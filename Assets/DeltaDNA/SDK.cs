@@ -614,10 +614,10 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'newPlayer' event");
 			
-				this.TriggerEvent("newPlayer", new Dictionary<string, object>()
-				{
-					{ "userCountry", Application.systemLanguage.ToString() }
-				});
+				var newPlayerParams = new EventParams()
+					.AddParam("userCountry", ClientInfo.CountryCode);
+			
+				this.TriggerEvent("newPlayer", newPlayerParams);
 				
 				PlayerPrefs.SetInt(PF_KEY_FIRST_RUN, 0);
 			}
@@ -626,23 +626,11 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'gameStarted' event");
 				
-				var gameStartedParams = new Dictionary<string, object>();
+				var gameStartedParams = new EventParams()
+					.AddParam("clientVersion", this.ClientVersion)
+					.AddParam("pushNotificationToken", this.PushNotificationToken)
+					.AddParam("androidRegistrationID", this.AndroidRegistrationID);
 				
-				if (this.ClientVersion != null) 
-				{
-					gameStartedParams.Add("clientVersion", this.ClientVersion);
-				}
-				
-				if (this.PushNotificationToken != null) 
-				{
-					gameStartedParams.Add("pushNotificationToken", this.PushNotificationToken);
-				}
-				
-				if (this.AndroidRegistrationID != null)
-				{
-					gameStartedParams.Add ("androidRegistrationID", this.AndroidRegistrationID);
-				}
-					
 				this.TriggerEvent("gameStarted", gameStartedParams);
 			}
 			
@@ -650,15 +638,17 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'clientDevice' event");
 				
-				this.TriggerEvent("clientDevice", new Dictionary<string, object>()
-				                  {
-					{ "deviceName", ClientInfo.DeviceName },
-					{ "deviceType", ClientInfo.DeviceType },
-					{ "hardwareVersion", ClientInfo.DeviceModel },
-					{ "operatingSystem", ClientInfo.OperatingSystem },
-					{ "operatingSystemVersion", ClientInfo.OperatingSystemVersion },
-					{ "manufacturer", ClientInfo.Manufacturer }
-				});
+				EventParams clientDeviceParams = new EventParams()
+					.AddParam("deviceName", ClientInfo.DeviceName)
+					.AddParam("deviceType", ClientInfo.DeviceType)
+					.AddParam("hardwareVersion", ClientInfo.DeviceModel)
+					.AddParam("operatingSystem", ClientInfo.OperatingSystem)
+					.AddParam("operatingSystemVersion", ClientInfo.OperatingSystemVersion)
+					.AddParam("manufacturer", ClientInfo.Manufacturer)
+					.AddParam("timezone", ClientInfo.Timezone)
+					.AddParam("userLanguage", ClientInfo.LanguageCode);
+					
+				this.TriggerEvent("clientDevice", clientDeviceParams);
 			}	
 		}
 		

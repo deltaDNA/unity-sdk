@@ -4,37 +4,75 @@ using UnityEngine;
 
 namespace DeltaDNA
 {
+	/// <summary>
+	/// The ClientInfo class determines facts about the device the game is being played on.  The 
+	/// results are formatted to be valid game parameter values.
+	/// </summary>
 	static class ClientInfo
 	{
 		private static string platform = null;
 	
+		/// <summary>
+		/// The platform the game is being played on.
+		/// </summary>
 		public static string Platform { get { return platform ?? (platform = GetPlatform()); }}
 		
 		private static string deviceName = null;
-		
+
+		/// <summary>
+		/// The name of the device.
+		/// </summary>		
 		public static string DeviceName { get { return deviceName ?? (deviceName = GetDeviceName()); }}
 		
 		private static string deviceModel = null;
 		
+		/// <summary>
+		/// The device's model number.
+		/// </summary>
+		/// <value>The device model.</value>
 		public static string DeviceModel { get { return deviceModel ?? (deviceModel = GetDeviceModel()); }}
 		
 		private static string deviceType = null;
 		
+		/// <summary>
+		/// The type of device.
+		/// </summary>
 		public static string DeviceType { get { return deviceType ?? (deviceType = GetDeviceType()); }}
 		
 		private static string operatingSystem = null;
 		
+		/// <summary>
+		/// The operating system the device is running.
+		/// </summary>
 		public static string OperatingSystem { get { return operatingSystem ?? (operatingSystem = GetOperatingSystem()); }}
 		
 		private static string operatingSystemVersion = null;
-		
+
+		/// <summary>
+		/// The version of the operating system the device is running.
+		/// </summary>		
 		public static string OperatingSystemVersion { get { return operatingSystemVersion ?? (operatingSystemVersion = GetOperatingSystemVersion()); }}
 		
 		private static string manufacturer = null;
 		
-		public static string Manufacturer { get { return manufacturer ?? (manufacturer = GetManufacturer()); }}
+		/// <summary>
+		/// The manufacturer of the device the game is running on.
+		/// </summary>
+		public static string Manufacturer { get { return manufacturer ?? (manufacturer = GetManufacturer()); }}	
 		
+		private static string timezone = null;
 		
+		public static string Timezone { get { return timezone ?? (timezone = GetCurrentTimezone()); }}
+		
+		private static string countryCode = null;
+		
+		public static string CountryCode { get { return countryCode ?? (countryCode = GetCountryCode()); }}
+		
+		private static string languageCode = null;
+		
+		public static string LanguageCode { get { return languageCode ?? (languageCode = GetLanguageCode()); }}
+		
+		#region Private Helpers
 	
 		/// <summary>
 		/// Gets the platform as an enumeration of the 'platform' key.
@@ -146,8 +184,71 @@ namespace DeltaDNA
 		
 		private static string GetManufacturer()
 		{
-			return "UNKNOWN";
+			return null;
 		}
+		
+		private static string GetCurrentTimezone()
+		{
+			TimeZone localZone = TimeZone.CurrentTimeZone;
+			DateTime currentDate = DateTime.Now;
+			TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
+			return String.Format("{0}{1:D2}{2:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours, currentOffset.Minutes);
+		}
+		
+		private static string GetCountryCode()
+		{
+			return null;
+		}
+		
+		private static string GetLanguageCode()
+		{
+			switch (Application.systemLanguage)
+			{
+				case SystemLanguage.Afrikaans: return "af";
+				case SystemLanguage.Arabic: return "ar";
+				case SystemLanguage.Basque: return "eu";
+				case SystemLanguage.Belarusian: return "be";
+				case SystemLanguage.Bulgarian: return "bg";
+				case SystemLanguage.Catalan: return "ca";
+				case SystemLanguage.Chinese: return "zh";
+				case SystemLanguage.Czech: return "cs";
+				case SystemLanguage.Danish: return "da";
+				case SystemLanguage.Dutch: return "nl";
+				case SystemLanguage.English: return "en";
+				case SystemLanguage.Estonian: return "et";
+				case SystemLanguage.Faroese: return "fo";
+				case SystemLanguage.Finnish: return "fi";
+				case SystemLanguage.French: return "fr";
+				case SystemLanguage.German: return "de";
+				case SystemLanguage.Greek: return "el";
+				case SystemLanguage.Hebrew: return "he";
+				case SystemLanguage.Hungarian: return "hu";
+				case SystemLanguage.Icelandic: return "is";
+				case SystemLanguage.Indonesian: return "id";
+				case SystemLanguage.Italian: return "it";
+				case SystemLanguage.Japanese: return "ja";
+				case SystemLanguage.Korean: return "ko";
+				case SystemLanguage.Latvian: return "lv";
+				case SystemLanguage.Lithuanian: return "lt";
+				case SystemLanguage.Norwegian: return "nn";
+				case SystemLanguage.Polish: return "pl";
+				case SystemLanguage.Portuguese: return "pt";
+				case SystemLanguage.Romanian: return "ro";
+				case SystemLanguage.Russian: return "ru";
+				case SystemLanguage.SerboCroatian: return "sr";
+				case SystemLanguage.Slovak: return "sk";
+				case SystemLanguage.Slovenian: return "sl";
+				case SystemLanguage.Spanish: return "es";
+				case SystemLanguage.Swedish: return "sv";
+				case SystemLanguage.Thai: return "th";
+				case SystemLanguage.Turkish: return "tr";
+				case SystemLanguage.Ukrainian: return "uk";
+				case SystemLanguage.Vietnamese: return "vi";
+				default: return "en";	// English...
+			}
+		}
+		
+		#endregion
 	}
 }
 

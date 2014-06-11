@@ -12,8 +12,16 @@ namespace DeltaDNA
 		
 		}
 		
+		/// <summary>
+		/// Adds a game parameter to the event params object.  If the value is null
+		/// it is ignored.
+		/// </summary>
+		/// <param name="key">Game parameter name.</param>
+		/// <param name="value">The value of the game parameter.</param>
 		public EventParams AddParam(string key, object value)
 		{
+			if (value == null) return this;
+			
 			if (value.GetType() == typeof(ProductParams))
 			{
 				ProductParams product = value as ProductParams;
