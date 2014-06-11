@@ -1,0 +1,18 @@
+# Folders
+Library/
+Temp/
+Build/
+
+# Project/User Preference Files
+*.sln
+*.csproj
+*.pidb
+*.userprefs
+*.user
+*.suo
+
+# OS Junk
+Thumbs.db
+.DS_Store*
+ehthumbs.db
+Icon7
