@@ -9,11 +9,11 @@ namespace DeltaDNA
 		private List<Dictionary<string, object>> virtualCurrencies;
 		private List<Dictionary<string, object>> items;
 		
-		private string productName;
+		//private string productName;
 		
-		public ProductParams(string productName)
+		public ProductParams(/*string productName*/)
 		{
-			this.productName = productName;
+			//this.productName = productName;
 		}
 		
 		public ProductParams AddRealCurrency(string currencyType, int currencyAmount)
@@ -90,10 +90,12 @@ namespace DeltaDNA
 				contents.Add("items", this.items);
 			}
 		
-			return new Dictionary<string, object>()
-			{
-				{ this.productName, contents }
-			};
+//			return new Dictionary<string, object>()
+//			{
+//				{ this.productName, contents }
+//			};
+
+			return contents;
 		}
 	}
 }

@@ -27,7 +27,12 @@ namespace DeltaDNA
 				ProductParams product = value as ProductParams;
 				value = product.ToDictionary();
 			}
-		
+			else if (value.GetType() == typeof(EventParams))
+			{
+					EventParams eventParams = value as EventParams;
+					value = eventParams.ToDictionary();
+			}
+			
 			this.dict.Add(key, value);
 			return this;
 		}

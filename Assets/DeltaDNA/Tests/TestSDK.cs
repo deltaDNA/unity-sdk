@@ -25,66 +25,31 @@ public class TestSDK : MonoBehaviour {
 	
 		
 		// Send some more complicated events
-		var achievementParams = new Dictionary<string, object>()
-		{
-			{ "achievementName", "Sunday Showdown Tournament Win" },
-			{ "achievementID", "SS-2014-03-02-01" },
-			{ "reward", new Dictionary<string, object>()
-				{
-					{ "rewardProducts", new Dictionary<string, object>()
-						{
-							{ "realCurrency", new Dictionary<string, object>()
-								{
-									{ "realCurrencyType", "USD" },
-									{ "realCurrencyAmount", 5000 }	
-								}
-							},
-							{ "virtualCurrencies", new List<object>()
-								{
-									new Dictionary<string, object>()
-									{
-										{ "virtualCurrency", new Dictionary<string, object>()
-											{
-												{ "virtualCurrencyName", "VIP Points" },
-												{ "virtualCurrencyType", "GRIND_CURRENCY" },
-												{ "virtualCurrencyAmount", 10 }	
-											}
-										}
-									}
-								}
-							},
-							{ "items", new List<object>()
-								{
-									new Dictionary<string, object>()
-									{
-										{ "item", new Dictionary<string, object>()
-											{
-												{ "itemName", "Sunday Showdown Medal" },
-												{ "itemType", "Victory Badge" },
-												{ "itemAmount", 1 }	
-											}
-										}
-									}
-								}
-							}	
-						}
-					}
-				}
-			}
-		};
-		
-		//SDK.Instance.TriggerEvent("achievement", achievementParams);
-		
-		EventParams achievementParams2 = new EventParams()
+		EventParams achievementParams = new EventParams()
 			.AddParam("achievementName", "Sunday Showdown Tournament Win")
 			.AddParam("achievementID", "SS-2014-03-02-01")
-			.AddParam("reward", new ProductParams("rewardProducts")
-				.AddRealCurrency("USD", 5000)
-				.AddVirtualCurrency("VIP Points", "GRIND_CURRENCY", 20)
-				.AddItem("Sunday Showdown Medal", "Victory Badge", 1));
+			.AddParam("reward", new EventParams()
+				.AddParam("rewardProducts", new ProductParams()
+					.AddRealCurrency("USD", 5000)
+					.AddVirtualCurrency("VIP Points", "GRIND_CURRENCY", 20)
+					.AddItem("Sunday Showdown Medal", "Victory Badge", 1))
+				.AddParam("rewardName", "Medal"));
 		
-		SDK.Instance.TriggerEvent("achievement", achievementParams2);	
+		SDK.Instance.TriggerEvent("achievement", achievementParams);	
 		
+		EventParams transactionParams = new EventParams()
+			.AddParam("transactionName", "Weapon type 11 manual repair")
+			.AddParam("transactionID", "47891208312996456524019-178.149.115.237:51787")
+			.AddParam("transactorID", "62.212.91.84:15116")
+			.AddParam("productID", "4019")
+			.AddParam("transactionType", "PURCHASE")
+			.AddParam("paymentCountry", "EN")
+			.AddParam("productsReceived", new ProductParams()
+				.AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
+			.AddParam("productsSpent", new ProductParams()
+				.AddVirtualCurrency("Credit", "Grind", 710));
+				
+		SDK.Instance.TriggerEvent("transaction", transactionParams);
 		
 		// Play with Engage
 		var engageParams = new Dictionary<string, object>()
