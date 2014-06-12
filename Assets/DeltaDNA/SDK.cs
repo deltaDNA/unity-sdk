@@ -86,7 +86,7 @@ namespace DeltaDNA
 			TriggerEvent(eventName, new Dictionary<string, object>());
 		}
 		
-		public void TriggerEvent(string eventName, EventParams eventParams)
+		public void TriggerEvent(string eventName, EventBuilder eventParams)
 		{
 			TriggerEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
 		}
@@ -634,7 +634,7 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'newPlayer' event");
 			
-				var newPlayerParams = new EventParams()
+				var newPlayerParams = new EventBuilder()
 					.AddParam("userCountry", ClientInfo.CountryCode);
 			
 				this.TriggerEvent("newPlayer", newPlayerParams);
@@ -646,7 +646,7 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'gameStarted' event");
 				
-				var gameStartedParams = new EventParams()
+				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
 					.AddParam("pushNotificationToken", this.PushNotificationToken)
 					.AddParam("androidRegistrationID", this.AndroidRegistrationID);
@@ -658,7 +658,7 @@ namespace DeltaDNA
 			{
 				LogDebug("Sending 'clientDevice' event");
 				
-				EventParams clientDeviceParams = new EventParams()
+				EventBuilder clientDeviceParams = new EventBuilder()
 					.AddParam("deviceName", ClientInfo.DeviceName)
 					.AddParam("deviceType", ClientInfo.DeviceType)
 					.AddParam("hardwareVersion", ClientInfo.DeviceModel)

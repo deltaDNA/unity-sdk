@@ -25,11 +25,11 @@ public class TestSDK : MonoBehaviour {
 	
 		
 		// Send some more complicated events
-		EventParams achievementParams = new EventParams()
+		EventBuilder achievementParams = new EventBuilder()
 			.AddParam("achievementName", "Sunday Showdown Tournament Win")
 			.AddParam("achievementID", "SS-2014-03-02-01")
-			.AddParam("reward", new EventParams()
-				.AddParam("rewardProducts", new ProductParams()
+			.AddParam("reward", new EventBuilder()
+				.AddParam("rewardProducts", new ProductBuilder()
 					.AddRealCurrency("USD", 5000)
 					.AddVirtualCurrency("VIP Points", "GRIND_CURRENCY", 20)
 					.AddItem("Sunday Showdown Medal", "Victory Badge", 1))
@@ -37,16 +37,16 @@ public class TestSDK : MonoBehaviour {
 		
 		SDK.Instance.TriggerEvent("achievement", achievementParams);	
 		
-		EventParams transactionParams = new EventParams()
+		EventBuilder transactionParams = new EventBuilder()
 			.AddParam("transactionName", "Weapon type 11 manual repair")
 			.AddParam("transactionID", "47891208312996456524019-178.149.115.237:51787")
 			.AddParam("transactorID", "62.212.91.84:15116")
 			.AddParam("productID", "4019")
 			.AddParam("transactionType", "PURCHASE")
 			.AddParam("paymentCountry", "EN")
-			.AddParam("productsReceived", new ProductParams()
+			.AddParam("productsReceived", new ProductBuilder()
 				.AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
-			.AddParam("productsSpent", new ProductParams()
+			.AddParam("productsSpent", new ProductBuilder()
 				.AddVirtualCurrency("Credit", "Grind", 710));
 				
 		SDK.Instance.TriggerEvent("transaction", transactionParams);

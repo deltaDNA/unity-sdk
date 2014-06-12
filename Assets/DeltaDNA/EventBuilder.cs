@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace DeltaDNA
 {
-	public class EventParams
+	public class EventBuilder
 	{
 		private Dictionary<string, object> dict = new Dictionary<string, object>();
 	
-		public EventParams()
+		public EventBuilder()
 		{
 		
 		}
@@ -18,18 +18,18 @@ namespace DeltaDNA
 		/// </summary>
 		/// <param name="key">Game parameter name.</param>
 		/// <param name="value">The value of the game parameter.</param>
-		public EventParams AddParam(string key, object value)
+		public EventBuilder AddParam(string key, object value)
 		{
 			if (value == null) return this;
 			
-			if (value.GetType() == typeof(ProductParams))
+			if (value.GetType() == typeof(ProductBuilder))
 			{
-				ProductParams product = value as ProductParams;
+				ProductBuilder product = value as ProductBuilder;
 				value = product.ToDictionary();
 			}
-			else if (value.GetType() == typeof(EventParams))
+			else if (value.GetType() == typeof(EventBuilder))
 			{
-					EventParams eventParams = value as EventParams;
+					EventBuilder eventParams = value as EventBuilder;
 					value = eventParams.ToDictionary();
 			}
 			

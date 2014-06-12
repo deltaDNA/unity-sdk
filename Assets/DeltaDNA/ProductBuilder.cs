@@ -3,20 +3,18 @@ using System.Collections.Generic;
 
 namespace DeltaDNA
 {
-	public class ProductParams
+	public class ProductBuilder
 	{
 		private Dictionary<string, object> realCurrency;
 		private List<Dictionary<string, object>> virtualCurrencies;
 		private List<Dictionary<string, object>> items;
 		
-		//private string productName;
-		
-		public ProductParams(/*string productName*/)
+		public ProductBuilder()
 		{
-			//this.productName = productName;
+
 		}
 		
-		public ProductParams AddRealCurrency(string currencyType, int currencyAmount)
+		public ProductBuilder AddRealCurrency(string currencyType, int currencyAmount)
 		{
 			if (this.realCurrency != null)
 			{
@@ -32,7 +30,7 @@ namespace DeltaDNA
 			return this;
 		}
 		
-		public ProductParams AddVirtualCurrency(string currencyName, string currencyType, int currencyAmount)
+		public ProductBuilder AddVirtualCurrency(string currencyName, string currencyType, int currencyAmount)
 		{
 			if (this.virtualCurrencies == null)
 			{
@@ -53,7 +51,7 @@ namespace DeltaDNA
 			return this;
 		}
 		
-		public ProductParams AddItem(string itemName, string itemType, int itemAmount)
+		public ProductBuilder AddItem(string itemName, string itemType, int itemAmount)
 		{
 			if (this.items == null)
 			{
@@ -90,11 +88,6 @@ namespace DeltaDNA
 				contents.Add("items", this.items);
 			}
 		
-//			return new Dictionary<string, object>()
-//			{
-//				{ this.productName, contents }
-//			};
-
 			return contents;
 		}
 	}
