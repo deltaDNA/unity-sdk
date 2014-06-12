@@ -52,9 +52,12 @@ namespace DeltaDNA
 				Defaults.DebugMode
 			);
 			
-			this.engageArchive = new EngageArchive(
-				Defaults.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
-			);
+			if (engageURL != null)
+			{
+				this.engageArchive = new EngageArchive(
+					Defaults.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
+				);
+			}
 			
 			this.initialised = true;
 			
@@ -70,9 +73,8 @@ namespace DeltaDNA
 		
 		public override void OnDestroy()
 		{
-			LogDebug("Destroying SDK...");
-			this.eventStore.Dispose();
-			this.engageArchive.Save();
+			if (this.eventStore != null) this.eventStore.Dispose();
+			if (this.engageArchive != null) this.engageArchive.Save();
 			base.OnDestroy();
 		}
 		
