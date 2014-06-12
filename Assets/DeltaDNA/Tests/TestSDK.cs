@@ -11,6 +11,8 @@ public class TestSDK : MonoBehaviour {
 		Defaults.DebugMode = true;
 		Defaults.ResetTest = true;
 		
+		Defaults.BackgroundEventUpload = true;
+		
 		//Defaults.OnInitSendNewPlayerEvent = false;
 	
 		SDK.Instance.Init(
@@ -98,14 +100,11 @@ public class TestSDK : MonoBehaviour {
 			Debug.Log("Engage returned '"+data+"'");
 		});
 		
-		
 		// Some time later...
 		//SDK.Instance.Upload();
 		
 		//InvokeRepeating("TriggerEvent", 0, 5);
 		
-		// TODO: move this inside the SDK and make the default behaviour
-		InvokeRepeating("SendEvents", 0, 23);
 	}
 	
 	// Update is called once per frame
@@ -119,9 +118,4 @@ public class TestSDK : MonoBehaviour {
 		SDK.Instance.TriggerEvent("emptySchema");
 	}
 	
-	private void SendEvents()
-	{
-		Debug.Log ("Sending Events...");
-		SDK.Instance.Upload();
-	}
 }

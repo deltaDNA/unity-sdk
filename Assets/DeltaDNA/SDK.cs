@@ -60,6 +60,12 @@ namespace DeltaDNA
 			
 			// must do this once we're initialised
 			TriggerDefaultEvents();
+			
+			// Setup automated event uploads
+			if (Defaults.BackgroundEventUpload)
+			{
+				InvokeRepeating("Upload", Defaults.BackgroundEventUploadStartDelaySeconds, Defaults.BackgroundEventUploadRepeatRateSeconds);
+			}
 		}
 		
 		public override void OnDestroy()

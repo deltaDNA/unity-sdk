@@ -26,6 +26,10 @@ namespace DeltaDNA
 			
 			HttpRequestRetryDelaySeconds = 2;
 			HttpRequestMaxRetries = 5;
+			
+			BackgroundEventUpload = true;	// send events automatically by default
+			BackgroundEventUploadStartDelaySeconds = 0;
+			BackgroundEventUploadRepeatRateSeconds = 60;
 		}
 		
 		/// <summary>
@@ -63,5 +67,11 @@ namespace DeltaDNA
 		/// </summary>
 		/// <value>The http request max retries.</value>
 		public static int HttpRequestMaxRetries { get; set; }
+		
+		public static bool BackgroundEventUpload { get; set; }
+		
+		public static int BackgroundEventUploadStartDelaySeconds { get; set; }
+		
+		public static int BackgroundEventUploadRepeatRateSeconds { get; set; }
 	}
 }
