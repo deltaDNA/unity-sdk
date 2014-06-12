@@ -30,13 +30,16 @@ namespace DeltaDNA
 		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
 		
-		private SDK() {}
+		private SDK() 
+		{
+			this.Settings = new Settings();	// default configuration
+		}
 		
 		#region Client Interface
 		
 		public void Init(string envKey, string collectURL, string secret, string userID=null, string engageURL=null)
 		{
-			if (Defaults.ResetTest) ClearPersistentData();
+			if (Settings.ResetTest) ClearPersistentData();
 		
 			this.EnvironmentKey = envKey;
 			this.Secret = secret;
@@ -47,15 +50,15 @@ namespace DeltaDNA
 			this.SessionID = GetSessionID();
 			
 			this.eventStore = new EventStore(
-				Defaults.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
-				Defaults.ResetTest, 
-				Defaults.DebugMode
+				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
+				Settings.ResetTest, 
+				Settings.DebugMode
 			);
 			
 			if (engageURL != null)
 			{
 				this.engageArchive = new EngageArchive(
-					Defaults.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
+					Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
 				);
 			}
 			
@@ -65,9 +68,9 @@ namespace DeltaDNA
 			TriggerDefaultEvents();
 			
 			// Setup automated event uploads
-			if (Defaults.BackgroundEventUpload)
+			if (Settings.BackgroundEventUpload)
 			{
-				InvokeRepeating("Upload", Defaults.BackgroundEventUploadStartDelaySeconds, Defaults.BackgroundEventUploadRepeatRateSeconds);
+				InvokeRepeating("Upload", Settings.BackgroundEventUploadStartDelaySeconds, Settings.BackgroundEventUploadRepeatRateSeconds);
 			}
 		}
 		
@@ -111,12 +114,16 @@ namespace DeltaDNA
 			
 			if (!eventParams.ContainsKey(EP_KEY_SDK_VERSION))
 			{
-				eventParams.Add(EP_KEY_SDK_VERSION, Defaults.SDK_VERSION);
+				eventParams.Add(EP_KEY_SDK_VERSION, Settings.SDK_VERSION);
 			}
 			
 			eventRecord[EV_KEY_PARAMS] = eventParams;
 			
-			if (!this.eventStore.Push(MiniJSON.Json.Serialize(eventRecord)))
+			if (String.IsNullOrEmpty(this.UserID))
+			{
+			
+			}
+			else if (!this.eventStore.Push(MiniJSON.Json.Serialize(eventRecord)))
 			{
 				LogWarning("Event Store full, unable to handle event");
 			}
@@ -286,11 +293,16 @@ namespace DeltaDNA
 		
 		#endregion
 		
+		/// <summary>
+		/// Controls default behaviour of the SDK.  Set prior to intialisation.
+		/// </summary>
+		public Settings Settings { get; set; }
+		
 		#region Private Helpers
 		
 		private void LogDebug(string message)
 		{
-			if (Defaults.DebugMode)
+			if (Settings.DebugMode)
 			{
 				Debug.Log("[DDSDK] "+message);
 			}
@@ -318,7 +330,7 @@ namespace DeltaDNA
 		
 		private string GetCurrentTimestamp()
 		{
-			return DateTime.UtcNow.ToString(Defaults.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+			return DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
 		}
 		
 		private IEnumerator UploadCoroutine()
@@ -392,8 +404,8 @@ namespace DeltaDNA
 					{ "userID", this.UserID },
 					{ "decisionPoint", decisionPoint },
 					{ "sessionID", this.SessionID },
-					{ "version", Defaults.ENGAGE_API_VERSION },
-					{ "sdkVersion", Defaults.SDK_VERSION },
+					{ "version", Settings.ENGAGE_API_VERSION },
+					{ "sdkVersion", Settings.SDK_VERSION },
 					{ "platform", this.Platform }
 				};
 				
@@ -462,7 +474,7 @@ namespace DeltaDNA
 			{
 				this.userIdRequestInProgress = true;
 				
-				string url = FormatURI(Defaults.USERID_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
+				string url = FormatURI(Settings.USERID_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
 				
 				// create a new url to turn off any caching
 				DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
@@ -486,9 +498,9 @@ namespace DeltaDNA
 							LogDebug("Error requesting User ID, Collect returned: "+status);
 						}
 					}));
-					yield return new WaitForSeconds(Defaults.HttpRequestRetryDelaySeconds);
+					yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
 				}
-				while (!succeeded && ++attempts < Defaults.HttpRequestMaxRetries);
+				while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
 			}
 			finally
 			{
@@ -500,7 +512,7 @@ namespace DeltaDNA
 		{
 			string bulkEvent = "{\"eventList\":[" + String.Join(",", events) + "]}";
 			string md5Hash = GenerateHash(bulkEvent);
-			string url = FormatURI(Defaults.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey, md5Hash);
+			string url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey, md5Hash);
 			
 			int attempts = 0;
 			bool succeeded = false;
@@ -512,9 +524,9 @@ namespace DeltaDNA
 					if (status == 200) succeeded = true;
 					else LogDebug("Error uploading events, Collect returned: "+status);
 				}));
-				yield return new WaitForSeconds(Defaults.HttpRequestRetryDelaySeconds);
+				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
 			}
-			while (!succeeded && ++attempts < Defaults.HttpRequestMaxRetries);
+			while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
 			
 			resultCallback(succeeded);
 		}
@@ -522,7 +534,7 @@ namespace DeltaDNA
 		private IEnumerator EngageRequest(string engagement, Action<string> callback)
 		{
 			string md5Hash = GenerateHash(engagement);
-			string url = FormatURI(Defaults.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, md5Hash);
+			string url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, md5Hash);
 			
 			yield return StartCoroutine(HttpPOST(url, engagement, (status, response) => 
 			{
@@ -618,7 +630,7 @@ namespace DeltaDNA
 		
 		private void TriggerDefaultEvents()
 		{
-			if (Defaults.OnFirstRunSendNewPlayerEvent && PlayerPrefs.GetInt(PF_KEY_FIRST_RUN, 1) > 0)
+			if (Settings.OnFirstRunSendNewPlayerEvent && PlayerPrefs.GetInt(PF_KEY_FIRST_RUN, 1) > 0)
 			{
 				LogDebug("Sending 'newPlayer' event");
 			
@@ -630,7 +642,7 @@ namespace DeltaDNA
 				PlayerPrefs.SetInt(PF_KEY_FIRST_RUN, 0);
 			}
 			
-			if (Defaults.OnInitSendGameStartedEvent)
+			if (Settings.OnInitSendGameStartedEvent)
 			{
 				LogDebug("Sending 'gameStarted' event");
 				
@@ -642,7 +654,7 @@ namespace DeltaDNA
 				this.TriggerEvent("gameStarted", gameStartedParams);
 			}
 			
-			if (Defaults.OnInitSendClientDeviceEvent)
+			if (Settings.OnInitSendClientDeviceEvent)
 			{
 				LogDebug("Sending 'clientDevice' event");
 				

@@ -1,6 +1,6 @@
 namespace DeltaDNA
 {
-	public static class Defaults
+	public class Settings
 	{
 		internal static readonly string SDK_VERSION = "Unity SDK v3.1";
 		
@@ -13,7 +13,7 @@ namespace DeltaDNA
 		internal static readonly string COLLECT_URL_PATTERN = "{host}/{env_key}/bulk/hash/{hash}";
 		internal static readonly string ENGAGE_URL_PATTERN = "{host}/{env_key}/hash/{hash}";
 		
-		static Defaults()
+		internal Settings()
 		{
 			// defines default behaviour of the SDK
 			
@@ -35,43 +35,43 @@ namespace DeltaDNA
 		/// <summary>
 		/// Controls whether a 'newPlayer' event is sent the first time the game is played.
 		/// </summary>
-		public static bool OnFirstRunSendNewPlayerEvent { get; set; }
+		public bool OnFirstRunSendNewPlayerEvent { get; set; }
 		
 		/// <summary>
 		/// Controls whether a 'clientDevice' event is sent after the Init call.
 		/// </summary>
-		public static bool OnInitSendClientDeviceEvent { get; set; }
+		public bool OnInitSendClientDeviceEvent { get; set; }
 		
 		/// <summary>
 		/// Controls whether a 'gameStarted' event is sent after the Init call.
 		/// </summary>
-		public static bool OnInitSendGameStartedEvent { get; set; }
+		public bool OnInitSendGameStartedEvent { get; set; }
 		
 		/// <summary>
 		/// Controls if additional debug is output to the console.
 		/// </summary>
-		public static bool DebugMode { get; set; }
+		public bool DebugMode { get; set; }
 		
 		/// <summary>
 		/// If set, clear all persisted data on start up.
 		/// </summary>
-		public static bool ResetTest { get; set; }
+		public bool ResetTest { get; set; }
 		
 		/// <summary>
 		/// Controls the time in seconds between retrying a failed Http request.
 		/// </summary>
-		public static float HttpRequestRetryDelaySeconds { get; set; }
+		public float HttpRequestRetryDelaySeconds { get; set; }
 		
 		/// <summary>
 		/// Controls the number of times we retry an Http request before giving up.
 		/// </summary>
 		/// <value>The http request max retries.</value>
-		public static int HttpRequestMaxRetries { get; set; }
+		public int HttpRequestMaxRetries { get; set; }
 		
-		public static bool BackgroundEventUpload { get; set; }
+		public bool BackgroundEventUpload { get; set; }
 		
-		public static int BackgroundEventUploadStartDelaySeconds { get; set; }
+		public int BackgroundEventUploadStartDelaySeconds { get; set; }
 		
-		public static int BackgroundEventUploadRepeatRateSeconds { get; set; }
+		public int BackgroundEventUploadRepeatRateSeconds { get; set; }
 	}
 }

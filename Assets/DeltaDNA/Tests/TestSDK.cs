@@ -8,12 +8,12 @@ public class TestSDK : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		Defaults.DebugMode = true;
-		Defaults.ResetTest = true;
+		SDK.Instance.Settings.DebugMode = true;
+		SDK.Instance.Settings.ResetTest = true;
 		
-		Defaults.BackgroundEventUpload = true;
+		SDK.Instance.Settings.BackgroundEventUpload = true;
 		
-		//Defaults.OnInitSendNewPlayerEvent = false;
+		//SDK.Instance.Settings.OnInitSendNewPlayerEvent = false;
 	
 		SDK.Instance.Init(
 			"55822530117170763508653519413932", 				// iOS Test Dev				
