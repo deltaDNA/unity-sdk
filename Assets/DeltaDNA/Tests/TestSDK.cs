@@ -19,7 +19,7 @@ public class TestSDK : MonoBehaviour {
 			"55822530117170763508653519413932", 				// iOS Test Dev				
 			"http://collect2010stst.deltadna.net/collect/api",
 			"KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw",
-			"David - Test",
+			null, //"David - Test",
 			"http://engage2010stst.deltadna.net"
 		);
 	

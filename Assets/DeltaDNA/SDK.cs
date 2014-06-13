@@ -43,7 +43,14 @@ namespace DeltaDNA
 		
 			this.EnvironmentKey = envKey;
 			this.Secret = secret;
-			this.UserID = userID;
+			
+			// if client's not giving us a user id and we don't already have
+			// one from a previous run, generate one for them.
+			if (String.IsNullOrEmpty(userID) && String.IsNullOrEmpty(this.UserID))
+			{
+				this.UserID = GetUserID();
+			}
+			
 			this.CollectURL = collectURL;	// TODO: warn if no http is present, prepend it, although we support both
 			this.EngageURL = engageURL;
 			this.Platform = ClientInfo.Platform;
@@ -324,6 +331,11 @@ namespace DeltaDNA
 		}
 		
 		private string GetSessionID()
+		{
+			return Guid.NewGuid().ToString();
+		}
+		
+		private string GetUserID()
 		{
 			return Guid.NewGuid().ToString();
 		}
