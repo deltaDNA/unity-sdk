@@ -16,9 +16,12 @@ namespace DeltaDNA
 		private string path;
 		#endif 
 	
-		public EngageArchive(string path)
+		public EngageArchive(string path, bool reset=false)
 		{
-			Load(path);
+			if (!reset)
+			{
+				Load(path);			
+			}
 			
 			#if !UNITY_WEBPLAYER
 			this.path = path;
@@ -27,6 +30,7 @@ namespace DeltaDNA
 		
 		public bool Contains(string decisionPoint)
 		{
+			Debug.Log ("Does Engage contain "+decisionPoint);
 			return table.ContainsKey(decisionPoint);
 		}
 		
@@ -48,6 +52,7 @@ namespace DeltaDNA
 			try
 			{
 				string filename = Path.Combine(path, FILENAME);
+				Debug.Log("Loading Engage from "+filename);
 				if (File.Exists(filename))
 				{
 					using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))

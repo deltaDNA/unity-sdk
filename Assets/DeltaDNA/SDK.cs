@@ -25,6 +25,7 @@ namespace DeltaDNA
 		static readonly string EP_KEY_PLATFORM = "platform";
 		static readonly string EP_KEY_SDK_VERSION = "sdkVersion";
 		
+		private bool reset = false;
 		private bool initialised = false;
 		private bool userIdRequestInProgress = false;
 		
@@ -39,10 +40,16 @@ namespace DeltaDNA
 		
 		#region Client Interface
 		
+		/// <summary>
+		/// Initialises the SDK.  Call before sending events.
+		/// </summary>
+		/// <param name="envKey">The unique environment key for the game.</param>
+		/// <param name="collectURL">The Collect URL for this game.</param>
+		/// <param name="secret">The secret key for this game.</param>
+		/// <param name="userID">The user id for the player, if none is provided we generate one for you.</param>
+		/// <param name="engageURL">The Engage URL for this game if you're using Engage.</param>
 		public void Init(string envKey, string collectURL, string secret, string userID=null, string engageURL=null)
 		{
-			if (Settings.ResetTest) ClearPersistentData();
-		
 			this.EnvironmentKey = envKey;
 			this.Secret = secret;
 			
@@ -66,7 +73,7 @@ namespace DeltaDNA
 			
 			this.eventStore = new EventStore(
 				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
-				Settings.ResetTest, 
+				this.reset, 
 				Settings.DebugMode
 			);
 			
@@ -75,7 +82,8 @@ namespace DeltaDNA
 			if (engageURL != null)
 			{
 				this.engageArchive = new EngageArchive(
-					Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
+					Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath),
+					this.reset
 				);
 			}
 			
@@ -91,23 +99,30 @@ namespace DeltaDNA
 			}
 		}
 		
-		public override void OnDestroy()
-		{
-			if (this.eventStore != null && this.eventStore.GetType() == typeof(EventStore)) this.eventStore.Dispose();
-			if (this.engageArchive != null) this.engageArchive.Save();
-			base.OnDestroy();
-		}
-		
+		/// <summary>
+		///	Sends an event to Collect, with no additional event parameters.
+		/// </summary>
+		/// <param name="eventName">Name of the event.</param>
 		public void TriggerEvent(string eventName)
 		{
 			TriggerEvent(eventName, new Dictionary<string, object>());
 		}
 		
+		/// <summary>
+		/// Sends an event to Collect.
+		/// </summary>
+		/// <param name="eventName">Name of the event schema.</param>
+		/// <param name="eventParams">An EventBuilder that describes the event params for the event.</param>
 		public void TriggerEvent(string eventName, EventBuilder eventParams)
 		{
 			TriggerEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
 		}
 		
+		/// <summary>
+		/// Sends an event to Collect.
+		/// </summary>
+		/// <param name="eventName">Name of the event schema.</param>
+		/// <param name="eventParams">Event parameters for the event.</param>
 		public void TriggerEvent(string eventName, Dictionary<string, object> eventParams)
 		{
 			if (!this.initialised) 
@@ -146,6 +161,12 @@ namespace DeltaDNA
 			}
 		}
 		
+		/// <summary>
+		/// Makes an Engage request.  The result of the engagement will be passed as a dictionary object to your callback method.
+		/// </summary>
+		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
+		/// <param name="engageParams">Additional parameters for the engagement.</param>
+		/// <param name="callback">Method called with the response from our server.</param>
 		public void RequestEngagement(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
 		{
 			if (!this.initialised)
@@ -176,6 +197,9 @@ namespace DeltaDNA
 			StartCoroutine(EngageCoroutine(decisionPoint, engageParams, callback));
 		}
 		
+		/// <summary>
+		/// Uploads waiting events to our Collect service.
+		/// </summary>
 		public void Upload()
 		{
 			if (!this.initialised) 
@@ -190,6 +214,32 @@ namespace DeltaDNA
 			}
 			
 			StartCoroutine(UploadCoroutine());
+		}
+		
+		/// <summary>
+		/// Controls default behaviour of the SDK.  Set prior to intialisation.
+		/// </summary>
+		public Settings Settings { get; set; }
+		
+		/// <summary>
+		/// Helper for building common transaction type events.
+		/// </summary>
+		/// <value>The transaction.</value>
+		public TransactionBuilder Transaction { get; private set; }
+		
+		/// <summary>
+		/// Clears the persistent data such as user id.  Useful for testing purposes.
+		/// </summary>
+		public void ClearPersistentData()
+		{
+			// PlayerPrefs
+			PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
+			PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
+			PlayerPrefs.DeleteKey(PF_KEY_CLIENT_VERSION);
+			PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
+			PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);	
+			
+			this.reset = true;	
 		}
 		
 		#endregion
@@ -232,6 +282,7 @@ namespace DeltaDNA
 			get
 			{
 				string v = PlayerPrefs.GetString(PF_KEY_CLIENT_VERSION, null);
+				LogDebug("Got Client Version '"+v+"'");
 				if (String.IsNullOrEmpty(v))
 				{
 					LogWarning("No client game version set.");
@@ -243,6 +294,7 @@ namespace DeltaDNA
 			{ 
 				if (!String.IsNullOrEmpty(value))
 				{
+					LogDebug("Setting ClientVersion '"+value+"'");
 					PlayerPrefs.SetString(PF_KEY_CLIENT_VERSION, value);
 					PlayerPrefs.Save();				
 				}
@@ -310,18 +362,14 @@ namespace DeltaDNA
 		
 		#endregion
 		
-		/// <summary>
-		/// Controls default behaviour of the SDK.  Set prior to intialisation.
-		/// </summary>
-		public Settings Settings { get; set; }
-		
-		/// <summary>
-		/// Helper for building common transaction type events.
-		/// </summary>
-		/// <value>The transaction.</value>
-		public TransactionBuilder Transaction { get; private set; }
-		
 		#region Private Helpers
+		
+		public override void OnDestroy()
+		{
+			if (this.eventStore != null && this.eventStore.GetType() == typeof(EventStore)) this.eventStore.Dispose();
+			if (this.engageArchive != null) this.engageArchive.Save();
+			base.OnDestroy();
+		}
 		
 		private void LogDebug(string message)
 		{
@@ -334,16 +382,6 @@ namespace DeltaDNA
 		private void LogWarning(string message)
 		{
 			Debug.LogWarning("[DDSDK] "+message);
-		}
-		
-		private void ClearPersistentData()
-		{
-			// PlayerPrefs
-			PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
-			PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
-			PlayerPrefs.DeleteKey(PF_KEY_CLIENT_VERSION);
-			PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
-			PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);		
 		}
 		
 		private string GetSessionID()
@@ -646,7 +684,14 @@ namespace DeltaDNA
 			
 			byte[] bytes = Encoding.UTF8.GetBytes(json);
 			
+			// silence deprecation warning
+			# if UNITY_4_5
+			WWW www = new WWW(url, bytes, Utils.HashtableToDictionary<string, string>(headers));
+			# else
 			WWW www = new WWW(url, bytes, headers);
+			# endif
+			
+			
 			yield return www;
 			
 			int statusCode = 0;
@@ -739,6 +784,7 @@ namespace DeltaDNA
 		}
 		
 		#endregion
+	
 	}
 }
 

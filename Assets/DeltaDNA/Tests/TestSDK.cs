@@ -8,13 +8,15 @@ public class TestSDK : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
+		// Test mode - clear any data from last run
+		// and enable additional logging.
+		//SDK.Instance.ClearPersistentData();
 		SDK.Instance.Settings.DebugMode = true;
-		SDK.Instance.Settings.ResetTest = true;
 		
-		SDK.Instance.Settings.BackgroundEventUpload = true;
-		
-		//SDK.Instance.Settings.OnInitSendNewPlayerEvent = false;
+		// Set client external information		
+		SDK.Instance.ClientVersion = "1.0";
 	
+		// Intialise the SDK
 		SDK.Instance.Init(
 			"55822530117170763508653519413932", 				// iOS Test Dev				
 			"http://collect2010stst.deltadna.net/collect/api",
@@ -51,7 +53,7 @@ public class TestSDK : MonoBehaviour {
 				
 		SDK.Instance.TriggerEvent("transaction", transactionParams);
 		
-		// try out Transaction helpers
+		// Try out Transaction helpers
 		SDK.Instance.Transaction.BuyVirtualCurrency("Buy Gold Coins", "USD", 10000, "Gold", "Premium", 5, "12567335-DFEWFG-sdfgr-343");
 		
 		// Play with Engage
@@ -68,22 +70,11 @@ public class TestSDK : MonoBehaviour {
 			Debug.Log("Engage returned '"+data+"'");
 		});
 		
-		// Some time later...
-		//SDK.Instance.Upload();
-		
-		//InvokeRepeating("TriggerEvent", 0, 5);
-		
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
-	}
-	
-	private void TriggerEvent()
-	{
-		Debug.Log("Trigger Event...");
-		SDK.Instance.TriggerEvent("emptySchema");
 	}
 	
 }

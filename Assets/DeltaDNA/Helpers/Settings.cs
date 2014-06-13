@@ -19,7 +19,6 @@ namespace DeltaDNA
 			// defines default behaviour of the SDK
 			
 			DebugMode = false;
-			ResetTest = false;
 			
 			OnFirstRunSendNewPlayerEvent = true;
 			OnInitSendClientDeviceEvent = true;
@@ -52,11 +51,6 @@ namespace DeltaDNA
 		/// Controls if additional debug is output to the console.
 		/// </summary>
 		public bool DebugMode { get; set; }
-		
-		/// <summary>
-		/// If set, clear all persisted data on start up.
-		/// </summary>
-		public bool ResetTest { get; set; }
 		
 		/// <summary>
 		/// Controls the time in seconds between retrying a failed Http request.
