@@ -40,6 +40,7 @@ namespace DeltaDNA
 		
 		private void Load(string path)
 		{
+			#if !UNITY_WEBPLAYER
 			try
 			{
 				string filename = Path.Combine(path, FILENAME);
@@ -74,12 +75,12 @@ namespace DeltaDNA
 			{
 				Debug.LogWarning("Unable to load Engagement archive: "+e.Message);
 			}
+			#endif
 		}
 		
 		public void Save()
 		{
-			Debug.Log("Saving Engagement archive");
-		
+			#if !UNITY_WEBPLAYER
 			try
 			{
 				if (!Directory.Exists(this.path)) 
@@ -115,6 +116,7 @@ namespace DeltaDNA
 			{
 				Debug.LogWarning("Unable to save Engagement archive: "+e.Message);
 			}
+			#endif
 		}
 	}
 }

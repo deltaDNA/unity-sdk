@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DeltaDNA
 {
-	public class EventStore : IDisposable
+	public class EventStore : IEventStore, IDisposable
 	{
 		
 		private static readonly string PF_KEY_IN_FILE = "DDSDK_EVENT_IN_FILE";
@@ -40,12 +40,6 @@ namespace DeltaDNA
 			{
 				Log("Problem initialising Event Store: "+e.Message);
 			}
-		}
-		
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
 		}
 		
 		/// <summary>
@@ -209,6 +203,17 @@ namespace DeltaDNA
 			{
 				Debug.Log ("[DDSDK EventStore] "+message);
 			}
+		}
+		
+		~EventStore()
+		{
+			Dispose(false);
+		}
+		
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 		
 		protected virtual void Dispose(bool disposing)

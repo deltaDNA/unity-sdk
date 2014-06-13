@@ -27,7 +27,7 @@ namespace DeltaDNA
 		private bool initialised = false;
 		private bool userIdRequestInProgress = false;
 		
-		private EventStore eventStore = null;
+		private IEventStore eventStore = null;
 		private EngageArchive engageArchive = null;
 		
 		private SDK() 
@@ -56,11 +56,19 @@ namespace DeltaDNA
 			this.Platform = ClientInfo.Platform;
 			this.SessionID = GetSessionID();
 			
+			#if UNITY_WEBPLAYER
+			
+			this.eventStore = new WebplayerEventStore();
+			
+			#else
+			
 			this.eventStore = new EventStore(
 				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
 				Settings.ResetTest, 
 				Settings.DebugMode
 			);
+			
+			#endif
 			
 			if (engageURL != null)
 			{
@@ -83,7 +91,7 @@ namespace DeltaDNA
 		
 		public override void OnDestroy()
 		{
-			if (this.eventStore != null) this.eventStore.Dispose();
+			if (this.eventStore != null && this.eventStore.GetType() == typeof(EventStore)) this.eventStore.Dispose();
 			if (this.engageArchive != null) this.engageArchive.Save();
 			base.OnDestroy();
 		}

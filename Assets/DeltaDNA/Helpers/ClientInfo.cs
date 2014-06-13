@@ -85,6 +85,8 @@ namespace DeltaDNA
 				case RuntimePlatform.Android: return "ANDROID";
 				case RuntimePlatform.BlackBerryPlayer: return "BLACKBERRY_MOBILE";
 				case RuntimePlatform.FlashPlayer: return "WEB";
+				
+				#if !UNITY_WEBPLAYER
 				case RuntimePlatform.IPhonePlayer:
 				{
 					switch (UnityEngine.iPhone.generation)
@@ -100,6 +102,8 @@ namespace DeltaDNA
 					default: return "IOS_MOBILE";
 					}
 				}
+				#endif
+				
 				case RuntimePlatform.LinuxPlayer: return "PC_CLIENT";
 				case RuntimePlatform.MetroPlayerARM: return "WINDOWS_TABLET";
 				case RuntimePlatform.MetroPlayerX64: return "WINDOWS_TABLET";
