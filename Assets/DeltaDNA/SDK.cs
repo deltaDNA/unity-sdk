@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.IO;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
@@ -352,6 +353,38 @@ namespace DeltaDNA
 		
 		private string GetUserID()
 		{
+			// see if this game ran with the previous SDK and look for
+			// a user id.
+			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+			if (File.Exists(legacySettingsPath))
+			{
+				LogDebug("Found a legacy file in "+legacySettingsPath);
+				using (FileStream fs = new FileStream(legacySettingsPath, FileMode.Open, FileAccess.Read))
+				{
+					try 
+					{
+						var bytes = new List<byte>();
+						byte[] buffer = new byte[1024];
+						while (fs.Read(buffer, 0, buffer.Length) > 0)
+						{
+							bytes.AddRange(buffer);
+						}
+						string json = Encoding.UTF8.GetString(bytes.ToArray());
+						var settings = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
+						if (settings.ContainsKey("userID"))
+						{
+							LogDebug("Found a legacy user id for player");
+							return settings["userID"] as string;
+						}
+					}
+					catch (Exception e)
+					{
+						LogWarning("Problem reading legacy user id: "+e.Message);
+					}
+				}
+			}
+		
+			LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
 		}
 		

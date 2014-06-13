@@ -8,6 +8,7 @@ namespace DeltaDNA
 		
 		internal static readonly string EVENT_STORAGE_PATH = "{persistent_path}/ddsdk/events/";
 		internal static readonly string ENGAGE_STORAGE_PATH = "{persistent_path}/ddsdk/engage/";
+		internal static readonly string LEGACY_SETTINGS_STORAGE_PATH = "{persistent_path}/GASettings.ini";
 		internal static readonly string EVENT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
 		internal static readonly string USERID_URL_PATTERN = "{host}/uuid";
 		internal static readonly string COLLECT_URL_PATTERN = "{host}/{env_key}/bulk/hash/{hash}";
