@@ -51,6 +51,9 @@ public class TestSDK : MonoBehaviour {
 				
 		SDK.Instance.TriggerEvent("transaction", transactionParams);
 		
+		// try out Transaction helpers
+		SDK.Instance.Transaction.BuyVirtualCurrency("Buy Gold Coins", "USD", 10000, "Gold", "Premium", 5, "12567335-DFEWFG-sdfgr-343");
+		
 		// Play with Engage
 		var engageParams = new Dictionary<string, object>()
 		{

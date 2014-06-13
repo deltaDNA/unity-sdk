@@ -33,6 +33,7 @@ namespace DeltaDNA
 		private SDK() 
 		{
 			this.Settings = new Settings();	// default configuration
+			this.Transaction = new TransactionBuilder(this);
 		}
 		
 		#region Client Interface
@@ -313,6 +314,12 @@ namespace DeltaDNA
 		/// </summary>
 		public Settings Settings { get; set; }
 		
+		/// <summary>
+		/// Helper for building common transaction type events.
+		/// </summary>
+		/// <value>The transaction.</value>
+		public TransactionBuilder Transaction { get; private set; }
+		
 		#region Private Helpers
 		
 		private void LogDebug(string message)
@@ -426,8 +433,14 @@ namespace DeltaDNA
 					{ "sessionID", this.SessionID },
 					{ "version", Settings.ENGAGE_API_VERSION },
 					{ "sdkVersion", Settings.SDK_VERSION },
-					{ "platform", this.Platform }
+					{ "platform", this.Platform },
+					{ "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset) }
 				};
+				
+				if (ClientInfo.Locale != null)
+				{
+					engageRequest.Add("locale", ClientInfo.Locale);
+				}
 				
 				if (engageParams != null)
 				{
@@ -685,7 +698,7 @@ namespace DeltaDNA
 					.AddParam("operatingSystem", ClientInfo.OperatingSystem)
 					.AddParam("operatingSystemVersion", ClientInfo.OperatingSystemVersion)
 					.AddParam("manufacturer", ClientInfo.Manufacturer)
-					.AddParam("timezone", ClientInfo.Timezone)
+					.AddParam("timezoneOffset", ClientInfo.TimezoneOffset)
 					.AddParam("userLanguage", ClientInfo.LanguageCode);
 					
 				this.TriggerEvent("clientDevice", clientDeviceParams);

@@ -11,14 +11,18 @@ namespace DeltaDNA
 	{
 		private Hashtable table = new Hashtable();
 		
+		#if !UNITY_WEBPLAYER
 		private string FILENAME = "ENGAGEMENTS";
 		private string path;
+		#endif 
 	
 		public EngageArchive(string path)
 		{
 			Load(path);
 			
+			#if !UNITY_WEBPLAYER
 			this.path = path;
+			#endif
 		}
 		
 		public bool Contains(string decisionPoint)

@@ -60,9 +60,9 @@ namespace DeltaDNA
 		/// </summary>
 		public static string Manufacturer { get { return manufacturer ?? (manufacturer = GetManufacturer()); }}	
 		
-		private static string timezone = null;
+		private static string timezoneOffset = null;
 		
-		public static string Timezone { get { return timezone ?? (timezone = GetCurrentTimezone()); }}
+		public static string TimezoneOffset { get { return timezoneOffset ?? (timezoneOffset = GetCurrentTimezoneOffset()); }}
 		
 		private static string countryCode = null;
 		
@@ -71,6 +71,10 @@ namespace DeltaDNA
 		private static string languageCode = null;
 		
 		public static string LanguageCode { get { return languageCode ?? (languageCode = GetLanguageCode()); }}
+		
+		private static string locale = null;
+		
+		public static string Locale { get { return locale ?? (locale = GetLocale()); }}
 		
 		#region Private Helpers
 	
@@ -191,12 +195,12 @@ namespace DeltaDNA
 			return null;
 		}
 		
-		private static string GetCurrentTimezone()
+		private static string GetCurrentTimezoneOffset()
 		{
 			TimeZone localZone = TimeZone.CurrentTimeZone;
 			DateTime currentDate = DateTime.Now;
 			TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
-			return String.Format("{0}{1:D2}{2:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours, currentOffset.Minutes);
+			return String.Format("{0}{1:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours);
 		}
 		
 		private static string GetCountryCode()
@@ -249,6 +253,18 @@ namespace DeltaDNA
 				case SystemLanguage.Ukrainian: return "uk";
 				case SystemLanguage.Vietnamese: return "vi";
 				default: return "en";	// English...
+			}
+		}
+		
+		private static string GetLocale()
+		{
+			if (CountryCode != null)
+			{
+				return String.Format("{0}_{1}", LanguageCode, CountryCode);
+			}
+			else
+			{
+				return String.Format("{0}_ZZ", LanguageCode);
 			}
 		}
 		
