@@ -13,5 +13,10 @@ namespace DeltaDNA
 				dict.Add((K)kvp.Key, (V)kvp.Value);
 			return dict;
 		}
+
+		public static Dictionary<K,V> HashtableToDictionary<K,V> (Dictionary<K,V> dictionary)
+		{
+			return dictionary;
+		}
 	}
 }

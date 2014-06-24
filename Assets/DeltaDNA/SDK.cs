@@ -679,7 +679,7 @@ namespace DeltaDNA
 			LogDebug("HttpPOST " + url + " " + json);
 			
 			WWWForm form = new WWWForm();
-			Hashtable headers = form.headers;
+			var headers = form.headers;
 			headers["Content-Type"] = "application/json";
 			
 			byte[] bytes = Encoding.UTF8.GetBytes(json);

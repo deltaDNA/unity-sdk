@@ -90,7 +90,7 @@ namespace DeltaDNA
 				case RuntimePlatform.BlackBerryPlayer: return "BLACKBERRY_MOBILE";
 				case RuntimePlatform.FlashPlayer: return "WEB";
 				
-				#if !UNITY_WEBPLAYER
+				#if UNITY_IPHONE
 				case RuntimePlatform.IPhonePlayer:
 				{
 					switch (UnityEngine.iPhone.generation)
