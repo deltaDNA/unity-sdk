@@ -17,8 +17,12 @@ public class TestSDK : MonoBehaviour {
 		SDK.Instance.ClientVersion = "1.0";
 		
 		// Enable event hashing
-		//SDK.Instance.HashSecret = "KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw";
-		SDK.Instance.HashSecret = null;
+		SDK.Instance.HashSecret = "KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw";
+		//SDK.Instance.HashSecret = "bad";
+		//SDK.Instance.HashSecret = null;
+		
+		//SDK.Instance.Settings.OnFirstRunSendNewPlayerEvent = false;
+		//SDK.Instance.Settings.OnInitSendGameStartedEvent = false;
 	
 		// Initialise the SDK
 		SDK.Instance.Init(

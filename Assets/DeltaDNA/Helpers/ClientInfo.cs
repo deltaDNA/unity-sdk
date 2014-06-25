@@ -206,7 +206,7 @@ namespace DeltaDNA
 		{
 			string pattern = @"^\w+";
 			Regex regex = new Regex(pattern);
-			string os = ClientInfo.operatingSystem;
+			string os = SystemInfo.operatingSystem;
 			return regex.Replace(os, "").Trim();	// stripping out words should leave a version number
 		}
 		

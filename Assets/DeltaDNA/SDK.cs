@@ -700,8 +700,12 @@ namespace DeltaDNA
 			{
 				yield return StartCoroutine(HttpPOST(url, bulkEvent, (status, response) =>
 				{
-					if (status == 200) succeeded = true;
-					else LogDebug("Error uploading events, Collect returned: "+status);
+					// Unity doesn't handle 100 response correctly, so you can't know
+					// if it succeeded or failed.  We can assume if no response text came back
+					// Collect was happy.
+					if (status == 204) succeeded = true;
+					else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
+					else LogDebug("Error uploading events, Collect returned: "+status+" "+response);
 				}));
 				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
 			}
@@ -725,7 +729,7 @@ namespace DeltaDNA
 			
 			yield return StartCoroutine(HttpPOST(url, engagement, (status, response) => 
 			{
-				if (status == 200)
+				if (status == 200 || status == 100)
 				{
 					callback(response);
 				}
@@ -764,6 +768,12 @@ namespace DeltaDNA
 			WWWForm form = new WWWForm();
 			var headers = form.headers;
 			headers["Content-Type"] = "application/json";
+			// Annoyingly when posting large amounts of data, a 100-continue
+			// response is generated.  This becomes the status code of the
+			// response so we can't tell if the request was successull or
+			// not. You should be able to prevent this behaviour by removing
+			// the expect header, but since Unity 4.3 this header is protected.
+			//headers["Expect"] = "";
 			
 			byte[] bytes = Encoding.UTF8.GetBytes(json);
 			
@@ -776,16 +786,15 @@ namespace DeltaDNA
 			
 			
 			yield return www;
-			
-			int statusCode = 0;
+
+			int statusCode = ReadWWWStatusCode(www);
+
 			if (www.error == null)
 			{
-				statusCode = 200;
 				if (responseCallback != null) responseCallback(statusCode, www.text);
 			}
 			else
 			{
-				statusCode = ReadWWWResponse(www.error);
 				if (responseCallback != null) responseCallback(statusCode, null);
 			}
 		}
@@ -798,6 +807,21 @@ namespace DeltaDNA
 				return Convert.ToInt32(matches[0].Groups[1].Value);
 			}
 			return 0;
+		}
+		
+		private int ReadWWWStatusCode(WWW www)
+		{
+			int statusCode = 0;
+			if (www.responseHeaders.ContainsKey("STATUS"))
+			{
+				string status = www.responseHeaders["STATUS"];
+				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP/1\.1\s(\d+).+$");
+				if (matches.Count > 0 && matches[0].Groups.Count > 0) 
+				{
+					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
+				}
+			}
+			return statusCode;
 		}
 		
 		public static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null) 
