@@ -87,7 +87,6 @@ namespace DeltaDNA
 			switch (Application.platform)
 			{
 				case RuntimePlatform.Android: return "ANDROID";
-				case RuntimePlatform.BlackBerryPlayer: return "BLACKBERRY_MOBILE";
 				case RuntimePlatform.FlashPlayer: return "WEB";
 				
 				#if UNITY_IPHONE
@@ -118,17 +117,22 @@ namespace DeltaDNA
 				case RuntimePlatform.OSXPlayer: return "MAC_CLIENT";
 				case RuntimePlatform.OSXWebPlayer: return "WEB";
 				case RuntimePlatform.PS3: return "PS3";
-				case RuntimePlatform.PS4: return "PS4";
-				case RuntimePlatform.PSMPlayer: return "WEB";
-				case RuntimePlatform.PSP2: return "PSVITA";
-				case RuntimePlatform.SamsungTVPlayer: return "ANDROID";
 				case RuntimePlatform.TizenPlayer: return "ANDROID";
 				case RuntimePlatform.WindowsEditor: return "PC_CLIENT";
 				case RuntimePlatform.WindowsPlayer: return "PC_CLIENT";
 				case RuntimePlatform.WindowsWebPlayer: return "WEB";
 				case RuntimePlatform.WP8Player: return "WINDOWS_MOBILE";
 				case RuntimePlatform.XBOX360: return "XBOX360";
+
+				#if UNITY_4_5 || UNITY_4_5_1
+				case RuntimePlatform.PS4: return "PS4";
+				case RuntimePlatform.PSMPlayer: return "WEB";
+				case RuntimePlatform.PSP2: return "PSVITA";
+				case RuntimePlatform.SamsungTVPlayer: return "ANDROID";
 				case RuntimePlatform.XboxOne: return "XBOXONE";
+				case RuntimePlatform.BlackBerryPlayer: return "BLACKBERRY_MOBILE";
+				#endif
+
 				default:
 				{
 					Debug.LogWarning("Unsupported platform '"+Application.platform+"' returning UNKNOWN");
@@ -160,7 +164,9 @@ namespace DeltaDNA
 				case UnityEngine.DeviceType.Handheld: return "HANDHELD";
 				case UnityEngine.DeviceType.Unknown: 
 				{
+					#if UNITY_4_5 || UNITY_4_5_1
 					if (Application.platform == RuntimePlatform.SamsungTVPlayer) return "TV";
+					#endif
 					return "UNKOWN";
 				}
 				default: return "UNKNOWN";
