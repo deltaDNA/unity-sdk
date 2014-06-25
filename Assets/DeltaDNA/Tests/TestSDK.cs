@@ -10,21 +10,22 @@ public class TestSDK : MonoBehaviour {
 	
 		// Test mode - clear any data from last run
 		// and enable additional logging.
-		//SDK.Instance.ClearPersistentData();
+		SDK.Instance.ClearPersistentData();
 		SDK.Instance.Settings.DebugMode = true;
 		
 		// Set client external information		
 		SDK.Instance.ClientVersion = "1.0";
+		
+		// Enable event hashing
+		//SDK.Instance.HashSecret = "KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw";
 	
-		// Intialise the SDK
+		// Initialise the SDK
 		SDK.Instance.Init(
 			"55822530117170763508653519413932", 				// iOS Test Dev				
 			"http://collect2010stst.deltadna.net/collect/api",
-			"KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw",
-			null,//"David - Test",
-			"http://engage2010stst.deltadna.net"
+			"http://engage2010stst.deltadna.net",
+			SDK.AUTO_GENERATED_USER_ID
 		);
-	
 		
 		// Send some more complicated events
 		EventBuilder achievementParams = new EventBuilder()

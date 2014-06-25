@@ -12,6 +12,7 @@ namespace DeltaDNA
 	{
 		static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
 		static readonly string PF_KEY_FIRST_RUN = "DDSDK_FIRST_RUN";
+		static readonly string PF_KEY_HASH_SECRET = "DDSDK_HASH_SECRET";
 		static readonly string PF_KEY_CLIENT_VERSION = "DDSDK_CLIENT_VERSION";
 		static readonly string PF_KEY_PUSH_NOTIFICATION_TOKEN = "DDSDK_PUSH_NOTIFICATION_TOKEN";
 		static readonly string PF_KEY_ANDROID_REGISTRATION_ID = "DDSDK_ANDROID_REGISTRATION_ID";
@@ -24,6 +25,8 @@ namespace DeltaDNA
 		
 		static readonly string EP_KEY_PLATFORM = "platform";
 		static readonly string EP_KEY_SDK_VERSION = "sdkVersion";
+		
+		public static readonly string AUTO_GENERATED_USER_ID = null;
 		
 		private bool reset = false;
 		private bool initialised = false;
@@ -48,10 +51,9 @@ namespace DeltaDNA
 		/// <param name="secret">The secret key for this game.</param>
 		/// <param name="userID">The user id for the player, if none is provided we generate one for you.</param>
 		/// <param name="engageURL">The Engage URL for this game if you're using Engage.</param>
-		public void Init(string envKey, string collectURL, string secret, string userID=null, string engageURL=null)
+		public void Init(string envKey, string collectURL, string engageURL, string userID)
 		{
 			this.EnvironmentKey = envKey;
-			this.Secret = secret;
 			
 			// if client's not giving us a user id and we don't already have
 			// one from a previous run, generate one for them.
@@ -239,6 +241,7 @@ namespace DeltaDNA
 			// PlayerPrefs
 			PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
 			PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
+			PlayerPrefs.DeleteKey(PF_KEY_HASH_SECRET);
 			PlayerPrefs.DeleteKey(PF_KEY_CLIENT_VERSION);
 			PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
 			PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);	
@@ -251,7 +254,6 @@ namespace DeltaDNA
 		#region Properties
 		
 		public string EnvironmentKey { get; private set; }
-		public string Secret { get; private set; }
 		public string CollectURL { get; private set; }
 		public string EngageURL { get; private set; }
 		public string SessionID { get; private set; }
@@ -277,6 +279,30 @@ namespace DeltaDNA
 		#endregion
 		
 		#region Client Configuration
+		
+		public string HashSecret
+		{
+			get
+			{
+				string v = PlayerPrefs.GetString(PF_KEY_HASH_SECRET, null);
+				LogDebug("Got Hash Secret '"+v+"'");
+				if (String.IsNullOrEmpty(v))
+				{
+					LogDebug("Event hashing not enabled.");
+					return null;
+				}
+				return v;
+			}
+			set 
+			{ 
+				if (!String.IsNullOrEmpty(value))
+				{
+					LogDebug("Setting Hash Secret '"+value+"'");
+					PlayerPrefs.SetString(PF_KEY_HASH_SECRET, value);
+					PlayerPrefs.Save();				
+				}
+			}
+		}
 		
 		/// <summary>
 		/// A version string for your game that will be reported to us.
@@ -620,8 +646,16 @@ namespace DeltaDNA
 		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)
 		{
 			string bulkEvent = "{\"eventList\":[" + String.Join(",", events) + "]}";
-			string md5Hash = GenerateHash(bulkEvent);
-			string url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey, md5Hash);
+			string url;
+			if (this.HashSecret != null)
+			{
+				string md5Hash = GenerateHash(bulkEvent, this.HashSecret);
+				url = FormatURI(Settings.COLLECT_HASH_URL_PATTERN, this.CollectURL, this.EnvironmentKey, md5Hash);
+			}
+			else
+			{
+				url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
+			}
 			
 			int attempts = 0;
 			bool succeeded = false;
@@ -642,8 +676,16 @@ namespace DeltaDNA
 		
 		private IEnumerator EngageRequest(string engagement, Action<string> callback)
 		{
-			string md5Hash = GenerateHash(engagement);
-			string url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, md5Hash);
+			string url;
+			if (this.HashSecret != null)
+			{
+				string md5Hash = GenerateHash(engagement, this.HashSecret);
+				url = FormatURI(Settings.ENGAGE_HASH_URL_PATTERN, this.EngageURL, this.EnvironmentKey, md5Hash);
+			}
+			else
+			{
+				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
+			}
 			
 			yield return StartCoroutine(HttpPOST(url, engagement, (status, response) => 
 			{
@@ -730,9 +772,9 @@ namespace DeltaDNA
 			return uri;
 		}
 		
-		private string GenerateHash(string data){
+		private static string GenerateHash(string data, string secret){
 			var md5 = MD5.Create();
-			var inputBytes = Encoding.UTF8.GetBytes(data + this.Secret);
+			var inputBytes = Encoding.UTF8.GetBytes(data + secret);
 			var hash = md5.ComputeHash(inputBytes);
 			
 			var sb = new StringBuilder();

@@ -11,8 +11,10 @@ namespace DeltaDNA
 		internal static readonly string LEGACY_SETTINGS_STORAGE_PATH = "{persistent_path}/GASettings.ini";
 		internal static readonly string EVENT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
 		internal static readonly string USERID_URL_PATTERN = "{host}/uuid";
-		internal static readonly string COLLECT_URL_PATTERN = "{host}/{env_key}/bulk/hash/{hash}";
-		internal static readonly string ENGAGE_URL_PATTERN = "{host}/{env_key}/hash/{hash}";
+		internal static readonly string COLLECT_URL_PATTERN = "{host}/{env_key}/bulk";
+		internal static readonly string COLLECT_HASH_URL_PATTERN = "{host}/{env_key}/bulk/hash/{hash}";
+		internal static readonly string ENGAGE_URL_PATTERN = "{host}/{env_key}";
+		internal static readonly string ENGAGE_HASH_URL_PATTERN = "{host}/{env_key}/hash/{hash}";
 		
 		internal Settings()
 		{
