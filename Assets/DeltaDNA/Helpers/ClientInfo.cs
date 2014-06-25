@@ -197,11 +197,22 @@ namespace DeltaDNA
 		
 		private static string GetCurrentTimezoneOffset()
 		{
-//			TimeZone localZone = TimeZone.CurrentTimeZone;
-//			DateTime currentDate = DateTime.Now;
-//			TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
-//			return String.Format("{0}{1:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours);
-			return null;
+			try
+			{
+				// WP8 doesn't support the 'old' way of getting the time zone.
+				#if UNITY_WP8
+				TimeSpan currentOffset = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now);
+				#else
+				TimeZone localZone = TimeZone.CurrentTimeZone;
+				DateTime currentDate = DateTime.Now;
+				TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
+				#endif
+				return String.Format("{0}{1:D2}", currentOffset.Hours >= 0 ? "+" : "", currentOffset.Hours);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
 		
 		private static string GetCountryCode()
