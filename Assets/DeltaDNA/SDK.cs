@@ -59,6 +59,10 @@ namespace DeltaDNA
 			{
 				this.UserID = GetUserID();
 			}
+			else
+			{
+				this.UserID = userID;
+			}
 			
 			this.CollectURL = collectURL;	// TODO: warn if no http is present, prepend it, although we support both
 			this.EngageURL = engageURL;
