@@ -113,7 +113,7 @@ namespace DeltaDNA
 					Int32 eventLength = BitConverter.ToInt32(lengthField, 0);
 					byte[] recordField = new byte[eventLength];
 					outfs.Read(recordField, 0, recordField.Length);
-					string record = Encoding.UTF8.GetString(recordField);
+					string record = Encoding.UTF8.GetString(recordField, 0, recordField.Length);
 					results.Add(record);
 				}
 				outfs.Seek(0, SeekOrigin.Begin);	// let us read it again next time

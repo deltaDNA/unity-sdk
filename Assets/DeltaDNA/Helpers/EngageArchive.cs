@@ -68,11 +68,11 @@ namespace DeltaDNA
 							fs.Read(valueField, 0, valueField.Length);
 							if (read % 2 == 0)
 							{
-								key = Encoding.UTF8.GetString(valueField);
+								key = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
 							}
 							else
 							{
-								value = Encoding.UTF8.GetString(valueField);
+								value = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
 								table.Add(key, value);
 							}
 							read++;

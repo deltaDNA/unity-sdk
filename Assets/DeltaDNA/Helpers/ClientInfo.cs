@@ -197,10 +197,11 @@ namespace DeltaDNA
 		
 		private static string GetCurrentTimezoneOffset()
 		{
-			TimeZone localZone = TimeZone.CurrentTimeZone;
-			DateTime currentDate = DateTime.Now;
-			TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
-			return String.Format("{0}{1:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours);
+//			TimeZone localZone = TimeZone.CurrentTimeZone;
+//			DateTime currentDate = DateTime.Now;
+//			TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
+//			return String.Format("{0}{1:D2}", currentOffset.Hours > 0 ? "+" : "", currentOffset.Hours);
+			return null;
 		}
 		
 		private static string GetCountryCode()

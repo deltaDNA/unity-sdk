@@ -407,7 +407,8 @@ namespace DeltaDNA
 						{
 							bytes.AddRange(buffer);
 						}
-						string json = Encoding.UTF8.GetString(bytes.ToArray());
+						byte[] byteArray = bytes.ToArray();
+						string json = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
 						var settings = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
 						if (settings.ContainsKey("userID"))
 						{
@@ -726,7 +727,7 @@ namespace DeltaDNA
 		}
 		
 		private string GenerateHash(string data){
-			var md5 = System.Security.Cryptography.MD5.Create();
+			var md5 = MD5.Create();
 			var inputBytes = Encoding.UTF8.GetBytes(data + this.Secret);
 			var hash = md5.ComputeHash(inputBytes);
 			
