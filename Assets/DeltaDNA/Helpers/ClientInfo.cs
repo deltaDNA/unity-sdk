@@ -62,18 +62,32 @@ namespace DeltaDNA
 		
 		private static string timezoneOffset = null;
 		
+		/// <summary>
+		/// The timezone offset from UTC the device is set to.
+		/// </summary>
 		public static string TimezoneOffset { get { return timezoneOffset ?? (timezoneOffset = GetCurrentTimezoneOffset()); }}
 		
 		private static string countryCode = null;
 		
+		/// <summary>
+		/// The country code the device is set to.
+		/// </summary>
 		public static string CountryCode { get { return countryCode ?? (countryCode = GetCountryCode()); }}
 		
 		private static string languageCode = null;
 		
+		/// <summary>
+		/// The language code the device is set to.
+		/// </summary>
+		/// <value>The language code.</value>
 		public static string LanguageCode { get { return languageCode ?? (languageCode = GetLanguageCode()); }}
 		
 		private static string locale = null;
 		
+		/// <summary>
+		/// The locale of the device in.
+		/// </summary>
+		/// <value>The locale.</value>
 		public static string Locale { get { return locale ?? (locale = GetLocale()); }}
 		
 		#region Private Helpers

@@ -44,18 +44,17 @@ namespace DeltaDNA
 		#region Client Interface
 		
 		/// <summary>
-		/// Initialises the SDK.  Call before sending events.
+		/// Initialises the SDK.  Call before sending events or making engagements.
 		/// </summary>
-		/// <param name="envKey">The unique environment key for the game.</param>
+		/// <param name="envKey">The unique environment key for this game environment.</param>
 		/// <param name="collectURL">The Collect URL for this game.</param>
-		/// <param name="secret">The secret key for this game.</param>
-		/// <param name="userID">The user id for the player, if none is provided we generate one for you.</param>
-		/// <param name="engageURL">The Engage URL for this game if you're using Engage.</param>
+		/// <param name="engageURL">The Engage URL for this game.</param>
+		/// <param name="userID">The user id for the player, if set to AUTO_GENERATED_USER_ID we create one for you.</param>
 		public void Init(string envKey, string collectURL, string engageURL, string userID)
 		{
 			this.EnvironmentKey = envKey;
 			
-			// if client's not giving us a user id and we don't already have
+			// if the client's not giving us a user id and we don't already have
 			// one from a previous run, generate one for them.
 			if (String.IsNullOrEmpty(userID) && String.IsNullOrEmpty(this.UserID))
 			{
@@ -137,7 +136,6 @@ namespace DeltaDNA
 			}
 			
 			// the header for every event is eventName, userID, sessionID and timestamp
-			//var eventRecord = new Event(eventName, this.UserID, this.SessionID, DateTime.UtcNow);
 			var eventRecord = new Dictionary<string, object>();
 			eventRecord[EV_KEY_NAME] 		= eventName;
 			eventRecord[EV_KEY_USER_ID] 	= this.UserID;
@@ -204,7 +202,9 @@ namespace DeltaDNA
 		}
 		
 		/// <summary>
-		/// Uploads waiting events to our Collect service.
+		/// Uploads waiting events to our Collect service.  By default this is called automatically in the 
+		/// background.  If you disable auto uploading via <see cref="Settings.BackgroundEventUpload"/> you
+		/// will need to call this method yourself periodically.
 		/// </summary>
 		public void Upload()
 		{
@@ -223,7 +223,7 @@ namespace DeltaDNA
 		}
 		
 		/// <summary>
-		/// Controls default behaviour of the SDK.  Set prior to intialisation.
+		/// Controls default behaviour of the SDK.  Set prior to initialisation.
 		/// </summary>
 		public Settings Settings { get; set; }
 		
@@ -253,16 +253,38 @@ namespace DeltaDNA
 		
 		#region Properties
 		
+		/// <summary>
+		/// Gets the environment key.
+		/// </summary>
 		public string EnvironmentKey { get; private set; }
+		
+		/// <summary>
+		/// Gets the Collect URL.
+		/// </summary>
 		public string CollectURL { get; private set; }
+		
+		/// <summary>
+		/// Gets the engage URL.
+		/// </summary>
 		public string EngageURL { get; private set; }
+		
+		/// <summary>
+		/// Gets the session ID.
+		/// </summary>
 		public string SessionID { get; private set; }
+		
+		/// <summary>
+		/// Gets the platform.
+		/// </summary>
 		public string Platform { get; private set; }
 		
+		/// <summary>
+		/// Gets the user ID.
+		/// </summary>
 		public string UserID 
 		{
 			get { return PlayerPrefs.GetString(PF_KEY_USER_ID, null); }
-			set 
+			private set 
 			{
 				if (!String.IsNullOrEmpty(value))
 				{
@@ -272,14 +294,31 @@ namespace DeltaDNA
 			}
 		}
 		
+		/// <summary>
+		/// Gets a value indicating whether this instance is initialised.
+		/// </summary>
 		public bool IsInitialised { get { return this.initialised; }} 
+		
+		/// <summary>
+		/// Gets a value indicating whether an event upload is in progress.
+		/// </summary>
 		public bool IsUploading { get; private set; }
+		
+		/// <summary>
+		/// Gets a value indicating whether an engagement request is in progress.
+		/// </summary>
 		public bool IsRequestingEngagement { get; private set; }
 		
 		#endregion
 		
 		#region Client Configuration
 		
+		/// <summary>
+		/// To enable hashing of your event and engage data, set this value to your
+		/// unique hash secret.  You must also enable hashing for the environment.
+		/// To disable hashing set it to null, which is the default.  This must be 
+		/// set before calling <see cref="Init"/>.
+		/// </summary>
 		public string HashSecret
 		{
 			get
@@ -295,17 +334,15 @@ namespace DeltaDNA
 			}
 			set 
 			{ 
-				if (!String.IsNullOrEmpty(value))
-				{
-					LogDebug("Setting Hash Secret '"+value+"'");
-					PlayerPrefs.SetString(PF_KEY_HASH_SECRET, value);
-					PlayerPrefs.Save();				
-				}
+				LogDebug("Setting Hash Secret '"+value+"'");
+				PlayerPrefs.SetString(PF_KEY_HASH_SECRET, value);
+				PlayerPrefs.Save();				
 			}
 		}
 		
 		/// <summary>
-		/// A version string for your game that will be reported to us.
+		/// A version string for your game that will be reported to us.  This must
+		/// be set before calling <see cref="Init"/>. 
 		/// </summary>
 		public string ClientVersion 
 		{ 
@@ -333,7 +370,7 @@ namespace DeltaDNA
 		
 		/// <summary>
 		/// The push notification token from Apple that is associated with this device if
-		/// it's running on the iOS platform.
+		/// it's running on the iOS platform.  This must be set before calling <see cref="Init"/>. 
 		/// </summary>
 		public string PushNotificationToken 
 		{ 
@@ -362,9 +399,8 @@ namespace DeltaDNA
 		
 		/// <summary>
 		/// The Android registration ID that is associated with this device if it's running
-		/// on the Android platform.
+		/// on the Android platform.  This must be set before calling <see cref="Init"/>. 
 		/// </summary>
-		/// <value>The android registration I.</value>
 		public string AndroidRegistrationID 
 		{ 
 			get

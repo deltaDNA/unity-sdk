@@ -18,13 +18,14 @@ public class TestSDK : MonoBehaviour {
 		
 		// Enable event hashing
 		//SDK.Instance.HashSecret = "KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw";
+		SDK.Instance.HashSecret = null;
 	
 		// Initialise the SDK
 		SDK.Instance.Init(
-			"55822530117170763508653519413932", 				// iOS Test Dev				
-			"http://collect2010stst.deltadna.net/collect/api",
-			"http://engage2010stst.deltadna.net",
-			SDK.AUTO_GENERATED_USER_ID
+			"55822530117170763508653519413932", 					// Environment Key			
+			"http://collect2010stst.deltadna.net/collect/api",		// Collect URI
+			"http://engage2010stst.deltadna.net",					// Engage URI
+			SDK.AUTO_GENERATED_USER_ID								// User ID
 		);
 		
 		// Send some more complicated events

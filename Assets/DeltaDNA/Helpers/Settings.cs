@@ -62,13 +62,22 @@ namespace DeltaDNA
 		/// <summary>
 		/// Controls the number of times we retry an Http request before giving up.
 		/// </summary>
-		/// <value>The http request max retries.</value>
 		public int HttpRequestMaxRetries { get; set; }
 		
+		/// <summary>
+		/// Controls if events are uploaded automatically in the background.
+		/// </summary>
 		public bool BackgroundEventUpload { get; set; }
 		
+		/// <summary>
+		/// Controls how long after the <see cref="Init"/> call we wait before
+		/// sending the first event upload. 
+		/// </summary>
 		public int BackgroundEventUploadStartDelaySeconds { get; set; }
 		
+		/// <summary>
+		/// Controls how fequently events are uploaded automatically.
+		/// </summary>
 		public int BackgroundEventUploadRepeatRateSeconds { get; set; }
 	}
 }
