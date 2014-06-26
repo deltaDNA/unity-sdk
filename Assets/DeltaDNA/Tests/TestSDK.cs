@@ -17,18 +17,13 @@ public class TestSDK : MonoBehaviour {
 		SDK.Instance.ClientVersion = "1.0";
 		
 		// Enable event hashing
-		SDK.Instance.HashSecret = "KmMBBcNwStLJaq6KsEBxXc6HY3A4bhGw";
-		//SDK.Instance.HashSecret = "bad";
-		//SDK.Instance.HashSecret = null;
-		
-		//SDK.Instance.Settings.OnFirstRunSendNewPlayerEvent = false;
-		//SDK.Instance.Settings.OnInitSendGameStartedEvent = false;
+		SDK.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 	
 		// Initialise the SDK
 		SDK.Instance.Init(
-			"55822530117170763508653519413932", 					// Environment Key			
-			"http://collect2010stst.deltadna.net/collect/api",		// Collect URI
-			"http://engage2010stst.deltadna.net",					// Engage URI
+			"76410301326725846610230818914037", 					// Environment Key	(UnitySDK)		
+			"http://collect2470ntysd.deltadna.net/collect/api",		// Collect URI
+			"http://engage2470ntysd.deltadna.net",					// Engage URI
 			SDK.AUTO_GENERATED_USER_ID								// User ID
 		);
 		
@@ -39,7 +34,7 @@ public class TestSDK : MonoBehaviour {
 			.AddParam("reward", new EventBuilder()
 				.AddParam("rewardProducts", new ProductBuilder()
 					.AddRealCurrency("USD", 5000)
-					.AddVirtualCurrency("VIP Points", "GRIND_CURRENCY", 20)
+					.AddVirtualCurrency("VIP Points", "GRIND", 20)
 					.AddItem("Sunday Showdown Medal", "Victory Badge", 1))
 				.AddParam("rewardName", "Medal"));
 		
@@ -51,16 +46,16 @@ public class TestSDK : MonoBehaviour {
 			.AddParam("transactorID", "62.212.91.84:15116")
 			.AddParam("productID", "4019")
 			.AddParam("transactionType", "PURCHASE")
-			.AddParam("paymentCountry", "EN")
+			.AddParam("paymentCountry", "GB")
 			.AddParam("productsReceived", new ProductBuilder()
 				.AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
 			.AddParam("productsSpent", new ProductBuilder()
-				.AddVirtualCurrency("Credit", "Grind", 710));
+				.AddVirtualCurrency("Credit", "GRIND", 710));
 				
 		SDK.Instance.TriggerEvent("transaction", transactionParams);
 		
 		// Try out Transaction helpers
-		SDK.Instance.Transaction.BuyVirtualCurrency("Buy Gold Coins", "USD", 10000, "Gold", "Premium", 5, "12567335-DFEWFG-sdfgr-343");
+		SDK.Instance.Transaction.BuyVirtualCurrency("Buy Gold Coins", "USD", 10000, "Gold", "PREMIUM_GRIND", 5, "12567335-DFEWFG-sdfgr-343");
 		
 		// Play with Engage
 		var engageParams = new Dictionary<string, object>()
