@@ -709,7 +709,7 @@ namespace DeltaDNA
 					// Unity doesn't handle 100 response correctly, so you can't know
 					// if it succeeded or failed.  We can assume if no response text came back
 					// Collect was happy.
-					if (status == 204) succeeded = true;
+					if (status == 200 || status == 204) succeeded = true;
 					else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
 					else LogDebug("Error uploading events, Collect returned: "+status+" "+response);
 				}));
@@ -817,6 +817,12 @@ namespace DeltaDNA
 		
 		private int ReadWWWStatusCode(WWW www)
 		{
+			// As of Unity 4.5 WWW is not great for http requests.  Reading the http status is not offically supported, 
+			// and although the responseHeaders generally contain the status, not all platforms have implemented this the same way.
+			// If it looks like the responseHeader doesn't have a STATUS key I fall back to the official method of testing
+			// WWW.error.  If this is empty we can assume success i.e. 200 else the error text might have a status code in it
+			// to return.
+		
 			int statusCode = 0;
 			#if UNITY_ANDROID
 			// see http://issuetracker.unity3d.com/issues/www-dot-responseheaders-status-key-is-null-in-android
@@ -824,6 +830,7 @@ namespace DeltaDNA
 			#else
 			string headerKey = "STATUS";
 			#endif
+			
 			
 			if (www.responseHeaders.ContainsKey(headerKey))
 			{
@@ -834,6 +841,18 @@ namespace DeltaDNA
 					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
 				}
 			}
+			else
+			{
+				if (String.IsNullOrEmpty(www.error))
+				{	
+					statusCode = 200;
+				}
+				else
+				{
+					statusCode = ReadWWWResponse(www.error);
+				}
+			}
+			
 			return statusCode;
 		}
 		
