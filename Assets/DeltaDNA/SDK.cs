@@ -207,7 +207,7 @@ namespace DeltaDNA
 		/// will need to call this method yourself periodically.
 		/// </summary>
 		public void Upload()
-		{
+		{			
 			if (!this.initialised) 
 			{
 				throw new NotInitialisedException("You must first initialise our SDK via the Init method");
@@ -504,8 +504,6 @@ namespace DeltaDNA
 			
 			try
 			{
-				LogDebug("Starting event upload");
-				
 				// If there's no user id set by the client, ask our server for one.
 				if (String.IsNullOrEmpty(UserID)) {
 					LogDebug("Upload has no user id set, requesting an user id");
@@ -526,6 +524,8 @@ namespace DeltaDNA
 				
 				if (events.Count > 0)
 				{
+					LogDebug("Starting event upload");
+				
 					yield return StartCoroutine(PostEvents(events.ToArray(), (succeeded) =>
 					{
 						if (succeeded)
@@ -818,9 +818,16 @@ namespace DeltaDNA
 		private int ReadWWWStatusCode(WWW www)
 		{
 			int statusCode = 0;
-			if (www.responseHeaders.ContainsKey("STATUS"))
+			#if UNITY_ANDROID
+			// see http://issuetracker.unity3d.com/issues/www-dot-responseheaders-status-key-is-null-in-android
+			string headerKey = "NULL";
+			#else
+			string headerKey = "STATUS";
+			#endif
+			
+			if (www.responseHeaders.ContainsKey(headerKey))
 			{
-				string status = www.responseHeaders["STATUS"];
+				string status = www.responseHeaders[headerKey];
 				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP/1\.1\s(\d+).+$");
 				if (matches.Count > 0 && matches[0].Groups.Count > 0) 
 				{
