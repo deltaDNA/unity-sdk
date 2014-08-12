@@ -283,7 +283,16 @@ namespace DeltaDNA
 		/// </summary>
 		public string UserID 
 		{
-			get { return PlayerPrefs.GetString(PF_KEY_USER_ID, null); }
+			get 
+			{
+				string v = PlayerPrefs.GetString(PF_KEY_USER_ID, null);
+				if (String.IsNullOrEmpty(v))
+				{
+					LogDebug("No existing User ID found.");
+					return null;
+				} 
+				return v;
+			}
 			private set 
 			{
 				if (!String.IsNullOrEmpty(value))
@@ -324,7 +333,6 @@ namespace DeltaDNA
 			get
 			{
 				string v = PlayerPrefs.GetString(PF_KEY_HASH_SECRET, null);
-				LogDebug("Got Hash Secret '"+v+"'");
 				if (String.IsNullOrEmpty(v))
 				{
 					LogDebug("Event hashing not enabled.");
@@ -349,7 +357,6 @@ namespace DeltaDNA
 			get
 			{
 				string v = PlayerPrefs.GetString(PF_KEY_CLIENT_VERSION, null);
-				LogDebug("Got Client Version '"+v+"'");
 				if (String.IsNullOrEmpty(v))
 				{
 					LogWarning("No client game version set.");
@@ -457,6 +464,7 @@ namespace DeltaDNA
 		
 		private string GetUserID()
 		{
+			#if !UNITY_WEBPLAYER
 			// see if this game ran with the previous SDK and look for
 			// a user id.
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
@@ -488,6 +496,7 @@ namespace DeltaDNA
 					}
 				}
 			}
+			#endif
 		
 			LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
@@ -530,12 +539,12 @@ namespace DeltaDNA
 					{
 						if (succeeded)
 						{
-							LogDebug("Upload successful");
+							LogDebug("Event upload successful");
 							this.eventStore.Clear();
 						}
 						else
 						{
-							LogWarning("Upload failed - try again later");
+							LogWarning("Event upload failed - try again later");
 						}
 					}));
 				}
@@ -711,6 +720,11 @@ namespace DeltaDNA
 					// Collect was happy.
 					if (status == 200 || status == 204) succeeded = true;
 					else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
+					#if UNITY_WEBPLAYER
+					// Unity Webplayer on IE will report the request to Collect as 'failed to download' 
+					// although Collect receives the data fine.
+					else if (status == 0) { LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
+					#endif
 					else LogDebug("Error uploading events, Collect returned: "+status+" "+response);
 				}));
 				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
@@ -801,13 +815,14 @@ namespace DeltaDNA
 			}
 			else
 			{
+				LogDebug("WWW.error: "+www.error);
 				if (responseCallback != null) responseCallback(statusCode, null);
 			}
 		}
 		
 		private static int ReadWWWResponse(string response)
 		{
-			System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(response, @"^(\d+).+$");
+			System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(response, @"^.*\s(\d{3})\s.*$");
 			if (matches.Count > 0 && matches[0].Groups.Count > 0) 
 			{
 				return Convert.ToInt32(matches[0].Groups[1].Value);
@@ -831,11 +846,10 @@ namespace DeltaDNA
 			string headerKey = "STATUS";
 			#endif
 			
-			
 			if (www.responseHeaders.ContainsKey(headerKey))
 			{
 				string status = www.responseHeaders[headerKey];
-				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP/1\.1\s(\d+).+$");
+				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP.*\s(\d{3})\s.*$");
 				if (matches.Count > 0 && matches[0].Groups.Count > 0) 
 				{
 					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
