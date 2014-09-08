@@ -143,6 +143,8 @@ namespace DeltaDNA
 			
 			string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
 			string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
+			inFile = Path.GetFileName(inFile);		// support legacy pp that could have full path
+			outFile = Path.GetFileName(outFile);
 
 			string inPath = Path.Combine(path, inFile);
 			string outPath = Path.Combine(path, outFile);
