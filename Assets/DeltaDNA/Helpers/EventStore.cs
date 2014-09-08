@@ -90,8 +90,8 @@ namespace DeltaDNA
 				// reset read
 				outfs.Seek(0, SeekOrigin.Begin);
 				
-				PlayerPrefs.SetString(PF_KEY_IN_FILE, infs.Name);
-				PlayerPrefs.SetString(PF_KEY_OUT_FILE, outfs.Name);
+				PlayerPrefs.SetString(PF_KEY_IN_FILE, Path.GetFileName(infs.Name));
+				PlayerPrefs.SetString(PF_KEY_OUT_FILE, Path.GetFileName(outfs.Name));
 				
 				return true;
 			}
@@ -141,11 +141,11 @@ namespace DeltaDNA
 				Directory.CreateDirectory(path);
 			}
 			
-			string pathA = Path.Combine(path, FILE_A);
-			string pathB = Path.Combine(path, FILE_B);
+			string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
+			string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
 
-			string inPath = PlayerPrefs.GetString(PF_KEY_IN_FILE, pathA);
-			string outPath = PlayerPrefs.GetString(PF_KEY_OUT_FILE, pathB);
+			string inPath = Path.Combine(path, inFile);
+			string outPath = Path.Combine(path, outFile);
 
 			FileMode fileMode = reset ? FileMode.Create : FileMode.OpenOrCreate;
 
@@ -162,40 +162,9 @@ namespace DeltaDNA
 			infs.Seek(0, SeekOrigin.End);
 			outfs = new FileStream(outPath, fileMode, FileAccess.ReadWrite, FileShare.None, FILE_BUFFER_SIZE); 
 			
-			PlayerPrefs.SetString(PF_KEY_IN_FILE, infs.Name);
-			PlayerPrefs.SetString(PF_KEY_OUT_FILE, outfs.Name);
-			
-//			
-//						
-//			// if both files exist, the the most recently modified
-//			// is what we write too.
-//			string inPath = pathA;
-//			string outPath = pathB;
-//			
-//			// TODO: figure out which is the file we used as the in buffer last
-//			// not sure how reliable the file write time will be across different
-//			// platforms!
-//			if (File.Exists(pathA) && File.Exists(pathB))
-//			{
-//				Log("Timestamps: "+File.GetLastWriteTime(pathA)+" "+File.GetLastWriteTime(pathB));
-//				
-//				if (!(File.GetLastWriteTime(pathA) > File.GetLastWriteTime(pathB)))
-//				{
-//					inPath = pathB;
-//					outPath = pathA;
-//				}
-//				
-//				Log("Loaded existing Event Store in @ "+inPath+" out @ "+outPath);
-//			}
-//			else
-//			{
-//				Log("Creating new Event Store @ "+path);
-//			}
-//			
-			
+			PlayerPrefs.SetString(PF_KEY_IN_FILE, Path.GetFileName(infs.Name));
+			PlayerPrefs.SetString(PF_KEY_OUT_FILE, Path.GetFileName(outfs.Name));			
 		}
-		
-		// TODO: Do I need to put a dispose method on this class, and close the file handles explicity??
 		
 		private void Log(string message)
 		{
