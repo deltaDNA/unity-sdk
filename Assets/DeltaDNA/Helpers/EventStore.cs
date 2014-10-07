@@ -27,13 +27,13 @@ namespace DeltaDNA
 		/// Initializes a new instance of the <see cref="DeltaDNA.EventStore"/> class.
 		/// </summary>
 		/// <param name="path">Path to where we hold the events.</param>
-		public EventStore(string path, bool reset=false, bool debug=false)
+		public EventStore(string path, /*bool reset=false,*/ bool debug=false)
 		{
 			this.debug = debug;
 			
 			try
 			{
-				InitialiseFileStreams(path, reset);
+				InitialiseFileStreams(path, false);
 				initialised = true;
 			}
 			catch (Exception e)
@@ -131,6 +131,7 @@ namespace DeltaDNA
 		/// </summary>
 		public void Clear()
 		{
+			infs.SetLength(0);
 			outfs.SetLength(0);
 		}
 		

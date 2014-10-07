@@ -27,8 +27,7 @@ namespace DeltaDNA
 		static readonly string EP_KEY_SDK_VERSION = "sdkVersion";
 		
 		public static readonly string AUTO_GENERATED_USER_ID = null;
-		
-		private bool reset = false;
+
 		private bool initialised = false;
 		private bool userIdRequestInProgress = false;
 		
@@ -39,6 +38,23 @@ namespace DeltaDNA
 		{
 			this.Settings = new Settings();	// default configuration
 			this.Transaction = new TransactionBuilder(this);
+
+			#if UNITY_WEBPLAYER
+			
+			this.eventStore = new WebplayerEventStore();
+			
+			#else
+			
+			this.eventStore = new EventStore(
+				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
+				Settings.DebugMode
+			);
+			
+			#endif
+
+			this.engageArchive = new EngageArchive(
+				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
+			);
 		}
 		
 		#region Client Interface
@@ -50,48 +66,29 @@ namespace DeltaDNA
 		/// <param name="collectURL">The Collect URL for this game.</param>
 		/// <param name="engageURL">The Engage URL for this game.</param>
 		/// <param name="userID">The user id for the player, if set to AUTO_GENERATED_USER_ID we create one for you.</param>
+		[Obsolete("Prefer 'StartSDK' instead, Init will be removed in a future update.")]
 		public void Init(string envKey, string collectURL, string engageURL, string userID)
 		{
+			StartSDK(envKey, collectURL, engageURL, userID);
+		}
+
+		/// <summary>
+		/// Starts the SDK.  Call before sending events or making engagements.
+		/// </summary>
+		/// <param name="envKey">The unique environment key for this game environment.</param>
+		/// <param name="collectURL">The Collect URL for this game.</param>
+		/// <param name="engageURL">The Engage URL for this game.</param>
+		/// <param name="userID">The user id for the player, if set to AUTO_GENERATED_USER_ID we create one for you.</param>
+		public void StartSDK(string envKey, string collectURL, string engageURL, string userID)
+		{
+			SetUserID(userID);
+				
 			this.EnvironmentKey = envKey;
-			
-			// if the client's not giving us a user id and we don't already have
-			// one from a previous run, generate one for them.
-			if (String.IsNullOrEmpty(userID) && String.IsNullOrEmpty(this.UserID))
-			{
-				this.UserID = GetUserID();
-			}
-			else
-			{
-				this.UserID = userID;
-			}
-			
 			this.CollectURL = collectURL;	// TODO: warn if no http is present, prepend it, although we support both
 			this.EngageURL = engageURL;
 			this.Platform = ClientInfo.Platform;
 			this.SessionID = GetSessionID();
-			
-			#if UNITY_WEBPLAYER
-			
-			this.eventStore = new WebplayerEventStore();
-			
-			#else
-			
-			this.eventStore = new EventStore(
-				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath), 
-				this.reset, 
-				Settings.DebugMode
-			);
-			
-			#endif
-			
-			if (engageURL != null)
-			{
-				this.engageArchive = new EngageArchive(
-					Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath),
-					this.reset
-				);
-			}
-			
+
 			this.initialised = true;
 			
 			// must do this once we're initialised
@@ -102,6 +99,14 @@ namespace DeltaDNA
 			{
 				InvokeRepeating("Upload", Settings.BackgroundEventUploadStartDelaySeconds, Settings.BackgroundEventUploadRepeatRateSeconds);
 			}
+		}
+
+		/// <summary>
+		/// Changes the session ID for the current User.
+		/// </summary>
+		public void NewSession()
+		{
+			this.SessionID = GetSessionID();
 		}
 		
 		/// <summary>
@@ -245,8 +250,9 @@ namespace DeltaDNA
 			PlayerPrefs.DeleteKey(PF_KEY_CLIENT_VERSION);
 			PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
 			PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);	
-			
-			this.reset = true;	
+
+			this.eventStore.Clear();
+			this.engageArchive.Clear();
 		}
 		
 		#endregion
@@ -890,6 +896,35 @@ namespace DeltaDNA
 			}
 			
 			return sb.ToString();
+		}
+
+		private void SetUserID(string userID)
+		{
+			if (String.IsNullOrEmpty (userID))
+			{
+				if (String.IsNullOrEmpty (this.UserID))
+				{
+					// we have no user id and the we've not been given one so make one up
+					this.UserID = GetUserID ();
+				}
+				else 
+				{
+					// leave the user ID alone
+				}
+			}
+			else 
+			{
+				if (this.UserID != userID)
+				{
+					// new user ID given or not been sent one yet
+					PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
+					this.UserID = userID;
+				}
+				else
+				{
+					// leave the user ID alone
+				}
+			}
 		}
 		
 		private void TriggerDefaultEvents()
