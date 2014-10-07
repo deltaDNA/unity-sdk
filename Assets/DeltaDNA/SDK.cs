@@ -95,7 +95,7 @@ namespace DeltaDNA
 			TriggerDefaultEvents();
 			
 			// Setup automated event uploads
-			if (Settings.BackgroundEventUpload)
+			if (Settings.BackgroundEventUpload && !IsInvoking("Upload"))
 			{
 				InvokeRepeating("Upload", Settings.BackgroundEventUploadStartDelaySeconds, Settings.BackgroundEventUploadRepeatRateSeconds);
 			}
@@ -107,6 +107,18 @@ namespace DeltaDNA
 		public void NewSession()
 		{
 			this.SessionID = GetSessionID();
+		}
+
+		/// <summary>
+		/// Sends a 'gameEnded' event to Collect, disables background uploads.
+		/// </summary>
+		public void StopSDK()
+		{
+			LogDebug("Stopping SDK");
+			TriggerEvent("gameEnded");
+			CancelInvoke();
+			Upload();
+			this.initialised = false;
 		}
 		
 		/// <summary>
@@ -137,7 +149,7 @@ namespace DeltaDNA
 		{
 			if (!this.initialised) 
 			{
-				throw new NotInitialisedException("You must first initialise our SDK via the Init method");
+				throw new NotStartedException("You must first start the SDK via the StartSDK method");
 			}
 			
 			// the header for every event is eventName, userID, sessionID and timestamp
@@ -180,7 +192,7 @@ namespace DeltaDNA
 		{
 			if (!this.initialised)
 			{
-				throw new NotInitialisedException("You must first initialise out SDK via the Init method");
+				throw new NotStartedException("You must first start the SDK via the StartSDK method");
 			}
 			
 			if (String.IsNullOrEmpty(this.EngageURL))
@@ -215,7 +227,7 @@ namespace DeltaDNA
 		{			
 			if (!this.initialised) 
 			{
-				throw new NotInitialisedException("You must first initialise our SDK via the Init method");
+				throw new NotStartedException("You must first start the SDK via the StartSDK method");
 			}
 			
 			if (this.IsUploading)

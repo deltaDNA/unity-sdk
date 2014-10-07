@@ -99,7 +99,14 @@ public class TestSDKMultipleUsers : MonoBehaviour {
 			});
 
 			changedSession = true;
+
+			Invoke("StopTest", 5);
 		}
+	}
+
+	void StopTest()
+	{
+		SDK.Instance.StopSDK();
 	}
 	
 }
