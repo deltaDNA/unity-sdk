@@ -115,7 +115,7 @@ namespace DeltaDNA
 		public void StopSDK()
 		{
 			LogDebug("Stopping SDK");
-			TriggerEvent("gameEnded");
+			RecordEvent("gameEnded");
 			CancelInvoke();
 			Upload();
 			this.initialised = false;
@@ -125,9 +125,19 @@ namespace DeltaDNA
 		///	Sends an event to Collect, with no additional event parameters.
 		/// </summary>
 		/// <param name="eventName">Name of the event.</param>
+		[Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
 		public void TriggerEvent(string eventName)
 		{
-			TriggerEvent(eventName, new Dictionary<string, object>());
+			RecordEvent(eventName, new Dictionary<string, object>());
+		}
+
+		/// <summary>
+		///	Sends an event to Collect, with no additional event parameters.
+		/// </summary>
+		/// <param name="eventName">Name of the event.</param>
+		public void RecordEvent(string eventName)
+		{
+			RecordEvent(eventName, new Dictionary<string, object>());
 		}
 		
 		/// <summary>
@@ -135,9 +145,20 @@ namespace DeltaDNA
 		/// </summary>
 		/// <param name="eventName">Name of the event schema.</param>
 		/// <param name="eventParams">An EventBuilder that describes the event params for the event.</param>
+		[Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
 		public void TriggerEvent(string eventName, EventBuilder eventParams)
 		{
-			TriggerEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
+			RecordEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
+		}
+
+		/// <summary>
+		/// Sends an event to Collect.
+		/// </summary>
+		/// <param name="eventName">Name of the event schema.</param>
+		/// <param name="eventParams">An EventBuilder that describes the event params for the event.</param>
+		public void RecordEvent(string eventName, EventBuilder eventParams)
+		{
+			RecordEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
 		}
 		
 		/// <summary>
@@ -145,7 +166,18 @@ namespace DeltaDNA
 		/// </summary>
 		/// <param name="eventName">Name of the event schema.</param>
 		/// <param name="eventParams">Event parameters for the event.</param>
+		[Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
 		public void TriggerEvent(string eventName, Dictionary<string, object> eventParams)
+		{
+			RecordEvent(eventName, eventParams);
+		}
+
+		/// <summary>
+		/// Sends an event to Collect.
+		/// </summary>
+		/// <param name="eventName">Name of the event schema.</param>
+		/// <param name="eventParams">Event parameters for the event.</param>
+		public void RecordEvent(string eventName, Dictionary<string, object> eventParams)
 		{
 			if (!this.initialised) 
 			{
@@ -948,7 +980,7 @@ namespace DeltaDNA
 				var newPlayerParams = new EventBuilder()
 					.AddParam("userCountry", ClientInfo.CountryCode);
 			
-				this.TriggerEvent("newPlayer", newPlayerParams);
+				this.RecordEvent("newPlayer", newPlayerParams);
 				
 				PlayerPrefs.SetInt(PF_KEY_FIRST_RUN, 0);
 			}
@@ -962,7 +994,7 @@ namespace DeltaDNA
 					.AddParam("pushNotificationToken", this.PushNotificationToken)
 					.AddParam("androidRegistrationID", this.AndroidRegistrationID);
 				
-				this.TriggerEvent("gameStarted", gameStartedParams);
+				this.RecordEvent("gameStarted", gameStartedParams);
 			}
 			
 			if (Settings.OnInitSendClientDeviceEvent)
@@ -979,7 +1011,7 @@ namespace DeltaDNA
 					.AddParam("timezoneOffset", ClientInfo.TimezoneOffset)
 					.AddParam("userLanguage", ClientInfo.LanguageCode);
 					
-				this.TriggerEvent("clientDevice", clientDeviceParams);
+				this.RecordEvent("clientDevice", clientDeviceParams);
 			}	
 		}
 		

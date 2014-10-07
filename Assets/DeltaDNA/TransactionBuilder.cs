@@ -30,7 +30,7 @@ namespace DeltaDNA
 					.AddVirtualCurrency(virtualCurrencyName, virtualCurrencyType, virtualCurrencyAmount))
 				.AddParam("transactionReceipt", transactionReceipt);
 				
-			sdk.TriggerEvent("transaction", eventParams);
+			sdk.RecordEvent("transaction", eventParams);
 		}
 	}
 }

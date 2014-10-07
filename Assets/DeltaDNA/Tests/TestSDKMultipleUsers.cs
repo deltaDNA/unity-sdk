@@ -24,7 +24,7 @@ public class TestSDKMultipleUsers : MonoBehaviour {
 		SDK.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 	
 		// Initialise the SDK with first UserID
-		SDK.Instance.Init(
+		SDK.Instance.StartSDK(
 			"76410301326725846610230818914037", 					// Environment Key	(UnitySDK)		
 			"http://collect2470ntysd.deltadna.net/collect/api",		// Collect URI
 			"http://engage2470ntysd.deltadna.net",					// Engage URI
@@ -42,7 +42,7 @@ public class TestSDKMultipleUsers : MonoBehaviour {
 					.AddItem("Sunday Showdown Medal", "Victory Badge", 1))
 				.AddParam("rewardName", "Medal"));
 		
-		SDK.Instance.TriggerEvent("achievement", achievementParams);	
+		SDK.Instance.RecordEvent("achievement", achievementParams);	
 	}
 	
 	// Update is called once per frame
@@ -52,7 +52,7 @@ public class TestSDKMultipleUsers : MonoBehaviour {
 		if (this.timer <= 15 && !changedUser)
 		{
 			// Change the UserID
-			SDK.Instance.Init(
+			SDK.Instance.StartSDK(
 				"76410301326725846610230818914037", 					// Environment Key	(UnitySDK)		
 				"http://collect2470ntysd.deltadna.net/collect/api",		// Collect URI
 				"http://engage2470ntysd.deltadna.net",					// Engage URI
@@ -71,7 +71,7 @@ public class TestSDKMultipleUsers : MonoBehaviour {
 				.AddParam("productsSpent", new ProductBuilder()
 					.AddVirtualCurrency("Credit", "GRIND", 710));
 					
-			SDK.Instance.TriggerEvent("transaction", transactionParams);
+			SDK.Instance.RecordEvent("transaction", transactionParams);
 
 			changedUser = true;
 		}
