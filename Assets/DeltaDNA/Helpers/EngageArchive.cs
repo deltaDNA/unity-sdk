@@ -7,131 +7,161 @@ using UnityEngine;
 
 namespace DeltaDNA
 {
+	/// <summary>
+	/// The Engage archive holds previously requested engage responses. The responses
+	/// can be saved to disk.
+	/// </summary>
 	internal sealed class EngageArchive
 	{
-		private Hashtable table = new Hashtable();
-		
-		#if !UNITY_WEBPLAYER
-		private string FILENAME = "ENGAGEMENTS";
-		private string path;
-		#endif 
+		private Hashtable _table = new Hashtable();
+		private object _lock = new object();
+
+		private static readonly string FILENAME = "ENGAGEMENTS";
+		private string _path;
 	
-		public EngageArchive(string path/*, bool reset=false*/)
+		/// <summary>
+		/// Creates a new EnagageArchive, loading any previously saved Engagements from
+		/// a file at <param name="path">. 
+		/// </summary>
+		public EngageArchive(string path)
 		{
-			//if (!reset)
-			//{
-			//	Load(path);			
-			//}
-			
 			#if !UNITY_WEBPLAYER
 			Load(path);
-			this.path = path;
+			this._path = path;
 			#endif
 		}
-		
+
+		/// <summary>
+		/// Returns true if the archive contains a previous response for the
+		/// decision point.
+		/// </summary>
 		public bool Contains(string decisionPoint)
 		{
 			Debug.Log ("Does Engage contain "+decisionPoint);
-			return table.ContainsKey(decisionPoint);
+			return _table.ContainsKey(decisionPoint);
 		}
-		
+
+		/// <summary>
+		/// Gets or sets the <see cref="DeltaDNA.EngageArchive"/> with the specified decisionPoint.
+		/// </summary>
 		public string this[string decisionPoint]
 		{
 			get
 			{
-				return table[decisionPoint] as string;
+				return _table[decisionPoint] as string;
 			}
 			set
 			{
-				table[decisionPoint] = value;
+				lock(_lock)
+				{
+					_table[decisionPoint] = value;
+				}
 			}
 		}
-		
+
+		/// <summary>
+		/// Loads an existing archive from disk.
+		/// </summary>
 		private void Load(string path)
 		{
-			//#if !UNITY_WEBPLAYER
-			try
+			lock(_lock)
 			{
-				string filename = Path.Combine(path, FILENAME);
-				Debug.Log("Loading Engage from "+filename);
-				if (File.Exists(filename))
+				try
 				{
-					using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+					string filename = Path.Combine(path, FILENAME);
+					Debug.Log("Loading Engage from "+filename);
+					if (File.Exists(filename))
 					{
-						string key = null;
-						string value = null;
-						int read = 0;
-						byte[] length = new byte[4];
-						while (fs.Read(length, 0, length.Length) > 0)
+						using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
 						{
-							Int32 valueLength = BitConverter.ToInt32(length, 0);
-							byte[] valueField = new byte[valueLength];
-							fs.Read(valueField, 0, valueField.Length);
-							if (read % 2 == 0)
+							string key = null;
+							string value = null;
+							int read = 0;
+							byte[] length = new byte[4];
+							while (fs.Read(length, 0, length.Length) > 0)
 							{
-								key = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
+								Int32 valueLength = BitConverter.ToInt32(length, 0);
+								byte[] valueField = new byte[valueLength];
+								fs.Read(valueField, 0, valueField.Length);
+								if (read % 2 == 0)
+								{
+									key = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
+								}
+								else
+								{
+									value = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
+									_table.Add(key, value);
+								}
+								read++;
 							}
-							else
-							{
-								value = Encoding.UTF8.GetString(valueField, 0, valueField.Length);
-								table.Add(key, value);
-							}
-							read++;
 						}
 					}
 				}
-			}
-			catch (Exception e)
-			{
-				Debug.LogWarning("Unable to load Engagement archive: "+e.Message);
-			}
-			//#endif
-		}
-		
-		public void Save()
-		{
-			#if !UNITY_WEBPLAYER
-			try
-			{
-				if (!Directory.Exists(this.path)) 
+				catch (Exception e)
 				{
-					Directory.CreateDirectory(this.path);
-				}
-				
-				var bytes = new List<byte>();
-				
-				foreach (DictionaryEntry entry in table)
-				{
-					byte[] key = Encoding.UTF8.GetBytes(entry.Key as string);
-					byte[] keyLength = BitConverter.GetBytes(key.Length);
-					byte[] value = Encoding.UTF8.GetBytes(entry.Value as string);
-					byte[] valueLength = BitConverter.GetBytes(value.Length);
-					
-					bytes.AddRange(keyLength);
-					bytes.AddRange(key);
-					bytes.AddRange(valueLength);
-					bytes.AddRange(value);
-				}
-				
-				byte[] byteArray = bytes.ToArray();
-				
-				string filename = Path.Combine(this.path, FILENAME);
-			
-				using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
-				{
-					fs.Write(byteArray, 0, byteArray.Length);
+					Debug.LogWarning("Unable to load Engagement archive: "+e.Message);
 				}
 			}
-			catch (Exception e)
-			{
-				Debug.LogWarning("Unable to save Engagement archive: "+e.Message);
-			}
-			#endif
 		}
 
+		/// <summary>
+		/// Save the archive to disk.
+		/// </summary>
+		public void Save()
+		{
+			#if UNITY_WEBPLAYER
+			return; // no-op
+			#endif
+
+			lock(_lock)
+			{
+				try
+				{
+					if (!Directory.Exists(this._path)) 
+					{
+						Directory.CreateDirectory(this._path);
+					}
+					
+					var bytes = new List<byte>();
+					
+					foreach (DictionaryEntry entry in _table)
+					{
+						byte[] key = Encoding.UTF8.GetBytes(entry.Key as string);
+						byte[] keyLength = BitConverter.GetBytes(key.Length);
+						byte[] value = Encoding.UTF8.GetBytes(entry.Value as string);
+						byte[] valueLength = BitConverter.GetBytes(value.Length);
+						
+						bytes.AddRange(keyLength);
+						bytes.AddRange(key);
+						bytes.AddRange(valueLength);
+						bytes.AddRange(value);
+					}
+					
+					byte[] byteArray = bytes.ToArray();
+					
+					string filename = Path.Combine(this._path, FILENAME);
+				
+					using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
+					{
+						fs.Write(byteArray, 0, byteArray.Length);
+					}
+				}
+				catch (Exception e)
+				{
+					Debug.LogWarning("Unable to save Engagement archive: "+e.Message);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Clears the archive.
+		/// </summary>
 		public void Clear()
 		{
-			table.Clear();
+			lock(_lock)
+			{
+				_table.Clear();
+			}
 		}
 	}
 }

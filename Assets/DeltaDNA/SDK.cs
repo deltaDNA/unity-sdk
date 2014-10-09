@@ -29,7 +29,6 @@ namespace DeltaDNA
 		public static readonly string AUTO_GENERATED_USER_ID = null;
 
 		private bool initialised = false;
-		private bool userIdRequestInProgress = false;
 		
 		private IEventStore eventStore = null;
 		private EngageArchive engageArchive = null;
@@ -239,14 +238,6 @@ namespace DeltaDNA
 				return;
 			}
 			
-			if (this.IsRequestingEngagement)
-			{
-				// TODO: should we abort the current request if it is for a different descison point?
-				// Implication is that the games moved on, so previous request is no longer valid.
-				LogWarning("Only one engage request at a time is currently supported.");
-				return;
-			}
-			
 			StartCoroutine(EngageCoroutine(decisionPoint, engageParams, callback));
 		}
 		
@@ -362,11 +353,6 @@ namespace DeltaDNA
 		/// Gets a value indicating whether an event upload is in progress.
 		/// </summary>
 		public bool IsUploading { get; private set; }
-		
-		/// <summary>
-		/// Gets a value indicating whether an engagement request is in progress.
-		/// </summary>
-		public bool IsRequestingEngagement { get; private set; }
 		
 		#endregion
 		
@@ -563,18 +549,6 @@ namespace DeltaDNA
 			
 			try
 			{
-				// If there's no user id set by the client, ask our server for one.
-				if (String.IsNullOrEmpty(UserID)) {
-					LogDebug("Upload has no user id set, requesting an user id");
-					yield return StartCoroutine(RequestUserID());
-				}
-				
-				// Did we eventually get a user id?
-				if (String.IsNullOrEmpty(UserID)) {
-					LogDebug("Upload failed to get an user id, can not continue");
-					yield break;
-				}
-				
 				// Swap over event queue.
 				this.eventStore.Swap();	
 				
@@ -607,141 +581,68 @@ namespace DeltaDNA
 		
 		private IEnumerator EngageCoroutine(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
 		{
-			try
+			LogDebug("Starting engagement for '"+decisionPoint+"'");	
+			
+			Dictionary<string, object> engageRequest = new Dictionary<string, object>()
 			{
-				this.IsRequestingEngagement = true;
-				LogDebug("Starting engagement for '"+decisionPoint+"'");	
-				
-				if (String.IsNullOrEmpty(UserID))	
-				{
-					LogDebug("Not user ID set, requesting one");
-					yield return StartCoroutine(RequestUserID());
-					
-					if(String.IsNullOrEmpty(UserID))
-					{
-						LogWarning("Failed to get a user id, can not continue.");
-					}
-				}	
-				
-				Dictionary<string, object> engageRequest = new Dictionary<string, object>()
-				{
-					{ "userID", this.UserID },
-					{ "decisionPoint", decisionPoint },
-					{ "sessionID", this.SessionID },
-					{ "version", Settings.ENGAGE_API_VERSION },
-					{ "sdkVersion", Settings.SDK_VERSION },
-					{ "platform", this.Platform },
-					{ "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset) }
-				};
-				
-				if (ClientInfo.Locale != null)
-				{
-					engageRequest.Add("locale", ClientInfo.Locale);
-				}
-				
-				if (engageParams != null)
-				{
-					engageRequest.Add("parameters", engageParams);
-				}
-				
-				string engageJSON = null;
-				try
-				{
-					engageJSON = MiniJSON.Json.Serialize(engageRequest);
-				}
-				catch (Exception e)
-				{
-					LogWarning("Problem serialising engage request data: "+e.Message);
-					yield break;
-				}
-				
-				yield return StartCoroutine(EngageRequest(engageJSON, (response) => 
-				{
-					bool cachedResponse = false;
-					if (response != null)
-					{
-						LogDebug("Using live engagement: "+response);
-						this.engageArchive[decisionPoint] = response;
-					}
-					else
-					{
-						if (this.engageArchive.Contains(decisionPoint))
-						{
-							LogWarning("Engage request failed, using cached response.");
-							cachedResponse = true;
-							response = this.engageArchive[decisionPoint];
-						}
-						else
-						{
-							LogWarning("Engage request failed");
-						}
-					}
-					Dictionary<string, object> result = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
-					if (cachedResponse)
-					{
-						result["isCachedResponse"] = cachedResponse;
-					}
-					callback(result);
-				}));
-			}	
-			finally
+				{ "userID", this.UserID },
+				{ "decisionPoint", decisionPoint },
+				{ "sessionID", this.SessionID },
+				{ "version", Settings.ENGAGE_API_VERSION },
+				{ "sdkVersion", Settings.SDK_VERSION },
+				{ "platform", this.Platform },
+				{ "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset) }
+			};
+			
+			if (ClientInfo.Locale != null)
 			{
-				this.IsRequestingEngagement = false;
-			}
-		}
-		
-		private IEnumerator RequestUserID()
-		{
-			// We can call this from different coroutines so
-			// need to make sure we don't make multiple requests
-			// which will give us different answers.
-			while (this.userIdRequestInProgress)
-			{
-				LogDebug("User ID request already in progress, waiting...");
-				yield return null;
+				engageRequest.Add("locale", ClientInfo.Locale);
 			}
 			
-			if (!String.IsNullOrEmpty(UserID))
+			if (engageParams != null)
 			{
+				engageRequest.Add("parameters", engageParams);
+			}
+			
+			string engageJSON = null;
+			try
+			{
+				engageJSON = MiniJSON.Json.Serialize(engageRequest);
+			}
+			catch (Exception e)
+			{
+				LogWarning("Problem serialising engage request data: "+e.Message);
 				yield break;
 			}
 			
-			try
+			yield return StartCoroutine(EngageRequest(engageJSON, (response) => 
 			{
-				this.userIdRequestInProgress = true;
-				
-				string url = FormatURI(Settings.USERID_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
-				
-				// create a new url to turn off any caching
-				DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
-				TimeSpan span = (DateTime.Now.ToLocalTime() - epoch);
-				url += "?"+span.TotalMilliseconds;
-				
-				int attempts = 0;
-				bool succeeded = false;
-				
-				do
+				bool cachedResponse = false;
+				if (response != null)
 				{
-					yield return StartCoroutine(HttpGET(url, (status, response) => {
-						if (status == 200)
-						{
-							var obj = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
-							UserID = Convert.ToString(obj["userID"]);
-							succeeded = true;
-						}
-						else
-						{
-							LogDebug("Error requesting User ID, Collect returned: "+status);
-						}
-					}));
-					yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
+					LogDebug("Using live engagement: "+response);
+					this.engageArchive[decisionPoint] = response;
 				}
-				while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
-			}
-			finally
-			{
-				this.userIdRequestInProgress = false;
-			}
+				else
+				{
+					if (this.engageArchive.Contains(decisionPoint))
+					{
+						LogWarning("Engage request failed, using cached response.");
+						cachedResponse = true;
+						response = this.engageArchive[decisionPoint];
+					}
+					else
+					{
+						LogWarning("Engage request failed");
+					}
+				}
+				Dictionary<string, object> result = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
+				if (cachedResponse)
+				{
+					result["isCachedResponse"] = cachedResponse;
+				}
+				callback(result);
+			}));
 		}
 		
 		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)
@@ -920,7 +821,7 @@ namespace DeltaDNA
 			return statusCode;
 		}
 		
-		public static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null) 
+		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null) 
 		{
 			var uri = uriPattern.Replace("{host}", apiHost);
 			uri = uri.Replace("{env_key}", envKey);
