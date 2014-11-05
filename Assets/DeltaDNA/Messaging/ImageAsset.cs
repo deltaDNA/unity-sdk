@@ -96,7 +96,7 @@ namespace DeltaDNA.Messaging
 							LogError("actionParam", "actionType "+result.Action+ " requires missing actionParam");
 						}
 					}
-				} catch (Exception e) {
+				} catch (Exception) {
 					LogError("actionType", "actionType "+actionTypeStr+ " is not recognised");
 				}
 			} else {

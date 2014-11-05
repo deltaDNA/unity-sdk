@@ -82,6 +82,9 @@
      <Compile Include="Assets\Scripts\IntegrationTests\PopupCancelTest.cs" />
      <Compile Include="Assets\Scripts\IntegrationTests\PopupLaunchTest.cs" />
      <Compile Include="Assets\Scripts\IntegrationTests\TestSDKStarted.cs" />
+     <Compile Include="Assets\Scripts\RollABall\CameraController.cs" />
+     <Compile Include="Assets\Scripts\RollABall\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\RollABall\Rotator.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\AssertionComponent.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\AssertionException.cs" />
      <Compile Include="Assets\UnityTestTools\Assertions\Assertions.cs" />
