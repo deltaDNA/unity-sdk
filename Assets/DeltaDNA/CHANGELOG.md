@@ -1,4 +1,12 @@
-﻿3.2.1 (2014/10/14)
+﻿3.3 (2014/11/05)
+================
+
+Features:
+
+    * Added support for rich messaging.  Call `RequestImageMessage` to display a popup image
+        from an engagement.
+
+3.2.1 (2014/10/14)
 ==================
 
 Changes:
