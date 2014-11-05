@@ -30,10 +30,10 @@ public class PlayerController : MonoBehaviour
 		ddsdk.Settings.BackgroundEventUploadRepeatRateSeconds = 10;
 
 		ddsdk.StartSDK(
-			"47331089073395586423522795814123",
-            "http://collect2968rllbl.deltadna.net/collect/api",
-            //"http://engage2968rllbl.deltadna.net",
-			"http://192.168.30.72:9000/qa/engage",
+			"76410301326725846610230818914037",
+			"http://collect2470ntysd.deltadna.net/collect/api",
+			//"http://engage2470ntysd.deltadna.net",
+			"http://stage.deltadna.net/qa/engage",
             DeltaDNA.SDK.AUTO_GENERATED_USER_ID
        	);
 	}
