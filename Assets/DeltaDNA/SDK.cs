@@ -240,6 +240,46 @@ namespace DeltaDNA
 			
 			StartCoroutine(EngageCoroutine(decisionPoint, engageParams, callback));
 		}
+
+		/// <summary>
+		/// Requests an image based Engagement. The method is called with a Popup Behaviour which will display a popup from the
+		/// returned JSON.  An optional callback can be given, which will also receive the server response and will be called 
+		/// at the same time as launching the popup.
+		/// </summary>
+		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
+		/// <param name="engageParams">Additional parameters for the engagement.</param>
+		/// <param name="callback">Method called with the response from our server.</param>
+		/// <typeparam name="T">The Popup Behaviour type.</typeparam>
+		public void RequestImageMessage<T>(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback = null) where T : Messaging.Popup
+		{
+			RequestEngagement(decisionPoint, engageParams, (response) => {
+
+				if (response != null && response.ContainsKey("image")) {
+					var ip = response["image"] as Dictionary<string, object>;
+
+					GameObject popup = new GameObject("Popup");
+					T popupBehaviour = popup.AddComponent<T>();
+					Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
+					popupBehaviour.InitAndRun(image);
+
+					if (callback != null) {
+						callback(response);
+					}
+				}
+			});
+		}
+
+		/// <summary>
+		/// Requests an image based Engagement with the default popup behaviour.  An optional callback can be given, which will also received
+		/// the server response and will be called at the same time as launching the popup.
+		/// </summary>
+		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
+		/// <param name="engageParams">Additional parameters for the engagement.</param>
+		/// <param name="callback">Method called with the response from our server.</param>
+		public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback = null)
+		{
+			RequestImageMessage<Messaging.Popup>(decisionPoint, engageParams, callback);
+		}
 		
 		/// <summary>
 		/// Uploads waiting events to our Collect service.  By default this is called automatically in the 

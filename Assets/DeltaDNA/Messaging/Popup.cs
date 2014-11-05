@@ -51,7 +51,7 @@ namespace DeltaDNA.Messaging
 			_button2.transform.parent = gameObject.transform;
 		}
 
-		public IEnumerator LoadImageIntoTexture(Texture2D texture, WWW www)
+		protected IEnumerator LoadImageIntoTexture(Texture2D texture, WWW www)
 		{
 			yield return www;
 
@@ -83,7 +83,7 @@ namespace DeltaDNA.Messaging
 			}
 		}
 
-		private void DrawAsset(GameObject go, ImageAsset asset, Texture2D spriteMap, float z)
+		protected void DrawAsset(GameObject go, ImageAsset asset, Texture2D spriteMap, float z)
 		{
 			Texture2D texture = CopySubRegion(spriteMap, asset.GlobalPosition);
 			GUITexture gui = go.AddComponent<GUITexture>();
@@ -109,7 +109,7 @@ namespace DeltaDNA.Messaging
 			go.transform.localScale = Vector3.zero;
 		}
 			
-		private Texture2D CopySubRegion(Texture2D texture, int x, int y, int width, int height)
+		protected Texture2D CopySubRegion(Texture2D texture, int x, int y, int width, int height)
 		{
 			Color[] pixels = texture.GetPixels(x, texture.height-y-height, width, height);
 			Texture2D result = new Texture2D(width, height, texture.format, false);
@@ -118,7 +118,7 @@ namespace DeltaDNA.Messaging
 			return result;
 		}
 
-		private Texture2D CopySubRegion(Texture2D texture, Rect rect)
+		protected Texture2D CopySubRegion(Texture2D texture, Rect rect)
 		{
 			return CopySubRegion(
 				texture, 
@@ -128,7 +128,7 @@ namespace DeltaDNA.Messaging
 				Mathf.FloorToInt(rect.height));
 		}
 
-		private void AddAction(GameObject obj, ImageAsset asset) {
+		protected void AddAction(GameObject obj, ImageAsset asset) {
 			PopupActionHandler action = obj.GetComponent<PopupActionHandler>();
 			if (action != null) {
 
