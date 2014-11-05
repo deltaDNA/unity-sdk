@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Editor\UnitTests\Helpers\TestMD5.cs" />
      <Compile Include="Assets\Editor\UnitTests\Messaging\TestBackground.cs" />
      <Compile Include="Assets\Editor\UnitTests\Messaging\TestButton.cs" />
      <Compile Include="Assets\Editor\UnitTests\Messaging\TestImageComposition.cs" />

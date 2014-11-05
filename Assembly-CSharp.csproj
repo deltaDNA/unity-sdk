@@ -67,9 +67,6 @@
      <Compile Include="Assets\DeltaDNA\Messaging\Viewport.cs" />
      <Compile Include="Assets\DeltaDNA\ProductBuilder.cs" />
      <Compile Include="Assets\DeltaDNA\SDK.cs" />
-     <Compile Include="Assets\DeltaDNA\Tests\TestMD5.cs" />
-     <Compile Include="Assets\DeltaDNA\Tests\TestSDK.cs" />
-     <Compile Include="Assets\DeltaDNA\Tests\TestSDKMultipleUsers.cs" />
      <Compile Include="Assets\DeltaDNA\TransactionBuilder.cs" />
      <Compile Include="Assets\Helpers\RenderExtensions.cs" />
      <Compile Include="Assets\Scripts\2DShooter\EnemyScript.cs" />
@@ -78,6 +75,8 @@
      <Compile Include="Assets\Scripts\2DShooter\PlayerScript.cs" />
      <Compile Include="Assets\Scripts\2DShooter\ScrollingScript.cs" />
      <Compile Include="Assets\Scripts\2DShooter\ShotScript.cs" />
+     <Compile Include="Assets\Scripts\2DShooter\TestSDK.cs" />
+     <Compile Include="Assets\Scripts\2DShooter\TestSDKMultipleUsers.cs" />
      <Compile Include="Assets\Scripts\2DShooter\WeaponScript.cs" />
      <Compile Include="Assets\Scripts\IntegrationTests\PopupCancelTest.cs" />
      <Compile Include="Assets\Scripts\IntegrationTests\PopupLaunchTest.cs" />
