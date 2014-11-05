@@ -101,8 +101,8 @@
      <Compile Include="Assets\UnityTestTools\UnitTesting\Editor\TestRunner\UnitTestView.cs" />
      <Compile Include="Assets\UnityTestTools\UnitTesting\Editor\UnitTestsRunnerSettings.cs" />
      <Compile Include="Assets\UnityTestTools\UnitTesting\Editor\UnityUnitTest.cs" />
-     <None Include="Assets\UnityTestTools\LICENSE.txt" />
      <None Include="Assets\UnityTestTools\changelog.txt" />
+     <None Include="Assets\UnityTestTools\LICENSE.txt" />
  <Reference Include="NSubstitute">
  <HintPath>/Users/davidwhite/Documents/sandbox/unity-sdk/Assets/UnityTestTools/UnitTesting/Editor/NSubstitute/NSubstitute.dll</HintPath>
  </Reference>
