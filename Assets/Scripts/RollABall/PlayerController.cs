@@ -48,8 +48,13 @@ public class PlayerController : MonoBehaviour
 	
 	void FixedUpdate()
 	{
+		#if UNITY_EDITOR
 		float moveHorizontal = Input.GetAxis("Horizontal");
 		float moveVertical = Input.GetAxis("Vertical");
+		#else
+		float moveHorizontal = Input.acceleration.x;
+		float moveVertical = Input.acceleration.y;
+		#endif
 
 		Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 		
@@ -100,7 +105,7 @@ public class PlayerController : MonoBehaviour
 	
 	void SetCountText()
 	{
-		countText.text = String.Format("{0,2}s Count: {1}", Math.Floor(secondsPlayed), score);
+		countText.text = String.Format("{0,2}s Remaining: {1}", Math.Floor(secondsPlayed), pickups - score);
 		if (winnerFound) {
 			winText.text = "YOU WIN!";
 		}
