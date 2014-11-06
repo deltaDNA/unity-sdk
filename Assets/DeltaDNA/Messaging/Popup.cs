@@ -6,6 +6,10 @@ namespace DeltaDNA.Messaging
 {
 	public class Popup : MonoBehaviour {
 
+		public delegate void Action();
+		public event Action BeforeShow;
+		public event Action AfterShow;
+
 		private ImageComposition _image;
 
 		private GameObject _background;
@@ -59,6 +63,8 @@ namespace DeltaDNA.Messaging
 				if (www.error == null) {
 					www.LoadImageIntoTexture(texture);
 					HasLoadedSpriteMap = true;
+
+					if (BeforeShow != null) BeforeShow();
 
 					// Background
 					if (_image.Background != null) {
@@ -135,24 +141,30 @@ namespace DeltaDNA.Messaging
 				switch (asset.Action) {
 					case ImageAsset.ActionType.DISMISS: {
 						action.OnMouseDownAction += () => {
-							GameObject.Destroy(gameObject);
+							ClosePopup();
 						};
 						break;
 					}
 					case ImageAsset.ActionType.LINK: {
 						action.OnMouseDownAction += () => {
 							Application.OpenURL(asset.ActionParam);
-							GameObject.Destroy(gameObject);
+							ClosePopup();
 						};
 						break;
 					}
 					case ImageAsset.ActionType.CUSTOM: {
 						// TODO: need access to a table of predefined functions
-						GameObject.Destroy(gameObject);
+						ClosePopup();
 						break;
 					}
 				}
 			}
+		}
+
+		protected void ClosePopup()
+		{
+			Destroy(gameObject);
+			if (AfterShow != null) AfterShow();
 		}
 	}
 

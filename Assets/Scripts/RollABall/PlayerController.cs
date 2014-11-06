@@ -88,7 +88,9 @@ public class PlayerController : MonoBehaviour
 					{ "secondsPlayed", Math.Floor(secondsPlayed) }
 				};
 					
-				ddsdk.RequestImageMessage("gameEnded", engageParams);
+				ddsdk.RequestImageMessage("gameEnded", engageParams, null, (response) => {
+					Application.LoadLevel(Application.loadedLevelName);
+				});
 			}
 
 			if (score % 3 == 0) {

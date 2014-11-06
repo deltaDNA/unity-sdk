@@ -248,9 +248,15 @@ namespace DeltaDNA
 		/// </summary>
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
-		/// <param name="callback">Method called with the response from our server.</param>
+		/// <param name="beforeCallback">Method called before popup is shown with the response from our server.</param>
+		/// <param name="afterCallback">Method called after popup is shown with the response from our server.</param>
 		/// <typeparam name="T">The Popup Behaviour type.</typeparam>
-		public void RequestImageMessage<T>(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback = null) where T : Messaging.Popup
+		public void RequestImageMessage<T>(
+			string decisionPoint, 
+			Dictionary<string, object> engageParams, 
+			Action<Dictionary<string, object>> beforeCallback = null,
+			Action<Dictionary<string, object>> afterCallback = null) 
+		where T : Messaging.Popup
 		{
 			RequestEngagement(decisionPoint, engageParams, (response) => {
 
@@ -260,11 +266,16 @@ namespace DeltaDNA
 					GameObject popup = new GameObject("Popup");
 					T popupBehaviour = popup.AddComponent<T>();
 					Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
-					popupBehaviour.InitAndRun(image);
 
-					if (callback != null) {
-						callback(response);
+					if (beforeCallback != null) {
+						popupBehaviour.BeforeShow += ()=>{beforeCallback(response);};
 					}
+
+					if (afterCallback != null) {
+						popupBehaviour.AfterShow += ()=>{afterCallback(response);};
+					}
+
+					popupBehaviour.InitAndRun(image);
 				}
 			});
 		}
@@ -275,10 +286,15 @@ namespace DeltaDNA
 		/// </summary>
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
-		/// <param name="callback">Method called with the response from our server.</param>
-		public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback = null)
+		/// <param name="beforeCallback">Method called before popup is shown with the response from our server.</param>
+		/// <param name="afterCallback">Method called after popup is shown with the response from our server.</param>
+		public void RequestImageMessage(
+			string decisionPoint, 
+			Dictionary<string, object> engageParams, 
+			Action<Dictionary<string, object>> beforeCallback = null,
+			Action<Dictionary<string, object>> afterCallback = null)
 		{
-			RequestImageMessage<Messaging.Popup>(decisionPoint, engageParams, callback);
+			RequestImageMessage<Messaging.Popup>(decisionPoint, engageParams, beforeCallback, afterCallback);
 		}
 		
 		/// <summary>
