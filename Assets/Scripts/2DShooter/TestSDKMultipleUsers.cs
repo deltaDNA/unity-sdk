@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DeltaDNA;
+using MiniJSON = DeltaDNA.MiniJSON;
 
 public class TestSDKMultipleUsers : MonoBehaviour {
 
