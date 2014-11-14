@@ -29,6 +29,8 @@ namespace DeltaDNA
 		public static readonly string AUTO_GENERATED_USER_ID = null;
 
 		private bool initialised = false;
+		private string collectURL;
+		private string engageURL;
 		
 		private IEventStore eventStore = null;
 		private EngageArchive engageArchive = null;
@@ -354,16 +356,22 @@ namespace DeltaDNA
 		/// Gets the environment key.
 		/// </summary>
 		public string EnvironmentKey { get; private set; }
-		
+
 		/// <summary>
 		/// Gets the Collect URL.
 		/// </summary>
-		public string CollectURL { get; private set; }
+		public string CollectURL { 
+			get { return this.collectURL; }
+			private set { this.collectURL = ValidateURL(value); } 
+		}
 		
 		/// <summary>
 		/// Gets the engage URL.
 		/// </summary>
-		public string EngageURL { get; private set; }
+		public string EngageURL { 
+			get { return this.engageURL; } 
+			private set { this.engageURL = ValidateURL(value); } 
+		}
 		
 		/// <summary>
 		/// Gets the session ID.
@@ -883,6 +891,13 @@ namespace DeltaDNA
 			uri = uri.Replace("{env_key}", envKey);
 			uri = uri.Replace("{hash}", hash);
 			return uri;
+		}
+
+		private static string ValidateURL(string url) {
+			if (!url.ToLower().StartsWith("http://")) {
+				url = "http://" + url;
+			}
+			return url;
 		}
 		
 		private static string GenerateHash(string data, string secret){

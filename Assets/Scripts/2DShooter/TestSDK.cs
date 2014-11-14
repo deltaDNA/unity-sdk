@@ -22,8 +22,8 @@ public class TestSDK : MonoBehaviour {
 		// Initialise the SDK
 		SDK.Instance.StartSDK(
 			"76410301326725846610230818914037", 					// Environment Key	(UnitySDK)		
-			"http://collect2470ntysd.deltadna.net/collect/api",		// Collect URI
-			"http://engage2470ntysd.deltadna.net",					// Engage URI
+			"collect2470ntysd.deltadna.net/collect/api",			// Collect URI
+			"engage2470ntysd.deltadna.net",							// Engage URI
 			SDK.AUTO_GENERATED_USER_ID								// User ID
 		);
 		
