@@ -8,6 +8,9 @@ obj/
 *.pidb
 *.user
 *.suo
+*.sln
+*.csproj
+*.userprefs
 
 # OS Junk
 Thumbs.db
