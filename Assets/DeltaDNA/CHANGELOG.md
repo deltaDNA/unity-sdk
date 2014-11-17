@@ -1,6 +1,11 @@
 ﻿3.3 (2014/11/05)
 ================
 
+Changes:
+
+    * Moved our copy of MiniJSON inside DeltaDNA namespace to avoid namespace clashes.
+    * If Collect and/or Engage URL's don't start with 'http://' I slightly prepend it.
+
 Features:
 
     * Added support for rich messaging.  Call `RequestImageMessage` to display a popup image
