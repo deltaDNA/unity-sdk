@@ -260,26 +260,27 @@ namespace DeltaDNA
 			Action<Dictionary<string, object>> afterCallback = null) 
 		where T : Messaging.Popup
 		{
-			RequestEngagement(decisionPoint, engageParams, (response) => {
+			RequestEngagement(decisionPoint, engageParams, (response) =>
+            {
+                if (response != null && response.ContainsKey("image"))
+                {
+                    var ip = response["image"] as Dictionary<string, object>;
 
-				if (response != null && response.ContainsKey("image")) {
-					var ip = response["image"] as Dictionary<string, object>;
+                    GameObject popup = new GameObject("Popup");
+                    T popupBehaviour = popup.AddComponent<T>();
+                    Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
 
-					GameObject popup = new GameObject("Popup");
-					T popupBehaviour = popup.AddComponent<T>();
-					Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
+                    if (beforeCallback != null) {
+                        popupBehaviour.RegisterBeforeShowHandler(() => { beforeCallback(response); });
+                    }
 
-					if (beforeCallback != null) {
-						popupBehaviour.BeforeShow += ()=>{beforeCallback(response);};
-					}
+                    if (afterCallback != null) {
+                        popupBehaviour.RegisterAfterShowHandler(() => { afterCallback(response); });
+                    }
 
-					if (afterCallback != null) {
-						popupBehaviour.AfterShow += ()=>{afterCallback(response);};
-					}
-
-					popupBehaviour.InitAndRun(image);
-				}
-			});
+                    popupBehaviour.InitAndRun(image);
+                }
+            });
 		}
 
 		/// <summary>
@@ -678,35 +679,35 @@ namespace DeltaDNA
 				LogWarning("Problem serialising engage request data: "+e.Message);
 				yield break;
 			}
-			
-			yield return StartCoroutine(EngageRequest(engageJSON, (response) => 
-			{
-				bool cachedResponse = false;
-				if (response != null)
-				{
-					LogDebug("Using live engagement: "+response);
-					this.engageArchive[decisionPoint] = response;
-				}
-				else
-				{
-					if (this.engageArchive.Contains(decisionPoint))
-					{
-						LogWarning("Engage request failed, using cached response.");
-						cachedResponse = true;
-						response = this.engageArchive[decisionPoint];
-					}
-					else
-					{
-						LogWarning("Engage request failed");
-					}
-				}
-				Dictionary<string, object> result = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
-				if (cachedResponse)
-				{
-					result["isCachedResponse"] = cachedResponse;
-				}
-				callback(result);
-			}));
+
+			yield return StartCoroutine(EngageRequest(engageJSON, (response) =>
+            {
+                bool cachedResponse = false;
+                if (response != null)
+                {
+                    LogDebug("Using live engagement: " + response);
+                    this.engageArchive[decisionPoint] = response;
+                }
+                else
+                {
+                    if (this.engageArchive.Contains(decisionPoint))
+                    {
+                        LogWarning("Engage request failed, using cached response.");
+                        cachedResponse = true;
+                        response = this.engageArchive[decisionPoint];
+                    }
+                    else
+                    {
+                        LogWarning("Engage request failed");
+                    }
+                }
+                Dictionary<string, object> result = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
+                if (cachedResponse)
+                {
+                    result["isCachedResponse"] = cachedResponse;
+                }
+                callback(result);
+            }));
 		}
 		
 		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)

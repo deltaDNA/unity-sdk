@@ -1,14 +1,13 @@
 ﻿using System;
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
 	public class Popup : MonoBehaviour {
 
-		public delegate void Action();
-		public event Action BeforeShow;
-		public event Action AfterShow;
+		private event Action BeforeShow;
+		private event Action AfterShow;
 
 		private ImageComposition _image;
 
@@ -30,6 +29,16 @@ namespace DeltaDNA.Messaging
 		{
 			get { return _button2.GetComponent<PopupActionHandler>(); }
 		}
+
+        public void RegisterBeforeShowHandler(Action action)
+        {
+            BeforeShow += action;
+        }
+
+        public void RegisterAfterShowHandler(Action action)
+        {
+            AfterShow += action;
+        }
 
 		public bool HasLoadedSpriteMap { get; private set; }
 
@@ -64,7 +73,10 @@ namespace DeltaDNA.Messaging
 					www.LoadImageIntoTexture(texture);
 					HasLoadedSpriteMap = true;
 
-					if (BeforeShow != null) BeforeShow();
+                    if (BeforeShow != null)
+                    {
+                        BeforeShow();
+                    }
 
 					// Background
 					if (_image.Background != null) {
@@ -164,18 +176,23 @@ namespace DeltaDNA.Messaging
 		protected void ClosePopup()
 		{
 			Destroy(gameObject);
-			if (AfterShow != null) AfterShow();
+            if (AfterShow != null)
+            {
+                AfterShow();
+            }
 		}
 	}
 
 	public class PopupActionHandler : MonoBehaviour
 	{
-		public delegate void Action();
 		public event Action OnMouseDownAction;
 
 		public void OnMouseDown()
 		{
-			if (OnMouseDownAction != null) OnMouseDownAction();
+            if (OnMouseDownAction != null)
+            {
+                OnMouseDownAction();
+            }
 		}
 	}
 }

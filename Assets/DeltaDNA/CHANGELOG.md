@@ -1,4 +1,11 @@
-﻿3.3 (2014/11/05)
+﻿3.3.1 (2014/11/19)
+==================
+
+Fixes:
+
+    * Minor change to works with Windows Phone 8 build.
+
+3.3 (2014/11/05)
 ================
 
 Changes:
