@@ -29,11 +29,13 @@ public class PlayerController : MonoBehaviour
 		ddsdk.Settings.DebugMode = true;
 		ddsdk.Settings.BackgroundEventUploadRepeatRateSeconds = 10;
 
+		ddsdk.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
+
 		ddsdk.StartSDK(
 			"76410301326725846610230818914037",
 			"http://collect2470ntysd.deltadna.net/collect/api",
-			//"http://engage2470ntysd.deltadna.net",
-			"http://stage.deltadna.net/qa/engage",
+			"http://engage2470ntysd.deltadna.net",
+			//"http://www.deltadna.net/qa/engage",
             DeltaDNA.SDK.AUTO_GENERATED_USER_ID
        	);
 	}
