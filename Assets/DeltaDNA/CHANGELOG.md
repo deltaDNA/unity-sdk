@@ -1,3 +1,10 @@
+3.3.2 (2014/11/20)
+==================
+
+Fixes:
+
+    * Tweaked ClientInfo to return better names for deviceName and deviceType.
+
 ﻿3.3.1 (2014/11/19)
 ==================
 
