@@ -46,7 +46,8 @@ namespace DeltaDNA.Messaging
 					{"height", 48},
 					{"label", "Purchase"},
 					{"name", "purchase"},
-					{"actionType", "NONE"}
+					{"actionType", "CUSTOM"},
+					{"actionParam", "DO_SOMETHING"}
 				}},
 				{"button2", new Dictionary<string, object>() {
 					{"x", 644},
@@ -61,31 +62,30 @@ namespace DeltaDNA.Messaging
 				}}
 			});
 
-//			Popup popupBehaviour = popup.GetComponent<Popup>();
-//			if (popupBehaviour != null)
-//			{
-//				popupBehaviour.Action += (sender, e) =>
-//				{
-//					//if (e.GameObject == popupBehaviour.Button1)
-//					//{
-//						PassTest();
-//					//}
-//				};
-//
-//				popupBehaviour.AfterLoad += (sender, e) =>
-//				{
-//					((Popup)sender).ShowPopup();
-//				};
-//
-//				popupBehaviour.LoadResource(c);
-//			}
+			Popup popupBehaviour = popup.GetComponent<Popup>();
+			if (popupBehaviour != null)
+			{
+				popupBehaviour.Action += (sender, e) =>
+				{
+					if (e.GameObject == popupBehaviour.Button1)
+					{
+						PassTest();
+					}
+				};
+
+				popupBehaviour.AfterLoad += (sender, e) =>
+				{
+					((Popup)sender).ShowPopup();
+				};
+
+				popupBehaviour.LoadResource(c);
+			}
 
 		}		
 
 		void Update()
 		{
 			// After awhile simulate a button press...
-			//popup.SendMessage("OnMouseDown");
 			if (Time.time > 5) {
 				Transform btn1 = popup.transform.Find("Button1");
 				if (btn1 != null) {

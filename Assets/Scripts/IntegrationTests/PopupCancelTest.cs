@@ -61,29 +61,24 @@ namespace DeltaDNA.Messaging
 				}}
 			});
 
-//			Popup popupBehaviour = popup.GetComponent<Popup>();
-//			popupBehaviour.Dismiss += (sender, e) => 
-//			{
-//				IntegrationTest.Pass();
-//			};
-//
-//			popupBehaviour.AfterLoad += (sender, e) =>
-//			{
-//				((Popup)sender).ShowPopup();
-//			};
-//
-//			popupBehaviour.LoadResource(c);
+			Popup popupBehaviour = popup.GetComponent<Popup>();
+			popupBehaviour.Dismiss += (sender, e) => 
+			{
+				IntegrationTest.Pass();
+			};
 
-			//popup.GetComponent<Popup>().InitAndRun(c);
+			popupBehaviour.AfterLoad += (sender, e) =>
+			{
+				((Popup)sender).ShowPopup();
+			};
 
-			// wouldn't it make more sense to get the buttons and set
-			// the events on them??
+			popupBehaviour.LoadResource(c);
+
 		}		
 
 		void Update()
 		{
 			// After awhile simulate a button press...
-			//popup.SendMessage("OnMouseDown");
 			if (popup != null && Time.time > 3) {
 				Transform btn2 = popup.transform.Find("Button2");
 				if (btn2 != null) {

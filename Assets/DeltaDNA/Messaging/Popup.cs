@@ -5,32 +5,6 @@ using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
-	public class PopupEventArgs: EventArgs
-	{
-		public PopupEventArgs(GameObject gameObject, ImageAsset imageAsset)
-		{
-			this.GameObject = gameObject;
-			this.ImageAsset = imageAsset;
-		}
-
-		public GameObject GameObject { get; set; }
-		public ImageAsset ImageAsset { get; set; }
-	}
-
-	public interface IPopup
-	{
-		event EventHandler BeforeLoad;
-		event EventHandler AfterLoad;
-		event EventHandler BeforeShow;
-		event EventHandler BeforeClose;
-		event EventHandler AfterClose;
-		event EventHandler<PopupEventArgs> Dismiss;
-		event EventHandler<PopupEventArgs> Action;
-
-		void LoadResource(ImageComposition image);
-		void ShowPopup(Dictionary<string, object> options = null);
-	}
-
 	public class Popup : MonoBehaviour, IPopup 
 	{
 		public event EventHandler BeforeLoad;
@@ -44,12 +18,9 @@ namespace DeltaDNA.Messaging
 		public ImageComposition Image { get; set; }
 		public bool HasLoadedResource { get; set; }
 
-		//public GameObject Background { get; private set; }
-		//public GameObject Button1 { get; private set; }
-		//public GameObject Button2 { get; private set; }
-		private GameObject Background;
-		private GameObject Button1;
-		private GameObject Button2;
+		public GameObject Background { get; private set; }
+		public GameObject Button1 { get; private set; }
+		public GameObject Button2 { get; private set; }
 
 		private Texture2D _texture;
 
@@ -68,6 +39,8 @@ namespace DeltaDNA.Messaging
 
 		public void LoadResource(ImageComposition image)
 		{
+			Image = image;
+
 			if (BeforeLoad != null) 
 			{
 				BeforeLoad(this, new EventArgs());
@@ -85,20 +58,17 @@ namespace DeltaDNA.Messaging
 					{
 						BeforeShow(this, new EventArgs());
 					}
-
-					// Background
+						
 					if (Image.Background != null) {
 						DrawAsset(Background, Image.Background, _texture, 0);
 						AddAction(Background, Image.Background);
 					}
-
-					// Button 1
+						
 					if (Image.Button1 != null) {
 						DrawAsset(Button1, Image.Button1, _texture, 1);
 						AddAction(Button1, Image.Button1);
 					}
-
-					// Button 2
+						
 					if (Image.Button2 != null) {
 						DrawAsset(Button2, Image.Button2, _texture, 1);
 						AddAction(Button2, Image.Button2);
