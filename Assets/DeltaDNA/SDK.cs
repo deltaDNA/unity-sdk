@@ -260,27 +260,27 @@ namespace DeltaDNA
 			Action<Dictionary<string, object>> afterCallback = null) 
 		where T : Messaging.Popup
 		{
-			RequestEngagement(decisionPoint, engageParams, (response) =>
-            {
-                if (response != null && response.ContainsKey("image"))
-                {
-                    var ip = response["image"] as Dictionary<string, object>;
-
-                    GameObject popup = new GameObject("Popup");
-                    T popupBehaviour = popup.AddComponent<T>();
-                    Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
-
-                    if (beforeCallback != null) {
-                        popupBehaviour.RegisterBeforeShowHandler(() => { beforeCallback(response); });
-                    }
-
-                    if (afterCallback != null) {
-                        popupBehaviour.RegisterAfterShowHandler(() => { afterCallback(response); });
-                    }
-
-                    popupBehaviour.InitAndRun(image);
-                }
-            });
+//			RequestEngagement(decisionPoint, engageParams, (response) =>
+//            {
+//                if (response != null && response.ContainsKey("image"))
+//                {
+//                    var ip = response["image"] as Dictionary<string, object>;
+//
+//                    GameObject popup = new GameObject("Popup");
+//                    T popupBehaviour = popup.AddComponent<T>();
+//                    Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
+//
+//                    if (beforeCallback != null) {
+//                        popupBehaviour.RegisterBeforeShowHandler(() => { beforeCallback(response); });
+//                    }
+//
+//                    if (afterCallback != null) {
+//                        popupBehaviour.RegisterAfterShowHandler(() => { afterCallback(response); });
+//                    }
+//
+//                    popupBehaviour.InitAndRun(image);
+//                }
+//            });
 		}
 
 		/// <summary>

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -61,8 +61,25 @@ namespace DeltaDNA.Messaging
 				}}
 			});
 
-			popup.GetComponent<Popup>().Button1.OnMouseDownAction += PassTest;
-			popup.GetComponent<Popup>().InitAndRun(c);
+//			Popup popupBehaviour = popup.GetComponent<Popup>();
+//			if (popupBehaviour != null)
+//			{
+//				popupBehaviour.Action += (sender, e) =>
+//				{
+//					//if (e.GameObject == popupBehaviour.Button1)
+//					//{
+//						PassTest();
+//					//}
+//				};
+//
+//				popupBehaviour.AfterLoad += (sender, e) =>
+//				{
+//					((Popup)sender).ShowPopup();
+//				};
+//
+//				popupBehaviour.LoadResource(c);
+//			}
+
 		}		
 
 		void Update()

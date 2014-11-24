@@ -61,7 +61,20 @@ namespace DeltaDNA.Messaging
 				}}
 			});
 
-			popup.GetComponent<Popup>().InitAndRun(c);
+//			Popup popupBehaviour = popup.GetComponent<Popup>();
+//			popupBehaviour.Dismiss += (sender, e) => 
+//			{
+//				IntegrationTest.Pass();
+//			};
+//
+//			popupBehaviour.AfterLoad += (sender, e) =>
+//			{
+//				((Popup)sender).ShowPopup();
+//			};
+//
+//			popupBehaviour.LoadResource(c);
+
+			//popup.GetComponent<Popup>().InitAndRun(c);
 
 			// wouldn't it make more sense to get the buttons and set
 			// the events on them??

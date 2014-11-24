@@ -1,107 +1,137 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
-	public class Popup : MonoBehaviour {
-
-		private event Action BeforeShow;
-		private event Action AfterShow;
-
-		private ImageComposition _image;
-
-		private GameObject _background;
-		private GameObject _button1;
-		private GameObject _button2;
-
-		public PopupActionHandler Background 
+	public class PopupEventArgs: EventArgs
+	{
+		public PopupEventArgs(GameObject gameObject, ImageAsset imageAsset)
 		{
-			get { return _background.GetComponent<PopupActionHandler>(); }
+			this.GameObject = gameObject;
+			this.ImageAsset = imageAsset;
 		}
 
-		public PopupActionHandler Button1 
-		{
-			get { return _button1.GetComponent<PopupActionHandler>(); }
-		}
+		public GameObject GameObject { get; set; }
+		public ImageAsset ImageAsset { get; set; }
+	}
 
-		public PopupActionHandler Button2 
-		{
-			get { return _button2.GetComponent<PopupActionHandler>(); }
-		}
+	public interface IPopup
+	{
+		event EventHandler BeforeLoad;
+		event EventHandler AfterLoad;
+		event EventHandler BeforeShow;
+		event EventHandler BeforeClose;
+		event EventHandler AfterClose;
+		event EventHandler<PopupEventArgs> Dismiss;
+		event EventHandler<PopupEventArgs> Action;
 
-        public void RegisterBeforeShowHandler(Action action)
-        {
-            BeforeShow += action;
-        }
+		void LoadResource(ImageComposition image);
+		void ShowPopup(Dictionary<string, object> options = null);
+	}
 
-        public void RegisterAfterShowHandler(Action action)
-        {
-            AfterShow += action;
-        }
+	public class Popup : MonoBehaviour, IPopup 
+	{
+		public event EventHandler BeforeLoad;
+		public event EventHandler AfterLoad;
+		public event EventHandler BeforeShow;
+		public event EventHandler BeforeClose;
+		public event EventHandler AfterClose;
+		public event EventHandler<PopupEventArgs> Dismiss;
+		public event EventHandler<PopupEventArgs> Action;
 
-		public bool HasLoadedSpriteMap { get; private set; }
+		public ImageComposition Image { get; set; }
+		public bool HasLoadedResource { get; set; }
 
-		public void InitAndRun(ImageComposition image)
-		{
-			_image = image;
+		//public GameObject Background { get; private set; }
+		//public GameObject Button1 { get; private set; }
+		//public GameObject Button2 { get; private set; }
+		private GameObject Background;
+		private GameObject Button1;
+		private GameObject Button2;
 
-			Texture2D spriteMap = new Texture2D(image.SpriteMap.Width, image.SpriteMap.Height);
-			WWW www = new WWW(image.SpriteMap.Url);
-			StartCoroutine(LoadImageIntoTexture(spriteMap, www));
-		}
+		private Texture2D _texture;
 
 		void Awake () 
 		{
-			_background = new GameObject("Background");
-			_background.AddComponent<PopupActionHandler>();
-			_background.transform.parent = gameObject.transform;
-			_button1 = new GameObject("Button1");
-			_button1.AddComponent<PopupActionHandler>();
-			_button1.transform.parent = gameObject.transform;
-			_button2 = new GameObject("Button2");
-			_button2.AddComponent<PopupActionHandler>();
-			_button2.transform.parent = gameObject.transform;
+			Background = new GameObject("Background");
+			Background.AddComponent<PopupActionHandler>();
+			Background.transform.parent = gameObject.transform;
+			Button1 = new GameObject("Button1");
+			Button1.AddComponent<PopupActionHandler>();
+			Button1.transform.parent = gameObject.transform;
+			Button2 = new GameObject("Button2");
+			Button2.AddComponent<PopupActionHandler>();
+			Button2.transform.parent = gameObject.transform;
 		}
 
-		protected IEnumerator LoadImageIntoTexture(Texture2D texture, WWW www)
+		public void LoadResource(ImageComposition image)
 		{
+			if (BeforeLoad != null) 
+			{
+				BeforeLoad(this, new EventArgs());
+			}
+
+			StartCoroutine(LoadResourceCoroutine(image));
+		}
+
+		public void ShowPopup(Dictionary<string, object> options = null)
+		{
+			if (HasLoadedResource) 
+			{
+				try {
+					if (BeforeShow != null)
+					{
+						BeforeShow(this, new EventArgs());
+					}
+
+					// Background
+					if (Image.Background != null) {
+						DrawAsset(Background, Image.Background, _texture, 0);
+						AddAction(Background, Image.Background);
+					}
+
+					// Button 1
+					if (Image.Button1 != null) {
+						DrawAsset(Button1, Image.Button1, _texture, 1);
+						AddAction(Button1, Image.Button1);
+					}
+
+					// Button 2
+					if (Image.Button2 != null) {
+						DrawAsset(Button2, Image.Button2, _texture, 1);
+						AddAction(Button2, Image.Button2);
+					}
+				} catch (Exception ex) {
+					Debug.LogException(ex);
+				}
+			}
+		}
+
+		private IEnumerator LoadResourceCoroutine(ImageComposition image)
+		{
+			_texture = new Texture2D(image.SpriteMap.Width, image.SpriteMap.Height);
+			WWW www = new WWW(image.SpriteMap.Url);
+
 			yield return www;
 
 			try {
 				if (www.error == null) {
-					www.LoadImageIntoTexture(texture);
-					HasLoadedSpriteMap = true;
+					www.LoadImageIntoTexture(_texture);
+					HasLoadedResource = true;
 
-                    if (BeforeShow != null)
+                    if (AfterLoad != null)
                     {
-                        BeforeShow();
-                    }
-
-					// Background
-					if (_image.Background != null) {
-						DrawAsset(_background, _image.Background, texture, 0);
-						AddAction(_background, _image.Background);
-					}
-
-					// Button 1
-					if (_image.Button1 != null) {
-						DrawAsset(_button1, _image.Button1, texture, 1);
-						AddAction(_button1, _image.Button1);
-					}
-
-					// Button 2
-					if (_image.Button2 != null) {
-						DrawAsset(_button2, _image.Button2, texture, 1);
-						AddAction(_button2, _image.Button2);
-					}
+                        AfterLoad(this, new EventArgs());
+                    }			
 				}
-			} catch (Exception) {
-
+			} catch (Exception ex) {
+				Debug.LogException(ex);
 			}
 		}
 
-		protected void DrawAsset(GameObject go, ImageAsset asset, Texture2D spriteMap, float z)
+		private void DrawAsset(GameObject go, ImageAsset asset, Texture2D spriteMap, float z)
 		{
 			Texture2D texture = CopySubRegion(spriteMap, asset.GlobalPosition);
 			GUITexture gui = go.AddComponent<GUITexture>();
@@ -116,7 +146,7 @@ namespace DeltaDNA.Messaging
 			// find distance to middle of viewpoint
 			// position assets scaled normalised distance from middle
 			Vector2 screen = new Vector2(Screen.width, Screen.height);
-			Vector2 viewport = new Vector2(_image.Viewport.Width, _image.Viewport.Height);
+			Vector2 viewport = new Vector2(Image.Viewport.Width, Image.Viewport.Height);
 			Vector2 tl = new Vector2(asset.ImagePosition.x, asset.ImagePosition.y);
 			Vector2 br = new Vector2(asset.ImagePosition.width, asset.ImagePosition.height);
 			Vector2 middle = tl + (br / 2.0f);
@@ -127,7 +157,7 @@ namespace DeltaDNA.Messaging
 			go.transform.localScale = Vector3.zero;
 		}
 			
-		protected Texture2D CopySubRegion(Texture2D texture, int x, int y, int width, int height)
+		private Texture2D CopySubRegion(Texture2D texture, int x, int y, int width, int height)
 		{
 			Color[] pixels = texture.GetPixels(x, texture.height-y-height, width, height);
 			Texture2D result = new Texture2D(width, height, texture.format, false);
@@ -136,7 +166,7 @@ namespace DeltaDNA.Messaging
 			return result;
 		}
 
-		protected Texture2D CopySubRegion(Texture2D texture, Rect rect)
+		private Texture2D CopySubRegion(Texture2D texture, Rect rect)
 		{
 			return CopySubRegion(
 				texture, 
@@ -146,39 +176,60 @@ namespace DeltaDNA.Messaging
 				Mathf.FloorToInt(rect.height));
 		}
 
-		protected void AddAction(GameObject obj, ImageAsset asset) {
+		private void AddAction(GameObject obj, ImageAsset asset) {
 			PopupActionHandler action = obj.GetComponent<PopupActionHandler>();
 			if (action != null) {
+
+				PopupEventArgs eventArgs = new PopupEventArgs(obj, asset);
 
 				switch (asset.Action) {
 					case ImageAsset.ActionType.DISMISS: {
 						action.OnMouseDownAction += () => {
+							if (Dismiss != null)
+							{
+								Dismiss(this, eventArgs);
+							}
 							ClosePopup();
 						};
 						break;
 					}
 					case ImageAsset.ActionType.LINK: {
 						action.OnMouseDownAction += () => {
+							if (Action != null)
+							{
+								Action(this, eventArgs);
+							}
 							Application.OpenURL(asset.ActionParam);
 							ClosePopup();
 						};
 						break;
 					}
 					case ImageAsset.ActionType.CUSTOM: {
-						// TODO: need access to a table of predefined functions
-						ClosePopup();
+						action.OnMouseDownAction += () => {
+							if (Action != null)
+							{
+								Action(this, eventArgs);
+							}
+							ClosePopup();
+						};
 						break;
 					}
 				}
 			}
 		}
 
-		protected void ClosePopup()
+		private void ClosePopup()
 		{
+			if (BeforeClose != null)
+			{
+				BeforeClose(this, new EventArgs());
+			}
+
 			Destroy(gameObject);
-            if (AfterShow != null)
+
+            if (AfterClose != null)
             {
-                AfterShow();
+                AfterClose(this, new EventArgs());
             }
 		}
 	}
