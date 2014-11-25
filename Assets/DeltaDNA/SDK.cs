@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DeltaDNA.Messaging;
 
 namespace DeltaDNA
 {
@@ -244,60 +245,26 @@ namespace DeltaDNA
 		}
 
 		/// <summary>
-		/// Requests an image based Engagement. The method is called with a Popup Behaviour which will display a popup from the
-		/// returned JSON.  An optional callback can be given, which will also receive the server response and will be called 
-		/// at the same time as launching the popup.
+		/// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement 
+		/// that loads the image resource automatically from the original engage request.  Register a function with the 
+		/// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
 		/// </summary>
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
-		/// <param name="beforeCallback">Method called before popup is shown with the response from our server.</param>
-		/// <param name="afterCallback">Method called after popup is shown with the response from our server.</param>
-		/// <typeparam name="T">The Popup Behaviour type.</typeparam>
-		public void RequestImageMessage<T>(
-			string decisionPoint, 
-			Dictionary<string, object> engageParams, 
-			Action<Dictionary<string, object>> beforeCallback = null,
-			Action<Dictionary<string, object>> afterCallback = null) 
-		where T : Messaging.Popup
-		{
-//			RequestEngagement(decisionPoint, engageParams, (response) =>
-//            {
-//                if (response != null && response.ContainsKey("image"))
-//                {
-//                    var ip = response["image"] as Dictionary<string, object>;
-//
-//                    GameObject popup = new GameObject("Popup");
-//                    T popupBehaviour = popup.AddComponent<T>();
-//                    Messaging.ImageComposition image = Messaging.ImageComposition.BuildFromDictionary(ip);
-//
-//                    if (beforeCallback != null) {
-//                        popupBehaviour.RegisterBeforeShowHandler(() => { beforeCallback(response); });
-//                    }
-//
-//                    if (afterCallback != null) {
-//                        popupBehaviour.RegisterAfterShowHandler(() => { afterCallback(response); });
-//                    }
-//
-//                    popupBehaviour.InitAndRun(image);
-//                }
-//            });
-		}
-
-		/// <summary>
-		/// Requests an image based Engagement with the default popup behaviour.  An optional callback can be given, which will also received
-		/// the server response and will be called at the same time as launching the popup.
-		/// </summary>
-		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
-		/// <param name="engageParams">Additional parameters for the engagement.</param>
-		/// <param name="beforeCallback">Method called before popup is shown with the response from our server.</param>
-		/// <param name="afterCallback">Method called after popup is shown with the response from our server.</param>
+		/// <param name="popup">A Popup object to display the image.</param>
 		public void RequestImageMessage(
-			string decisionPoint, 
-			Dictionary<string, object> engageParams, 
-			Action<Dictionary<string, object>> beforeCallback = null,
-			Action<Dictionary<string, object>> afterCallback = null)
+			string decisionPoint,
+			Dictionary<string, object> engageParams,
+			IPopup popup)
 		{
-			RequestImageMessage<Messaging.Popup>(decisionPoint, engageParams, beforeCallback, afterCallback);
+			RequestEngagement(decisionPoint, engageParams, (response) => {
+				if (response != null && response.ContainsKey("image"))
+				{
+					var ip = response["image"] as Dictionary<string, object>;
+					ImageComposition image = ImageComposition.BuildFromDictionary(ip);
+					popup.LoadResource(image);
+				}
+			});
 		}
 		
 		/// <summary>

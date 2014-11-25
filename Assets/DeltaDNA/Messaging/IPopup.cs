@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace DeltaDNA.Messaging
@@ -27,7 +26,25 @@ namespace DeltaDNA.Messaging
 		event EventHandler<PopupEventArgs> Action;
 
 		void LoadResource(ImageComposition image);
-		void ShowPopup(Dictionary<string, object> options = null);
+		void ShowPopup();
+
+		GameObject Background { get; }
+		GameObject Button1 { get; }
+		GameObject Button2 { get; }
+	}
+
+	public class PopupException : Exception
+	{
+		public PopupException()
+		{}
+		
+		public PopupException(string message)
+			: base(message)
+		{}
+		
+		public PopupException(string message, Exception inner)
+			: base(message, inner)
+		{}
 	}
 }
 

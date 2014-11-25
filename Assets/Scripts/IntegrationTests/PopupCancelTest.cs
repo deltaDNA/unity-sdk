@@ -10,8 +10,6 @@ namespace DeltaDNA.Messaging
 	// that can be drawn for the Popup.
 	public class PopupCancelTest : MonoBehaviour {
 
-		public GameObject popup;
-
 		// Use this for initialization
 		void Awake () {
 			
@@ -60,30 +58,28 @@ namespace DeltaDNA.Messaging
 					{"actionType", "DISMISS"}
 				}}
 			});
-
-			Popup popupBehaviour = popup.GetComponent<Popup>();
-			popupBehaviour.Dismiss += (sender, e) => 
-			{
+				
+			Popup popup = new Popup();
+			popup.Dismiss += (sender, e) => {
 				IntegrationTest.Pass();
 			};
-
-			popupBehaviour.AfterLoad += (sender, e) =>
-			{
+			popup.AfterLoad += (sender, e) => {
 				((Popup)sender).ShowPopup();
 			};
-
-			popupBehaviour.LoadResource(c);
-
+			popup.LoadResource(c);
 		}		
 
 		void Update()
 		{
 			// After awhile simulate a button press...
-			if (popup != null && Time.time > 3) {
-				Transform btn2 = popup.transform.Find("Button2");
-				if (btn2 != null) {
-					PopupActionHandler handler = btn2.gameObject.GetComponent<PopupActionHandler>();
-					if (handler != null) {
+			if (Time.time > 5)
+			{
+				GameObject btn2 = GameObject.Find("Button2");
+				if (btn2 != null) 
+				{
+					PopupActionHandler handler = btn2.GetComponent<PopupActionHandler>();
+					if (handler != null) 
+					{
 						handler.OnMouseDown();
 					}
 				}

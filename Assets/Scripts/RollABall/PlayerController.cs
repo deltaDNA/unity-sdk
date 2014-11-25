@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using DeltaDNA;
+using DeltaDNA.Messaging;
 
 public class PlayerController : MonoBehaviour 
 {
@@ -12,7 +14,7 @@ public class PlayerController : MonoBehaviour
 	private int pickups;
 	private float secondsPlayed;
 	private bool winnerFound;
-	public DeltaDNA.SDK ddsdk;
+	public SDK ddsdk;
 	
 	void Start()
 	{
@@ -24,7 +26,7 @@ public class PlayerController : MonoBehaviour
 		winnerFound = false;
 
 		// -- Set up DeltaDNA SDK -- //
-		ddsdk = DeltaDNA.SDK.Instance;
+		ddsdk = SDK.Instance;
 
 		ddsdk.Settings.DebugMode = true;
 		ddsdk.Settings.BackgroundEventUploadRepeatRateSeconds = 10;
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
 			"http://collect2470ntysd.deltadna.net/collect/api",
 			"http://engage2470ntysd.deltadna.net",
 			//"http://www.deltadna.net/qa/engage",
-            DeltaDNA.SDK.AUTO_GENERATED_USER_ID
+            SDK.AUTO_GENERATED_USER_ID
        	);
 	}
 
@@ -90,9 +92,10 @@ public class PlayerController : MonoBehaviour
 					{ "secondsPlayed", Math.Floor(secondsPlayed) }
 				};
 					
-				ddsdk.RequestImageMessage("gameEnded", engageParams, null, (response) => {
-					Application.LoadLevel(Application.loadedLevelName);
-				});
+				IPopup gameEndedPopup = new Popup();
+				gameEndedPopup.AfterLoad += new EventHandler(OnPopupLoaded);
+				gameEndedPopup.BeforeClose += new EventHandler(OnGameEnded);
+				ddsdk.RequestImageMessage("gameEnded", engageParams, gameEndedPopup);
 			}
 
 			if (score % 3 == 0) {
@@ -102,7 +105,24 @@ public class PlayerController : MonoBehaviour
 					{ "secondsPlayed", Math.Floor(secondsPlayed) }
 				};
 					
-				ddsdk.RequestImageMessage("pickUp", engageParams);
+				// Create Popup Object
+				IPopup myPopup = new Popup();
+				// Setup Events
+				myPopup.AfterLoad += (sender, e) => {
+					Debug.Log("Popup loaded resource");
+					// Just show it, although you could do this later
+					myPopup.ShowPopup();
+				};
+
+				myPopup.Dismiss += (sender, e) => {
+					Debug.Log("Popup dismissed by "+e.GameObject.name);
+				};
+
+				myPopup.Action += (sender, e) => {
+					Debug.Log("Popup actioned by "+e.GameObject.name+" with command "+e.ImageAsset.ActionParam);
+				};
+				// Start Request
+				ddsdk.RequestImageMessage("pickUp", engageParams, myPopup);
 			}
 		}
 	}
@@ -113,6 +133,16 @@ public class PlayerController : MonoBehaviour
 		if (winnerFound) {
 			winText.text = "YOU WIN!";
 		}
+	}
+
+	void OnPopupLoaded(object sender, EventArgs e)
+	{
+		((IPopup)sender).ShowPopup();
+	}
+
+	void OnGameEnded(object sender, EventArgs e)
+	{
+		Application.LoadLevel(Application.loadedLevelName);
 	}
 
 }
