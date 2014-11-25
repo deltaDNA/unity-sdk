@@ -5,7 +5,15 @@ using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
-
+	/// <summary>
+	/// Builds a popup to display an image message from Engage.  Each popup has a background
+	/// and two buttons.  Their images are determined by an ImageComposition object.  A 
+	/// number of event handlers are available to customise the behaviour for your game.
+	///
+	/// Known limitations:
+	/// 	The Popup uses GUITextures to render the background and buttons.  These will
+	/// interfere with UI components drawn in OnGUI.
+	/// </summary>
 	public class Popup : IPopup
 	{
 		public event EventHandler BeforeLoad;
@@ -22,19 +30,38 @@ namespace DeltaDNA.Messaging
 
 		private GameObject _popup;
 		private PopupBehaviour _behaviour;
+		private float _zAxis = 1;
 
+		/// <summary>
+		/// Creates a new Popup object with default behaviour.
+		/// </summary>
 		public Popup() : this(new Dictionary<string, object>())
 		{
 
 		}
 
+		/// <summary>
+		/// Creates a new Popup object with a set of options.
+		///
+		/// Available options:
+		///		* name - override the name of GameObject (default: Popup)
+		///		* zAxis - the position the GUITextures are drawn at (default: 1).
+		/// </summary>
+		/// <param name="options">The dictionary of options.</param>
 		public Popup(Dictionary<string, object> options)
 		{
 			string name = (options.ContainsKey("name")) ? options["name"] as string : "Popup";
 			_popup = new GameObject(name);
 			_behaviour = _popup.AddComponent<PopupBehaviour>();
+			if (options.ContainsKey("zAxis")) float.TryParse(options["zAxis"] as string, out _zAxis);
 		}
 
+		/// <summary>
+		/// Fetchs the image resource from our servers.  BeforeLoad will be called before
+		/// the request is made.  AfterLoad will be called once the image has been
+		/// downloaded.
+		/// </summary>
+		/// <param name="image">Image.</param>
 		public void LoadResource(ImageComposition image)
 		{
 			try {
@@ -68,6 +95,10 @@ namespace DeltaDNA.Messaging
 			}
 		}
 
+		/// <summary>
+		/// Renders the popup to screen.  BeforeShow is called before the 
+		/// popup is rendered.
+		/// </summary>
 		public void ShowPopup()
 		{
 			if (HasLoadedResource)
@@ -77,7 +108,7 @@ namespace DeltaDNA.Messaging
 					{
 						BeforeShow(this, new EventArgs());
 					}
-					_behaviour.ShowPopup(Image);
+					_behaviour.ShowPopup(Image, _zAxis);
 					IsShowingPopup = true;
 				} catch (Exception ex) {
 					Debug.LogException(ex);
@@ -85,6 +116,11 @@ namespace DeltaDNA.Messaging
 			}
 		}
 
+		/// <summary>
+		/// Closes the popup.  This is normally called by the Popup but is available for 
+		/// other usecases.  BeforeClose is called before the Popop is closed.  AfterClose
+		/// is called after the Popup has closed.
+		/// </summary>
 		public void ClosePopup()
 		{
 			if (IsShowingPopup)
@@ -104,10 +140,19 @@ namespace DeltaDNA.Messaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the background game object.  Use this reference to determine if it was selected.
+		/// </summary>
 		public GameObject Background { get { return _behaviour.Background; }}
 
+		/// <summary>
+		/// Gets the button1 game object.  Use this reference to determine if it was selected.
+		/// </summary>
 		public GameObject Button1 { get { return _behaviour.Button1; }}
 
+		/// <summary>
+		/// Get the button2 game object.  Use this reference to determine if it was selected.
+		/// </summary>
 		public GameObject Button2 { get { return _behaviour.Button2; }}
 
 		private void AddAction(GameObject obj, ImageAsset asset) {
@@ -179,21 +224,21 @@ namespace DeltaDNA.Messaging
 			StartCoroutine(LoadResourceCoroutine(image, callback));
 		}
 
-		public void ShowPopup(ImageComposition image)
+		public void ShowPopup(ImageComposition image, float zAxis)
 		{
 			Vector2 screen = new Vector2(Screen.width, Screen.height);
 			Vector2 viewport = new Vector2(image.Viewport.Width, image.Viewport.Height);
 				
 			if (image.Background != null) {
-				DrawAsset(Background, image.Background, _texture, screen, viewport, 0);
+				DrawAsset(Background, image.Background, _texture, screen, viewport, zAxis);
 			}
 				
 			if (image.Button1 != null) {
-				DrawAsset(Button1, image.Button1, _texture, screen, viewport, 1);
+				DrawAsset(Button1, image.Button1, _texture, screen, viewport, zAxis+1);
 			}
 				
 			if (image.Button2 != null) {
-				DrawAsset(Button2, image.Button2, _texture, screen, viewport, 1);
+				DrawAsset(Button2, image.Button2, _texture, screen, viewport, zAxis+1);
 			}
 		}
 

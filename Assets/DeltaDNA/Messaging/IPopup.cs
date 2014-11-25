@@ -14,7 +14,7 @@ namespace DeltaDNA.Messaging
 		public GameObject GameObject { get; set; }
 		public ImageAsset ImageAsset { get; set; }
 	}
-
+		
 	public interface IPopup
 	{
 		event EventHandler BeforeLoad;

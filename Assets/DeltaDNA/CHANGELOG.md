@@ -1,29 +1,21 @@
-3.3.2 (2014/11/20)
-==================
-
-Fixes:
-
-    * Tweaked ClientInfo to return better names for deviceName and deviceType.
-
-﻿3.3.1 (2014/11/19)
-==================
-
-Fixes:
-
-    * Minor change to works with Windows Phone 8 build.
-
-3.3 (2014/11/05)
+3.3 (2014/11/25)
 ================
 
 Changes:
 
     * Moved our copy of MiniJSON inside DeltaDNA namespace to avoid namespace clashes.
-    * If Collect and/or Engage URL's don't start with 'http://' I slightly prepend it.
+    * If Collect and/or Engage URL's don't start with 'http://' I silently prepend it.
 
 Features:
 
     * Added support for rich messaging.  Call `RequestImageMessage` to display a popup image
-        from an engagement.
+        from an engagement.  See Docs for details.
+
+Fixes:
+
+    * Minor change so works with Windows Phone 8 build.
+    * Tweaked ClientInfo to return better names for deviceName and deviceType.
+
 
 3.2.1 (2014/10/14)
 ==================
