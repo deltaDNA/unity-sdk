@@ -85,6 +85,22 @@ namespace DeltaDNA.Messaging
 			}
 		}
 
+		void OnGUI () 
+		{
+	        // Make a background box
+	        GUI.Box(new Rect(150,110,100,90), "Loader Menu");
+	    
+	        // Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
+	        if(GUI.Button(new Rect(160,140,80,20), "Level 1")) {
+	            Debug.Log("Level 1 Selected");
+	        }
+	    
+	        // Make the second button.
+	        if(GUI.Button(new Rect(160,170,80,20), "Level 2")) {
+	            Debug.Log("Level 2 Selected");
+	        }
+	    }
+
 		void PassTest()
 		{
 			IntegrationTest.Pass();
