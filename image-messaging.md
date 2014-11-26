@@ -1,4 +1,118 @@
-# Image Messaging
+# Image Messaging (Take 2)
+
+The revised idea for image messaging is to move away from images and screen sizes.  We can't
+know what size screen the image will appear on, so why try.  Instead we work in constraints.  The
+user can restrict where the image is drawn on the screen.  The image is drawn as large as possible
+whilst still maintaining the original aspect ratio.
+
+
+## Engage Message Format
+
+### Some Examples
+
+
+```javascript
+
+{
+    'url': 'http://cdn.com/image'
+    'width': 1024,
+    'height': 512,
+    'format': 'png'
+    'spritemap': {
+        'background': {
+            'x': 0,
+            'y': 0,
+            'width': 100,
+            'height': 150
+        },
+        'buttons': [
+            {
+                'x': 102,
+                'y': 0,
+                'width': 25,
+                'height': 10
+            },
+            {
+                'x': 102,
+                'y': 27,
+                'width': 25,
+                'height': 10
+            }
+        ]
+    },
+    'layout': {
+        'landscape': {
+            'cover': {
+                'h': 'center'
+                'v': 'center'
+            },
+            'buttons': [
+                {
+                    'x': 10
+                    'y': 25
+                },
+                {
+                    'x': 50
+                    'y': 75
+                }
+            ]
+        }
+    }
+}
+
+```
+
+The `url` is the location of the spritemap image file.  The `width` and `height` are the size of
+the image, and the `format` is the image format; PNG for now.
+
+The 'spritemap' object describes the location of the image assets in the sprite map.  The 'buttons'
+are optional depending on the number of buttons in the message.
+
+The `layout` object describes how the background is to appear on the screen.  It contains
+`landscape` and/or `portrait` keys depending on preferred layout.  If only one key is present
+the rules are applied whatever the orientation. (I think it would work this way, typically a game stays in the same orientation but this could be useful.)
+
+Under the layout orientation a number of options describing how to render the background can appear.  `cover` scales the background so it's as large as possible so that the background is completely covered by the image.  The origin of the image is controlled by horizontal and vertical alignments.
+`contain` scales the image as large as possible such that it's width and height fit inside the screen.  Horizontal and vertical alignment control the image position.
+`constrain` will scale the image as large as possible such that the rules about how much space to the edge of the screen are maintained.  The rules can be in pixels from the edge, or a percentage of the screen size, and any combination.
+
+Also under the orientation are the positions of the all the buttons relative to the background.  The x and y values are the top left corner of the button.  The button is scaled by the same factor as the background.  The number of buttons will match the number in the `spritemap` object.
+
+#### Some More Layout Examples
+
+Some more examples looking at the possible layouts and what they would achieve.
+
+```javascript
+'layout': {
+    'landscape': {
+        'contain': {
+            'h': 'left'
+            'v': 'center'
+        }
+    }
+}
+```
+Fill's the screen with the image, positioning it against the left side.
+
+```javascript
+'layout': {
+    'portrait': {
+        'constrain': {
+            'l': '10px'
+            'r': '20%'
+            't': '25px',
+            'b': '5%'
+        }
+    }
+}
+```
+Fill's the screen with the image, but keeps at least 10 pixels from the left, 20% of the screen from the right, 25 pixels from the top and 5% of the screen from the bottom.
+
+It could be useful to support different layouts for landscape and portrait although that is perhaps unnecessary.
+
+___
+
+# Image Messaging (First Attempt)
 
 We've added a new feature into our platform called Image Messaging.  This enables your users to be
 targeted with popup messages.  It's built on top of our Engagement system, so you can display

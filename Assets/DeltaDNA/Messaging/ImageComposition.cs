@@ -3,6 +3,18 @@ using System.Collections.Generic;
 
 namespace DeltaDNA.Messaging
 {
+	public class Composition
+	{
+		public string Url { get; set; }
+		public int Width { get; set; }
+		public int Height { get; set; }
+		public string Format { get; set; }
+		public SpriteMap SpriteMap { get; set; }
+		public Layout Layout { get; set; }
+
+	}
+
+
 	public class ImageComposition
 	{
 		public SpriteMap SpriteMap { get; set; }
