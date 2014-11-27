@@ -91,7 +91,7 @@ namespace DeltaDNA.Messaging
 					//_behaviour.ShowPopup(Resource);
 
 					// Build layers
-					//Background background = _popup.AddComponent<Background>();
+					Background background = _popup.AddComponent<Background>();
 					//background.Init(Resource);
 
 					Container container = _popup.AddComponent<Container>();
@@ -192,51 +192,29 @@ namespace DeltaDNA.Messaging
 			callback();
 		}
 
-//		public void ShowPopup(Dictionary<string, object> resource)
-//		{
-//			Debug.Log("Asked to show popup");
-//
-//			_container = TextureHelpers.CopySubRegion(_spritemap, new Rect(2, 52, 640, 400));
-//			_button = TextureHelpers.CopySubRegion(_spritemap, new Rect(2, 2, 96, 48));
-//		}
-//
-//		public void OnGUI()
-//		{
-//			// This works!  You must set the value lower than the other gui elements,
-//			// so it will need to be an input to the configuration.
-//			GUI.depth = 0;
-//
-//			if (_container) {
-//				//GUI.DrawTextureWithTexCoords(position, _container, texCoords);
-//				if (GUI.Button(new Rect(30, 30, 320, 200), _container, GUIStyle.none)) {
-//					Debug.Log("Container was clicked");
-//				}
-//			}
-//
-//			if (_button) {
-//				if (GUI.Button(new Rect(50, 50, 48, 24), _button, GUIStyle.none)) {
-//					Debug.Log("Button was clicked");
-//				}
-//			}
-//		}
-
-
 	}
 
 	public class Background : MonoBehaviour
 	{
-		private Texture _texture;
+		private Texture2D _texture = new Texture2D(1, 1);
+
+		public void Awake()
+		{
+			Color32[] colours = new Color32[1];
+			colours[0] = new Color32(0, 0, 0, 128); 
+			_texture.SetPixels32(colours);
+			_texture.Apply();
+		}
 
 		public void OnGUI()
 		{
 			GUI.depth = 2;
 
-			GUI.color = new Color32(255, 255, 255, 100);
-
 			if (_texture)
 			{
 				Rect position = new Rect(0, 0, Screen.width, Screen.height);
-				if (GUI.Button(position, _texture, GUIStyle.none)) {
+				GUI.DrawTexture(position, _texture);
+				if (GUI.Button(position, "", GUIStyle.none)) {
 					Debug.Log("Background clicked");
 				}
 			}
