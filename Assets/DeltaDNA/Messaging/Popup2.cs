@@ -96,6 +96,7 @@ namespace DeltaDNA.Messaging
 					Container container = _popup.AddComponent<Container>();
 					Texture containerTexture = _spritemap.GetSubRegion(new Rect(2, 52, 640, 400));
 
+					// Container Layout
 					object layout;
 					if (Resource.TryGetValue("layout", out layout)) {
 						// Not caring about orientation of device just now
@@ -110,7 +111,11 @@ namespace DeltaDNA.Messaging
 
 						if (orientation != null) {
 							container.Init(orientation, containerTexture);
+						} else {
+							Debug.LogError("No layout orientation found");
 						}
+					} else {
+						Debug.LogError("No layout found");
 					}
 
 
@@ -230,8 +235,19 @@ namespace DeltaDNA.Messaging
 		{
 			_texture = texture;
 
-			// workout how to position the image...
-			_position = new Rect(40, 40, 320, 200);
+			object rules;
+			if (layout.TryGetValue("cover", out rules)) {
+				_position = RenderAsCover((Dictionary<string, object>)rules);
+			} 
+			else if (layout.TryGetValue("contain", out rules)) {
+				_position = RenderAsContain((Dictionary<string, object>)rules);
+			}
+			else if (layout.TryGetValue("constrain", out rules)) {
+
+			}
+			else {
+				Debug.Log("Invalid layout");
+			}
 		}
 
 		public void OnGUI()
@@ -240,10 +256,114 @@ namespace DeltaDNA.Messaging
 
 			if (_texture)
 			{
-				if (GUI.Button(_position, _texture, GUIStyle.none)) {
-					Debug.Log("Container clicked");
+				//if (GUI.Button(_position, _texture, GUIStyle.none)) {
+				//	Debug.Log("Container clicked");
+				//}
+				// Unity feature: You can't scale a Button's texture bigger than the original
+				// but a normal texture is quite happy.  
+				GUI.DrawTexture(_position, _texture);
+				if (GUI.Button(_position, "", GUIStyle.none)) {
+					Debug.Log("container clicked");
 				}
 			}
+		}
+
+		private Rect RenderAsCover(Dictionary<string, object> rules)
+		{
+			float scale = Math.Max((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			float width = _texture.width * scale;
+			float height = _texture.height * scale;
+
+			float top = 0, left = 0; 
+			object valign;
+			if (rules.TryGetValue("v", out valign))
+			{
+				switch ((string)valign)
+				{
+					case "top": {
+						top = 0;
+						break;
+					}
+					case "bottom": {
+						top = Screen.height - height;
+						break;
+					}
+					default: { // "center"
+						top = Screen.height / 2.0f - height / 2.0f;
+						break;
+					}
+				}
+			}
+			object halign;
+			if (rules.TryGetValue("h", out halign))
+			{
+				switch ((string)halign)
+				{
+					case "left": {
+						left = 0;
+						break;
+					}
+					case "right": {
+						left = Screen.width - width;
+						break;
+					}
+					default: { // "center"
+						left = Screen.width / 2.0f - width / 2.0f;
+						break;
+					}
+				}
+			}
+
+			return new Rect(left, top, width, height);
+		}
+
+		private Rect RenderAsContain(Dictionary<string, object> rules)
+		{
+			float scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			float width = _texture.width * scale;
+			float height = _texture.height * scale;
+
+			float top = 0, left = 0; 
+			object valign;
+			if (rules.TryGetValue("v", out valign))
+			{
+				switch ((string)valign)
+				{
+					case "top": {
+						top = 0;
+						break;
+					}
+					case "bottom": {
+						top = Screen.height - height;
+						break;
+					}
+					default: { // "center"
+						top = Screen.height / 2.0f - height / 2.0f;
+						break;
+					}
+				}
+			}
+			object halign;
+			if (rules.TryGetValue("h", out halign))
+			{
+				switch ((string)halign)
+				{
+					case "left": {
+						left = 0;
+						break;
+					}
+					case "right": {
+						left = Screen.width - width;
+						break;
+					}
+					default: { // "center"
+						left = Screen.width / 2.0f - width / 2.0f;
+						break;
+					}
+				}
+			}
+			
+			return new Rect(left, top, width, height);
 		}
 	}
 

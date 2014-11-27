@@ -16,7 +16,15 @@ namespace DeltaDNA.Messaging
 				{"url", spriteMapPath},
 				{"width", 1024},
 				{"height", 512},
-				{"format", "png"}
+				{"format", "png"},
+				{"layout", new Dictionary<string, object>() {
+					{"landscape", new Dictionary<string, object>() {
+						{"contain", new Dictionary<string, object>() {
+							{"h", "center"},
+							{"v", "center"}
+						}}
+					}}
+				}}
 			};
 
 			Popup2 popup = new Popup2();
@@ -28,7 +36,7 @@ namespace DeltaDNA.Messaging
 
 		void OnGUI () 
 		{
-			GUI.depth = 1;
+			GUI.depth = 5;
 
 	        // Make a background box
 	        GUI.Box(new Rect(150,110,100,90), "Loader Menu");
