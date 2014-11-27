@@ -19,9 +19,13 @@ namespace DeltaDNA.Messaging
 				{"format", "png"},
 				{"layout", new Dictionary<string, object>() {
 					{"landscape", new Dictionary<string, object>() {
-						{"contain", new Dictionary<string, object>() {
-							{"h", "center"},
-							{"v", "center"}
+						{"constrain", new Dictionary<string, object>() {
+							{"l", "20%"},
+							{"r", "20%"},
+							{"t", "10px"},
+							{"b", "10px"},
+							{"v", "top"},
+							{"h", "left"}
 						}}
 					}}
 				}}

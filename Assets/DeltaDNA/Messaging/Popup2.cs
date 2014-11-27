@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace DeltaDNA.Messaging
 {
@@ -243,7 +244,7 @@ namespace DeltaDNA.Messaging
 				_position = RenderAsContain((Dictionary<string, object>)rules);
 			}
 			else if (layout.TryGetValue("constrain", out rules)) {
-
+				_position = RenderAsConstrain((Dictionary<string, object>)rules);
 			}
 			else {
 				Debug.Log("Invalid layout");
@@ -364,6 +365,91 @@ namespace DeltaDNA.Messaging
 			}
 			
 			return new Rect(left, top, width, height);
+		}
+
+		private Rect RenderAsConstrain(Dictionary<string, object> rules)
+		{
+			//float scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			// find max scale that satifies the contraints
+			float lc = 0, rc = 0, tc = 0, bc = 0;
+			object l, r, t, b;
+			if (rules.TryGetValue("l", out l)) {
+				lc = GetConstraintPixels((string)l, Screen.width);
+			}
+			if (rules.TryGetValue("r", out r)) {
+				rc = GetConstraintPixels((string)r, Screen.width);
+			}
+
+			float ws = ((float)Screen.width - lc - rc) / (float)_texture.width;
+
+			if (rules.TryGetValue("t", out t)) {
+				tc = GetConstraintPixels((string)t, Screen.height);
+			}
+			if (rules.TryGetValue("b", out b)) {
+				bc = GetConstraintPixels((string)b, Screen.height);
+			}
+
+			float hs = ((float)Screen.height - tc - bc) / (float)_texture.height;
+
+			float scale = Math.Min(ws, hs);	// This is Max if you want to do cover (only works if no contraints since can't crop)
+			float width = _texture.width * scale;
+			float height = _texture.height * scale;
+
+			float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc;	// default "center"
+			float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc; 	// default "center"
+
+			object valign;
+			if (rules.TryGetValue("v", out valign))
+			{
+				switch ((string)valign)
+				{
+					case "top": {
+						top = tc;
+						break;
+					}
+					case "bottom": {
+						top = Screen.height - height - bc;
+						break;
+					}
+				}
+			}
+			object halign;
+			if (rules.TryGetValue("h", out halign))
+			{
+				switch ((string)halign)
+				{
+					case "left": {
+						left = lc;
+						break;
+					}
+					case "right": {
+						left = Screen.width - width - rc;
+						break;
+					}
+				}
+			}
+
+			return new Rect(left, top, width, height);
+		}
+
+		private float GetConstraintPixels(string constraint, float edge)
+		{
+			float val = 0;
+			Regex rgx = new Regex(@"(\d+)(px|%)", RegexOptions.IgnoreCase);
+			var match = rgx.Match(constraint);
+			if (match != null && match.Success) {
+				var groups = match.Groups;
+				Debug.Log(groups[1].Value +" "+groups[2].Value);
+
+				if (float.TryParse(groups[1].Value, out val)) {
+					if (groups[2].Value == "%") {
+						return edge * val / 100.0f;
+					} else {
+					return val;
+					}
+				}
+			}
+			return val;
 		}
 	}
 
