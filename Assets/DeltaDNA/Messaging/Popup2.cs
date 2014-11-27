@@ -1,7 +1,8 @@
-﻿using System;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System;
+
 using System.Text.RegularExpressions;
 
 namespace DeltaDNA.Messaging
@@ -52,27 +53,38 @@ namespace DeltaDNA.Messaging
 					BeforeLoad(this, new EventArgs());
 				}
 					
-				object url, width, height;
-				if (resource.TryGetValue("url", out url) &&
-				    resource.TryGetValue("width", out width) &&
-				    resource.TryGetValue("height", out height)) {
-					
-					Debug.Log("Loading resource...");
-					_spritemap.LoadResource((string)url, (int)width, (int)height, () => 
-					{
-						Debug.Log("Resource loaded...");
-						HasLoadedResource = true;
-						if (AfterLoad != null) {
-	                        AfterLoad(this, new EventArgs());
-	                    }	
-					});
-				} else {
-					Debug.LogWarning("Failed to load resource "+url);
-				}
+				SpriteMapManager spriteMapMgr = _popup.AddComponent<SpriteMapManager>();
+				spriteMapMgr.Init(resource);
+				spriteMapMgr.LoadResource(() => {
+					Debug.Log("Resource loaded...");
+					HasLoadedResource = true;
+					if (AfterLoad != null) {
+                        AfterLoad(this, new EventArgs());
+                    }	
+				});
+
+//				object url, width, height;
+//				if (resource.TryGetValue("url", out url) &&
+//				    resource.TryGetValue("width", out width) &&
+//				    resource.TryGetValue("height", out height)) {
+//					
+//					Debug.Log("Loading resource...");
+//					_spritemap.LoadResource((string)url, (int)width, (int)height, () => 
+//					{
+//						Debug.Log("Resource loaded...");
+//						HasLoadedResource = true;
+//						if (AfterLoad != null) {
+//	                        AfterLoad(this, new EventArgs());
+//	                    }	
+//					});
+//				} else {
+//					Debug.LogWarning("Failed to load resource "+url);
+//				}
 				// else what if the dictionary is corrupt?
 
 				// Add action behaviour to the buttons?
 
+				_spritemap = spriteMapMgr;
 				Resource = resource;
 
 			} catch (Exception ex) {
@@ -88,60 +100,87 @@ namespace DeltaDNA.Messaging
 					if (BeforeShow != null) {
 						BeforeShow(this, new EventArgs());
 					}
-					//_behaviour.ShowPopup(Resource);
 
-					// Build layers
-					Background background = _popup.AddComponent<Background>();
-					//background.Init(Resource);
-
-					Container container = _popup.AddComponent<Container>();
-					Texture containerTexture = _spritemap.GetSubRegion(new Rect(2, 52, 640, 400));
-
-					Buttons buttons = _popup.AddComponent<Buttons>();
-					List<Texture> buttonTextures = new List<Texture>();
-					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(2, 2, 96, 48)));
-					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(644, 404, 96, 48)));
-
-					// Container Layout
-					object layout;
-					if (Resource.TryGetValue("layout", out layout)) {
-						// Not caring about orientation of device just now
-						Dictionary<string, object> l = layout as Dictionary<string, object>;
-						Dictionary<string, object> orientation = null;
-						if (l.ContainsKey("landscape")) {
-							orientation = l["landscape"] as Dictionary<string, object>;
-						}
-						else if (l.ContainsKey("portrait")) {
-							orientation = l["portrait"] as Dictionary<string, object>;
-						}
-
-						if (orientation != null) {
-							container.Init(orientation, containerTexture);
-
-							object btns;
-							if (orientation.TryGetValue("buttons", out btns)) {
-								Debug.Log(container.Position);
-								buttons.Init(
-									(List<object>)btns, 
-									buttonTextures, 
-									container);
-							}
-
-
-						} else {
-							Debug.LogError("No layout orientation found");
-						}
-					} else {
-						Debug.LogError("No layout found");
+					object backgroundDict;
+					if (Resource.TryGetValue("background", out backgroundDict)) {
+						Background background = _popup.AddComponent<Background>();
+						background.Init((Dictionary<string, object>)backgroundDict);
 					}
 
+					object layoutDict;
+					if (Resource.TryGetValue("layout", out layoutDict)) {
+						object orientationDict;
+						if (((Dictionary<string, object>)layoutDict).TryGetValue("landscape", out orientationDict) ||
+							((Dictionary<string, object>)layoutDict).TryGetValue("portrait", out orientationDict)) {
 
-					// float scale = container.Scale...
+							Content content = _popup.AddComponent<Content>();
+							content.Init((Dictionary<string, object>)orientationDict, _spritemap.GetBackground());
 
-					//Buttons buttons = _popup.AddComponent<Buttons>();
-					//buttons.Init(Resource);
+							Buttons buttons = _popup.AddComponent<Buttons>();
+							buttons.Init((Dictionary<string, object>)orientationDict, _spritemap.GetButtons(), content);
+						
+							IsShowingPopup = true;
+						} 
+						else {
+							Debug.LogError("No layout orientation found.");
+						} 
+					}
+					else {
+						Debug.LogError("No layout found.");
+					}
 
-					IsShowingPopup = true;
+//					// Build layers
+//					//Background background = _popup.AddComponent<Background>();
+//					//background.Init(Resource);
+//
+//					Content container = _popup.AddComponent<Content>();
+//					Texture containerTexture = _spritemap.GetSubRegion(new Rect(2, 52, 640, 400));
+//
+//					Buttons buttons = _popup.AddComponent<Buttons>();
+//					List<Texture> buttonTextures = new List<Texture>();
+//					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(2, 2, 96, 48)));
+//					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(644, 404, 96, 48)));
+//
+//					// Container Layout
+//					object layout;
+//					if (Resource.TryGetValue("layout", out layout)) {
+//						// Not caring about orientation of device just now
+//						Dictionary<string, object> l = layout as Dictionary<string, object>;
+//						Dictionary<string, object> orientation = null;
+//						if (l.ContainsKey("landscape")) {
+//							orientation = l["landscape"] as Dictionary<string, object>;
+//						}
+//						else if (l.ContainsKey("portrait")) {
+//							orientation = l["portrait"] as Dictionary<string, object>;
+//						}
+//
+//						if (orientation != null) {
+//							container.Init(orientation, containerTexture);
+//
+//							object btns;
+//							if (orientation.TryGetValue("buttons", out btns)) {
+//								Debug.Log(container.Position);
+//								buttons.Init(
+//									(List<object>)btns, 
+//									buttonTextures, 
+//									container);
+//							}
+//
+//
+//						} else {
+//							Debug.LogError("No layout orientation found");
+//						}
+//					} else {
+//						Debug.LogError("No layout found");
+//					}
+//
+//
+//					// float scale = container.Scale...
+//
+//					//Buttons buttons = _popup.AddComponent<Buttons>();
+//					//buttons.Init(Resource);
+
+
 				} catch (Exception ex) {
 					Debug.LogException(ex);
 				}
@@ -149,14 +188,84 @@ namespace DeltaDNA.Messaging
 		}
 	}
 
-	public class SpriteMapManager : MonoBehaviour
+	internal class SpriteMapManager : MonoBehaviour
 	{
-		public Texture2D SpriteMap { get; set; }
-	
-		public void LoadResource(string url, int width, int height, Action callback)
+		private Dictionary<string, object> _spriteMapDict;
+
+		public Texture2D SpriteMap { get; private set; }
+		public string URL { get; private set; }
+		public int Width { get; private set; }
+		public int Height { get; private set; }
+
+		public void Init(Dictionary<string, object> message)
 		{
-			SpriteMap = new Texture2D(width, height);
-			StartCoroutine(LoadResourceCoroutine(url, callback));
+			object url, width, height;
+			if (message.TryGetValue("url", out url) &&
+			    message.TryGetValue("width", out width) &&
+			    message.TryGetValue("height", out height)) {
+
+			    URL = (string)url;
+			    Width = (int)width;
+			    Height = (int)height;
+			}
+			else {
+				Debug.Log("Invalid image message format.");
+			}
+
+			object spriteMapDict;
+			if (message.TryGetValue("spritemap", out spriteMapDict)) {
+				_spriteMapDict = (Dictionary<string, object>)spriteMapDict;
+			}
+			else {
+				Debug.Log("Invalid message format, missing 'spritemap' object");
+			}
+		}
+	
+		public void LoadResource(Action callback)
+		{
+			SpriteMap = new Texture2D(Width, Height);
+			StartCoroutine(LoadResourceCoroutine(URL, callback));
+		}
+
+		public Texture GetBackground()
+		{
+			object backgroundDict;
+			if (_spriteMapDict.TryGetValue("background", out backgroundDict)) {
+				object x, y, width, height;
+				if (((Dictionary<string, object>)backgroundDict).TryGetValue("x", out x) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("y", out y) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("width", out width) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("height", out height)) {
+
+				    return GetSubRegion((int)x, (int)y, (int)width, (int)height);
+				}
+			}
+			else {
+				Debug.LogError("Background not found in spritemap object.");
+			}
+
+			return null;
+		}
+
+		public List<Texture> GetButtons()
+		{
+			List<Texture> textures = new List<Texture>();
+
+			object buttonList;
+			if (_spriteMapDict.TryGetValue("buttons", out buttonList)) {
+				foreach (object buttonDict in (List<object>)buttonList) {
+					object x, y, width, height;
+					if (((Dictionary<string, object>)buttonDict).TryGetValue("x", out x) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("y", out y) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("width", out width) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("height", out height)) {
+
+						textures.Add(GetSubRegion((int)x, (int)y, (int)width, (int)height));
+					}
+				}
+			}
+
+			return textures;
 		}
 
 		public Texture2D GetSubRegion(int x, int y, int width, int height)
@@ -177,7 +286,7 @@ namespace DeltaDNA.Messaging
 				Mathf.FloorToInt(rect.height));
 		}
 
-		private IEnumerator LoadResourceCoroutine(string url, Action callback)
+		private System.Collections.IEnumerator LoadResourceCoroutine(string url, Action callback)
 		{
 			WWW www = new WWW(url);
 
@@ -194,16 +303,38 @@ namespace DeltaDNA.Messaging
 
 	}
 
-	public class Background : MonoBehaviour
+	internal class Background : MonoBehaviour
 	{
-		private Texture2D _texture = new Texture2D(1, 1);
+		private Texture2D _texture;
+		private const byte _dimmedMaskAlpha = 128;
 
-		public void Awake()
+		public void Init(Dictionary<string, object> config)
 		{
-			Color32[] colours = new Color32[1];
-			colours[0] = new Color32(0, 0, 0, 128); 
-			_texture.SetPixels32(colours);
-			_texture.Apply();
+			object mask;
+			if (config.TryGetValue("mask", out mask)) {
+				bool show = true;
+				Color32[] colours = new Color32[1];
+				switch ((string)mask) 
+				{
+					case "dimmed": {
+						colours[0] = new Color32(0, 0, 0, _dimmedMaskAlpha); 
+						break;
+					}
+					case "clear": {
+						colours[0] = new Color32(0, 0, 0, 0); 
+						break;
+					}
+					default: {	// "none"
+						show = false;
+						break;
+					}
+				}
+				if (show) {
+					_texture = new Texture2D(1, 1);
+					_texture.SetPixels32(colours);
+					_texture.Apply();
+				}
+			}
 		}
 
 		public void OnGUI()
@@ -221,7 +352,7 @@ namespace DeltaDNA.Messaging
 		}
 	}
 
-	public class Container : MonoBehaviour
+	internal class Content : MonoBehaviour
 	{
 		private Texture _texture;
 		private Rect _position;
@@ -237,9 +368,6 @@ namespace DeltaDNA.Messaging
 			} 
 			else if (layout.TryGetValue("contain", out rules)) {
 				_position = RenderAsContain((Dictionary<string, object>)rules);
-			}
-			else if (layout.TryGetValue("constrain", out rules)) {
-				_position = RenderAsConstrain((Dictionary<string, object>)rules);
 			}
 			else {
 				Debug.Log("Invalid layout");
@@ -274,9 +402,10 @@ namespace DeltaDNA.Messaging
 			float width = _texture.width * _scale;
 			float height = _texture.height * _scale;
 
-			float top = 0, left = 0; 
+			float top = Screen.height / 2.0f - height / 2.0f;	// default "center"
+			float left = Screen.width / 2.0f - width / 2.0f;
 			object valign;
-			if (rules.TryGetValue("v", out valign))
+			if (rules.TryGetValue("valign", out valign))
 			{
 				switch ((string)valign)
 				{
@@ -288,14 +417,10 @@ namespace DeltaDNA.Messaging
 						top = Screen.height - height;
 						break;
 					}
-					default: { // "center"
-						top = Screen.height / 2.0f - height / 2.0f;
-						break;
-					}
 				}
 			}
 			object halign;
-			if (rules.TryGetValue("h", out halign))
+			if (rules.TryGetValue("halign", out halign))
 			{
 				switch ((string)halign)
 				{
@@ -307,90 +432,35 @@ namespace DeltaDNA.Messaging
 						left = Screen.width - width;
 						break;
 					}
-					default: { // "center"
-						left = Screen.width / 2.0f - width / 2.0f;
-						break;
-					}
 				}
 			}
 
 			return new Rect(left, top, width, height);
 		}
-
+			
 		private Rect RenderAsContain(Dictionary<string, object> rules)
 		{
-			_scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
-			float width = _texture.width * _scale;
-			float height = _texture.height * _scale;
-
-			float top = 0, left = 0; 
-			object valign;
-			if (rules.TryGetValue("v", out valign))
-			{
-				switch ((string)valign)
-				{
-					case "top": {
-						top = 0;
-						break;
-					}
-					case "bottom": {
-						top = Screen.height - height;
-						break;
-					}
-					default: { // "center"
-						top = Screen.height / 2.0f - height / 2.0f;
-						break;
-					}
-				}
-			}
-			object halign;
-			if (rules.TryGetValue("h", out halign))
-			{
-				switch ((string)halign)
-				{
-					case "left": {
-						left = 0;
-						break;
-					}
-					case "right": {
-						left = Screen.width - width;
-						break;
-					}
-					default: { // "center"
-						left = Screen.width / 2.0f - width / 2.0f;
-						break;
-					}
-				}
-			}
-			
-			return new Rect(left, top, width, height);
-		}
-
-		private Rect RenderAsConstrain(Dictionary<string, object> rules)
-		{
-			//float scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
-			// find max scale that satifies the contraints
 			float lc = 0, rc = 0, tc = 0, bc = 0;
 			object l, r, t, b;
-			if (rules.TryGetValue("l", out l)) {
+			if (rules.TryGetValue("left", out l)) {
 				lc = GetConstraintPixels((string)l, Screen.width);
 			}
-			if (rules.TryGetValue("r", out r)) {
+			if (rules.TryGetValue("right", out r)) {
 				rc = GetConstraintPixels((string)r, Screen.width);
 			}
 
 			float ws = ((float)Screen.width - lc - rc) / (float)_texture.width;
 
-			if (rules.TryGetValue("t", out t)) {
+			if (rules.TryGetValue("top", out t)) {
 				tc = GetConstraintPixels((string)t, Screen.height);
 			}
-			if (rules.TryGetValue("b", out b)) {
+			if (rules.TryGetValue("bottom", out b)) {
 				bc = GetConstraintPixels((string)b, Screen.height);
 			}
 
 			float hs = ((float)Screen.height - tc - bc) / (float)_texture.height;
 
-			_scale = Math.Min(ws, hs);	// This is Max if you want to do cover (only works if no contraints since can't crop)
+			_scale = Math.Min(ws, hs);
 			float width = _texture.width * _scale;
 			float height = _texture.height * _scale;
 
@@ -398,7 +468,7 @@ namespace DeltaDNA.Messaging
 			float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc; 	// default "center"
 
 			object valign;
-			if (rules.TryGetValue("v", out valign))
+			if (rules.TryGetValue("valign", out valign))
 			{
 				switch ((string)valign)
 				{
@@ -413,7 +483,7 @@ namespace DeltaDNA.Messaging
 				}
 			}
 			object halign;
-			if (rules.TryGetValue("h", out halign))
+			if (rules.TryGetValue("halign", out halign))
 			{
 				switch ((string)halign)
 				{
@@ -452,26 +522,32 @@ namespace DeltaDNA.Messaging
 		}
 	}
 
-	public class Buttons : MonoBehaviour
+	internal class Buttons : MonoBehaviour
 	{
 		private List<Texture> _textures = new List<Texture>();
 		private List<Rect> _positions = new List<Rect>();
 					
-		public void Init(List<object> buttons, List<Texture> textures, Container container)
+		public void Init(Dictionary<string, object> orientation, List<Texture> textures, Content content)
 		{
-			for (int i = 0; i < buttons.Count; ++i) {
-				float left = 0, top = 0;
-				object x, y;
-				if (((Dictionary<string, object>)buttons[i]).TryGetValue("x", out x)) {
-					left = (int)x * container.Scale + container.Position.xMin;
-				}
-				if (((Dictionary<string, object>)buttons[i]).TryGetValue("y", out y)) {
-					top = (int)y * container.Scale + container.Position.yMin;
-				}
-				_positions.Add(new Rect(left, top, textures[i].width * container.Scale, textures[i].height * container.Scale));
-			}
+			object buttonsObj;
+			if (orientation.TryGetValue("buttons", out buttonsObj)) {
+				List<object> buttons = buttonsObj as List<object>;
 
-			_textures = textures;
+				for (int i = 0; i < buttons.Count; ++i) {
+					float left = 0, top = 0;
+					object x, y;
+					if (((Dictionary<string, object>)buttons[i]).TryGetValue("x", out x)) {
+						left = (int)x * content.Scale + content.Position.xMin;
+					}
+					if (((Dictionary<string, object>)buttons[i]).TryGetValue("y", out y)) {
+						top = (int)y * content.Scale + content.Position.yMin;
+					}
+					_positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
+				}
+
+				_textures = textures;
+
+			}
 		}
 
 		public void OnGUI()

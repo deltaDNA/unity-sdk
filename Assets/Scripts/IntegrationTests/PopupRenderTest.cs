@@ -17,15 +17,37 @@ namespace DeltaDNA.Messaging
 				{"width", 1024},
 				{"height", 512},
 				{"format", "png"},
+				{"spritemap", new Dictionary<string, object>() {
+					{"background", new Dictionary<string, object>() {
+						{"x", 2},
+						{"y", 52},
+						{"width", 640},
+						{"height", 400}
+					}},
+					{"buttons", new List<object>() {
+						new Dictionary<string, object>() {
+							{"x", 2},
+							{"y", 2},
+							{"width", 96},
+							{"height", 48}
+						},
+						new Dictionary<string, object>() {
+							{"x", 644},
+							{"y", 404},
+							{"width", 96},
+							{"height", 48}
+						}
+					}}
+				}},
 				{"layout", new Dictionary<string, object>() {
 					{"landscape", new Dictionary<string, object>() {
-						{"constrain", new Dictionary<string, object>() {
-							{"l", "20%"},
-							{"r", "20%"},
-							{"t", "10px"},
-							{"b", "10px"},
-							{"v", "top"},
-							{"h", "left"}
+						{"contain", new Dictionary<string, object>() {
+							{"left", "20%"},
+							{"right", "20%"},
+							{"top", "10px"},
+							{"bottom", "10px"},
+							{"valign", "center"},
+							{"halign", "center"}
 						}},
 						{"buttons", new List<object>() {
 							new Dictionary<string, object>() {
@@ -38,6 +60,10 @@ namespace DeltaDNA.Messaging
 							}
 						}}
 					}}
+				}},
+				{"background", new Dictionary<string, object>() {
+					{"mask", "dimmed"},
+					{"dismiss", true}
 				}}
 			};
 

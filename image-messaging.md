@@ -43,8 +43,8 @@ whilst still maintaining the original aspect ratio.
     'layout': {
         'landscape': {
             'cover': {
-                'h': 'center'
-                'v': 'center'
+                'halign': 'center'
+                'valign': 'center'
             },
             'buttons': [
                 {
@@ -55,8 +55,12 @@ whilst still maintaining the original aspect ratio.
                     'x': 50
                     'y': 75
                 }
-            ]
-        }
+            ],
+        },
+    },
+    'background': {
+        'mask': 'dimmed'    // none, clear, dimmed
+        'dimiss': true      // dismiss on touch
     }
 }
 
@@ -86,27 +90,40 @@ Some more examples looking at the possible layouts and what they would achieve.
 'layout': {
     'landscape': {
         'contain': {
-            'h': 'left'
-            'v': 'center'
+
         }
     }
 }
 ```
-Fill's the screen with the image, positioning it against the left side.
+Fills the centre of the screen with the image.
+
+```javascript
+'layout': {
+    'landscape': {
+        'contain': {
+            'halign': 'left'
+            'valign': 'center'
+        }
+    }
+}
+```
+Fills the screen with the image, positioning it against the left side.
 
 ```javascript
 'layout': {
     'portrait': {
-        'constrain': {
-            'l': '10px'
-            'r': '20%'
-            't': '25px',
-            'b': '5%'
+        'contain': {
+            'halign': 'center',
+            'valign': 'center',
+            'left': '10px'
+            'right': '20%'
+            'top': '25px',
+            'bottom': '5%'
         }
     }
 }
 ```
-Fill's the screen with the image, but keeps at least 10 pixels from the left, 20% of the screen from the right, 25 pixels from the top and 5% of the screen from the bottom.
+Fill's the screen with the image, but keeps at least 10 pixels from the left edge, 20% of the screen from the right, 25 pixels from the top and 5% of the screen from the bottom.  The image is then centered in the available space.
 
 It could be useful to support different layouts for landscape and portrait although that is perhaps unnecessary.
 
