@@ -26,6 +26,16 @@ namespace DeltaDNA.Messaging
 							{"b", "10px"},
 							{"v", "top"},
 							{"h", "left"}
+						}},
+						{"buttons", new List<object>() {
+							new Dictionary<string, object>() {
+								{"x", 544},
+								{"y", 0}
+							},
+							new Dictionary<string, object>() {
+								{"x", 544},
+								{"y", 352}
+							}
 						}}
 					}}
 				}}

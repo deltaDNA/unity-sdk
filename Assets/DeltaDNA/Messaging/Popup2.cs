@@ -97,6 +97,11 @@ namespace DeltaDNA.Messaging
 					Container container = _popup.AddComponent<Container>();
 					Texture containerTexture = _spritemap.GetSubRegion(new Rect(2, 52, 640, 400));
 
+					Buttons buttons = _popup.AddComponent<Buttons>();
+					List<Texture> buttonTextures = new List<Texture>();
+					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(2, 2, 96, 48)));
+					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(644, 404, 96, 48)));
+
 					// Container Layout
 					object layout;
 					if (Resource.TryGetValue("layout", out layout)) {
@@ -112,6 +117,17 @@ namespace DeltaDNA.Messaging
 
 						if (orientation != null) {
 							container.Init(orientation, containerTexture);
+
+							object btns;
+							if (orientation.TryGetValue("buttons", out btns)) {
+								Debug.Log(container.Position);
+								buttons.Init(
+									(List<object>)btns, 
+									buttonTextures, 
+									container);
+							}
+
+
 						} else {
 							Debug.LogError("No layout orientation found");
 						}
@@ -213,7 +229,7 @@ namespace DeltaDNA.Messaging
 
 		public void OnGUI()
 		{
-			GUI.depth = 0;
+			GUI.depth = 2;
 
 			GUI.color = new Color32(255, 255, 255, 100);
 
@@ -231,6 +247,7 @@ namespace DeltaDNA.Messaging
 	{
 		private Texture _texture;
 		private Rect _position;
+		private float _scale;
 
 		public void Init(Dictionary<string, object> layout, Texture texture)
 		{
@@ -250,6 +267,10 @@ namespace DeltaDNA.Messaging
 				Debug.Log("Invalid layout");
 			}
 		}
+
+		public Rect Position { get { return _position; }}
+
+		public float Scale { get { return _scale; }}
 
 		public void OnGUI()
 		{
@@ -271,9 +292,9 @@ namespace DeltaDNA.Messaging
 
 		private Rect RenderAsCover(Dictionary<string, object> rules)
 		{
-			float scale = Math.Max((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
-			float width = _texture.width * scale;
-			float height = _texture.height * scale;
+			_scale = Math.Max((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			float width = _texture.width * _scale;
+			float height = _texture.height * _scale;
 
 			float top = 0, left = 0; 
 			object valign;
@@ -320,9 +341,9 @@ namespace DeltaDNA.Messaging
 
 		private Rect RenderAsContain(Dictionary<string, object> rules)
 		{
-			float scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
-			float width = _texture.width * scale;
-			float height = _texture.height * scale;
+			_scale = Math.Min((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			float width = _texture.width * _scale;
+			float height = _texture.height * _scale;
 
 			float top = 0, left = 0; 
 			object valign;
@@ -391,9 +412,9 @@ namespace DeltaDNA.Messaging
 
 			float hs = ((float)Screen.height - tc - bc) / (float)_texture.height;
 
-			float scale = Math.Min(ws, hs);	// This is Max if you want to do cover (only works if no contraints since can't crop)
-			float width = _texture.width * scale;
-			float height = _texture.height * scale;
+			_scale = Math.Min(ws, hs);	// This is Max if you want to do cover (only works if no contraints since can't crop)
+			float width = _texture.width * _scale;
+			float height = _texture.height * _scale;
 
 			float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc;	// default "center"
 			float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc; 	// default "center"
@@ -455,17 +476,34 @@ namespace DeltaDNA.Messaging
 
 	public class Buttons : MonoBehaviour
 	{
-		private List<Texture> _texture = new List<Texture>();
-		private List<Rect> _position = new List<Rect>();
+		private List<Texture> _textures = new List<Texture>();
+		private List<Rect> _positions = new List<Rect>();
+					
+		public void Init(List<object> buttons, List<Texture> textures, Container container)
+		{
+			for (int i = 0; i < buttons.Count; ++i) {
+				float left = 0, top = 0;
+				object x, y;
+				if (((Dictionary<string, object>)buttons[i]).TryGetValue("x", out x)) {
+					left = (int)x * container.Scale + container.Position.xMin;
+				}
+				if (((Dictionary<string, object>)buttons[i]).TryGetValue("y", out y)) {
+					top = (int)y * container.Scale + container.Position.yMin;
+				}
+				_positions.Add(new Rect(left, top, textures[i].width * container.Scale, textures[i].height * container.Scale));
+			}
+
+			_textures = textures;
+		}
 
 		public void OnGUI()
 		{
-			GUI.depth = 2;
+			GUI.depth = 0;
 
-			for (int i = 0; i < _texture.Count; ++i)
+			for (int i = 0; i < _textures.Count; ++i)
 			{
-				if (GUI.Button(_position[i], _texture[i], GUIStyle.none)) {
-					Debug.Log("Button "+i+1+" clicked");
+				if (GUI.Button(_positions[i], _textures[i], GUIStyle.none)) {
+					Debug.Log("Button "+(i+1)+" clicked");
 				}
 			}
 		}
