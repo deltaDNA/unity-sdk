@@ -68,10 +68,11 @@ namespace DeltaDNA.Messaging
 						BeforeShow(this, new EventArgs());
 					}
 
-					object screenDict;
-					if (Configuration.TryGetValue("screen", out screenDict)) {
+					object screenDictObj;
+					if (Configuration.TryGetValue("screen", out screenDictObj)) {
+						var screenDict = screenDictObj as Dictionary<string, object>;
 						ScreenLayer screen = _gameObject.AddComponent<ScreenLayer>();
-						screen.Init(this, (Dictionary<string, object>)screenDict);
+						screen.Init(this, screenDict);
 					}
 
 					object layoutDictObj;
@@ -183,13 +184,14 @@ namespace DeltaDNA.Messaging
 
 		public Texture GetBackground()
 		{
-			object backgroundDict;
-			if (_spriteMapDict.TryGetValue("background", out backgroundDict)) {
+			object backgroundDictObj;
+			if (_spriteMapDict.TryGetValue("background", out backgroundDictObj)) {
+				var backgroundDict = backgroundDictObj as Dictionary<string, object>;
 				object x, y, width, height;
-				if (((Dictionary<string, object>)backgroundDict).TryGetValue("x", out x) &&
-					((Dictionary<string, object>)backgroundDict).TryGetValue("y", out y) &&
-					((Dictionary<string, object>)backgroundDict).TryGetValue("width", out width) &&
-					((Dictionary<string, object>)backgroundDict).TryGetValue("height", out height)) {
+				if (backgroundDict.TryGetValue("x", out x) &&
+					backgroundDict.TryGetValue("y", out y) &&
+					backgroundDict.TryGetValue("width", out width) &&
+					backgroundDict.TryGetValue("height", out height)) {
 
 				    return GetSubRegion((int)x, (int)y, (int)width, (int)height);
 				}
@@ -205,14 +207,16 @@ namespace DeltaDNA.Messaging
 		{
 			List<Texture> textures = new List<Texture>();
 
-			object buttonList;
-			if (_spriteMapDict.TryGetValue("buttons", out buttonList)) {
-				foreach (object buttonDict in (List<object>)buttonList) {
+			object buttonListObj;
+			if (_spriteMapDict.TryGetValue("buttons", out buttonListObj)) {
+				var buttonList = buttonListObj as List<object>;
+				foreach (object buttonDictObj in buttonList) {
+					var buttonDict = buttonDictObj as Dictionary<string, object>;
 					object x, y, width, height;
-					if (((Dictionary<string, object>)buttonDict).TryGetValue("x", out x) &&
-						((Dictionary<string, object>)buttonDict).TryGetValue("y", out y) &&
-						((Dictionary<string, object>)buttonDict).TryGetValue("width", out width) &&
-						((Dictionary<string, object>)buttonDict).TryGetValue("height", out height)) {
+					if (buttonDict.TryGetValue("x", out x) &&
+						buttonDict.TryGetValue("y", out y) &&
+						buttonDict.TryGetValue("width", out width) &&
+						buttonDict.TryGetValue("height", out height)) {
 
 						textures.Add(GetSubRegion((int)x, (int)y, (int)width, (int)height));
 					}
