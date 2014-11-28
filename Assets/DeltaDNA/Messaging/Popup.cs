@@ -22,17 +22,22 @@ namespace DeltaDNA.Messaging
 
 		private GameObject _gameObject;
 		private SpriteMap _spritemap;
+		private int _depth = 0;
 
-		public Popup() : this(new Dictionary<string, object>())
-		{
-
-		}
+		public Popup() : this(new Dictionary<string, object>()) {}
 
 		public Popup(Dictionary<string, object> options)
 		{
-			string name = (options.ContainsKey("name")) ? options["name"] as string : "Popup";
-			_gameObject = new GameObject(name);
+			object name;
+			options.TryGetValue("name", out name);
+			_gameObject = new GameObject((string)name ?? "Popup");
+
 			_spritemap = _gameObject.AddComponent<SpriteMap>();
+
+			object depth;
+			if (options.TryGetValue("depth", out depth)) {
+				_depth = (int)depth;
+			}
 		}
 
 		public void Prepare(Dictionary<string, object> configuration)
@@ -68,11 +73,11 @@ namespace DeltaDNA.Messaging
 						BeforeShow(this, new EventArgs());
 					}
 
-					object screenDictObj;
-					if (Configuration.TryGetValue("screen", out screenDictObj)) {
-						var screenDict = screenDictObj as Dictionary<string, object>;
-						ScreenLayer screen = _gameObject.AddComponent<ScreenLayer>();
-						screen.Init(this, screenDict);
+					object shimDictObj;
+					if (Configuration.TryGetValue("shim", out shimDictObj)) {
+						var shimDict = shimDictObj as Dictionary<string, object>;
+						ShimLayer shim = _gameObject.AddComponent<ShimLayer>();
+						shim.Init(this, shimDict, _depth);
 					}
 
 					object layoutDictObj;
@@ -85,10 +90,10 @@ namespace DeltaDNA.Messaging
 							var orientationDict = orientationDictObj as Dictionary<string, object>;
 
 							BackgroundLayer background = _gameObject.AddComponent<BackgroundLayer>();
-							background.Init(this, orientationDict, _spritemap.GetBackground());
+							background.Init(this, orientationDict, _spritemap.GetBackground(), _depth-1);
 
 							ButtonsLayer buttons = _gameObject.AddComponent<ButtonsLayer>();
-							buttons.Init(this, orientationDict, _spritemap.GetButtons(), background);
+							buttons.Init(this, orientationDict, _spritemap.GetButtons(), background, _depth-2);
 						
 							IsShowing = true;
 						} 
@@ -265,20 +270,21 @@ namespace DeltaDNA.Messaging
 	{
 		protected IPopup _popup;
 		protected List<Action> _actions = new List<Action>();
+		protected int _depth = 0;
 
 		protected void RegisterAction()
 		{
 			_actions.Add(() => {});
 		}
 
-		protected void RegisterAction(Dictionary<string, object> action)
+		protected void RegisterAction(Dictionary<string, object> action, string id)
 		{
 			object typeObj, valueObj;
 			action.TryGetValue("value", out valueObj);
 		
 			if (action.TryGetValue("type", out typeObj)) {
 
-				PopupEventArgs eventArgs = new PopupEventArgs((string)typeObj, (string)valueObj);
+				PopupEventArgs eventArgs = new PopupEventArgs(id, (string)typeObj, (string)valueObj);
 
 				switch ((string)typeObj) {
 					case "NONE": {
@@ -316,14 +322,15 @@ namespace DeltaDNA.Messaging
 		}
 	}
 
-	internal class ScreenLayer : Layer
+	internal class ShimLayer : Layer
 	{
 		private Texture2D _texture;
 		private const byte _dimmedMaskAlpha = 128;
 
-		public void Init(IPopup popup, Dictionary<string, object> config)
+		public void Init(IPopup popup, Dictionary<string, object> config, int depth)
 		{
 			_popup = popup;
+			_depth = depth;
 
 			object mask;
 			if (config.TryGetValue("mask", out mask)) {
@@ -353,7 +360,7 @@ namespace DeltaDNA.Messaging
 
 			object actionObj;
 			if (config.TryGetValue("action", out actionObj)) {
-				RegisterAction((Dictionary<string, object>)actionObj);
+				RegisterAction((Dictionary<string, object>)actionObj, "shim");
 			} 
 			else {
 				RegisterAction();
@@ -362,7 +369,7 @@ namespace DeltaDNA.Messaging
 
 		public void OnGUI()
 		{
-			GUI.depth = 2;
+			GUI.depth = _depth;
 
 			if (_texture)
 			{
@@ -381,10 +388,11 @@ namespace DeltaDNA.Messaging
 		private Rect _position;
 		private float _scale;
 
-		public void Init(IPopup popup, Dictionary<string, object> layout, Texture texture)
+		public void Init(IPopup popup, Dictionary<string, object> layout, Texture texture, int depth)
 		{
 			_popup = popup;
 			_texture = texture;
+			_depth = depth;
 
 			object rules;
 			if (layout.TryGetValue("cover", out rules)) {
@@ -401,7 +409,7 @@ namespace DeltaDNA.Messaging
 			if (layout.TryGetValue("background", out backgroundObj)) {
 				object actionObj;
 				if (((Dictionary<string, object>)backgroundObj).TryGetValue("action", out actionObj)) {
-					RegisterAction((Dictionary<string, object>)actionObj);
+					RegisterAction((Dictionary<string, object>)actionObj, "background");
 				} 
 				else {
 					RegisterAction();
@@ -418,7 +426,7 @@ namespace DeltaDNA.Messaging
 
 		public void OnGUI()
 		{
-			GUI.depth = 1;
+			GUI.depth = _depth;
 
 			if (_texture)
 			{
@@ -560,9 +568,10 @@ namespace DeltaDNA.Messaging
 		private List<Texture> _textures = new List<Texture>();
 		private List<Rect> _positions = new List<Rect>();
 
-		public void Init(IPopup popup, Dictionary<string, object> orientation, List<Texture> textures, BackgroundLayer content)
+		public void Init(IPopup popup, Dictionary<string, object> orientation, List<Texture> textures, BackgroundLayer content, int depth)
 		{
 			_popup = popup;
+			_depth = depth;
 			
 			object buttonsObj;
 			if (orientation.TryGetValue("buttons", out buttonsObj)) {
@@ -581,7 +590,7 @@ namespace DeltaDNA.Messaging
 				
 					object actionObj;
 					if (button.TryGetValue("action", out actionObj)) {
-						RegisterAction((Dictionary<string, object>)actionObj);
+						RegisterAction((Dictionary<string, object>)actionObj, "button"+(i+1));
 					} 
 					else {
 						RegisterAction();
@@ -593,7 +602,7 @@ namespace DeltaDNA.Messaging
 
 		public void OnGUI()
 		{
-			GUI.depth = 0;
+			GUI.depth = _depth;
 
 			for (int i = 0; i < _textures.Count; ++i)
 			{

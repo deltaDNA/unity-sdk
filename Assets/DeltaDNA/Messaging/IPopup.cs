@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
 	public class PopupEventArgs: EventArgs
 	{
-		public PopupEventArgs(string type, string value=null)
+		public PopupEventArgs(string id, string type, string value=null)
 		{
+			this.ID = id;
 			this.ActionType = type;
 			this.ActionValue = value;
 		}
 
+		public string ID { get; set; }
 		public string ActionType { get; set; }
 		public string ActionValue { get; set; }
 	}

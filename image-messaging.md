@@ -70,7 +70,7 @@ whilst still maintaining the original aspect ratio.
             ]
         },
     },
-    'screen': {
+    'shim': {
         'mask': 'dimmed',   // none, clear, dimmed
         'action': {
             'type': 'DISMISS'      // dismiss on touch

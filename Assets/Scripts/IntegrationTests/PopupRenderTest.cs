@@ -73,7 +73,7 @@ namespace DeltaDNA.Messaging
 						}}
 					}}
 				}},
-				{"screen", new Dictionary<string, object>() {
+				{"shim", new Dictionary<string, object>() {
 					{"mask", "dimmed"},
 					{"action", new Dictionary<string, object>() {
 						{"type", "NONE"}
@@ -86,10 +86,10 @@ namespace DeltaDNA.Messaging
 				((Popup)sender).Show();
 			};
 			popup.Action += (sender, e) => {
-				Debug.Log("Action => "+e.ActionType+" "+e.ActionValue);
+				Debug.Log("Action => "+e.ID+" "+e.ActionType+" "+e.ActionValue);
 			};
 			popup.Dismiss += (sender, e) => {
-				Debug.Log("Dismiss");
+				Debug.Log("Dismiss => "+e.ID);
 			};
 			popup.Prepare(image);
 		}
