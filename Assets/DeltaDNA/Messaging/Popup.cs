@@ -111,7 +111,9 @@ namespace DeltaDNA.Messaging
 					BeforeClose(this, new EventArgs());
 				}
 
-				UnityEngine.Object.Destroy(_gameObject);
+				foreach (var layer in _gameObject.GetComponents<Layer>()) {
+					UnityEngine.Object.Destroy(layer);
+				}
 
 				if (AfterClose != null) {
 					AfterClose(this, new EventArgs());
