@@ -260,9 +260,8 @@ namespace DeltaDNA
 			RequestEngagement(decisionPoint, engageParams, (response) => {
 				if (response != null && response.ContainsKey("image"))
 				{
-					var ip = response["image"] as Dictionary<string, object>;
-					ImageComposition image = ImageComposition.BuildFromDictionary(ip);
-					popup.LoadResource(image);
+					var image = response["image"] as Dictionary<string, object>;
+					popup.Prepare(image);
 				}
 			});
 		}

@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
 				};
 					
 				IPopup gameEndedPopup = new Popup();
-				gameEndedPopup.AfterLoad += new EventHandler(OnPopupLoaded);
+				gameEndedPopup.AfterPrepare += new EventHandler(OnPopupLoaded);
 				gameEndedPopup.BeforeClose += new EventHandler(OnGameEnded);
 				ddsdk.RequestImageMessage("gameEnded", engageParams, gameEndedPopup);
 			}
@@ -108,18 +108,18 @@ public class PlayerController : MonoBehaviour
 				// Create Popup Object
 				IPopup myPopup = new Popup();
 				// Setup Events
-				myPopup.AfterLoad += (sender, e) => {
+				myPopup.AfterPrepare += (sender, e) => {
 					Debug.Log("Popup loaded resource");
 					// Just show it, although you could do this later
-					myPopup.ShowPopup();
+					myPopup.Show();
 				};
 
 				myPopup.Dismiss += (sender, e) => {
-					Debug.Log("Popup dismissed by "+e.GameObject.name);
+					Debug.Log("Popup dismissed");
 				};
 
 				myPopup.Action += (sender, e) => {
-					Debug.Log("Popup actioned by "+e.GameObject.name+" with command "+e.ImageAsset.ActionParam);
+					Debug.Log("Popup actioned by with command "+e.ActionValue);
 				};
 				// Start Request
 				ddsdk.RequestImageMessage("pickUp", engageParams, myPopup);
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
 	void OnPopupLoaded(object sender, EventArgs e)
 	{
-		((IPopup)sender).ShowPopup();
+		((IPopup)sender).Show();
 	}
 
 	void OnGameEnded(object sender, EventArgs e)

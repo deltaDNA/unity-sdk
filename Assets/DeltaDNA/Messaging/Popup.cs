@@ -1,330 +1,602 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
-	/// <summary>
-	/// Builds a popup to display an image message from Engage.  Each popup has a background
-	/// and two buttons.  Their images are determined by an ImageComposition object.  A 
-	/// number of event handlers are available to customise the behaviour for your game.
-	///
-	/// Known limitations:
-	/// 	The Popup uses GUITextures to render the background and buttons.  These will
-	/// interfere with UI components drawn in OnGUI.
-	/// </summary>
 	public class Popup : IPopup
 	{
-		public event EventHandler BeforeLoad;
-		public event EventHandler AfterLoad;
+		public event EventHandler BeforePrepare;
+		public event EventHandler AfterPrepare;
 		public event EventHandler BeforeShow;
 		public event EventHandler BeforeClose;
 		public event EventHandler AfterClose;
 		public event EventHandler<PopupEventArgs> Dismiss;
 		public event EventHandler<PopupEventArgs> Action;
 
-		public ImageComposition Image { get; set; }
-		public bool HasLoadedResource { get; set; }
-		public bool IsShowingPopup { get; set; }
+		public Dictionary<string, object> Configuration { get; private set; }
+		public bool IsReady { get; private set; }
+		public bool IsShowing { get; private set; }
 
-		private GameObject _popup;
-		private PopupBehaviour _behaviour;
-		private float _zAxis = 1;
+		private GameObject _gameObject;
+		private SpriteMap _spritemap;
 
-		public void OnDismiss(PopupEventArgs eventArgs)
-		{
-
-		}
-
-		public void OnAction(PopupEventArgs eventArgs)
-		{
-
-		}
-
-		/// <summary>
-		/// Creates a new Popup object with default behaviour.
-		/// </summary>
 		public Popup() : this(new Dictionary<string, object>())
 		{
 
 		}
 
-		/// <summary>
-		/// Creates a new Popup object with a set of options.
-		///
-		/// Available options:
-		///		* name - override the name of GameObject (default: Popup)
-		///		* zAxis - the position the GUITextures are drawn at (default: 1).
-		/// </summary>
-		/// <param name="options">The dictionary of options.</param>
 		public Popup(Dictionary<string, object> options)
 		{
 			string name = (options.ContainsKey("name")) ? options["name"] as string : "Popup";
-			_popup = new GameObject(name);
-			_behaviour = _popup.AddComponent<PopupBehaviour>();
-			if (options.ContainsKey("zAxis")) float.TryParse(options["zAxis"] as string, out _zAxis);
+			_gameObject = new GameObject(name);
+			_spritemap = _gameObject.AddComponent<SpriteMap>();
 		}
 
-		/// <summary>
-		/// Fetchs the image resource from our servers.  BeforeLoad will be called before
-		/// the request is made.  AfterLoad will be called once the image has been
-		/// downloaded.
-		/// </summary>
-		/// <param name="image">Image.</param>
-		public void LoadResource(ImageComposition image)
+		public void Prepare(Dictionary<string, object> configuration)
 		{
 			try {
-				Image = image;
-				if (BeforeLoad != null) 
-				{
-					BeforeLoad(this, new EventArgs());
+				if (BeforePrepare != null) {
+					BeforePrepare(this, new EventArgs());
 				}
-
-				_behaviour.LoadResource(image, () => {
-					HasLoadedResource = true;
-					if (AfterLoad != null)
-                    {
-                        AfterLoad(this, new EventArgs());
+					
+				SpriteMap spriteMapMgr = _gameObject.AddComponent<SpriteMap>();
+				spriteMapMgr.Init(configuration);
+				spriteMapMgr.LoadResource(() => {
+					IsReady = true;
+					if (AfterPrepare != null) {
+                        AfterPrepare(this, new EventArgs());
                     }	
 				});
 
-				if (image.Background != null) {
-					AddAction(_behaviour.Background, image.Background);
-				}
-					
-				if (image.Button1 != null) {
-					AddAction(_behaviour.Button1, image.Button1);
-				}
-					
-				if (image.Button2 != null) {
-					AddAction(_behaviour.Button2, image.Button2);
-				}
+				_spritemap = spriteMapMgr;
+				Configuration = configuration;
+
 			} catch (Exception ex) {
 				Debug.LogException(ex);
 			}
 		}
 
-		/// <summary>
-		/// Renders the popup to screen.  BeforeShow is called before the 
-		/// popup is rendered.
-		/// </summary>
-		public void ShowPopup()
+		public void Show()
 		{
-			if (HasLoadedResource)
+			if (IsReady)
 			{
 				try {
-					if (BeforeShow != null)
-					{
+					if (BeforeShow != null) {
 						BeforeShow(this, new EventArgs());
 					}
-					_behaviour.ShowPopup(Image, _zAxis);
-					IsShowingPopup = true;
+
+					object screenDict;
+					if (Configuration.TryGetValue("screen", out screenDict)) {
+						ScreenLayer screen = _gameObject.AddComponent<ScreenLayer>();
+						screen.Init(this, (Dictionary<string, object>)screenDict);
+					}
+
+					object layoutDictObj;
+					if (Configuration.TryGetValue("layout", out layoutDictObj)) {
+						var layoutDict = layoutDictObj as Dictionary<string, object>;
+						object orientationDictObj;
+						if ((layoutDict).TryGetValue("landscape", out orientationDictObj) ||
+							(layoutDict).TryGetValue("portrait", out orientationDictObj)) {
+
+							var orientationDict = orientationDictObj as Dictionary<string, object>;
+
+							BackgroundLayer background = _gameObject.AddComponent<BackgroundLayer>();
+							background.Init(this, orientationDict, _spritemap.GetBackground());
+
+							ButtonsLayer buttons = _gameObject.AddComponent<ButtonsLayer>();
+							buttons.Init(this, orientationDict, _spritemap.GetButtons(), background);
+						
+							IsShowing = true;
+						} 
+						else {
+							Debug.LogError("No layout orientation found.");
+						} 
+					}
+					else {
+						Debug.LogError("No layout found.");
+					}
 				} catch (Exception ex) {
 					Debug.LogException(ex);
 				}
 			}
 		}
 
-		/// <summary>
-		/// Closes the popup.  This is normally called by the Popup but is available for 
-		/// other usecases.  BeforeClose is called before the Popop is closed.  AfterClose
-		/// is called after the Popup has closed.
-		/// </summary>
-		public void ClosePopup()
+		public void Close()
 		{
-			if (IsShowingPopup)
-			{
-				if (BeforeClose != null)
-				{
+			if (IsShowing) {
+				if (BeforeClose != null) {
 					BeforeClose(this, new EventArgs());
 				}
 
-				UnityEngine.Object.Destroy(_popup);
-				IsShowingPopup = false;
+				UnityEngine.Object.Destroy(_gameObject);
 
-	            if (AfterClose != null)
-	            {
-	                AfterClose(this, new EventArgs());
-	            }
+				if (AfterClose != null) {
+					AfterClose(this, new EventArgs());
+				}
+				IsShowing = false;
 			}
 		}
 
-		/// <summary>
-		/// Gets the background game object.  Use this reference to determine if it was selected.
-		/// </summary>
-		public GameObject Background { get { return _behaviour.Background; }}
+		public void OnDismiss(PopupEventArgs eventArgs)
+		{
+			if (Dismiss != null) {
+				Dismiss(this, eventArgs);
+			}
+		}
 
-		/// <summary>
-		/// Gets the button1 game object.  Use this reference to determine if it was selected.
-		/// </summary>
-		public GameObject Button1 { get { return _behaviour.Button1; }}
-
-		/// <summary>
-		/// Get the button2 game object.  Use this reference to determine if it was selected.
-		/// </summary>
-		public GameObject Button2 { get { return _behaviour.Button2; }}
-
-		private void AddAction(GameObject obj, ImageAsset asset) {
-			PopupActionHandler action = obj.GetComponent<PopupActionHandler>();
-			if (action != null) {
-
-				PopupEventArgs eventArgs = new PopupEventArgs(obj, asset);
-
-				switch (asset.Action) {
-					case ImageAsset.ActionType.DISMISS: {
-						action.OnMouseDownAction += () => {
-							if (Dismiss != null)
-							{
-								Dismiss(this, eventArgs);
-							}
-							ClosePopup();
-						};
-						break;
-					}
-					case ImageAsset.ActionType.LINK: {
-						action.OnMouseDownAction += () => {
-							if (Action != null)
-							{
-								Action(this, eventArgs);
-							}
-							Application.OpenURL(asset.ActionParam);
-							ClosePopup();
-						};
-						break;
-					}
-					case ImageAsset.ActionType.CUSTOM: {
-						action.OnMouseDownAction += () => {
-							if (Action != null)
-							{
-								Action(this, eventArgs);
-							}
-							ClosePopup();
-						};
-						break;
-					}
-				}
+		public void OnAction(PopupEventArgs eventArgs)
+		{
+			if (Action != null) {
+				Action(this, eventArgs);
 			}
 		}
 	}
 
-	public class PopupBehaviour : MonoBehaviour
+	internal class SpriteMap : MonoBehaviour
 	{
-		public GameObject Background { get; set; }
-		public GameObject Button1 { get; set; }
-		public GameObject Button2 { get; set; }
+		private Dictionary<string, object> _spriteMapDict;
+		private Texture2D _spriteMap;
 
-		private Texture2D _texture;
+		public string URL { get; private set; }
+		public int Width { get; private set; }
+		public int Height { get; private set; }
 
-		void Awake () 
+		public void Init(Dictionary<string, object> message)
 		{
-			Background = new GameObject("Background");
-			Background.AddComponent<PopupActionHandler>();
-			Background.transform.parent = gameObject.transform;
-			Button1 = new GameObject("Button1");
-			Button1.AddComponent<PopupActionHandler>();
-			Button1.transform.parent = gameObject.transform;
-			Button2 = new GameObject("Button2");
-			Button2.AddComponent<PopupActionHandler>();
-			Button2.transform.parent = gameObject.transform;
-		}
+			object url, width, height;
+			if (message.TryGetValue("url", out url) &&
+			    message.TryGetValue("width", out width) &&
+			    message.TryGetValue("height", out height)) {
 
-		public void LoadResource(ImageComposition image, Action callback)
-		{
-			StartCoroutine(LoadResourceCoroutine(image, callback));
-		}
-
-		public void ShowPopup(ImageComposition image, float zAxis)
-		{
-			Vector2 screen = new Vector2(Screen.width, Screen.height);
-			Vector2 viewport = new Vector2(image.Viewport.Width, image.Viewport.Height);
-				
-			if (image.Background != null) {
-				DrawAsset(Background, image.Background, _texture, screen, viewport, zAxis);
+			    URL = (string)url;
+			    Width = (int)width;
+			    Height = (int)height;
 			}
-				
-			if (image.Button1 != null) {
-				DrawAsset(Button1, image.Button1, _texture, screen, viewport, zAxis+1);
+			else {
+				Debug.Log("Invalid image message format.");
 			}
-				
-			if (image.Button2 != null) {
-				DrawAsset(Button2, image.Button2, _texture, screen, viewport, zAxis+1);
+
+			object spriteMapDict;
+			if (message.TryGetValue("spritemap", out spriteMapDict)) {
+				_spriteMapDict = (Dictionary<string, object>)spriteMapDict;
+			}
+			else {
+				Debug.Log("Invalid message format, missing 'spritemap' object");
 			}
 		}
-
-		private IEnumerator LoadResourceCoroutine(ImageComposition image, Action callback)
+	
+		public void LoadResource(Action callback)
 		{
-			_texture = new Texture2D(image.SpriteMap.Width, image.SpriteMap.Height);
-			WWW www = new WWW(image.SpriteMap.Url);
-
-			yield return www;
-
-			if (www.error == null) 
-			{
-				www.LoadImageIntoTexture(_texture);
-				callback();
-			}
-			else 
-			{
-				throw new PopupException("Failed to load resource "+image.SpriteMap.Url+" "+www.error);
-			}
+			_spriteMap = new Texture2D(Width, Height);
+			StartCoroutine(LoadResourceCoroutine(URL, callback));
 		}
 
-		private void DrawAsset(GameObject go, ImageAsset asset, Texture2D spriteMap, Vector2 screen, Vector2 viewport, float z)
+		public Texture GetSpriteMap()
 		{
-			Texture2D texture = CopySubRegion(spriteMap, asset.GlobalPosition);
-			GUITexture gui = go.AddComponent<GUITexture>();
-			gui.texture = texture;
-			gui.border = new RectOffset(0, 0, 0, 0);
-			// centre texture
-			float width = asset.ImagePosition.width;
-			float height = asset.ImagePosition.height;
-			gui.pixelInset = new Rect(0.0f-width/2.0f, 0.0f-height/2.0f, width, height);
-
-			// find middle of asset
-			// find distance to middle of viewpoint
-			// position assets scaled normalised distance from middle
-
-			Vector2 tl = new Vector2(asset.ImagePosition.x, asset.ImagePosition.y);
-			Vector2 br = new Vector2(asset.ImagePosition.width, asset.ImagePosition.height);
-			Vector2 middle = tl + (br / 2.0f);
-			Vector2 distFromMiddleVP = middle - viewport / 2.0f;
-			Vector2 normalised = new Vector2(distFromMiddleVP.x / screen.x, distFromMiddleVP.y / screen.y );
-			Vector2 translatedToGUI = new Vector2(normalised.x+0.5f, (-1.0f * normalised.y)+0.5f);
-			go.transform.position = new Vector3(translatedToGUI.x, translatedToGUI.y, z);
-			go.transform.localScale = Vector3.zero;
+			return _spriteMap;
 		}
-			
-		private Texture2D CopySubRegion(Texture2D texture, int x, int y, int width, int height)
+
+		public Texture GetBackground()
 		{
-			Color[] pixels = texture.GetPixels(x, texture.height-y-height, width, height);
-			Texture2D result = new Texture2D(width, height, texture.format, false);
+			object backgroundDict;
+			if (_spriteMapDict.TryGetValue("background", out backgroundDict)) {
+				object x, y, width, height;
+				if (((Dictionary<string, object>)backgroundDict).TryGetValue("x", out x) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("y", out y) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("width", out width) &&
+					((Dictionary<string, object>)backgroundDict).TryGetValue("height", out height)) {
+
+				    return GetSubRegion((int)x, (int)y, (int)width, (int)height);
+				}
+			}
+			else {
+				Debug.LogError("Background not found in spritemap object.");
+			}
+
+			return null;
+		}
+
+		public List<Texture> GetButtons()
+		{
+			List<Texture> textures = new List<Texture>();
+
+			object buttonList;
+			if (_spriteMapDict.TryGetValue("buttons", out buttonList)) {
+				foreach (object buttonDict in (List<object>)buttonList) {
+					object x, y, width, height;
+					if (((Dictionary<string, object>)buttonDict).TryGetValue("x", out x) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("y", out y) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("width", out width) &&
+						((Dictionary<string, object>)buttonDict).TryGetValue("height", out height)) {
+
+						textures.Add(GetSubRegion((int)x, (int)y, (int)width, (int)height));
+					}
+				}
+			}
+
+			return textures;
+		}
+
+		public Texture2D GetSubRegion(int x, int y, int width, int height)
+		{
+			Color[] pixels = _spriteMap.GetPixels(x, _spriteMap.height-y-height, width, height);
+			Texture2D result = new Texture2D(width, height, _spriteMap.format, false);
 			result.SetPixels(pixels);
 			result.Apply();
 			return result;
 		}
 
-		private Texture2D CopySubRegion(Texture2D texture, Rect rect)
+		public Texture2D GetSubRegion(Rect rect)
 		{
-			return CopySubRegion(
-				texture, 
+			return GetSubRegion(
 				Mathf.FloorToInt(rect.x), 
 				Mathf.FloorToInt(rect.y), 
 				Mathf.FloorToInt(rect.width), 
 				Mathf.FloorToInt(rect.height));
 		}
+
+		private IEnumerator LoadResourceCoroutine(string url, Action callback)
+		{
+			WWW www = new WWW(url);
+
+			yield return www;
+
+			if (www.error == null) {
+				www.LoadImageIntoTexture(_spriteMap);
+			} else {
+				throw new PopupException("Failed to load resource "+url+" "+www.error);
+			}
+		
+			callback();
+		}
+
 	}
 
-	public class PopupActionHandler : MonoBehaviour
+	internal class Layer : MonoBehaviour
 	{
-		public event Action OnMouseDownAction;
+		protected IPopup _popup;
+		protected List<Action> _actions = new List<Action>();
 
-		public void OnMouseDown()
+		protected void RegisterAction()
 		{
-            if (OnMouseDownAction != null)
-            {
-                OnMouseDownAction();
-            }
+			_actions.Add(() => {});
+		}
+
+		protected void RegisterAction(Dictionary<string, object> action)
+		{
+			object typeObj, valueObj;
+			action.TryGetValue("value", out valueObj);
+		
+			if (action.TryGetValue("type", out typeObj)) {
+
+				PopupEventArgs eventArgs = new PopupEventArgs((string)typeObj, (string)valueObj);
+
+				switch ((string)typeObj) {
+					case "NONE": {
+						_actions.Add(() => {});
+						break;
+					}
+					case "ACTION": {
+						_actions.Add(() => {
+							if (valueObj != null) {
+								_popup.OnAction(eventArgs);
+							}
+							_popup.Close();
+						});
+						break;
+					}
+					case "LINK": {
+						_actions.Add(() => {
+							_popup.OnAction(eventArgs);
+							if (valueObj != null) {
+								Application.OpenURL((string)valueObj);
+							}
+							_popup.Close();
+						});
+						break;
+					}
+					default : {	// "DISMISS"
+						_actions.Add(() => {
+							_popup.OnDismiss(eventArgs);
+							_popup.Close();
+						});
+						break;
+					}
+				}
+			}
 		}
 	}
+
+	internal class ScreenLayer : Layer
+	{
+		private Texture2D _texture;
+		private const byte _dimmedMaskAlpha = 128;
+
+		public void Init(IPopup popup, Dictionary<string, object> config)
+		{
+			_popup = popup;
+
+			object mask;
+			if (config.TryGetValue("mask", out mask)) {
+				bool show = true;
+				Color32[] colours = new Color32[1];
+				switch ((string)mask) 
+				{
+					case "dimmed": {
+						colours[0] = new Color32(0, 0, 0, _dimmedMaskAlpha); 
+						break;
+					}
+					case "clear": {
+						colours[0] = new Color32(0, 0, 0, 0); 
+						break;
+					}
+					default: {	// "none"
+						show = false;
+						break;
+					}
+				}
+				if (show) {
+					_texture = new Texture2D(1, 1);
+					_texture.SetPixels32(colours);
+					_texture.Apply();
+				}
+			}
+
+			object actionObj;
+			if (config.TryGetValue("action", out actionObj)) {
+				RegisterAction((Dictionary<string, object>)actionObj);
+			} 
+			else {
+				RegisterAction();
+			}
+		}
+
+		public void OnGUI()
+		{
+			GUI.depth = 2;
+
+			if (_texture)
+			{
+				Rect position = new Rect(0, 0, Screen.width, Screen.height);
+				GUI.DrawTexture(position, _texture);
+				if (GUI.Button(position, "", GUIStyle.none)) {
+					if (_actions.Count > 0) _actions[0].Invoke();
+				}
+			}
+		}
+	}
+
+	internal class BackgroundLayer : Layer
+	{
+		private Texture _texture;
+		private Rect _position;
+		private float _scale;
+
+		public void Init(IPopup popup, Dictionary<string, object> layout, Texture texture)
+		{
+			_popup = popup;
+			_texture = texture;
+
+			object rules;
+			if (layout.TryGetValue("cover", out rules)) {
+				_position = RenderAsCover((Dictionary<string, object>)rules);
+			} 
+			else if (layout.TryGetValue("contain", out rules)) {
+				_position = RenderAsContain((Dictionary<string, object>)rules);
+			}
+			else {
+				Debug.Log("Invalid layout");
+			}
+
+			object backgroundObj;
+			if (layout.TryGetValue("background", out backgroundObj)) {
+				object actionObj;
+				if (((Dictionary<string, object>)backgroundObj).TryGetValue("action", out actionObj)) {
+					RegisterAction((Dictionary<string, object>)actionObj);
+				} 
+				else {
+					RegisterAction();
+				}
+			}
+			else {
+				RegisterAction();
+			}
+		}
+
+		public Rect Position { get { return _position; }}
+
+		public float Scale { get { return _scale; }}
+
+		public void OnGUI()
+		{
+			GUI.depth = 1;
+
+			if (_texture)
+			{
+				GUI.DrawTexture(_position, _texture);
+				if (GUI.Button(_position, "", GUIStyle.none)) {
+					if (_actions.Count > 0) _actions[0].Invoke();
+				}
+			}
+		}
+
+		private Rect RenderAsCover(Dictionary<string, object> rules)
+		{
+			_scale = Math.Max((float)Screen.width / (float)_texture.width, (float)Screen.height / (float)_texture.height);
+			float width = _texture.width * _scale;
+			float height = _texture.height * _scale;
+
+			float top = Screen.height / 2.0f - height / 2.0f;	// default "center"
+			float left = Screen.width / 2.0f - width / 2.0f;
+			object valign;
+			if (rules.TryGetValue("valign", out valign))
+			{
+				switch ((string)valign)
+				{
+					case "top": {
+						top = 0;
+						break;
+					}
+					case "bottom": {
+						top = Screen.height - height;
+						break;
+					}
+				}
+			}
+			object halign;
+			if (rules.TryGetValue("halign", out halign))
+			{
+				switch ((string)halign)
+				{
+					case "left": {
+						left = 0;
+						break;
+					}
+					case "right": {
+						left = Screen.width - width;
+						break;
+					}
+				}
+			}
+
+			return new Rect(left, top, width, height);
+		}
+			
+		private Rect RenderAsContain(Dictionary<string, object> rules)
+		{
+			float lc = 0, rc = 0, tc = 0, bc = 0;
+			object l, r, t, b;
+			if (rules.TryGetValue("left", out l)) {
+				lc = GetConstraintPixels((string)l, Screen.width);
+			}
+			if (rules.TryGetValue("right", out r)) {
+				rc = GetConstraintPixels((string)r, Screen.width);
+			}
+
+			float ws = ((float)Screen.width - lc - rc) / (float)_texture.width;
+
+			if (rules.TryGetValue("top", out t)) {
+				tc = GetConstraintPixels((string)t, Screen.height);
+			}
+			if (rules.TryGetValue("bottom", out b)) {
+				bc = GetConstraintPixels((string)b, Screen.height);
+			}
+
+			float hs = ((float)Screen.height - tc - bc) / (float)_texture.height;
+
+			_scale = Math.Min(ws, hs);
+			float width = _texture.width * _scale;
+			float height = _texture.height * _scale;
+
+			float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc;	// default "center"
+			float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc; 	// default "center"
+
+			object valign;
+			if (rules.TryGetValue("valign", out valign))
+			{
+				switch ((string)valign)
+				{
+					case "top": {
+						top = tc;
+						break;
+					}
+					case "bottom": {
+						top = Screen.height - height - bc;
+						break;
+					}
+				}
+			}
+			object halign;
+			if (rules.TryGetValue("halign", out halign))
+			{
+				switch ((string)halign)
+				{
+					case "left": {
+						left = lc;
+						break;
+					}
+					case "right": {
+						left = Screen.width - width - rc;
+						break;
+					}
+				}
+			}
+
+			return new Rect(left, top, width, height);
+		}
+
+		private float GetConstraintPixels(string constraint, float edge)
+		{
+			float val = 0;
+			Regex rgx = new Regex(@"(\d+)(px|%)", RegexOptions.IgnoreCase);
+			var match = rgx.Match(constraint);
+			if (match != null && match.Success) {
+				var groups = match.Groups;
+				Debug.Log(groups[1].Value +" "+groups[2].Value);
+
+				if (float.TryParse(groups[1].Value, out val)) {
+					if (groups[2].Value == "%") {
+						return edge * val / 100.0f;
+					} else {
+					return val;
+					}
+				}
+			}
+			return val;
+		}
+	}
+
+	internal class ButtonsLayer : Layer
+	{
+		private List<Texture> _textures = new List<Texture>();
+		private List<Rect> _positions = new List<Rect>();
+
+		public void Init(IPopup popup, Dictionary<string, object> orientation, List<Texture> textures, BackgroundLayer content)
+		{
+			_popup = popup;
+			
+			object buttonsObj;
+			if (orientation.TryGetValue("buttons", out buttonsObj)) {
+				var buttons = buttonsObj as List<object>;
+				for (int i = 0; i < buttons.Count; ++i) {
+					var button = buttons[i] as Dictionary<string, object>;
+					float left = 0, top = 0;
+					object x, y;
+					if (button.TryGetValue("x", out x)) {
+						left = (int)x * content.Scale + content.Position.xMin;
+					}
+					if (button.TryGetValue("y", out y)) {
+						top = (int)y * content.Scale + content.Position.yMin;
+					}
+					_positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
+				
+					object actionObj;
+					if (button.TryGetValue("action", out actionObj)) {
+						RegisterAction((Dictionary<string, object>)actionObj);
+					} 
+					else {
+						RegisterAction();
+					}
+				}
+				_textures = textures;
+			}
+		}
+
+		public void OnGUI()
+		{
+			GUI.depth = 0;
+
+			for (int i = 0; i < _textures.Count; ++i)
+			{
+				if (GUI.Button(_positions[i], _textures[i], GUIStyle.none)) {
+					_actions[i].Invoke();
+				}
+			}
+		}
+	}
+
 }
+

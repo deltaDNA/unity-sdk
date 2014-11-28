@@ -12,7 +12,7 @@ namespace DeltaDNA.Messaging
 		{
 			string spriteMapPath = "file://" + Path.Combine(Application.streamingAssetsPath, "Images/Popup1.png");
 
-			var resource = new Dictionary<string, object>() {
+			var image = new Dictionary<string, object>() {
 				{"url", spriteMapPath},
 				{"width", 1024},
 				{"height", 512},
@@ -81,9 +81,9 @@ namespace DeltaDNA.Messaging
 				}}
 			};
 
-			Popup2 popup = new Popup2();
-			popup.AfterLoad += (sender, e) => {
-				((Popup2)sender).ShowPopup();
+			Popup popup = new Popup();
+			popup.AfterPrepare += (sender, e) => {
+				((Popup)sender).Show();
 			};
 			popup.Action += (sender, e) => {
 				Debug.Log("Action => "+e.ActionType+" "+e.ActionValue);
@@ -91,7 +91,7 @@ namespace DeltaDNA.Messaging
 			popup.Dismiss += (sender, e) => {
 				Debug.Log("Dismiss");
 			};
-			popup.LoadResource(resource);
+			popup.Prepare(image);
 		}
 
 		void OnGUI () 

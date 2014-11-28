@@ -1,24 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DeltaDNA.Messaging
 {
 	public class PopupEventArgs: EventArgs
 	{
-		public PopupEventArgs(GameObject gameObject, ImageAsset imageAsset)
-		{
-			this.GameObject = gameObject;
-			this.ImageAsset = imageAsset;
-		}
-
 		public PopupEventArgs(string type, string value=null)
 		{
 			this.ActionType = type;
 			this.ActionValue = value;
 		}
-
-		public GameObject GameObject { get; set; }
-		public ImageAsset ImageAsset { get; set; }
 
 		public string ActionType { get; set; }
 		public string ActionValue { get; set; }
@@ -26,24 +18,20 @@ namespace DeltaDNA.Messaging
 		
 	public interface IPopup
 	{
-		event EventHandler BeforeLoad;
-		event EventHandler AfterLoad;
+		event EventHandler BeforePrepare;
+		event EventHandler AfterPrepare;
 		event EventHandler BeforeShow;
 		event EventHandler BeforeClose;
 		event EventHandler AfterClose;
 		event EventHandler<PopupEventArgs> Dismiss;
 		event EventHandler<PopupEventArgs> Action;
 
-		void LoadResource(ImageComposition image);
-		void ShowPopup();
-		void ClosePopup();
+		void Prepare(Dictionary<string, object> configuration);
+		void Show();
+		void Close();
 
 		void OnDismiss(PopupEventArgs eventArgs);
 		void OnAction(PopupEventArgs eventArgs);
-
-		GameObject Background { get; }
-		GameObject Button1 { get; }
-		GameObject Button2 { get; }
 	}
 
 	public class PopupException : Exception
