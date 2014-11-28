@@ -49,27 +49,47 @@ namespace DeltaDNA.Messaging
 							{"valign", "center"},
 							{"halign", "center"}
 						}},
+						{"background", new Dictionary<string, object>() {
+							{"action", new Dictionary<string, object>() {
+								{"type", "NONE"}
+							}}
+						}},
 						{"buttons", new List<object>() {
 							new Dictionary<string, object>() {
 								{"x", 544},
-								{"y", 0}
+								{"y", 0},
+								{"action", new Dictionary<string, object>() {
+									{"type", "ACTION"},
+									{"value", "BUY_GOLD"}
+								}},
 							},
 							new Dictionary<string, object>() {
 								{"x", 544},
-								{"y", 352}
+								{"y", 352},
+								{"action", new Dictionary<string, object>() {
+									{"type", "DISMISS"}
+								}}
 							}
 						}}
 					}}
 				}},
-				{"background", new Dictionary<string, object>() {
+				{"screen", new Dictionary<string, object>() {
 					{"mask", "dimmed"},
-					{"dismiss", true}
+					{"action", new Dictionary<string, object>() {
+						{"type", "NONE"}
+					}}
 				}}
 			};
 
 			Popup2 popup = new Popup2();
 			popup.AfterLoad += (sender, e) => {
 				((Popup2)sender).ShowPopup();
+			};
+			popup.Action += (sender, e) => {
+				Debug.Log("Action => "+e.ActionType+" "+e.ActionValue);
+			};
+			popup.Dismiss += (sender, e) => {
+				Debug.Log("Dismiss");
 			};
 			popup.LoadResource(resource);
 		}

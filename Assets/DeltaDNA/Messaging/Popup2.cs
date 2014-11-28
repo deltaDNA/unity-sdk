@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 
 using System.Text.RegularExpressions;
+using UnityEditor.AnimatedValues;
 
 namespace DeltaDNA.Messaging
 {
@@ -26,7 +27,7 @@ namespace DeltaDNA.Messaging
 		public GameObject Button2 { get; set; }
 		// should be a list of buttons going forward...
 
-		private GameObject _popup;
+		private GameObject _gameObject;
 		private SpriteMapManager _spritemap;
 
 		public Popup2() : this(new Dictionary<string, object>())
@@ -37,8 +38,8 @@ namespace DeltaDNA.Messaging
 		public Popup2(Dictionary<string, object> options)
 		{
 			string name = (options.ContainsKey("name")) ? options["name"] as string : "Popup";
-			_popup = new GameObject(name);
-			_spritemap = _popup.AddComponent<SpriteMapManager>();
+			_gameObject = new GameObject(name);
+			_spritemap = _gameObject.AddComponent<SpriteMapManager>();
 		}
 
 		public void LoadResource(ImageComposition image)
@@ -53,7 +54,7 @@ namespace DeltaDNA.Messaging
 					BeforeLoad(this, new EventArgs());
 				}
 					
-				SpriteMapManager spriteMapMgr = _popup.AddComponent<SpriteMapManager>();
+				SpriteMapManager spriteMapMgr = _gameObject.AddComponent<SpriteMapManager>();
 				spriteMapMgr.Init(resource);
 				spriteMapMgr.LoadResource(() => {
 					Debug.Log("Resource loaded...");
@@ -62,27 +63,6 @@ namespace DeltaDNA.Messaging
                         AfterLoad(this, new EventArgs());
                     }	
 				});
-
-//				object url, width, height;
-//				if (resource.TryGetValue("url", out url) &&
-//				    resource.TryGetValue("width", out width) &&
-//				    resource.TryGetValue("height", out height)) {
-//					
-//					Debug.Log("Loading resource...");
-//					_spritemap.LoadResource((string)url, (int)width, (int)height, () => 
-//					{
-//						Debug.Log("Resource loaded...");
-//						HasLoadedResource = true;
-//						if (AfterLoad != null) {
-//	                        AfterLoad(this, new EventArgs());
-//	                    }	
-//					});
-//				} else {
-//					Debug.LogWarning("Failed to load resource "+url);
-//				}
-				// else what if the dictionary is corrupt?
-
-				// Add action behaviour to the buttons?
 
 				_spritemap = spriteMapMgr;
 				Resource = resource;
@@ -101,23 +81,26 @@ namespace DeltaDNA.Messaging
 						BeforeShow(this, new EventArgs());
 					}
 
-					object backgroundDict;
-					if (Resource.TryGetValue("background", out backgroundDict)) {
-						Background background = _popup.AddComponent<Background>();
-						background.Init((Dictionary<string, object>)backgroundDict);
+					object screenDict;
+					if (Resource.TryGetValue("screen", out screenDict)) {
+						ScreenLayer screen = _gameObject.AddComponent<ScreenLayer>();
+						screen.Init(this, (Dictionary<string, object>)screenDict);
 					}
 
-					object layoutDict;
-					if (Resource.TryGetValue("layout", out layoutDict)) {
-						object orientationDict;
-						if (((Dictionary<string, object>)layoutDict).TryGetValue("landscape", out orientationDict) ||
-							((Dictionary<string, object>)layoutDict).TryGetValue("portrait", out orientationDict)) {
+					object layoutDictObj;
+					if (Resource.TryGetValue("layout", out layoutDictObj)) {
+						var layoutDict = layoutDictObj as Dictionary<string, object>;
+						object orientationDictObj;
+						if ((layoutDict).TryGetValue("landscape", out orientationDictObj) ||
+							(layoutDict).TryGetValue("portrait", out orientationDictObj)) {
 
-							Content content = _popup.AddComponent<Content>();
-							content.Init((Dictionary<string, object>)orientationDict, _spritemap.GetBackground());
+							var orientationDict = orientationDictObj as Dictionary<string, object>;
 
-							Buttons buttons = _popup.AddComponent<Buttons>();
-							buttons.Init((Dictionary<string, object>)orientationDict, _spritemap.GetButtons(), content);
+							BackgroundLayer background = _gameObject.AddComponent<BackgroundLayer>();
+							background.Init(this, orientationDict, _spritemap.GetBackground());
+
+							ButtonsLayer buttons = _gameObject.AddComponent<ButtonsLayer>();
+							buttons.Init(this, orientationDict, _spritemap.GetButtons(), background);
 						
 							IsShowingPopup = true;
 						} 
@@ -128,62 +111,39 @@ namespace DeltaDNA.Messaging
 					else {
 						Debug.LogError("No layout found.");
 					}
-
-//					// Build layers
-//					//Background background = _popup.AddComponent<Background>();
-//					//background.Init(Resource);
-//
-//					Content container = _popup.AddComponent<Content>();
-//					Texture containerTexture = _spritemap.GetSubRegion(new Rect(2, 52, 640, 400));
-//
-//					Buttons buttons = _popup.AddComponent<Buttons>();
-//					List<Texture> buttonTextures = new List<Texture>();
-//					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(2, 2, 96, 48)));
-//					buttonTextures.Add(_spritemap.GetSubRegion(new Rect(644, 404, 96, 48)));
-//
-//					// Container Layout
-//					object layout;
-//					if (Resource.TryGetValue("layout", out layout)) {
-//						// Not caring about orientation of device just now
-//						Dictionary<string, object> l = layout as Dictionary<string, object>;
-//						Dictionary<string, object> orientation = null;
-//						if (l.ContainsKey("landscape")) {
-//							orientation = l["landscape"] as Dictionary<string, object>;
-//						}
-//						else if (l.ContainsKey("portrait")) {
-//							orientation = l["portrait"] as Dictionary<string, object>;
-//						}
-//
-//						if (orientation != null) {
-//							container.Init(orientation, containerTexture);
-//
-//							object btns;
-//							if (orientation.TryGetValue("buttons", out btns)) {
-//								Debug.Log(container.Position);
-//								buttons.Init(
-//									(List<object>)btns, 
-//									buttonTextures, 
-//									container);
-//							}
-//
-//
-//						} else {
-//							Debug.LogError("No layout orientation found");
-//						}
-//					} else {
-//						Debug.LogError("No layout found");
-//					}
-//
-//
-//					// float scale = container.Scale...
-//
-//					//Buttons buttons = _popup.AddComponent<Buttons>();
-//					//buttons.Init(Resource);
-
-
 				} catch (Exception ex) {
 					Debug.LogException(ex);
 				}
+			}
+		}
+
+		public void ClosePopup()
+		{
+			Debug.Log("Closing popup");
+			if (IsShowingPopup) {
+				if (BeforeClose != null) {
+					BeforeClose(this, new EventArgs());
+				}
+
+				UnityEngine.Object.Destroy(_gameObject);
+
+				if (AfterClose != null) {
+					AfterClose(this, new EventArgs());
+				}
+			}
+		}
+
+		public void OnDismiss(PopupEventArgs eventArgs)
+		{
+			if (Dismiss != null) {
+				Dismiss(this, eventArgs);
+			}
+		}
+
+		public void OnAction(PopupEventArgs eventArgs)
+		{
+			if (Action != null) {
+				Action(this, eventArgs);
 			}
 		}
 	}
@@ -286,7 +246,7 @@ namespace DeltaDNA.Messaging
 				Mathf.FloorToInt(rect.height));
 		}
 
-		private System.Collections.IEnumerator LoadResourceCoroutine(string url, Action callback)
+		private IEnumerator LoadResourceCoroutine(string url, Action callback)
 		{
 			WWW www = new WWW(url);
 
@@ -303,13 +263,70 @@ namespace DeltaDNA.Messaging
 
 	}
 
-	internal class Background : MonoBehaviour
+	internal class Layer : MonoBehaviour
+	{
+		protected IPopup _popup;
+		protected List<Action> _actions = new List<Action>();
+
+		protected void RegisterAction()
+		{
+			_actions.Add(() => {});
+		}
+
+		protected void RegisterAction(Dictionary<string, object> action)
+		{
+			object typeObj, valueObj;
+			action.TryGetValue("value", out valueObj);
+		
+			if (action.TryGetValue("type", out typeObj)) {
+
+				PopupEventArgs eventArgs = new PopupEventArgs((string)typeObj, (string)valueObj);
+
+				switch ((string)typeObj) {
+					case "NONE": {
+						_actions.Add(() => {});
+						break;
+					}
+					case "ACTION": {
+						_actions.Add(() => {
+							if (valueObj != null) {
+								_popup.OnAction(eventArgs);
+							}
+							_popup.ClosePopup();
+						});
+						break;
+					}
+					case "LINK": {
+						_actions.Add(() => {
+							_popup.OnAction(eventArgs);
+							if (valueObj != null) {
+								Application.OpenURL((string)valueObj);
+							}
+							_popup.ClosePopup();
+						});
+						break;
+					}
+					default : {	// "DISMISS"
+						_actions.Add(() => {
+							_popup.OnDismiss(eventArgs);
+							_popup.ClosePopup();
+						});
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	internal class ScreenLayer : Layer
 	{
 		private Texture2D _texture;
 		private const byte _dimmedMaskAlpha = 128;
 
-		public void Init(Dictionary<string, object> config)
+		public void Init(IPopup popup, Dictionary<string, object> config)
 		{
+			_popup = popup;
+
 			object mask;
 			if (config.TryGetValue("mask", out mask)) {
 				bool show = true;
@@ -335,6 +352,14 @@ namespace DeltaDNA.Messaging
 					_texture.Apply();
 				}
 			}
+
+			object actionObj;
+			if (config.TryGetValue("action", out actionObj)) {
+				RegisterAction((Dictionary<string, object>)actionObj);
+			} 
+			else {
+				RegisterAction();
+			}
 		}
 
 		public void OnGUI()
@@ -347,19 +372,21 @@ namespace DeltaDNA.Messaging
 				GUI.DrawTexture(position, _texture);
 				if (GUI.Button(position, "", GUIStyle.none)) {
 					Debug.Log("Background clicked");
+					if (_actions.Count > 0) _actions[0].Invoke();
 				}
 			}
 		}
 	}
 
-	internal class Content : MonoBehaviour
+	internal class BackgroundLayer : Layer
 	{
 		private Texture _texture;
 		private Rect _position;
 		private float _scale;
 
-		public void Init(Dictionary<string, object> layout, Texture texture)
+		public void Init(IPopup popup, Dictionary<string, object> layout, Texture texture)
 		{
+			_popup = popup;
 			_texture = texture;
 
 			object rules;
@@ -371,6 +398,20 @@ namespace DeltaDNA.Messaging
 			}
 			else {
 				Debug.Log("Invalid layout");
+			}
+
+			object backgroundObj;
+			if (layout.TryGetValue("background", out backgroundObj)) {
+				object actionObj;
+				if (((Dictionary<string, object>)backgroundObj).TryGetValue("action", out actionObj)) {
+					RegisterAction((Dictionary<string, object>)actionObj);
+				} 
+				else {
+					RegisterAction();
+				}
+			}
+			else {
+				RegisterAction();
 			}
 		}
 
@@ -392,6 +433,7 @@ namespace DeltaDNA.Messaging
 				GUI.DrawTexture(_position, _texture);
 				if (GUI.Button(_position, "", GUIStyle.none)) {
 					Debug.Log("container clicked");
+					if (_actions.Count > 0) _actions[0].Invoke();
 				}
 			}
 		}
@@ -522,31 +564,39 @@ namespace DeltaDNA.Messaging
 		}
 	}
 
-	internal class Buttons : MonoBehaviour
+	internal class ButtonsLayer : Layer
 	{
 		private List<Texture> _textures = new List<Texture>();
 		private List<Rect> _positions = new List<Rect>();
-					
-		public void Init(Dictionary<string, object> orientation, List<Texture> textures, Content content)
+
+		public void Init(IPopup popup, Dictionary<string, object> orientation, List<Texture> textures, BackgroundLayer content)
 		{
+			_popup = popup;
+			
 			object buttonsObj;
 			if (orientation.TryGetValue("buttons", out buttonsObj)) {
-				List<object> buttons = buttonsObj as List<object>;
-
+				var buttons = buttonsObj as List<object>;
 				for (int i = 0; i < buttons.Count; ++i) {
+					var button = buttons[i] as Dictionary<string, object>;
 					float left = 0, top = 0;
 					object x, y;
-					if (((Dictionary<string, object>)buttons[i]).TryGetValue("x", out x)) {
+					if (button.TryGetValue("x", out x)) {
 						left = (int)x * content.Scale + content.Position.xMin;
 					}
-					if (((Dictionary<string, object>)buttons[i]).TryGetValue("y", out y)) {
+					if (button.TryGetValue("y", out y)) {
 						top = (int)y * content.Scale + content.Position.yMin;
 					}
 					_positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
+				
+					object actionObj;
+					if (button.TryGetValue("action", out actionObj)) {
+						RegisterAction((Dictionary<string, object>)actionObj);
+					} 
+					else {
+						RegisterAction();
+					}
 				}
-
 				_textures = textures;
-
 			}
 		}
 
@@ -558,6 +608,7 @@ namespace DeltaDNA.Messaging
 			{
 				if (GUI.Button(_positions[i], _textures[i], GUIStyle.none)) {
 					Debug.Log("Button "+(i+1)+" clicked");
+					_actions[i].Invoke();
 				}
 			}
 		}

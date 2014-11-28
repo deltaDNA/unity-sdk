@@ -46,21 +46,35 @@ whilst still maintaining the original aspect ratio.
                 'halign': 'center'
                 'valign': 'center'
             },
+            'background': {
+                'action': {
+                    'type': 'NONE'
+                }
+            },
             'buttons': [
                 {
-                    'x': 10
-                    'y': 25
+                    'x': 10,
+                    'y': 25,
+                    'action': {
+                        'type' : 'ACTION'
+                        'value': 'BUY_GOLD'
+                    }
                 },
                 {
-                    'x': 50
-                    'y': 75
+                    'x': 50,
+                    'y': 75,
+                    'action': {
+                        'type': 'DISMISS'
+                    }
                 }
-            ],
+            ]
         },
     },
-    'background': {
-        'mask': 'dimmed'    // none, clear, dimmed
-        'dimiss': true      // dismiss on touch
+    'screen': {
+        'mask': 'dimmed',   // none, clear, dimmed
+        'action': {
+            'type': 'DISMISS'      // dismiss on touch
+        }
     }
 }
 

@@ -32,6 +32,16 @@ namespace DeltaDNA.Messaging
 		private PopupBehaviour _behaviour;
 		private float _zAxis = 1;
 
+		public void OnDismiss(PopupEventArgs eventArgs)
+		{
+
+		}
+
+		public void OnAction(PopupEventArgs eventArgs)
+		{
+
+		}
+
 		/// <summary>
 		/// Creates a new Popup object with default behaviour.
 		/// </summary>

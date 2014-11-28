@@ -11,8 +11,17 @@ namespace DeltaDNA.Messaging
 			this.ImageAsset = imageAsset;
 		}
 
+		public PopupEventArgs(string type, string value=null)
+		{
+			this.ActionType = type;
+			this.ActionValue = value;
+		}
+
 		public GameObject GameObject { get; set; }
 		public ImageAsset ImageAsset { get; set; }
+
+		public string ActionType { get; set; }
+		public string ActionValue { get; set; }
 	}
 		
 	public interface IPopup
@@ -27,6 +36,10 @@ namespace DeltaDNA.Messaging
 
 		void LoadResource(ImageComposition image);
 		void ShowPopup();
+		void ClosePopup();
+
+		void OnDismiss(PopupEventArgs eventArgs);
+		void OnAction(PopupEventArgs eventArgs);
 
 		GameObject Background { get; }
 		GameObject Button1 { get; }
