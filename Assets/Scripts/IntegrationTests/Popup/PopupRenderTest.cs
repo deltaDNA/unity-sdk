@@ -8,6 +8,8 @@ namespace DeltaDNA.Messaging
 {
 	public class PopupRenderTest : MonoBehaviour 
 	{
+		public Popup popup = new Popup();
+
 		void Awake()
 		{
 			string spriteMapPath = "file://" + Path.Combine(Application.streamingAssetsPath, "Images/Popup1.png");
@@ -81,7 +83,7 @@ namespace DeltaDNA.Messaging
 				}}
 			};
 
-			Popup popup = new Popup();
+
 			popup.AfterPrepare += (sender, e) => {
 				((Popup)sender).Show();
 			};
@@ -90,6 +92,9 @@ namespace DeltaDNA.Messaging
 			};
 			popup.Dismiss += (sender, e) => {
 				Debug.Log("Dismiss => "+e.ID);
+			};
+			popup.AfterClose += (sender, e) => {
+				IntegrationTest.Pass();
 			};
 			popup.Prepare(image);
 		}
@@ -111,6 +116,13 @@ namespace DeltaDNA.Messaging
 	            Debug.Log("Level 2 Selected");
 	        }
 	    }
+
+		void Update()
+		{
+			if (Time.time > 5) {
+				popup.Close();
+			}
+		}
 	}
 }
 

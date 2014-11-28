@@ -22,6 +22,7 @@ namespace DeltaDNA.Messaging
 
 		private GameObject _gameObject;
 		private SpriteMap _spritemap;
+		private string _name = "Popup";
 		private int _depth = 0;
 
 		public Popup() : this(new Dictionary<string, object>()) {}
@@ -29,10 +30,9 @@ namespace DeltaDNA.Messaging
 		public Popup(Dictionary<string, object> options)
 		{
 			object name;
-			options.TryGetValue("name", out name);
-			_gameObject = new GameObject((string)name ?? "Popup");
-
-			_spritemap = _gameObject.AddComponent<SpriteMap>();
+			if (options.TryGetValue("name", out name)) {
+				_name = (string)name;
+			}
 
 			object depth;
 			if (options.TryGetValue("depth", out depth)) {
@@ -46,17 +46,18 @@ namespace DeltaDNA.Messaging
 				if (BeforePrepare != null) {
 					BeforePrepare(this, new EventArgs());
 				}
-					
-				SpriteMap spriteMapMgr = _gameObject.AddComponent<SpriteMap>();
-				spriteMapMgr.Init(configuration);
-				spriteMapMgr.LoadResource(() => {
+
+				_gameObject = new GameObject(_name);
+				SpriteMap spriteMap = _gameObject.AddComponent<SpriteMap>();
+				spriteMap.Init(configuration);
+				spriteMap.LoadResource(() => {
 					IsReady = true;
 					if (AfterPrepare != null) {
                         AfterPrepare(this, new EventArgs());
                     }	
 				});
 
-				_spritemap = spriteMapMgr;
+				_spritemap = spriteMap;
 				Configuration = configuration;
 
 			} catch (Exception ex) {
@@ -164,7 +165,7 @@ namespace DeltaDNA.Messaging
 			    Height = (int)height;
 			}
 			else {
-				Debug.Log("Invalid image message format.");
+				Debug.LogError("Invalid image message format.");
 			}
 
 			object spriteMapDict;
@@ -172,7 +173,7 @@ namespace DeltaDNA.Messaging
 				_spriteMapDict = (Dictionary<string, object>)spriteMapDict;
 			}
 			else {
-				Debug.Log("Invalid message format, missing 'spritemap' object");
+				Debug.LogError("Invalid message format, missing 'spritemap' object");
 			}
 		}
 	
@@ -402,7 +403,7 @@ namespace DeltaDNA.Messaging
 				_position = RenderAsContain((Dictionary<string, object>)rules);
 			}
 			else {
-				Debug.Log("Invalid layout");
+				Debug.LogError("Invalid layout");
 			}
 
 			object backgroundObj;
@@ -549,8 +550,6 @@ namespace DeltaDNA.Messaging
 			var match = rgx.Match(constraint);
 			if (match != null && match.Success) {
 				var groups = match.Groups;
-				Debug.Log(groups[1].Value +" "+groups[2].Value);
-
 				if (float.TryParse(groups[1].Value, out val)) {
 					if (groups[2].Value == "%") {
 						return edge * val / 100.0f;
