@@ -607,7 +607,8 @@ namespace DeltaDNA.Messaging
 
 			for (int i = 0; i < _textures.Count; ++i)
 			{
-				if (GUI.Button(_positions[i], _textures[i], GUIStyle.none)) {
+				GUI.DrawTexture(_positions[i], _textures[i]);
+				if (GUI.Button(_positions[i], "", GUIStyle.none)) {
 					_actions[i].Invoke();
 				}
 			}
