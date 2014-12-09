@@ -71,7 +71,7 @@ whilst still maintaining the original aspect ratio.
         },
     },
     'shim': {
-        'mask': 'dimmed',   // none, clear, dimmed
+        'mask': 'DIMMED',   // none, clear, dimmed
         'action': {
             'type': 'dismiss'      // dismiss on touch
         }
@@ -81,7 +81,7 @@ whilst still maintaining the original aspect ratio.
 ```
 
 The `url` is the location of the spritemap image file.  The `width` and `height` are the size of
-the image, and the `format` is the image format; PNG for now.
+the image, and the `format` is the image format; PNG for now (this isn't used but is probably useful in the future).
 
 The 'spritemap' object describes the location of the image assets in the sprite map.  The 'buttons'
 are optional depending on the number of buttons in the message.
@@ -90,11 +90,11 @@ The `layout` object describes how the background is to appear on the screen.  It
 `landscape` and/or `portrait` keys depending on preferred layout.  If only one key is present
 the rules are applied whatever the orientation. (I think it would work this way, typically a game stays in the same orientation but this could be useful.)
 
-Under the layout orientation a number of options describing how to render the background can appear.  `cover` scales the background so it's as large as possible so that the background is completely covered by the image.  The origin of the image is controlled by horizontal and vertical alignments.
-`contain` scales the image as large as possible such that it's width and height fit inside the screen.  Horizontal and vertical alignment control the image position.
-`constrain` will scale the image as large as possible such that the rules about how much space to the edge of the screen are maintained.  The rules can be in pixels from the edge, or a percentage of the screen size, and any combination.
+The layout orientation contains rules for the background and the location of the buttons.  For the background two modes are valid: `cover` which scales the background image so it's as large as possible, and `contain` which makes the image as large as possible such that all the constraints are satisfied.  See below for more examples of `contain` layouts.  For the buttons the `x` and `y` coordinates are the top left corner of the buttons in the space of the background dimensions.
 
-Also under the orientation are the positions of the all the buttons relative to the background.  The x and y values are the top left corner of the button.  The button is scaled by the same factor as the background.  The number of buttons will match the number in the `spritemap` object.
+Each background and button object can have an action.  The action `type` can be NONE, DISMISS, LINK or ACTION.  If the type is LINK or ACTION a `value` field will provide a string value to pass back to the callback associated with the button.  If a LINK, then the browser shall be opened automatically buy the SDK.
+
+The `shim` field describes how the remainder of the screen behind the message should be handled.  The `mask` can be either NONE, in which case nothing is added so any buttons behind the popup can still be clicked, CLEAR which will have the effect of preventing background buttons from being clicked, and DIMMED which greys out the screen.  The shim also supports actions so clicking on it can dismiss the popup too.
 
 #### Some More Layout Examples
 
@@ -145,7 +145,7 @@ Fills the screen with the image, positioning it against the left side.
 ```
 Fill's the screen with the image, but keeps at least 10 pixels from the left edge, 20% of the screen from the right, 25 pixels from the top and 5% of the screen from the bottom.  The image is then centered in the available space.
 
-It could be useful to support different layouts for landscape and portrait although that is perhaps unnecessary.
+We can support different layout for landscape and portrait by including both.
 
 ___
 
