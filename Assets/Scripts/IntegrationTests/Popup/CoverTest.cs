@@ -16,56 +16,56 @@ namespace DeltaDNA.Messaging
 
 			var image = new Dictionary<string, object>() {
 				{"url", spriteMapPath},
-				{"width", 1024},
-				{"height", 512},
+				{"width", 1024L},
+				{"height", 512L},
 				{"format", "png"},
 				{"spritemap", new Dictionary<string, object>() {
 					{"background", new Dictionary<string, object>() {
-						{"x", 2},
-						{"y", 52},
-						{"width", 640},
-						{"height", 400}
+						{"x", 2L},
+						{"y", 52L},
+						{"width", 640L},
+						{"height", 400L}
 					}},
 					{"buttons", new List<object>() {
 						new Dictionary<string, object>() {
-							{"x", 2},
-							{"y", 2},
-							{"width", 96},
-							{"height", 48}
+							{"x", 2L},
+							{"y", 2L},
+							{"width", 96L},
+							{"height", 48L}
 						},
 						new Dictionary<string, object>() {
-							{"x", 644},
-							{"y", 404},
-							{"width", 96},
-							{"height", 48}
+							{"x", 644L},
+							{"y", 404L},
+							{"width", 96L},
+							{"height", 48L}
 						}
 					}}
 				}},
 				{"layout", new Dictionary<string, object>() {
 					{"landscape", new Dictionary<string, object>() {
-						{"cover", new Dictionary<string, object>() {
-							{"valign", "center"},
-							{"halign", "center"}
-						}},
 						{"background", new Dictionary<string, object>() {
+							{"cover", new Dictionary<string, object>() {
+								{"valign", "center"},
+								{"halign", "center"}
+							}},
 							{"action", new Dictionary<string, object>() {
-								{"type", "NONE"}
+								{"type", "none"}
 							}}
 						}},
 						{"buttons", new List<object>() {
 							new Dictionary<string, object>() {
-								{"x", 544},
-								{"y", 0},
+								{"x", 544L},
+								{"y", 0L},
 								{"action", new Dictionary<string, object>() {
-									{"type", "ACTION"},
+									{"type", "action"},
 									{"value", "BUY_GOLD"}
 								}},
 							},
 							new Dictionary<string, object>() {
-								{"x", 544},
-								{"y", 352},
+								{"x", 544L},
+								{"y", 352L},
 								{"action", new Dictionary<string, object>() {
-									{"type", "DISMISS"}
+									{"type", "dismiss"}
 								}}
 							}
 						}}
@@ -74,7 +74,7 @@ namespace DeltaDNA.Messaging
 				{"shim", new Dictionary<string, object>() {
 					{"mask", "dimmed"},
 					{"action", new Dictionary<string, object>() {
-						{"type", "NONE"}
+						{"type", "none"}
 					}}
 				}}
 			};

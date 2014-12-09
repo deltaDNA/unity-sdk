@@ -161,8 +161,8 @@ namespace DeltaDNA.Messaging
 			    message.TryGetValue("height", out height)) {
 
 			    URL = (string)url;
-			    Width = (int)width;
-			    Height = (int)height;
+			    Width = (int)((long)width);
+			    Height = (int)((long)height);
 			}
 			else {
 				Debug.LogError("Invalid image message format.");
@@ -199,7 +199,7 @@ namespace DeltaDNA.Messaging
 					backgroundDict.TryGetValue("width", out width) &&
 					backgroundDict.TryGetValue("height", out height)) {
 
-				    return GetSubRegion((int)x, (int)y, (int)width, (int)height);
+				    return GetSubRegion((int)((long)x), (int)((long)y), (int)((long)width), (int)((long)height));
 				}
 			}
 			else {
@@ -224,7 +224,7 @@ namespace DeltaDNA.Messaging
 						buttonDict.TryGetValue("width", out width) &&
 						buttonDict.TryGetValue("height", out height)) {
 
-						textures.Add(GetSubRegion((int)x, (int)y, (int)width, (int)height));
+						textures.Add(GetSubRegion((int)((long)x), (int)((long)y), (int)((long)width), (int)((long)height)));
 					}
 				}
 			}
@@ -395,25 +395,27 @@ namespace DeltaDNA.Messaging
 			_texture = texture;
 			_depth = depth;
 
-			object rules;
-			if (layout.TryGetValue("cover", out rules)) {
-				_position = RenderAsCover((Dictionary<string, object>)rules);
-			} 
-			else if (layout.TryGetValue("contain", out rules)) {
-				_position = RenderAsContain((Dictionary<string, object>)rules);
-			}
-			else {
-				Debug.LogError("Invalid layout");
-			}
-
 			object backgroundObj;
 			if (layout.TryGetValue("background", out backgroundObj)) {
+				var background = backgroundObj as Dictionary<string, object>;
+
 				object actionObj;
-				if (((Dictionary<string, object>)backgroundObj).TryGetValue("action", out actionObj)) {
+				if ((background).TryGetValue("action", out actionObj)) {
 					RegisterAction((Dictionary<string, object>)actionObj, "background");
 				} 
 				else {
 					RegisterAction();
+				}
+
+				object rulesObj;
+				if (background.TryGetValue("cover", out rulesObj)) {
+					_position = RenderAsCover((Dictionary<string, object>)rulesObj);
+				} 
+				else if (background.TryGetValue("contain", out rulesObj)) {
+					_position = RenderAsContain((Dictionary<string, object>)rulesObj);
+				}
+				else {
+					Debug.LogError("Invalid layout");
 				}
 			}
 			else {
@@ -580,10 +582,10 @@ namespace DeltaDNA.Messaging
 					float left = 0, top = 0;
 					object x, y;
 					if (button.TryGetValue("x", out x)) {
-						left = (int)x * content.Scale + content.Position.xMin;
+						left = (int)((long)x) * content.Scale + content.Position.xMin;
 					}
 					if (button.TryGetValue("y", out y)) {
-						top = (int)y * content.Scale + content.Position.yMin;
+						top = (int)((long)y) * content.Scale + content.Position.yMin;
 					}
 					_positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
 				

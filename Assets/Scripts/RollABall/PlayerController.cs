@@ -36,8 +36,8 @@ public class PlayerController : MonoBehaviour
 		ddsdk.StartSDK(
 			"76410301326725846610230818914037",
 			"http://collect2470ntysd.deltadna.net/collect/api",
-			"http://engage2470ntysd.deltadna.net",
-			//"http://www.deltadna.net/qa/engage",
+			//"http://engage2470ntysd.deltadna.net",
+			"http://stage.deltadna.net/qa/engage",
             SDK.AUTO_GENERATED_USER_ID
        	);
 	}

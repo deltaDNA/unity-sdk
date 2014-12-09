@@ -42,13 +42,13 @@ whilst still maintaining the original aspect ratio.
     },
     'layout': {
         'landscape': {
-            'cover': {
-                'halign': 'center'
-                'valign': 'center'
-            },
             'background': {
+                'cover': {
+                    'halign': 'center'
+                    'valign': 'center'
+                },
                 'action': {
-                    'type': 'NONE'
+                    'type': 'none'
                 }
             },
             'buttons': [
@@ -56,7 +56,7 @@ whilst still maintaining the original aspect ratio.
                     'x': 10,
                     'y': 25,
                     'action': {
-                        'type' : 'ACTION'
+                        'type' : 'action'
                         'value': 'BUY_GOLD'
                     }
                 },
@@ -64,7 +64,7 @@ whilst still maintaining the original aspect ratio.
                     'x': 50,
                     'y': 75,
                     'action': {
-                        'type': 'DISMISS'
+                        'type': 'dismiss'
                     }
                 }
             ]
@@ -73,7 +73,7 @@ whilst still maintaining the original aspect ratio.
     'shim': {
         'mask': 'dimmed',   // none, clear, dimmed
         'action': {
-            'type': 'DISMISS'      // dismiss on touch
+            'type': 'dismiss'      // dismiss on touch
         }
     }
 }
@@ -103,8 +103,10 @@ Some more examples looking at the possible layouts and what they would achieve.
 ```javascript
 'layout': {
     'landscape': {
-        'contain': {
+        'background' : {
+            'contain': {
 
+            }
         }
     }
 }
@@ -114,9 +116,11 @@ Fills the centre of the screen with the image.
 ```javascript
 'layout': {
     'landscape': {
-        'contain': {
-            'halign': 'left'
-            'valign': 'center'
+        'background' : {
+            'contain': {
+                'halign': 'left'
+                'valign': 'center'
+            }
         }
     }
 }
@@ -126,13 +130,15 @@ Fills the screen with the image, positioning it against the left side.
 ```javascript
 'layout': {
     'portrait': {
-        'contain': {
-            'halign': 'center',
-            'valign': 'center',
-            'left': '10px'
-            'right': '20%'
-            'top': '25px',
-            'bottom': '5%'
+        'background': {
+            'contain': {
+                'halign': 'center',
+                'valign': 'center',
+                'left': '10px'
+                'right': '20%'
+                'top': '25px',
+                'bottom': '5%'
+            }
         }
     }
 }
