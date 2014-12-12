@@ -162,6 +162,9 @@ namespace DeltaDNA
 
 			string name = SystemInfo.deviceModel;
 			switch (name) {
+				
+				// Apple
+
 				case "iPhone1,1": return @"iPhone 1G";
     			case "iPhone1,2": return @"iPhone 3G";
 			    case "iPhone2,1": return @"iPhone 3GS";
@@ -211,6 +214,22 @@ namespace DeltaDNA
 				case "iPad4,8": return @"iPad Mini 3";
 				case "iPad4,9": return @"iPad Mini 3";
 
+				// Amazon
+
+				case "Amazon KFSAWA": return "Fire HDX 8.9 (4th Gen)";
+				case "Amazon KFASWI": return "Fire HD 7 (4th Gen)";
+				case "Amazon KFARWI": return "Fire HD 6 (4th Gen)";
+				case "Amazon KFAPWA": // fall through
+				case "Amazon KFAPWI": return "Kindle Fire HDX 8.9 (3rd Gen)";
+				case "Amazon KFTHWA": // fall through
+				case "Amazon KFTHWI": return "Kindle Fire HDX 7 (3rd Gen)";
+				case "Amazon KFSOWI": return "Kindle Fire HD 7 (3rd Gen)";
+				case "Amazon KFJWA": // fall through
+				case "Amazon KFJWI": return "Kindle Fire HD 8.9 (2nd Gen)";
+				case "Amazon KFTT": return "Kindle Fire HD 7 (2nd Gen)";
+				case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
+				case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
+
 				default : return name;
 			}
 		}
@@ -258,7 +277,12 @@ namespace DeltaDNA
 			if (os.Contains("MAC")) return "OSX";
 			if (os.Contains("IOS") || os.Contains("IPHONE") || os.Contains("IPAD")) return "IOS";
 			if (os.Contains("LINUX")) return "LINUX";
-			if (os.Contains("ANDROID")) return "ANDROID";
+			if (os.Contains("ANDROID")) {
+				if (SystemInfo.deviceModel.ToUpper().Contains("AMAZON")) {
+					return "FIREOS";
+				}
+				return "ANDROID";
+			}
 			if (os.Contains("BLACKBERRY")) return "BLACKBERRY";
 			return "UNKNOWN";
 		}
