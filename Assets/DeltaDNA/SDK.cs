@@ -252,16 +252,22 @@ namespace DeltaDNA
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
 		/// <param name="popup">A Popup object to display the image.</param>
+		/// <param name="callback">Optionally pass the full engage response back to the caller.</param>
 		public void RequestImageMessage(
 			string decisionPoint,
 			Dictionary<string, object> engageParams,
-			IPopup popup)
+			IPopup popup,
+			Action<Dictionary<string, object>> callback = null)
 		{
 			RequestEngagement(decisionPoint, engageParams, (response) => {
-				if (response != null && response.ContainsKey("image"))
+				if (response != null) 
 				{
-					var image = response["image"] as Dictionary<string, object>;
-					popup.Prepare(image);
+					if (response.ContainsKey("image"))
+					{
+						var image = response["image"] as Dictionary<string, object>;
+						popup.Prepare(image);
+					}
+					if (callback != null) callback(response);
 				}
 			});
 		}

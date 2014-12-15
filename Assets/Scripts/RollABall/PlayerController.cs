@@ -36,8 +36,8 @@ public class PlayerController : MonoBehaviour
 		ddsdk.StartSDK(
 			"76410301326725846610230818914037",
 			"http://collect2470ntysd.deltadna.net/collect/api",
-			//"http://engage2470ntysd.deltadna.net",
-			"http://www.deltadna.net/qa/engage",
+			"http://engage2470ntysd.deltadna.net",
+			//"http://www.deltadna.net/qa/engage",
             SDK.AUTO_GENERATED_USER_ID
        	);
 	}
@@ -95,7 +95,9 @@ public class PlayerController : MonoBehaviour
 				IPopup gameEndedPopup = new Popup();
 				gameEndedPopup.AfterPrepare += new EventHandler(OnPopupLoaded);
 				gameEndedPopup.BeforeClose += new EventHandler(OnGameEnded);
-				ddsdk.RequestImageMessage("gameEnded", engageParams, gameEndedPopup);
+				ddsdk.RequestImageMessage("gameEnded", engageParams, gameEndedPopup, (response) => {
+					Debug.Log ("gameEnded response: "+DeltaDNA.MiniJSON.Json.Serialize(response));
+				});
 			}
 
 			if (score % 3 == 0) {
