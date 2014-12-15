@@ -1,4 +1,4 @@
-3.3 (2014/11/25)
+3.3 (2014/12/15)
 ================
 
 Changes:
@@ -9,12 +9,14 @@ Changes:
 Features:
 
     * Added support for rich messaging.  Call `RequestImageMessage` to display a popup image
-        from an engagement.  See Docs for details.
+        from an engagement.  See Docs for details on how it works.
+    * Added support for Kindle Fire devices.
 
 Fixes:
 
     * Minor change so works with Windows Phone 8 build.
     * Tweaked ClientInfo to return better names for deviceName and deviceType.
+    * Improved how ClientInfo determines operating system version.
 
 
 3.2.1 (2014/10/14)
