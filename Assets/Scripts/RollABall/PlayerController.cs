@@ -117,11 +117,11 @@ public class PlayerController : MonoBehaviour
 				};
 
 				myPopup.Dismiss += (sender, e) => {
-					Debug.Log("Popup dismissed");
+					Debug.Log("Popup dismissed by "+e.ID);
 				};
 
 				myPopup.Action += (sender, e) => {
-					Debug.Log("Popup actioned by with command "+e.ActionValue);
+					Debug.Log("Popup actioned by "+e.ID+" with command "+e.ActionValue);
 				};
 				// Start Request
 				ddsdk.RequestImageMessage("pickUp", engageParams, myPopup);

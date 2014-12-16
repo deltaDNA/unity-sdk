@@ -288,11 +288,11 @@ namespace DeltaDNA.Messaging
 				PopupEventArgs eventArgs = new PopupEventArgs(id, (string)typeObj, (string)valueObj);
 
 				switch ((string)typeObj) {
-					case "NONE": {
+					case "none": {
 						_actions.Add(() => {});
 						break;
 					}
-					case "ACTION": {
+					case "action": {
 						_actions.Add(() => {
 							if (valueObj != null) {
 								_popup.OnAction(eventArgs);
@@ -301,7 +301,7 @@ namespace DeltaDNA.Messaging
 						});
 						break;
 					}
-					case "LINK": {
+					case "link": {
 						_actions.Add(() => {
 							_popup.OnAction(eventArgs);
 							if (valueObj != null) {
@@ -311,7 +311,7 @@ namespace DeltaDNA.Messaging
 						});
 						break;
 					}
-					default : {	// "DISMISS"
+					default : {	// "dismiss"
 						_actions.Add(() => {
 							_popup.OnDismiss(eventArgs);
 							_popup.Close();
