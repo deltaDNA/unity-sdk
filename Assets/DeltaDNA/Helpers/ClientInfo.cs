@@ -5,93 +5,93 @@ using UnityEngine;
 namespace DeltaDNA
 {
 	/// <summary>
-	/// The ClientInfo class determines facts about the device the game is being played on.  The 
+	/// The ClientInfo class determines facts about the device the game is being played on.  The
 	/// results are formatted to be valid game parameter values.
 	/// </summary>
 	static class ClientInfo
 	{
 		private static string platform = null;
-	
+
 		/// <summary>
 		/// The platform the game is being played on.
 		/// </summary>
 		public static string Platform { get { return platform ?? (platform = GetPlatform()); }}
-		
+
 		private static string deviceName = null;
 
 		/// <summary>
 		/// The name of the device.
-		/// </summary>		
+		/// </summary>
 		public static string DeviceName { get { return deviceName ?? (deviceName = GetDeviceName()); }}
-		
+
 		private static string deviceModel = null;
-		
+
 		/// <summary>
 		/// The device's model number.
 		/// </summary>
 		/// <value>The device model.</value>
 		public static string DeviceModel { get { return deviceModel ?? (deviceModel = GetDeviceModel()); }}
-		
+
 		private static string deviceType = null;
-		
+
 		/// <summary>
 		/// The type of device.
 		/// </summary>
 		public static string DeviceType { get { return deviceType ?? (deviceType = GetDeviceType()); }}
-		
+
 		private static string operatingSystem = null;
-		
+
 		/// <summary>
 		/// The operating system the device is running.
 		/// </summary>
 		public static string OperatingSystem { get { return operatingSystem ?? (operatingSystem = GetOperatingSystem()); }}
-		
+
 		private static string operatingSystemVersion = null;
 
 		/// <summary>
 		/// The version of the operating system the device is running.
-		/// </summary>		
+		/// </summary>
 		public static string OperatingSystemVersion { get { return operatingSystemVersion ?? (operatingSystemVersion = GetOperatingSystemVersion()); }}
-		
+
 		private static string manufacturer = null;
-		
+
 		/// <summary>
 		/// The manufacturer of the device the game is running on.
 		/// </summary>
-		public static string Manufacturer { get { return manufacturer ?? (manufacturer = GetManufacturer()); }}	
-		
+		public static string Manufacturer { get { return manufacturer ?? (manufacturer = GetManufacturer()); }}
+
 		private static string timezoneOffset = null;
-		
+
 		/// <summary>
 		/// The timezone offset from UTC the device is set to.
 		/// </summary>
 		public static string TimezoneOffset { get { return timezoneOffset ?? (timezoneOffset = GetCurrentTimezoneOffset()); }}
-		
+
 		private static string countryCode = null;
-		
+
 		/// <summary>
 		/// The country code the device is set to.
 		/// </summary>
 		public static string CountryCode { get { return countryCode ?? (countryCode = GetCountryCode()); }}
-		
+
 		private static string languageCode = null;
-		
+
 		/// <summary>
 		/// The language code the device is set to.
 		/// </summary>
 		/// <value>The language code.</value>
 		public static string LanguageCode { get { return languageCode ?? (languageCode = GetLanguageCode()); }}
-		
+
 		private static string locale = null;
-		
+
 		/// <summary>
 		/// The locale of the device in.
 		/// </summary>
 		/// <value>The locale.</value>
 		public static string Locale { get { return locale ?? (locale = GetLocale()); }}
-		
+
 		#region Private Helpers
-	
+
 		/// <summary>
 		/// Gets the platform as an enumeration of the 'platform' key.
 		/// </summary>
@@ -102,7 +102,7 @@ namespace DeltaDNA
 			{
 				case RuntimePlatform.Android: return "ANDROID";
 				case RuntimePlatform.FlashPlayer: return "WEB";
-				
+
 				#if UNITY_IPHONE
 				case RuntimePlatform.IPhonePlayer:
 				{
@@ -120,7 +120,7 @@ namespace DeltaDNA
 					}
 				}
 				#endif
-				
+
 				case RuntimePlatform.LinuxPlayer: return "PC_CLIENT";
 				case RuntimePlatform.MetroPlayerARM: return "WINDOWS_TABLET";
 				case RuntimePlatform.MetroPlayerX64: return "WINDOWS_TABLET";
@@ -154,7 +154,7 @@ namespace DeltaDNA
 				}
 			}
 		}
-		
+
 		private static string GetDeviceName()
 		{
 			// We attempt to create a friendly name from the device model
@@ -162,7 +162,7 @@ namespace DeltaDNA
 
 			string name = SystemInfo.deviceModel;
 			switch (name) {
-				
+
 				// Apple
 
 				case "iPhone1,1": return @"iPhone 1G";
@@ -180,13 +180,13 @@ namespace DeltaDNA
 			    case "iPhone6,2": return @"iPhone 5S";
 			    case "iPhone7,2": return @"iPhone 6";
 			    case "iPhone7,1": return @"iPhone 6 Plus";
-			    
+
 			    case "iPod1,1": return @"iPod Touch 1G";
 			    case "iPod2,1": return @"iPod Touch 2G";
 			    case "iPod3,1": return @"iPod Touch 3G";
 			    case "iPod4,1": return @"iPod Touch 4G";
 			    case "iPod5,1": return @"iPod Touch 5G";
-			    
+
 			    case "iPad1,1": return @"iPad 1G";
 			    case "iPad2,1": return @"iPad 2";
 			    case "iPad2,2": return @"iPad 2";
@@ -233,12 +233,12 @@ namespace DeltaDNA
 				default : return name;
 			}
 		}
-		
+
 		private static string GetDeviceModel()
 		{
 			return SystemInfo.deviceModel;
 		}
-		
+
 		/// <summary>
 		/// Gets the type of the device as an enumeration of 'deviceType'.
 		/// </summary>
@@ -255,8 +255,8 @@ namespace DeltaDNA
 					if (model.StartsWith("iPhone")) return "MOBILE_PHONE";
 					if (model.StartsWith("iPad")) return "TABLET";
 					return "HANDHELD";
-				} 
-				case UnityEngine.DeviceType.Unknown: 
+				}
+				case UnityEngine.DeviceType.Unknown:
 				{
 					#if UNITY_4_5 || UNITY_4_5_1
 					if (Application.platform == RuntimePlatform.SamsungTVPlayer) return "TV";
@@ -266,10 +266,10 @@ namespace DeltaDNA
 				default: return "UNKNOWN";
 			}
 		}
-		
+
 		private static string GetOperatingSystem()
 		{
-			// Unity gives a string with os plus version.  It's not documented 
+			// Unity gives a string with os plus version.  It's not documented
 			// how this string is generated but I can have a good guess.
 			string os = SystemInfo.operatingSystem.ToUpper();
 			if (os.Contains("WINDOWS")) return "WINDOWS";
@@ -286,22 +286,26 @@ namespace DeltaDNA
 			if (os.Contains("BLACKBERRY")) return "BLACKBERRY";
 			return "UNKNOWN";
 		}
-		
+
 		private static string GetOperatingSystemVersion()
 		{
-			const string pattern = @"[\d|\.]+";
-			Regex regex = new Regex(pattern);
-			string os = SystemInfo.operatingSystem;
-			Match match = regex.Match(os);
-			if (match.Success) return match.Groups[0].ToString();
-			return "";
+			try {
+				const string pattern = @"[\d|\.]+";
+				Regex regex = new Regex(pattern);
+				string os = SystemInfo.operatingSystem;
+				Match match = regex.Match(os);
+				if (match.Success) return match.Groups[0].ToString();
+				return "";
+			} catch (Exception) {
+				return null;
+			}
 		}
-		
+
 		private static string GetManufacturer()
 		{
 			return null;
 		}
-		
+
 		private static string GetCurrentTimezoneOffset()
 		{
 			try
@@ -321,13 +325,13 @@ namespace DeltaDNA
 				return null;
 			}
 		}
-		
+
 		private static string GetCountryCode()
 		{
 			// Not supported in Unity.
 			return null;
 		}
-		
+
 		private static string GetLanguageCode()
 		{
 			switch (Application.systemLanguage)
@@ -375,7 +379,7 @@ namespace DeltaDNA
 				default: return "en";	// English...
 			}
 		}
-		
+
 		private static string GetLocale()
 		{
 			if (CountryCode != null)
@@ -387,8 +391,7 @@ namespace DeltaDNA
 				return String.Format("{0}_ZZ", LanguageCode);
 			}
 		}
-		
+
 		#endregion
 	}
 }
-
