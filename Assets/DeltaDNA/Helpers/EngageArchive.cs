@@ -18,10 +18,10 @@ namespace DeltaDNA
 
 		private static readonly string FILENAME = "ENGAGEMENTS";
 		private string _path;
-	
+
 		/// <summary>
 		/// Creates a new EnagageArchive, loading any previously saved Engagements from
-		/// a file at <param name="path">. 
+		/// a file at <param name="path">.
 		/// </summary>
 		public EngageArchive(string path)
 		{
@@ -117,30 +117,30 @@ namespace DeltaDNA
 			{
 				try
 				{
-					if (!Directory.Exists(this._path)) 
+					if (!Directory.Exists(this._path))
 					{
 						Directory.CreateDirectory(this._path);
 					}
-					
+
 					var bytes = new List<byte>();
-					
+
 					foreach (DictionaryEntry entry in _table)
 					{
 						byte[] key = Encoding.UTF8.GetBytes(entry.Key as string);
 						byte[] keyLength = BitConverter.GetBytes(key.Length);
 						byte[] value = Encoding.UTF8.GetBytes(entry.Value as string);
 						byte[] valueLength = BitConverter.GetBytes(value.Length);
-						
+
 						bytes.AddRange(keyLength);
 						bytes.AddRange(key);
 						bytes.AddRange(valueLength);
 						bytes.AddRange(value);
 					}
-					
+
 					byte[] byteArray = bytes.ToArray();
-					
+
 					string filename = Path.Combine(this._path, FILENAME);
-				
+
 					using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
 					{
 						fs.Write(byteArray, 0, byteArray.Length);

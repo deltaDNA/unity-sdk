@@ -7,58 +7,72 @@ namespace DeltaDNA
 	{
 		private Queue<string> inEvents = new Queue<string>();
 		private Queue<string> outEvents = new Queue<string>();
-		
+
 		private bool disposed = false;
-	
+
+		private static object _lock = new object();
+
 		public WebplayerEventStore()
 		{
-		
+
 		}
-		
+
 		public bool Push(string obj)
 		{
-			inEvents.Enqueue(obj);
-			return true;
-		}
-		
-		public bool Swap()
-		{
-			if (outEvents.Count == 0)
+			lock (_lock)
 			{
-				var temp = outEvents;
-				outEvents = inEvents;
-				inEvents = temp;
+				inEvents.Enqueue(obj);
 				return true;
 			}
-			return false;
 		}
-		
+
+		public bool Swap()
+		{
+			lock (_lock)
+			{
+				if (outEvents.Count == 0)
+				{
+					var temp = outEvents;
+					outEvents = inEvents;
+					inEvents = temp;
+					return true;
+				}
+				return false;
+			}
+		}
+
 		public List<string> Read()
 		{
-			List<string> results = new List<string>();
-			foreach (string r in outEvents)
+			lock (_lock)
 			{
-				results.Add(r);
+				List<string> results = new List<string>();
+				foreach (string r in outEvents)
+				{
+					results.Add(r);
+				}
+				return results;
 			}
-			return results;
 		}
-		
+
 		public void Clear()
 		{
-			outEvents.Clear();
+			lock (_lock)
+			{
+				outEvents.Clear();
+			}
 		}
-		
-		public void Dispose() 
-		{ 
-			Dispose(true); 
+
+		public void Dispose()
+		{
+			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-		
+
 		~WebplayerEventStore()
 		{
 			Dispose(false);
 		}
-		
+
 		protected virtual void Dispose(bool disposing)
 		{
 			if(!disposed)
