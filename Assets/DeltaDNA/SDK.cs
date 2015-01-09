@@ -264,17 +264,20 @@ namespace DeltaDNA
 			IPopup popup,
 			Action<Dictionary<string, object>> callback = null)
 		{
-			RequestEngagement(decisionPoint, engageParams, (response) => {
-				if (response != null)
-				{
-					if (response.ContainsKey("image"))
-					{
-						var image = response["image"] as Dictionary<string, object>;
-						popup.Prepare(image);
-					}
-					if (callback != null) callback(response);
-				}
-			});
+            Action<Dictionary<string, object>> imageCallback = (response) =>
+            {
+                if (response != null)
+                {
+                    if (response.ContainsKey("image"))
+                    {
+                        var image = response["image"] as Dictionary<string, object>;
+                        popup.Prepare(image);
+                    }
+                    if (callback != null) callback(response);
+                }
+            };
+
+			RequestEngagement(decisionPoint, engageParams, imageCallback);
 		}
 
 		/// <summary>
@@ -601,18 +604,20 @@ namespace DeltaDNA
 				{
 					LogDebug("Starting event upload");
 
-					yield return StartCoroutine(PostEvents(events.ToArray(), (succeeded) =>
-					{
-						if (succeeded)
-						{
-							LogDebug("Event upload successful");
-							this.eventStore.Clear();
-						}
-						else
-						{
-							LogWarning("Event upload failed - try again later");
-						}
-					}));
+                    Action<bool> postCb = (succeeded) =>
+                    {
+                        if (succeeded)
+                        {
+                            LogDebug("Event upload successful");
+                            this.eventStore.Clear();
+                        }
+                        else
+                        {
+                            LogWarning("Event upload failed - try again later");
+                        }
+                    };
+
+					yield return StartCoroutine(PostEvents(events.ToArray(), postCb));
 				}
 			}
 			finally
@@ -657,7 +662,7 @@ namespace DeltaDNA
 				yield break;
 			}
 
-			yield return StartCoroutine(EngageRequest(engageJSON, (response) =>
+            Action<string> requestCb = (response) =>
             {
                 bool cachedResponse = false;
                 if (response != null)
@@ -683,8 +688,11 @@ namespace DeltaDNA
                 {
                     result["isCachedResponse"] = cachedResponse;
                 }
-                callback(result);
-            }));
+
+                if (callback != null) callback(result);
+            };
+
+			yield return StartCoroutine(EngageRequest(engageJSON, requestCb));
 		}
 
 		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)
@@ -706,20 +714,22 @@ namespace DeltaDNA
 
 			do
 			{
-				yield return StartCoroutine(HttpPOST(url, bulkEvent, (status, response) =>
-				{
-					// Unity doesn't handle 100 response correctly, so you can't know
-					// if it succeeded or failed.  We can assume if no response text came back
-					// Collect was happy.
-					if (status == 200 || status == 204) succeeded = true;
-					else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
-					#if UNITY_WEBPLAYER
+                Action<int, string> httpCb = (status, response) =>
+                {
+                    // Unity doesn't handle 100 response correctly, so you can't know
+                    // if it succeeded or failed.  We can assume if no response text came back
+                    // Collect was happy.
+                    if (status == 200 || status == 204) succeeded = true;
+                    else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
+#if UNITY_WEBPLAYER
 					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
 					// although Collect receives the data fine.
 					else if (status == 0) { LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
-					#endif
-					else LogDebug("Error uploading events, Collect returned: "+status+" "+response);
-				}));
+#endif
+                    else LogDebug("Error uploading events, Collect returned: " + status + " " + response);
+                };
+
+				yield return StartCoroutine(HttpPOST(url, bulkEvent, httpCb));
 				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
 			}
 			while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
@@ -740,18 +750,20 @@ namespace DeltaDNA
 				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
 			}
 
-			yield return StartCoroutine(HttpPOST(url, engagement, (status, response) =>
+            Action<int, string> httpCb = (status, response) =>
 			{
 				if (status == 200 || status == 100)
 				{
-					callback(response);
+					if (callback != null) callback(response);
 				}
 				else
 				{
 					LogDebug("Error requesting engagement, Engage returned: "+status);
-					callback(null);
+					if (callback != null) callback(null);
 				}
-			}));
+			};
+
+			yield return StartCoroutine(HttpPOST(url, engagement, httpCb));
 		}
 
 		private IEnumerator HttpGET(string url, Action<int, string> responseCallback = null)
