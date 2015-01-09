@@ -1,3 +1,10 @@
+3.3.2 (2015/01/09)
+==================
+
+Fixes:
+
+* Minor change to address potential crash from an engage request.
+
 3.3.1 (2015/01/06)
 ==================
 
