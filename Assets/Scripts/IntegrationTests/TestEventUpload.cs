@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityTest;
 
@@ -31,31 +32,33 @@ class TestEventUpload : MonoBehaviour {
 	
 	private IEnumerator RunTestCoroutine() {
 	
+		SDK.Instance.RecordEvent("gameStarted");
 		SDK.Instance.Upload();
 		SDK.Instance.RecordEvent("testUploadEvent1");
 		
 		while (SDK.Instance.IsUploading) {
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(3);
 		}
 		
 		SDK.Instance.Upload();
 		SDK.Instance.RecordEvent("testUploadEvent2");
 		
 		while (SDK.Instance.IsUploading) {
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(3);
 		}
 		
 		SDK.Instance.Upload();
 		SDK.Instance.RecordEvent("testUploadEvent3");
 		
 		while (SDK.Instance.IsUploading) {
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(3);
 		}
 		
+		SDK.Instance.RecordEvent("gameEnded", new Dictionary<string,object>() {{"userScore", 0}});
 		SDK.Instance.Upload();
 		
 		while (SDK.Instance.IsUploading) {
-			yield return new WaitForSeconds(1);
+			yield return new WaitForSeconds(3);
 		}
 	
 		IntegrationTest.Pass(gameObject);
