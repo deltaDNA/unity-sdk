@@ -32,7 +32,13 @@ class TestEventUpload : MonoBehaviour {
 	
 	private IEnumerator RunTestCoroutine() {
 	
+		SDK.Instance.Upload();
 		SDK.Instance.RecordEvent("gameStarted");
+		
+		while (SDK.Instance.IsUploading) {
+			yield return new WaitForSeconds(3);
+		}
+		
 		SDK.Instance.Upload();
 		SDK.Instance.RecordEvent("testUploadEvent1");
 		
@@ -54,7 +60,7 @@ class TestEventUpload : MonoBehaviour {
 			yield return new WaitForSeconds(3);
 		}
 		
-		SDK.Instance.RecordEvent("gameEnded", new Dictionary<string,object>() {{"userScore", 0}});
+		SDK.Instance.RecordEvent("gameEnded", new Dictionary<string,object>() {{"userScore", 0},{"secondsPlayed", 0}});
 		SDK.Instance.Upload();
 		
 		while (SDK.Instance.IsUploading) {

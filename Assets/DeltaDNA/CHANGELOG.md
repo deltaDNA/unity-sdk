@@ -1,3 +1,10 @@
+3.3.3 (2015/01/09)
+==================
+
+Fixes:
+
+* Fixed regression introduced in v3.2 which could prevent some events being uploaded.
+
 3.3.2 (2015/01/09)
 ==================
 

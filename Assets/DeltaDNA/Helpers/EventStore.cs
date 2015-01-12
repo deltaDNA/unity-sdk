@@ -140,7 +140,18 @@ namespace DeltaDNA
 		/// <summary>
 		/// Clears the out buffer.
 		/// </summary>
-		public void Clear()
+		public void ClearOut()
+		{
+			lock (_lock)
+			{
+				outfs.SetLength(0);
+			}
+		}
+		
+		/// <summary>
+		/// Clears both the in and out buffer.
+		/// </summary>
+		public void ClearAll()
 		{
 			lock (_lock)
 			{

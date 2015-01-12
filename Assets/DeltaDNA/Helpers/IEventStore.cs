@@ -8,7 +8,8 @@ namespace DeltaDNA
 		bool Push(string obj);
 		bool Swap();
 		List<string> Read();
-		void Clear();
+		void ClearOut();
+		void ClearAll();
 	}
 }
 

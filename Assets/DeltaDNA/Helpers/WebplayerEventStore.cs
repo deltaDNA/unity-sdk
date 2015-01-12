@@ -54,10 +54,19 @@ namespace DeltaDNA
 			}
 		}
 
-		public void Clear()
+		public void ClearOut()
 		{
 			lock (_lock)
 			{
+				outEvents.Clear();
+			}
+		}
+		
+		public void ClearAll()
+		{
+			lock (_lock)
+			{
+				inEvents.Clear();
 				outEvents.Clear();
 			}
 		}

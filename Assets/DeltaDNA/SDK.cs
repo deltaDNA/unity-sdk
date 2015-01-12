@@ -325,7 +325,7 @@ namespace DeltaDNA
 			PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
 			PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);
 
-			this.eventStore.Clear();
+			this.eventStore.ClearAll();
 			this.engageArchive.Clear();
 		}
 
@@ -609,7 +609,7 @@ namespace DeltaDNA
                         if (succeeded)
                         {
                             LogDebug("Event upload successful");
-                            this.eventStore.Clear();
+                            this.eventStore.ClearOut();
                         }
                         else
                         {
