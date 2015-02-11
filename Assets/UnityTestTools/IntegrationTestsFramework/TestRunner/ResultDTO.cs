@@ -109,6 +109,11 @@ namespace UnityTest
             get { return message; }
         }
 
+        public string Logs
+        {
+            get { return null; }
+        }
+
         public bool Executed
         {
             get { return executed; }

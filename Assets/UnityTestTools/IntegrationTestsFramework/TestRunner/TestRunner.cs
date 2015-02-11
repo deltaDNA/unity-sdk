@@ -34,7 +34,6 @@ namespace UnityTest
         private double m_StartTime;
         private bool m_ReadyToRun;
 
-        private AssertionComponent[] m_AssertionsToCheck;
         private string m_TestMessages;
         private string m_Stacktrace;
         private TestState m_TestState = TestState.Running;
@@ -226,11 +225,15 @@ namespace UnityTest
                 {
                     if (m_TestState == TestState.Running)
                     {
-                        if (m_AssertionsToCheck != null && m_AssertionsToCheck.All(a => a.checksPerformed > 0))
-                        {
-                            IntegrationTest.Pass(currentTest.gameObject);
-                            m_TestState = TestState.Success;
-                        }
+						if(currentTest.ShouldSucceedOnAssertions())
+						{
+							var assertionsToCheck = currentTest.gameObject.GetComponentsInChildren<AssertionComponent>().Where(a => a.enabled).ToArray();
+	                        if (assertionsToCheck.All(a => a.checksPerformed > 0))
+	                        {
+	                            IntegrationTest.Pass(currentTest.gameObject);
+	                            m_TestState = TestState.Success;
+	                        }
+						}
                         if (currentTest != null && Time.time > m_StartTime + currentTest.GetTimeout())
                         {
                             m_TestState = TestState.Timeout;
@@ -322,19 +325,11 @@ namespace UnityTest
             m_TestMessages = "";
             m_Stacktrace = "";
             m_TestState = TestState.Running;
-            m_AssertionsToCheck = null;
 
             m_StartTime = Time.time;
             currentTest = m_TestsProvider.GetNextTest() as TestComponent;
 
             var testResult = m_ResultList.Single(result => result.TestComponent == currentTest);
-
-            if (currentTest != null && currentTest.ShouldSucceedOnAssertions())
-            {
-                var assertionList = currentTest.gameObject.GetComponentsInChildren<AssertionComponent>().Where(a => a.enabled);
-                if (assertionList.Any())
-                    m_AssertionsToCheck = assertionList.ToArray();
-            }
 
             if (currentTest != null && currentTest.IsExludedOnThisPlatform())
             {
@@ -387,8 +382,7 @@ namespace UnityTest
         private static GameObject Create()
         {
             var runner = new GameObject("TestRunner");
-            var component = runner.AddComponent<TestRunner>();
-            component.hideFlags = HideFlags.NotEditable;
+            runner.AddComponent<TestRunner>();
             Debug.Log("Created Test Runner");
             return runner;
         }

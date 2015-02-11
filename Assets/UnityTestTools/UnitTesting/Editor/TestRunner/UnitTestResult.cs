@@ -17,6 +17,8 @@ namespace UnityTest
         public string Message { get; set; }
         public string StackTrace { get; set; }
 
+        public string Logs { get; set; }
+
         public bool Outdated { get; set; }
 
         public void Update(ITestResult source, bool outdated)
@@ -24,6 +26,7 @@ namespace UnityTest
             ResultState = source.ResultState;
             Duration = source.Duration;
             Message = source.Message;
+            Logs = source.Logs;
             StackTrace = source.StackTrace;
             Executed = source.Executed;
             Outdated = outdated;

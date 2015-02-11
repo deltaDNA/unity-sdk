@@ -95,19 +95,21 @@ namespace UnityTest
             var text = tempTest.Name;
             if (tempTest.Executed)
                 text += " (" + tempTest.Duration.ToString("##0.###") + "s)";
-            if (!tempTest.IsSuccess)
+            text += "\n";
+            if (!string.IsNullOrEmpty(tempTest.Message))
             {
-                text += "\n";
-                if (!string.IsNullOrEmpty(tempTest.Message))
-                {
-                    text += "---\n";
-                    text += tempTest.Message.Trim();
-                }
-                if (!string.IsNullOrEmpty(tempTest.StackTrace))
-                {
-                    var stackTrace = StackTraceFilter.Filter(tempTest.StackTrace).Trim();
-                    text += "\n---EXCEPTION---\n" + stackTrace;
-                }
+                text += "---\n";
+                text += tempTest.Message.Trim();
+            }
+            if (!string.IsNullOrEmpty(tempTest.Logs))
+            {
+                text += "---Logs---\n";
+                text += tempTest.Logs.Trim();
+            }
+            if (!tempTest.IsSuccess && !string.IsNullOrEmpty(tempTest.StackTrace))
+            {
+                var stackTrace = StackTraceFilter.Filter(tempTest.StackTrace).Trim();
+                text += "\n---EXCEPTION---\n" + stackTrace;
             }
             return text.Trim();
         }

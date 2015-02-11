@@ -28,7 +28,7 @@ namespace UnityTest
 
         #region runner steerign vars
         private static IntegrationTestsRunnerWindow s_Instance;
-        [SerializeField] private List<TestComponent> m_TestsToRun;
+        [SerializeField] private List<GameObject> m_TestsToRun;
         [SerializeField] private List<string> m_DynamicTestsToRun;
         [SerializeField] private bool m_ReadyToRun;
         private bool m_IsBuilding;
@@ -212,7 +212,7 @@ namespace UnityTest
             }
 
             var tests = TestComponent.FindAllTestsOnScene();
-            var skipList = gameObject.GetComponentsInChildren(typeof(TestComponent), true);
+            var skipList = gameObject.GetComponentsInChildren(typeof(TestComponent), true).ToList();
             tests.RemoveAll(skipList.Contains);
             foreach (var test in tests)
             {
@@ -227,10 +227,12 @@ namespace UnityTest
                 return;
             FocusWindowIfItsOpen(GetType());
 
-            m_TestsToRun = tests.Where(t => t is TestComponent).Cast<TestComponent>().ToList();
-            var temp = m_TestsToRun.Where(t => t.dynamic).ToArray();
-            m_DynamicTestsToRun = temp.Select(c => c.dynamicTypeName).ToList();
-            m_TestsToRun.RemoveAll(temp.Contains);
+			var testComponents = tests.Where(t => t is TestComponent).Cast<TestComponent>().ToList();
+			var dynaminTests = testComponents.Where(t => t.dynamic).ToList();
+			m_DynamicTestsToRun = dynaminTests.Select(c => c.dynamicTypeName).ToList();
+			testComponents.RemoveAll(dynaminTests.Contains);
+
+			m_TestsToRun = testComponents.Select( tc => tc.gameObject ).ToList();
 
             m_ReadyToRun = true;
             TestComponent.DisableAllTests();
@@ -246,8 +248,9 @@ namespace UnityTest
             {
                 m_ReadyToRun = false;
                 var testRunner = TestRunner.GetTestRunner();
-                testRunner.TestRunnerCallback.Add(new RunnerCallback(this));
-                testRunner.InitRunner(m_TestsToRun.ToList(), m_DynamicTestsToRun);
+				testRunner.TestRunnerCallback.Add(new RunnerCallback(this));
+				var testComponents = m_TestsToRun.Select(go => go.GetComponent<TestComponent>()).ToList();
+				testRunner.InitRunner(testComponents, m_DynamicTestsToRun);
             }
         }
 

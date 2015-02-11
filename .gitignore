@@ -3,6 +3,7 @@ Library/
 Temp/
 Build/
 obj/
+bin/
 
 # Project/User Preference Files
 *.pidb
@@ -11,6 +12,10 @@ obj/
 *.sln
 *.csproj
 *.userprefs
+*.unityproj
+
+# Other
+*.pfx
 
 # OS Junk
 Thumbs.db

@@ -57,9 +57,9 @@ namespace UnityTest
 
         protected void OnSelect()
         {
-            if (!Event.current.control) SelectedLines.Clear();
+			if (!Event.current.control && !Event.current.command) SelectedLines.Clear();
 
-            if (Event.current.control && SelectedLines.Contains(this))
+			if ((Event.current.control || Event.current.command) && SelectedLines.Contains(this))
                 SelectedLines.Remove(this);
             else
                 SelectedLines.Add(this);
