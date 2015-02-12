@@ -12,6 +12,7 @@ public class TestSDK : MonoBehaviour {
 		// Test mode - clear any data from last run
 		// and enable additional logging.
 		//SDK.Instance.ClearPersistentData();
+        SDK.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 		SDK.Instance.Settings.DebugMode = true;
 		
 		// Set client external information		

@@ -5,6 +5,10 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
+#if NETFX_CORE
+using UnityEngine.Windows;
+#endif
+
 namespace DeltaDNA
 {
 	/// <summary>
@@ -25,10 +29,10 @@ namespace DeltaDNA
 		/// </summary>
 		public EngageArchive(string path)
 		{
-			#if !UNITY_WEBPLAYER
+			//#if !UNITY_WEBPLAYER
 			Load(path);
 			this._path = path;
-			#endif
+			//#endif
 		}
 
 		/// <summary>
@@ -37,7 +41,7 @@ namespace DeltaDNA
 		/// </summary>
 		public bool Contains(string decisionPoint)
 		{
-			Debug.Log ("Does Engage contain "+decisionPoint);
+			Logger.LogDebug("Does Engage contain "+decisionPoint);
 			return _table.ContainsKey(decisionPoint);
 		}
 
@@ -69,10 +73,10 @@ namespace DeltaDNA
 				try
 				{
 					string filename = Path.Combine(path, FILENAME);
-					Debug.Log("Loading Engage from "+filename);
+					Logger.LogDebug("Loading Engage from "+filename);
 					if (File.Exists(filename))
 					{
-						using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+						using (Stream fs = Utils.OpenStream(filename))
 						{
 							string key = null;
 							string value = null;
@@ -99,7 +103,7 @@ namespace DeltaDNA
 				}
 				catch (Exception e)
 				{
-					Debug.LogWarning("Unable to load Engagement archive: "+e.Message);
+					Logger.LogWarning("Unable to load Engagement archive: "+e.Message);
 				}
 			}
 		}
@@ -109,9 +113,9 @@ namespace DeltaDNA
 		/// </summary>
 		public void Save()
 		{
-			#if UNITY_WEBPLAYER
-			return; // no-op
-			#endif
+		//	#if UNITY_WEBPLAYER
+		//	return; // no-op
+		//	#endif
 
 			lock(_lock)
 			{
@@ -119,7 +123,7 @@ namespace DeltaDNA
 				{
 					if (!Directory.Exists(this._path))
 					{
-						Directory.CreateDirectory(this._path);
+						Utils.CreateDirectory(this._path);
 					}
 
 					var bytes = new List<byte>();
@@ -141,14 +145,16 @@ namespace DeltaDNA
 
 					string filename = Path.Combine(this._path, FILENAME);
 
-					using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
+					using (Stream fs = Utils.CreateStream(filename))
 					{
+                        fs.SetLength(0);
+                        fs.Seek(0, SeekOrigin.Begin);
 						fs.Write(byteArray, 0, byteArray.Length);
 					}
 				}
 				catch (Exception e)
 				{
-					Debug.LogWarning("Unable to save Engagement archive: "+e.Message);
+					Logger.LogWarning("Unable to save Engagement archive: "+e.Message);
 				}
 			}
 		}

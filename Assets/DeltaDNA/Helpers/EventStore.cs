@@ -1,237 +1,303 @@
+﻿﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
-using UnityEngine;
+#if NETFX_CORE
+using UnityEngine.Windows;
+using Windows.Storage;
+using System.Threading.Tasks;
+using Windows.Storage.Streams;
+#endif
 
 namespace DeltaDNA
 {
-	public class EventStore : IEventStore, IDisposable
-	{
 
-		private static readonly string PF_KEY_IN_FILE = "DDSDK_EVENT_IN_FILE";
-		private static readonly string PF_KEY_OUT_FILE = "DDSDK_EVENT_OUT_FILE";
-		private static readonly string FILE_A = "A";
-		private static readonly string FILE_B = "B";
-		private static readonly int FILE_BUFFER_SIZE = 4096;
-		private static readonly long MAX_FILE_SIZE = 40 * 1024 * 1024;	// 40MB
+    public class EventStore : IDisposable
+    {
+        private static readonly string PF_KEY_IN_FILE = "DDSDK_EVENT_IN_FILE";
+        private static readonly string PF_KEY_OUT_FILE = "DDSDK_EVENT_OUT_FILE";
 
-		private FileStream infs = null;
-		private FileStream outfs = null;
+        private static readonly string FILE_A = "A";
+        private static readonly string FILE_B = "B";
 
-		private bool initialised = false;
-		private bool disposed = false;
-		private bool debug = false;
+        private static readonly int FILE_BUFFER_SIZE = 4096;
+        private static readonly long MAX_FILE_SIZE = 40 * 1024 * 1024;
 
-		private static object _lock = new object();
+        private bool _initialised = false;
+        private bool _disposed = false;
+        private Stream _infs = null;
+        private Stream _outfs = null;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DeltaDNA.EventStore"/> class.
-		/// </summary>
-		/// <param name="path">Path to where we hold the events.</param>
-		public EventStore(string path, /*bool reset=false,*/ bool debug=false)
-		{
-			this.debug = debug;
+        private static object _lock = new object();
 
-			try
-			{
-				InitialiseFileStreams(path, false);
-				initialised = true;
-			}
-			catch (Exception e)
-			{
-				Log("Problem initialising Event Store: "+e.Message);
-			}
-		}
+        public EventStore(string dir)
+        {
+            Logger.LogInfo("Creating Event Store");
 
-		/// <summary>
-		/// Pushes a new object onto the event store.
-		/// </summary>
-		/// <param name="obj">The event to push</param>
-		public bool Push(string obj)
-		{
-			lock (_lock)
-			{
-				if (initialised && infs.Length < MAX_FILE_SIZE)
-				{
-					try
-					{
-						byte[] record = Encoding.UTF8.GetBytes(obj);
-						byte[] length = BitConverter.GetBytes(record.Length);
+            if (InitialiseFileStreams(dir))
+            {
+                _initialised = true;
+            }
+            else
+            {
+                Logger.LogError("Failed to initialise event store in " + dir);
+            }
+        }
 
-						var bytes = new List<byte>();
-						bytes.AddRange(length);
-						bytes.AddRange(record);
-						byte[] byteArray = bytes.ToArray();
+        public bool Push(string obj)
+        {
+            lock (_lock)
+            {
+                if (!_initialised)
+                {
+                    Logger.LogError("Event Store not initialised");
+                    return false;
+                }
 
-						infs.Write(byteArray, 0, byteArray.Length);
-						return true;
-					}
-					catch (Exception e)
-					{
-						Log("Problem pushing event to Event Store: "+e.Message);
-					}
-				}
-				return false;
-			}
-		}
+                if (_infs.Length < MAX_FILE_SIZE)
+                {
+                    PushEvent(obj, _infs);
+                    return true;
+                }
+                else
+                {
+                    Logger.LogWarning("Event Store full");
+                    return false;
+                }
+            }
+        }
 
-		/// <summary>
-		/// Swap the in and out buffers.
-		/// </summary>
-		public bool Swap()
-		{
-			lock (_lock)
-			{
-				// only swap if out buffer is empty
-				if (outfs.Length == 0)
-				{
-					// close off our write stream
-					infs.Flush();
-					// swap the file handles
-					FileStream temp = infs;
-					infs = outfs;
-					outfs = temp;
-					// reset write
-					infs.SetLength(0);
-					// reset read
-					outfs.Seek(0, SeekOrigin.Begin);
+        public bool Swap()
+        {
+            lock (_lock)
+            {
+                // Only swap if the out buffer is empty
+                // -- So what really happens if the out buffer is full on start up??
+                if (_initialised && _outfs.Length == 0)
+                {
+                    SwapStreams(_infs, _outfs);
 
-					PlayerPrefs.SetString(PF_KEY_IN_FILE, Path.GetFileName(infs.Name));
-					PlayerPrefs.SetString(PF_KEY_OUT_FILE, Path.GetFileName(outfs.Name));
+                    // Swap the filenames
+                    string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE);
+                    string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE);
+                    PlayerPrefs.SetString(PF_KEY_IN_FILE, outFile);
+                    PlayerPrefs.SetString(PF_KEY_OUT_FILE, inFile);
 
-					return true;
-				}
-				return false;
-			}
-		}
+                    return true;
+                }
 
-		/// <summary>
-		/// Read the contents of the out buffer as a list of string.  Can be
-		/// called multiple times.
-		/// </summary>
-		public List<string> Read()	// get the next batch of events to send
-		{
-			lock (_lock)
-			{
-				List<string> results = new List<string>();
-				try
-				{
-					byte[] lengthField = new byte[4];
-					while (outfs.Read (lengthField, 0, lengthField.Length) > 0)
-					{
-						Int32 eventLength = BitConverter.ToInt32(lengthField, 0);
-						byte[] recordField = new byte[eventLength];
-						outfs.Read(recordField, 0, recordField.Length);
-						string record = Encoding.UTF8.GetString(recordField, 0, recordField.Length);
-						results.Add(record);
-					}
-					outfs.Seek(0, SeekOrigin.Begin);	// let us read it again next time
-				}
-				catch (Exception e)
-				{
-					Log("Problem reading events from Event Store: "+e.Message);
-				}
+                return false;
+            }
+        }
 
-				return results;
-			}
-		}
+        public List<string> Read()
+        {
+            lock (_lock)
+            {
+                List<string> events = new List<string>();
+                try
+                {
+                    if (_initialised) ReadEvents(_outfs, events);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError("Problem reading events: " + e.Message);
+                }
+                return events;
+            }
+        }
 
-		/// <summary>
-		/// Clears the out buffer.
-		/// </summary>
-		public void ClearOut()
-		{
-			lock (_lock)
-			{
-				outfs.SetLength(0);
-			}
-		}
-		
-		/// <summary>
-		/// Clears both the in and out buffer.
-		/// </summary>
-		public void ClearAll()
-		{
-			lock (_lock)
-			{
-				infs.SetLength(0);
-				outfs.SetLength(0);
-			}
-		}
+        public void ClearOut()
+        {
+            lock (_lock)
+            {
+                if (_initialised) ClearStream(_outfs);
+            }
+        }
 
-		private void InitialiseFileStreams(string path, bool reset)
-		{
-			if (!Directory.Exists(path))
-			{
-				Directory.CreateDirectory(path);
-			}
+        public void ClearAll()
+        {
+            lock (_lock)
+            {
+                if (_initialised)
+                {
+                    ClearStream(_infs);
+                    ClearStream(_outfs);
+                }
+            }
+        }
 
-			string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
-			string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
-			inFile = Path.GetFileName(inFile);		// support legacy pp that could have full path
-			outFile = Path.GetFileName(outFile);
+        public void FlushBuffers()
+        {
+            lock (_lock)
+            {
+                if (_initialised)
+                {
+                    _infs.Flush();
+                    _outfs.Flush();
+                }
+            }
+        }
 
-			string inPath = Path.Combine(path, inFile);
-			string outPath = Path.Combine(path, outFile);
+        ~EventStore()
+        {
+            Dispose(false);
+        }
 
-			FileMode fileMode = reset ? FileMode.Create : FileMode.OpenOrCreate;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-			if (File.Exists(inPath) && File.Exists(outPath) && !reset)
-			{
-				Log("Loaded existing Event Store in @ "+inPath+" out @ "+outPath);
-			}
-			else
-			{
-				Log("Creating new Event Store in @ "+path);
-			}
+        protected virtual void Dispose(bool disposing)
+        {
+            Logger.LogDebug("Disposing EventStore " + this);
+            try
+            {
+                if (!_disposed)
+                {
+                    if (disposing)
+                    {
+                        Logger.LogDebug("Disposing filestreams");
+                        _infs.Dispose();
+                        _outfs.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                _disposed = true;
+            }
+        }
 
-			infs = new FileStream(inPath, fileMode, FileAccess.ReadWrite, FileShare.None, FILE_BUFFER_SIZE);
-			infs.Seek(0, SeekOrigin.End);
-			outfs = new FileStream(outPath, fileMode, FileAccess.ReadWrite, FileShare.None, FILE_BUFFER_SIZE);
+        private bool InitialiseFileStreams(string dir)
+        {
+            if (!Directory.Exists(dir))
+            {
+                Logger.LogDebug("Directory not found, creating");
+                Utils.CreateDirectory(dir);
+            }
 
-			PlayerPrefs.SetString(PF_KEY_IN_FILE, Path.GetFileName(infs.Name));
-			PlayerPrefs.SetString(PF_KEY_OUT_FILE, Path.GetFileName(outfs.Name));
-		}
+            try
+            {
+                string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
+                string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
 
-		private void Log(string message)
-		{
-			if (this.debug)
-			{
-				Debug.Log ("[DDSDK EventStore] "+message);
-			}
-		}
+                string inPath = Path.Combine(dir, inFilename);
+                string outPath = Path.Combine(dir, outFilename);
 
-		~EventStore()
-		{
-			Dispose(false);
-		}
+                // NB as seperate call after creation resets the files
+                _infs = Create(inPath);
+                _infs.Seek(0, SeekOrigin.End);
+                _outfs = Create(outPath);
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
+                PlayerPrefs.SetString(PF_KEY_IN_FILE, inFilename);
+                PlayerPrefs.SetString(PF_KEY_OUT_FILE, outFilename);
 
-		protected virtual void Dispose(bool disposing)
-		{
-			Log("Disposing on EventStore...");
-			try
-			{
-				if (!this.disposed)
-				{
-					if (disposing)
-					{
-						Log("Disposing filestreams");
-						this.infs.Dispose();
-						this.outfs.Dispose();
-					}
-				}
-			}
-			finally
-			{
-				this.disposed = true;
-			}
-		}
-	}
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError("Failed to initialise file stream: " + e.Message);
+            }
+            return false;
+        }
+
+        public static void PushEvent(string obj, Stream stream)
+        {
+            byte[] record = Encoding.UTF8.GetBytes(obj);
+            byte[] length = BitConverter.GetBytes(record.Length);
+
+            var bytes = new List<byte>();
+            bytes.AddRange(length);
+            bytes.AddRange(record);
+            byte[] byteArray = bytes.ToArray();
+
+            stream.Write(byteArray, 0, byteArray.Length);
+        }
+
+        public static void ReadEvents(Stream stream, IList<string> events)
+        {
+            byte[] lengthField = new byte[4];
+            while (stream.Read(lengthField, 0, lengthField.Length) > 0)
+            {
+                Int32 eventLength = BitConverter.ToInt32(lengthField, 0);
+                byte[] recordField = new byte[eventLength];
+                stream.Read(recordField, 0, recordField.Length);
+                string record = Encoding.UTF8.GetString(recordField, 0, recordField.Length);
+                events.Add(record);
+            }
+            stream.Seek(0, SeekOrigin.Begin);	// let us read it again next time
+        }
+
+        public static void SwapStreams(Stream sin, Stream sout)
+        {
+            // Close off our write stream
+            sin.Flush();
+            // Swap the file handles
+            Stream tmp = sin;
+            sin = sout;
+            sout = tmp;
+            // Clear write stream
+            sin.Seek(0, SeekOrigin.Begin);
+            sin.SetLength(0);
+            // Prepare read stream
+            sout.Seek(0, SeekOrigin.Begin);
+        }
+
+        public static void ClearStream(Stream stream)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.SetLength(0);
+        }
+
+        private static Stream Create(string path)
+        {
+            #if NETFX_CORE
+
+            Logger.LogDebug("Creating async file stream");
+            path = FixPath(path);
+            var thread = CreateAsync(path);
+            thread.Wait();
+
+            if (thread.IsCompleted)
+                return thread.Result;
+
+            throw thread.Exception;
+
+            #elif UNITY_WEBPLAYER
+
+            Logger.LogDebug("Using memory based stream");
+            return new MemoryStream();
+
+            #else
+
+            Logger.LogDebug("Using file based stream");
+            return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, FILE_BUFFER_SIZE);
+
+            #endif
+        }
+
+    #if NETFX_CORE
+
+        private static async Task<Stream> CreateAsync(string path)
+        {
+            var dirName = Path.GetDirectoryName(path);
+            var filename = Path.GetFileName(path);
+
+            var dir = await StorageFolder.GetFolderFromPathAsync(dirName);
+            var file = await dir.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
+            return await file.OpenStreamForWriteAsync();
+        }
+
+        private static string FixPath(string path)
+        {
+            return path.Replace('/', '\\');
+        }
+    #endif
+
+    }
+
 }

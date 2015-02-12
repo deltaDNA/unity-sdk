@@ -311,7 +311,7 @@ namespace DeltaDNA
 			try
 			{
 				// WP8 doesn't support the 'old' way of getting the time zone.
-				#if UNITY_WP8
+				#if UNITY_WP8 || UNITY_METRO
 				TimeSpan currentOffset = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now);
 				#else
 				TimeZone localZone = TimeZone.CurrentTimeZone;

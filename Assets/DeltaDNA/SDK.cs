@@ -5,6 +5,9 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if NETFX_CORE
+using UnityEngine.Windows;
+#endif
 using DeltaDNA.Messaging;
 
 namespace DeltaDNA
@@ -33,7 +36,7 @@ namespace DeltaDNA
 		private string collectURL;
 		private string engageURL;
 
-		private IEventStore eventStore = null;
+		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
 
 		private static object _lock = new object();
@@ -43,18 +46,17 @@ namespace DeltaDNA
 			this.Settings = new Settings();	// default configuration
 			this.Transaction = new TransactionBuilder(this);
 
-			#if UNITY_WEBPLAYER
+			//#if UNITY_WEBPLAYER
 
-			this.eventStore = new WebplayerEventStore();
+			//this.eventStore = new WebplayerEventStore();
 
-			#else
+			//#else
 
 			this.eventStore = new EventStore(
-				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath),
-				Settings.DebugMode
+				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
 			);
 
-			#endif
+			//#endif
 
 			this.engageArchive = new EngageArchive(
 				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
@@ -301,6 +303,11 @@ namespace DeltaDNA
 			StartCoroutine(UploadCoroutine());
 		}
 
+        public void SetLoggingLevel(Logger.Level level)
+        {
+            Logger.SetLogLevel(level);
+        }
+
 		/// <summary>
 		/// Controls default behaviour of the SDK.  Set prior to initialisation.
 		/// </summary>
@@ -545,14 +552,14 @@ namespace DeltaDNA
 
 		private string GetUserID()
 		{
-			#if !UNITY_WEBPLAYER
+			//#if !UNITY_WEBPLAYER
 			// see if this game ran with the previous SDK and look for
 			// a user id.
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
 			if (File.Exists(legacySettingsPath))
 			{
 				LogDebug("Found a legacy file in "+legacySettingsPath);
-				using (FileStream fs = new FileStream(legacySettingsPath, FileMode.Open, FileAccess.Read))
+				using (Stream fs = Utils.OpenStream(legacySettingsPath))
 				{
 					try
 					{
@@ -577,7 +584,7 @@ namespace DeltaDNA
 					}
 				}
 			}
-			#endif
+			//#endif
 
 			LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
