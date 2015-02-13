@@ -94,7 +94,6 @@ namespace DeltaDNA
 
         private static bool RuntimePlatformIs(string platformName)
         {
-            var realName = Application.platform.ToString();
             return Enum.IsDefined(typeof(RuntimePlatform), platformName) && Application.platform.ToString() == platformName;
         }
 

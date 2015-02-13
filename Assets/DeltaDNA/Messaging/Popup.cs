@@ -61,7 +61,7 @@ namespace DeltaDNA.Messaging
 				Configuration = configuration;
 
 			} catch (Exception ex) {
-				Debug.LogException(ex);
+				Logger.LogError("Preparing popup configuration failed: "+ex.Message);
 			}
 		}
 
@@ -99,14 +99,14 @@ namespace DeltaDNA.Messaging
 							IsShowing = true;
 						} 
 						else {
-							Debug.LogError("No layout orientation found.");
+							Logger.LogError("No layout orientation found.");
 						} 
 					}
 					else {
-						Debug.LogError("No layout found.");
+						Logger.LogError("No layout found.");
 					}
 				} catch (Exception ex) {
-					Debug.LogException(ex);
+					Logger.LogError("Showing popup failed: "+ex.Message);
 				}
 			}
 		}
@@ -165,7 +165,7 @@ namespace DeltaDNA.Messaging
 			    Height = (int)((long)height);
 			}
 			else {
-				Debug.LogError("Invalid image message format.");
+				Logger.LogError("Invalid image message format.");
 			}
 
 			object spriteMapDict;
@@ -173,7 +173,7 @@ namespace DeltaDNA.Messaging
 				_spriteMapDict = (Dictionary<string, object>)spriteMapDict;
 			}
 			else {
-				Debug.LogError("Invalid message format, missing 'spritemap' object");
+				Logger.LogError("Invalid message format, missing 'spritemap' object");
 			}
 		}
 	
@@ -203,7 +203,7 @@ namespace DeltaDNA.Messaging
 				}
 			}
 			else {
-				Debug.LogError("Background not found in spritemap object.");
+				Logger.LogError("Background not found in spritemap object.");
 			}
 
 			return null;
@@ -415,7 +415,7 @@ namespace DeltaDNA.Messaging
 					_position = RenderAsContain((Dictionary<string, object>)rulesObj);
 				}
 				else {
-					Debug.LogError("Invalid layout");
+					Logger.LogError("Invalid layout");
 				}
 			}
 			else {

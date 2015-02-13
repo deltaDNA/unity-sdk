@@ -115,7 +115,7 @@ namespace DeltaDNA
 		/// </summary>
 		public void StopSDK()
 		{
-			LogDebug("Stopping SDK");
+			Logger.LogDebug("Stopping SDK");
 			RecordEvent("gameEnded");
 			CancelInvoke();
 			Upload();
@@ -211,7 +211,7 @@ namespace DeltaDNA
 			}
 			else if (!this.eventStore.Push(MiniJSON.Json.Serialize(eventRecord)))
 			{
-				LogWarning("Event Store full, unable to handle event");
+				Logger.LogWarning("Event Store full, unable to handle event");
 			}
 		}
 
@@ -230,13 +230,13 @@ namespace DeltaDNA
 
 			if (String.IsNullOrEmpty(this.EngageURL))
 			{
-				LogWarning("Engage URL not configured, can not make engagement.");
+				Logger.LogWarning("Engage URL not configured, can not make engagement.");
 				return;
 			}
 
 			if (String.IsNullOrEmpty(decisionPoint))
 			{
-				LogWarning("No decision point set, can not make engagement.");
+				Logger.LogWarning("No decision point set, can not make engagement.");
 				return;
 			}
 
@@ -288,7 +288,7 @@ namespace DeltaDNA
 
 			if (this.IsUploading)
 			{
-				LogWarning("Event upload already in progress, aborting");
+				Logger.LogWarning("Event upload already in progress, aborting");
 				return;
 			}
 
@@ -373,7 +373,7 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_USER_ID, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					LogDebug("No existing User ID found.");
+					Logger.LogDebug("No existing User ID found.");
 					return null;
 				}
 				return v;
@@ -415,14 +415,14 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_HASH_SECRET, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					LogDebug("Event hashing not enabled.");
+					Logger.LogDebug("Event hashing not enabled.");
 					return null;
 				}
 				return v;
 			}
 			set
 			{
-				LogDebug("Setting Hash Secret '"+value+"'");
+				Logger.LogDebug("Setting Hash Secret '"+value+"'");
 				PlayerPrefs.SetString(PF_KEY_HASH_SECRET, value);
 				PlayerPrefs.Save();
 			}
@@ -439,7 +439,7 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_CLIENT_VERSION, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					LogWarning("No client game version set.");
+					Logger.LogWarning("No client game version set.");
 					return null;
 				}
 				return v;
@@ -448,7 +448,7 @@ namespace DeltaDNA
 			{
 				if (!String.IsNullOrEmpty(value))
 				{
-					LogDebug("Setting ClientVersion '"+value+"'");
+					Logger.LogDebug("Setting ClientVersion '"+value+"'");
 					PlayerPrefs.SetString(PF_KEY_CLIENT_VERSION, value);
 					PlayerPrefs.Save();
 				}
@@ -468,7 +468,7 @@ namespace DeltaDNA
 				{
 					if (ClientInfo.Platform.Contains("IOS"))
 					{
-						LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
+						Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
 					}
 					return null;
 				}
@@ -497,7 +497,7 @@ namespace DeltaDNA
 				{
 					if (ClientInfo.Platform.Contains("ANDROID"))
 					{
-						LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
+						Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
 					}
 					return null;
 				}
@@ -519,22 +519,9 @@ namespace DeltaDNA
 
 		public override void OnDestroy()
 		{
-			if (this.eventStore != null && this.eventStore.GetType() == typeof(EventStore)) this.eventStore.Dispose();
+			if (this.eventStore != null) this.eventStore.Dispose();
 			if (this.engageArchive != null) this.engageArchive.Save();
 			base.OnDestroy();
-		}
-
-		private void LogDebug(string message)
-		{
-			if (Settings.DebugMode)
-			{
-				Debug.Log("[DDSDK] "+message);
-			}
-		}
-
-		private void LogWarning(string message)
-		{
-			Debug.LogWarning("[DDSDK] "+message);
 		}
 
 		private string GetSessionID()
@@ -544,13 +531,12 @@ namespace DeltaDNA
 
 		private string GetUserID()
 		{
-			//#if !UNITY_WEBPLAYER
 			// see if this game ran with the previous SDK and look for
 			// a user id.
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
 			if (File.Exists(legacySettingsPath))
 			{
-				LogDebug("Found a legacy file in "+legacySettingsPath);
+				Logger.LogDebug("Found a legacy file in "+legacySettingsPath);
 				using (Stream fs = Utils.OpenStream(legacySettingsPath))
 				{
 					try
@@ -566,19 +552,18 @@ namespace DeltaDNA
 						var settings = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
 						if (settings.ContainsKey("userID"))
 						{
-							LogDebug("Found a legacy user id for player");
+							Logger.LogDebug("Found a legacy user id for player");
 							return settings["userID"] as string;
 						}
 					}
 					catch (Exception e)
 					{
-						LogWarning("Problem reading legacy user id: "+e.Message);
+						Logger.LogWarning("Problem reading legacy user id: "+e.Message);
 					}
 				}
 			}
-			//#endif
 
-			LogDebug("Creating a new user id for player");
+			Logger.LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
 		}
 
@@ -601,18 +586,18 @@ namespace DeltaDNA
 
 				if (events.Count > 0)
 				{
-					LogDebug("Starting event upload");
+					Logger.LogDebug("Starting event upload");
 
                     Action<bool> postCb = (succeeded) =>
                     {
                         if (succeeded)
                         {
-                            LogDebug("Event upload successful");
+                            Logger.LogDebug("Event upload successful");
                             this.eventStore.ClearOut();
                         }
                         else
                         {
-                            LogWarning("Event upload failed - try again later");
+                            Logger.LogWarning("Event upload failed - try again later");
                         }
                     };
 
@@ -627,7 +612,7 @@ namespace DeltaDNA
 
 		private IEnumerator EngageCoroutine(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
 		{
-			LogDebug("Starting engagement for '"+decisionPoint+"'");
+			Logger.LogDebug("Starting engagement for '"+decisionPoint+"'");
 
 			Dictionary<string, object> engageRequest = new Dictionary<string, object>()
 			{
@@ -657,7 +642,7 @@ namespace DeltaDNA
 			}
 			catch (Exception e)
 			{
-				LogWarning("Problem serialising engage request data: "+e.Message);
+				Logger.LogWarning("Problem serialising engage request data: "+e.Message);
 				yield break;
 			}
 
@@ -666,20 +651,20 @@ namespace DeltaDNA
                 bool cachedResponse = false;
                 if (response != null)
                 {
-                    LogDebug("Using live engagement: " + response);
+                    Logger.LogDebug("Using live engagement: " + response);
                     this.engageArchive[decisionPoint] = response;
                 }
                 else
                 {
                     if (this.engageArchive.Contains(decisionPoint))
                     {
-                        LogWarning("Engage request failed, using cached response.");
+                        Logger.LogWarning("Engage request failed, using cached response.");
                         cachedResponse = true;
                         response = this.engageArchive[decisionPoint];
                     }
                     else
                     {
-                        LogWarning("Engage request failed");
+                        Logger.LogWarning("Engage request failed");
                     }
                 }
                 Dictionary<string, object> result = MiniJSON.Json.Deserialize(response) as Dictionary<string, object>;
@@ -725,7 +710,7 @@ namespace DeltaDNA
 					// although Collect receives the data fine.
 					else if (status == 0) { LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
                     #endif
-                    else LogDebug("Error uploading events, Collect returned: " + status + " " + response);
+                    else Logger.LogDebug("Error uploading events, Collect returned: " + status + " " + response);
                 };
 
 				yield return StartCoroutine(HttpPOST(url, bulkEvent, httpCb));
@@ -757,7 +742,7 @@ namespace DeltaDNA
 				}
 				else
 				{
-					LogDebug("Error requesting engagement, Engage returned: "+status);
+					Logger.LogDebug("Error requesting engagement, Engage returned: "+status);
 					if (callback != null) callback(null);
 				}
 			};
@@ -767,7 +752,7 @@ namespace DeltaDNA
 
 		private IEnumerator HttpGET(string url, Action<int, string> responseCallback = null)
 		{
-			LogDebug("HttpGET " + url);
+			Logger.LogDebug("HttpGET " + url);
 
 			WWW www = new WWW(url);
 			yield return www;
@@ -787,7 +772,7 @@ namespace DeltaDNA
 
 		private IEnumerator HttpPOST(string url, string json, Action<int, string> responseCallback = null)
 		{
-			LogDebug("HttpPOST " + url + " " + json);
+			Logger.LogDebug("HttpPOST " + url + " " + json);
 
 			WWWForm form = new WWWForm();
 			var headers = form.headers;
@@ -819,7 +804,7 @@ namespace DeltaDNA
 			}
 			else
 			{
-				LogDebug("WWW.error: "+www.error);
+				Logger.LogDebug("WWW.error: "+www.error);
 				if (responseCallback != null) responseCallback(statusCode, null);
 			}
 		}
@@ -936,7 +921,7 @@ namespace DeltaDNA
 		{
 			if (Settings.OnFirstRunSendNewPlayerEvent && PlayerPrefs.GetInt(PF_KEY_FIRST_RUN, 1) > 0)
 			{
-				LogDebug("Sending 'newPlayer' event");
+				Logger.LogDebug("Sending 'newPlayer' event");
 
 				var newPlayerParams = new EventBuilder()
 					.AddParam("userCountry", ClientInfo.CountryCode);
@@ -948,7 +933,7 @@ namespace DeltaDNA
 
 			if (Settings.OnInitSendGameStartedEvent)
 			{
-				LogDebug("Sending 'gameStarted' event");
+				Logger.LogDebug("Sending 'gameStarted' event");
 
 				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
@@ -960,7 +945,7 @@ namespace DeltaDNA
 
 			if (Settings.OnInitSendClientDeviceEvent)
 			{
-				LogDebug("Sending 'clientDevice' event");
+				Logger.LogDebug("Sending 'clientDevice' event");
 
 				EventBuilder clientDeviceParams = new EventBuilder()
 					.AddParam("deviceName", ClientInfo.DeviceName)
