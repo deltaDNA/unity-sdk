@@ -73,7 +73,7 @@ namespace DeltaDNA
             Assert.That(s1.Position, Is.EqualTo(0));
             Assert.That(s1.Length, Is.EqualTo(0));
             Assert.That(s2.Position, Is.EqualTo(0));
-			Assert.That(s2.Length, Is.EqualTo(originalLength));
+            Assert.That(s2.Length, Is.EqualTo(originalLength));
         }
     }
 }

@@ -192,6 +192,7 @@ namespace DeltaDNA
                 _infs = Create(inPath);
                 _infs.Seek(0, SeekOrigin.End);
                 _outfs = Create(outPath);
+                _outfs.Seek(0, SeekOrigin.Begin);
 
                 PlayerPrefs.SetString(PF_KEY_IN_FILE, inFilename);
                 PlayerPrefs.SetString(PF_KEY_OUT_FILE, outFilename);
