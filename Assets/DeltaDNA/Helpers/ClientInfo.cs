@@ -296,7 +296,7 @@ namespace DeltaDNA
 			if (os.Contains("BLACKBERRY")) return "BLACKBERRY";
 			return "UNKNOWN";
 		}
-
+		
 		private static string GetOperatingSystemVersion()
 		{
 			try {
