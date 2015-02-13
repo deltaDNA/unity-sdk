@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -68,12 +68,12 @@ namespace DeltaDNA
 
             Stream s2 = new MemoryStream();
 
-            EventStore.SwapStreams(s1, s2);
+            EventStore.SwapStreams(ref s1, ref s2);
 
             Assert.That(s1.Position, Is.EqualTo(0));
-            Assert.That(s1.Length, Is.EqualTo(originalLength));
+            Assert.That(s1.Length, Is.EqualTo(0));
             Assert.That(s2.Position, Is.EqualTo(0));
-            Assert.That(s2.Length, Is.EqualTo(0));
+			Assert.That(s2.Length, Is.EqualTo(originalLength));
         }
     }
 }

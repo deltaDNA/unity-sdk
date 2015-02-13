@@ -92,67 +92,83 @@ namespace DeltaDNA
 
 		#region Private Helpers
 
+        private static bool RuntimePlatformIs(string platformName)
+        {
+            var realName = Application.platform.ToString();
+            return Enum.IsDefined(typeof(RuntimePlatform), platformName) && Application.platform.ToString() == platformName;
+        }
+
+        private static float ScreenSizeInches()
+        {
+            var x = Screen.width / Screen.dpi;
+            var y = Screen.height / Screen.dpi;
+            return (float)Math.Sqrt(x * x + y * y);
+        }
+
+        private static bool IsTablet()
+        {
+            return ScreenSizeInches() > 6;
+        }
+
 		/// <summary>
 		/// Gets the platform as an enumeration of the 'platform' key.
 		/// </summary>
 		/// <returns>The platform.</returns>
 		private static string GetPlatform()
 		{
-			switch (Application.platform)
-			{
-				case RuntimePlatform.Android: return "ANDROID";
-				case RuntimePlatform.FlashPlayer: return "WEB";
+            if (RuntimePlatformIs("OSXEditor")) return "MAC_CLIENT";
+            if (RuntimePlatformIs("OSXPlayer")) return "MAC_CLIENT";
+            if (RuntimePlatformIs("WindowsPlayer")) return "PC_CLIENT";
+            if (RuntimePlatformIs("OSXWebPlayer")) return "WEB";
+            if (RuntimePlatformIs("OSXDashboardPlayer")) return "MAC_CLIENT";
+            if (RuntimePlatformIs("WindowsWebPlayer")) return "WEB";
+            if (RuntimePlatformIs("WindowsEditor")) return "PC_CLIENT";
+            if (RuntimePlatformIs("IPhonePlayer"))
+            {
+                string name = SystemInfo.deviceModel;
+                if (name.Contains("iPad")) return "IOS_TABLET";
+                return "IOS_MOBILE";
+            }
+            if (RuntimePlatformIs("PS3")) return "PS3";
+            if (RuntimePlatformIs("XBOX360")) return "XBOX360";
+            if (RuntimePlatformIs("Android"))
+            {
+                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
+            }
+            if (RuntimePlatformIs("NaCL")) return "WEB";
+            if (RuntimePlatformIs("LinuxPlayer")) return "PC_CLIENT";
+            if (RuntimePlatformIs("FlashPlayer")) return "WEB";
+            if (RuntimePlatformIs("MetroPlayerX86") ||
+                RuntimePlatformIs("MetroPlayerX64") ||
+                RuntimePlatformIs("MetroPlayerARM"))
+            {
+                // Metro Apps can run anywhere...
+                if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld)
+                {
+                    return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
+                }
+                return "PC_CLIENT";
+            }
+            if (RuntimePlatformIs("WP8Player"))
+            {
+                return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
+            }
+            if (RuntimePlatformIs("BB10Player") ||
+                RuntimePlatformIs("BlackBerryPlayer"))
+            {
+                return IsTablet() ? "BLACKBERRY_TABLET" : "BLACKBERRY_MOBILE";
+            }
+            if (RuntimePlatformIs("TizenPlayer"))
+            {
+                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
+            }
+            if (RuntimePlatformIs("PSP2")) return "PSVITA";
+            if (RuntimePlatformIs("PS4")) return "PS4";
+            if (RuntimePlatformIs("PSMPlayer")) return "WEB";
+            if (RuntimePlatformIs("XboxOne")) return "XBOXONE";
+            if (RuntimePlatformIs("SamsungTVPlayer")) return "ANDROID_CONSOLE";
 
-				#if UNITY_IPHONE
-				case RuntimePlatform.IPhonePlayer:
-				{
-					switch (UnityEngine.iPhone.generation)
-					{
-					case iPhoneGeneration.iPad1Gen:
-					case iPhoneGeneration.iPad2Gen:
-					case iPhoneGeneration.iPad3Gen:
-					case iPhoneGeneration.iPad4Gen:
-					case iPhoneGeneration.iPad5Gen:
-					case iPhoneGeneration.iPadMini1Gen:
-					case iPhoneGeneration.iPadMini2Gen: return "IOS_TABLET";
-					case iPhoneGeneration.iPadUnknown: return "IOS";
-					default: return "IOS_MOBILE";
-					}
-				}
-				#endif
-
-				case RuntimePlatform.LinuxPlayer: return "PC_CLIENT";
-				case RuntimePlatform.MetroPlayerARM: return "WINDOWS_TABLET";
-				case RuntimePlatform.MetroPlayerX64: return "WINDOWS_TABLET";
-				case RuntimePlatform.MetroPlayerX86: return "WINDOWS_TABLET";
-				case RuntimePlatform.NaCl: return "WEB";
-				case RuntimePlatform.OSXDashboardPlayer: return "MAC_CLIENT";
-				case RuntimePlatform.OSXEditor: return "MAC_CLIENT";
-				case RuntimePlatform.OSXPlayer: return "MAC_CLIENT";
-				case RuntimePlatform.OSXWebPlayer: return "WEB";
-				case RuntimePlatform.PS3: return "PS3";
-				case RuntimePlatform.TizenPlayer: return "ANDROID";
-				case RuntimePlatform.WindowsEditor: return "PC_CLIENT";
-				case RuntimePlatform.WindowsPlayer: return "PC_CLIENT";
-				case RuntimePlatform.WindowsWebPlayer: return "WEB";
-				case RuntimePlatform.WP8Player: return "WINDOWS_MOBILE";
-				case RuntimePlatform.XBOX360: return "XBOX360";
-
-				#if UNITY_4_5 || UNITY_4_5_1
-				case RuntimePlatform.PS4: return "PS4";
-				case RuntimePlatform.PSMPlayer: return "WEB";
-				case RuntimePlatform.PSP2: return "PSVITA";
-				case RuntimePlatform.SamsungTVPlayer: return "ANDROID";
-				case RuntimePlatform.XboxOne: return "XBOXONE";
-				case RuntimePlatform.BlackBerryPlayer: return "BLACKBERRY_MOBILE";
-				#endif
-
-				default:
-				{
-					Debug.LogWarning("Unsupported platform '"+Application.platform+"' returning UNKNOWN");
-					return "UNKNOWN";
-				}
-			}
+            return "UNKNOWN";
 		}
 
 		private static string GetDeviceName()
@@ -245,6 +261,8 @@ namespace DeltaDNA
 		/// <returns>The device type.</returns>
 		private static string GetDeviceType()
 		{
+            if (RuntimePlatformIs("SamsungTVPlayer")) return "TV";
+
 			switch (SystemInfo.deviceType)
 			{
 				case UnityEngine.DeviceType.Console: return "CONSOLE";
@@ -254,14 +272,7 @@ namespace DeltaDNA
 					string model = SystemInfo.deviceModel;
 					if (model.StartsWith("iPhone")) return "MOBILE_PHONE";
 					if (model.StartsWith("iPad")) return "TABLET";
-					return "HANDHELD";
-				}
-				case UnityEngine.DeviceType.Unknown:
-				{
-					#if UNITY_4_5 || UNITY_4_5_1
-					if (Application.platform == RuntimePlatform.SamsungTVPlayer) return "TV";
-					#endif
-					return "UNKOWN";
+                    return IsTablet() ? "TABLET" : "MOBILE_PHONE";
 				}
 				default: return "UNKNOWN";
 			}

@@ -76,7 +76,7 @@ namespace DeltaDNA
                 // -- So what really happens if the out buffer is full on start up??
                 if (_initialised && _outfs.Length == 0)
                 {
-                    SwapStreams(_infs, _outfs);
+                    SwapStreams(ref _infs, ref _outfs);
 
                     // Swap the filenames
                     string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE);
@@ -232,7 +232,7 @@ namespace DeltaDNA
             stream.Seek(0, SeekOrigin.Begin);	// let us read it again next time
         }
 
-        public static void SwapStreams(Stream sin, Stream sout)
+        public static void SwapStreams(ref Stream sin, ref Stream sout)
         {
             // Close off our write stream
             sin.Flush();
