@@ -21,7 +21,6 @@ namespace DeltaDNA
         private static readonly string FILE_A = "A";
         private static readonly string FILE_B = "B";
 
-        private static readonly int FILE_BUFFER_SIZE = 4096;
         private static readonly long MAX_FILE_SIZE = 40 * 1024 * 1024;
 
         private bool _initialised = false;
@@ -189,9 +188,9 @@ namespace DeltaDNA
                 string outPath = Path.Combine(dir, outFilename);
 
                 // NB as seperate call after creation resets the files
-                _infs = Create(inPath);
+                _infs = Utils.CreateStream(inPath);
                 _infs.Seek(0, SeekOrigin.End);
-                _outfs = Create(outPath);
+                _outfs = Utils.CreateStream(outPath);
                 _outfs.Seek(0, SeekOrigin.Begin);
 
                 PlayerPrefs.SetString(PF_KEY_IN_FILE, inFilename);
@@ -253,51 +252,6 @@ namespace DeltaDNA
             stream.Seek(0, SeekOrigin.Begin);
             stream.SetLength(0);
         }
-
-        private static Stream Create(string path)
-        {
-            #if NETFX_CORE
-
-            Logger.LogDebug("Creating async file stream");
-            path = FixPath(path);
-            var thread = CreateAsync(path);
-            thread.Wait();
-
-            if (thread.IsCompleted)
-                return thread.Result;
-
-            throw thread.Exception;
-
-            #elif UNITY_WEBPLAYER
-
-            Logger.LogDebug("Using memory based stream");
-            return new MemoryStream();
-
-            #else
-
-            Logger.LogDebug("Using file based stream");
-            return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, FILE_BUFFER_SIZE);
-
-            #endif
-        }
-
-    #if NETFX_CORE
-
-        private static async Task<Stream> CreateAsync(string path)
-        {
-            var dirName = Path.GetDirectoryName(path);
-            var filename = Path.GetFileName(path);
-
-            var dir = await StorageFolder.GetFolderFromPathAsync(dirName);
-            var file = await dir.CreateFileAsync(filename, CreationCollisionOption.OpenIfExists);
-            return await file.OpenStreamForWriteAsync();
-        }
-
-        private static string FixPath(string path)
-        {
-            return path.Replace('/', '\\');
-        }
-    #endif
 
     }
 

@@ -46,17 +46,9 @@ namespace DeltaDNA
 			this.Settings = new Settings();	// default configuration
 			this.Transaction = new TransactionBuilder(this);
 
-			//#if UNITY_WEBPLAYER
-
-			//this.eventStore = new WebplayerEventStore();
-
-			//#else
-
 			this.eventStore = new EventStore(
 				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
 			);
-
-			//#endif
 
 			this.engageArchive = new EngageArchive(
 				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
@@ -728,11 +720,11 @@ namespace DeltaDNA
                     // Collect was happy.
                     if (status == 200 || status == 204) succeeded = true;
                     else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
-#if UNITY_WEBPLAYER
+                    #if UNITY_WEBPLAYER
 					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
 					// although Collect receives the data fine.
 					else if (status == 0) { LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
-#endif
+                    #endif
                     else LogDebug("Error uploading events, Collect returned: " + status + " " + response);
                 };
 
