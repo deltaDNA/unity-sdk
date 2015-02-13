@@ -708,7 +708,7 @@ namespace DeltaDNA
                     #if UNITY_WEBPLAYER
 					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
 					// although Collect receives the data fine.
-					else if (status == 0) { LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
+					else if (status == 0) { Logger.LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
                     #endif
                     else Logger.LogDebug("Error uploading events, Collect returned: " + status + " " + response);
                 };
@@ -787,7 +787,7 @@ namespace DeltaDNA
 			byte[] bytes = Encoding.UTF8.GetBytes(json);
 
 			// silence deprecation warning
-			# if UNITY_4_5
+			# if UNITY_4_5 || UNITY_4_6
 			WWW www = new WWW(url, bytes, Utils.HashtableToDictionary<string, string>(headers));
 			# else
 			WWW www = new WWW(url, bytes, headers);
