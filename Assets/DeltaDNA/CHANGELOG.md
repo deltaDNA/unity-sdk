@@ -1,3 +1,14 @@
+3.4 (2015/02/13)
+================
+
+Features:
+
+* Support for Windows Phone 8.1.
+
+Changes:
+
+* Added a separate logger with DEBUG, INFO, WARNING and ERROR levels.  Default level is WARNING.  Call `SetLoggingLevel` to change it.  The `DebugMode` flag now switches between WARNING and DEBUG.
+
 3.3.3 (2015/01/12)
 ==================
 

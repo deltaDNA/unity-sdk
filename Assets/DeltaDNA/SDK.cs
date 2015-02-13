@@ -295,6 +295,9 @@ namespace DeltaDNA
 			StartCoroutine(UploadCoroutine());
 		}
 
+		/// <summary>
+		/// Sets the logging level. Choices are ERROR, WARNING, INFO or DEBUG. Default is WARNING.
+		/// </summary>
         public void SetLoggingLevel(Logger.Level level)
         {
             Logger.SetLogLevel(level);

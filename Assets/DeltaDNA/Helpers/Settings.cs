@@ -16,6 +16,8 @@ namespace DeltaDNA
 		internal static readonly string ENGAGE_URL_PATTERN = "{host}/{env_key}";
 		internal static readonly string ENGAGE_HASH_URL_PATTERN = "{host}/{env_key}/hash/{hash}";
 
+		private bool _debugMode = false;
+
 		internal Settings()
 		{
 			// defines default behaviour of the SDK
@@ -52,7 +54,18 @@ namespace DeltaDNA
 		/// <summary>
 		/// Controls if additional debug is output to the console.
 		/// </summary>
-		public bool DebugMode { get; set; }
+		public bool DebugMode 
+		{ 
+			get 
+			{
+				return _debugMode;
+			} 
+			set 
+			{ 
+				Logger.SetLogLevel(value ? Logger.Level.DEBUG : Logger.Level.WARNING);
+				_debugMode = value;
+			} 
+		}
 
 		/// <summary>
 		/// Controls the time in seconds between retrying a failed Http request.

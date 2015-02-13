@@ -16,6 +16,7 @@ bin/
 
 # Other
 *.pfx
+Assets/MetroTestCertificate.pfx.meta
 
 # OS Junk
 Thumbs.db

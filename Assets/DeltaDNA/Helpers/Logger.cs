@@ -16,7 +16,7 @@ namespace DeltaDNA
             ERROR = 3
         };
 
-        static Level sLogLevel = Level.INFO;
+        static Level sLogLevel = Level.WARNING;
 
         internal static void SetLogLevel(Level logLevel)
         {
@@ -25,7 +25,7 @@ namespace DeltaDNA
 
         internal static void LogDebug(string msg)
         {
-            if (sLogLevel >= Level.DEBUG)
+            if (sLogLevel <= Level.DEBUG)
             {
                 Log(msg, Level.DEBUG);
             }
@@ -33,7 +33,7 @@ namespace DeltaDNA
 
         internal static void LogInfo(string msg)
         {
-            if (sLogLevel >= Level.INFO)
+            if (sLogLevel <= Level.INFO)
             {
                 Log(msg, Level.INFO);
             }
@@ -41,7 +41,7 @@ namespace DeltaDNA
 
         internal static void LogWarning(string msg)
         {
-            if (sLogLevel >= Level.WARNING)
+            if (sLogLevel <= Level.WARNING)
             {
                 Log(msg, Level.WARNING);
             }
@@ -49,7 +49,7 @@ namespace DeltaDNA
 
         internal static void LogError(string msg)
         {
-            if (sLogLevel >= Level.ERROR)
+            if (sLogLevel <= Level.ERROR)
             {
                 Log(msg, Level.ERROR);
             }
