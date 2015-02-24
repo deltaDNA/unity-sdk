@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
 	
 	void FixedUpdate()
 	{
-		#if UNITY_EDITOR
+		#if UNITY_EDITOR || UNITY_WEBPLAYER
 		float moveHorizontal = Input.GetAxis("Horizontal");
 		float moveVertical = Input.GetAxis("Vertical");
 		#else
