@@ -68,6 +68,7 @@ namespace DeltaDNA
 		/// </summary>
 		private void Load(string path)
 		{
+			#if !UNITY_WEBPLAYER
 			lock(_lock)
 			{
 				try
@@ -106,6 +107,7 @@ namespace DeltaDNA
 					Logger.LogWarning("Unable to load Engagement archive: "+e.Message);
 				}
 			}
+			#endif
 		}
 
 		/// <summary>
@@ -113,18 +115,16 @@ namespace DeltaDNA
 		/// </summary>
 		public void Save()
 		{
-		//	#if UNITY_WEBPLAYER
-		//	return; // no-op
-		//	#endif
-
 			lock(_lock)
 			{
 				try
 				{
+					#if !UNITY_WEBPLAYER
 					if (!Directory.Exists(this._path))
 					{
 						Utils.CreateDirectory(this._path);
 					}
+					#endif
 
 					var bytes = new List<byte>();
 

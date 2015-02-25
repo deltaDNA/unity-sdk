@@ -1,4 +1,4 @@
-﻿﻿using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -173,11 +173,13 @@ namespace DeltaDNA
 
         private bool InitialiseFileStreams(string dir)
         {
+        	#if !UNITY_WEBPLAYER
             if (!Directory.Exists(dir))
             {
                 Logger.LogDebug("Directory not found, creating");
                 Utils.CreateDirectory(dir);
             }
+			#endif
 
             try
             {

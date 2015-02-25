@@ -2,7 +2,7 @@ namespace DeltaDNA
 {
 	public class Settings
 	{
-		internal static readonly string SDK_VERSION = "Unity SDK v3.4";
+		internal static readonly string SDK_VERSION = "Unity SDK v3.4.1";
 
 		internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -54,17 +54,17 @@ namespace DeltaDNA
 		/// <summary>
 		/// Controls if additional debug is output to the console.
 		/// </summary>
-		public bool DebugMode 
-		{ 
-			get 
+		public bool DebugMode
+		{
+			get
 			{
 				return _debugMode;
-			} 
-			set 
-			{ 
+			}
+			set
+			{
 				Logger.SetLogLevel(value ? Logger.Level.DEBUG : Logger.Level.WARNING);
 				_debugMode = value;
-			} 
+			}
 		}
 
 		/// <summary>
