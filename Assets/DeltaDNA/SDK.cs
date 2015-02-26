@@ -38,6 +38,8 @@ namespace DeltaDNA
 
 		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
+		
+		private static Func<DateTime> TimestampFunc = new Func<DateTime>(DefaultTimestampFunc); 
 
 		private static object _lock = new object();
 
@@ -330,6 +332,16 @@ namespace DeltaDNA
 			this.eventStore.ClearAll();
 			this.engageArchive.Clear();
 		}
+		
+		/// <summary>
+		/// If more control is required over the event timestamp source, you can override the default
+		/// behaviour with a function that returns a DateTime. 
+		/// </summary>
+		/// <param name="TimestampFunc">Timestamp func.</param>
+		public void SetTimestampFunc(Func<DateTime> TimestampFunc) 
+		{
+			SDK.TimestampFunc = TimestampFunc;
+		}
 
 		#endregion
 
@@ -569,10 +581,16 @@ namespace DeltaDNA
 			Logger.LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
 		}
-
-		private string GetCurrentTimestamp()
+		
+		private static DateTime DefaultTimestampFunc()
 		{
-			return DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+			return DateTime.UtcNow;
+		}
+
+		private static string GetCurrentTimestamp()
+		{
+			DateTime dt = TimestampFunc();
+			return dt.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
 		}
 
 		private IEnumerator UploadCoroutine()

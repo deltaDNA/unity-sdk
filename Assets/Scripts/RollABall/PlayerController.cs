@@ -30,6 +30,12 @@ public class PlayerController : MonoBehaviour
 
 		ddsdk.Settings.DebugMode = true;
 		ddsdk.Settings.BackgroundEventUploadRepeatRateSeconds = 10;
+		
+		// You don't want to do this, Collect will reject the events.
+//		ddsdk.SetTimestampFunc(() => {
+//			DateTime dt = new DateTime(0);
+//			return dt;
+//		});
 
 		ddsdk.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 

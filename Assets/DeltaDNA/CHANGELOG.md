@@ -1,5 +1,9 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.
+Change log for deltaDNA's Unity SDK.  The SDK should work with any recent version of Unity - get in touch if it doesn't.
+
+## 3.4.2 - 2015-02-26
+### Added
+* The source of the event timestamp can be overridden with your own timestamp.  Use `SetTimestampFunc` if you want to use something other than `DateTime.UtcNow` for your event timestamps.
 
 ## 3.4.1 - 2015-02-25
 ### Fixed
