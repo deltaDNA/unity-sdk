@@ -12,7 +12,7 @@ using DeltaDNA.Messaging;
 
 namespace DeltaDNA
 {
-	public sealed class SDK : Singleton<SDK>
+	public class SDK : Singleton<SDK>
 	{
 		static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
 		static readonly string PF_KEY_FIRST_RUN = "DDSDK_FIRST_RUN";
@@ -43,7 +43,7 @@ namespace DeltaDNA
 
 		private static object _lock = new object();
 
-		private SDK()
+		protected SDK()
 		{
 			this.Settings = new Settings();	// default configuration
 			this.Transaction = new TransactionBuilder(this);
@@ -985,4 +985,9 @@ namespace DeltaDNA
 		#endregion
 
 	}
+	
+	/// <summary>
+	/// Typedef the SDK to make client code more readable.
+	/// </summary>
+	public class DDNA : SDK {}
 }

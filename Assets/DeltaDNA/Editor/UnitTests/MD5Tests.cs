@@ -3,14 +3,14 @@ using System.Text;
 using NUnit.Framework;
 using DeltaDNA;
 
-namespace DeltaDNA.Helpers
+namespace DeltaDNA
 {
 	[TestFixture]
-	[Category("Helper Tests")]
-	internal class TestMD5
+	[Category("Utility Tests")]
+	internal class MD5Tests
 	{
 		[Test]
-		public void MD5Tests()
+		public void MD5Test()
 		{
 			Assert.That(getMd5Hash(""), Is.EqualTo("d41d8cd98f00b204e9800998ecf8427e"));
 			Assert.That(getMd5Hash("a"), Is.EqualTo("0cc175b9c0f1b6a831c399e269772661"));
