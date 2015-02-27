@@ -29,6 +29,11 @@ public class DeltaDNAExample : MonoBehaviour {
 	
 	}
 	
+	void FixedUpdate() {
+		// Make our cube rotate
+		transform.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);	
+	}
+	
 	void OnGUI() {
 	
 		int x = 10;
