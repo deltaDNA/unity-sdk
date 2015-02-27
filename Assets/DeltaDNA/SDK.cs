@@ -39,7 +39,7 @@ namespace DeltaDNA
 		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
 		
-		private static Func<DateTime> TimestampFunc = new Func<DateTime>(DefaultTimestampFunc); 
+		private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc); 
 
 		private static object _lock = new object();
 
@@ -192,7 +192,12 @@ namespace DeltaDNA
 			eventRecord[EV_KEY_NAME] 		= eventName;
 			eventRecord[EV_KEY_USER_ID] 	= this.UserID;
 			eventRecord[EV_KEY_SESSION_ID] 	= this.SessionID;
-			eventRecord[EV_KEY_TIMESTAMP] 	= GetCurrentTimestamp();
+			
+			// Collect will insert it's own timestamp if null is returned by the timestamp function
+			string currentTimestamp = GetCurrentTimestamp();
+			if (!String.IsNullOrEmpty(currentTimestamp)) {
+				eventRecord[EV_KEY_TIMESTAMP] 	= GetCurrentTimestamp();
+			}
 
 			// every template should support sdkVersion and platform in it's event params
 			if (!eventParams.ContainsKey(EP_KEY_PLATFORM))
@@ -334,11 +339,28 @@ namespace DeltaDNA
 		}
 		
 		/// <summary>
+		/// Controls if the device is used as the event timestamp source or our Collect server.  
+		/// Using the device time (the default) ensures the events will have the correct timestamp
+		/// while no internet connection is available to upload events.  But the device time relies 
+		/// on the user having set their system clock correctly.  If you disable the device 
+		/// timestamp, our Collect server will inject the time it received the event.  If you 
+		/// require more control over the timestamp, use <see cref="SetTimestampFunc"/>. 
+		/// </summary>
+		/// <param name="useCollect">If set to <c>true</c> use Collect server for event timestamps.</param>
+		public void UseCollectTimestamp(bool useCollect) {
+			if (!useCollect) {
+				SetTimestampFunc(DefaultTimestampFunc);
+			} else {
+				SetTimestampFunc(() => { return null; });
+			}
+		}
+		
+		/// <summary>
 		/// If more control is required over the event timestamp source, you can override the default
 		/// behaviour with a function that returns a DateTime. 
 		/// </summary>
 		/// <param name="TimestampFunc">Timestamp func.</param>
-		public void SetTimestampFunc(Func<DateTime> TimestampFunc) 
+		public void SetTimestampFunc(Func<DateTime?> TimestampFunc) 
 		{
 			SDK.TimestampFunc = TimestampFunc;
 		}
@@ -582,15 +604,18 @@ namespace DeltaDNA
 			return Guid.NewGuid().ToString();
 		}
 		
-		private static DateTime DefaultTimestampFunc()
+		private static DateTime? DefaultTimestampFunc()
 		{
 			return DateTime.UtcNow;
 		}
 
 		private static string GetCurrentTimestamp()
 		{
-			DateTime dt = TimestampFunc();
-			return dt.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+			DateTime? dt = TimestampFunc();
+			if (dt.HasValue) {
+				return dt.Value.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+			}
+			return null;	// Collect will insert a timestamp for us.
 		}
 
 		private IEnumerator UploadCoroutine()

@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK should work with any recent version of Unity - get in touch if it doesn't.
 
+## 3.4.3 - 2015-02-27
+### Added
+* You can return null from the timestamp function, which prevents using the device clock and relies on Collect injecting the timestamp when it receives the event.  This behaviour can be controlled with `UseCollectTimestamp`.  
+
 ## 3.4.2 - 2015-02-26
 ### Added
 * The source of the event timestamp can be overridden with your own timestamp.  Use `SetTimestampFunc` if you want to use something other than `DateTime.UtcNow` for your event timestamps.

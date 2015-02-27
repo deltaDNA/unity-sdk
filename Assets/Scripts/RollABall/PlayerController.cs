@@ -33,9 +33,11 @@ public class PlayerController : MonoBehaviour
 		
 		// You don't want to do this, Collect will reject the events.
 //		ddsdk.SetTimestampFunc(() => {
-//			DateTime dt = new DateTime(0);
-//			return dt;
+//			//DateTime dt = new DateTime(0);
+//			//return dt;
+//			return null;
 //		});
+		ddsdk.UseCollectTimestamp(true);
 
 		ddsdk.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 
