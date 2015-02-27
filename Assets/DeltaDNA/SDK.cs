@@ -117,11 +117,18 @@ namespace DeltaDNA
 		/// </summary>
 		public void StopSDK()
 		{
-			Logger.LogDebug("Stopping SDK");
-			RecordEvent("gameEnded");
-			CancelInvoke();
-			Upload();
-			this.initialised = false;
+			lock (_lock) 
+			{
+				if (this.initialised) {
+					Logger.LogDebug("Stopping SDK");
+					RecordEvent("gameEnded");
+					CancelInvoke();
+					Upload();
+					this.initialised = false;
+				} else {
+					Logger.LogDebug("SDK not running");
+				}
+			}
 		}
 
 		/// <summary>
@@ -481,10 +488,6 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_PUSH_NOTIFICATION_TOKEN, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					if (ClientInfo.Platform.Contains("IOS"))
-					{
-						Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
-					}
 					return null;
 				}
 				return v;
@@ -510,10 +513,6 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_ANDROID_REGISTRATION_ID, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					if (ClientInfo.Platform.Contains("ANDROID"))
-					{
-						Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
-					}
 					return null;
 				}
 				return v;
@@ -825,7 +824,7 @@ namespace DeltaDNA
 			}
 			else
 			{
-				Logger.LogDebug("WWW.error: "+www.error);
+				Logger.LogDebug("WWW.error: "+www.error+" url: "+url);
 				if (responseCallback != null) responseCallback(statusCode, null);
 			}
 		}
@@ -955,6 +954,15 @@ namespace DeltaDNA
 			if (Settings.OnInitSendGameStartedEvent)
 			{
 				Logger.LogDebug("Sending 'gameStarted' event");
+				
+				if (ClientInfo.Platform.Contains("IOS"))
+				{
+					Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
+				}
+				else if (ClientInfo.Platform.Contains("ANDROID"))
+				{
+					Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
+				}
 
 				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
