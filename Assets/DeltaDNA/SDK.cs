@@ -282,6 +282,28 @@ namespace DeltaDNA
 
 			RequestEngagement(decisionPoint, engageParams, imageCallback);
 		}
+		
+		public void RecordPushNotification(Dictionary<string, object> payload)
+		{
+			Logger.LogDebug("Received push notification: "+payload);
+			
+			EventBuilder eventParams = new EventBuilder();			
+			try {
+				if (payload.ContainsKey("_ddId")) {
+					eventParams.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
+				}
+				if (payload.ContainsKey("_ddName")) {
+					eventParams.AddParam("notificationName", payload["_ddName"]);
+				}
+				if (payload.ContainsKey("_ddLaunch")) {
+					eventParams.AddParam("notificationLaunch", Convert.ToBoolean(payload["_ddLaunch"]));
+				}
+			} catch (Exception ex) {
+				Logger.LogError("Error parsing push notification payload: "+ex);
+			}
+			
+			this.RecordEvent("notificationOpened", eventParams);
+		}
 
 		/// <summary>
 		/// Uploads waiting events to our Collect service.  By default this is called automatically in the
