@@ -23,7 +23,7 @@ namespace UnityTest
             loadedLevelName = Application.loadedLevelName;
         }
 
-        public enum MessageType
+        public enum MessageType : byte
         {
             Ping,
             RunStarted,

@@ -7,7 +7,7 @@ namespace DeltaDNA
 {
 	[TestFixture]
 	[Category("Utility Tests")]
-	internal class Timestamp
+	internal class TimestampTests
 	{
 		[Test]
 		public void MillisecondsTest()

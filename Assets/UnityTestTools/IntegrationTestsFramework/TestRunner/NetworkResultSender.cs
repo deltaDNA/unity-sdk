@@ -1,4 +1,4 @@
-//#if !UNITY_WP8 && !UNITY_METRO && !UNITY_WEBPLAYER && (UNITY_PRO_LICENSE || !(UNITY_ANDROID || UNITY_IPHONE))
+//#if !UNITY_METRO && (UNITY_PRO_LICENSE || !(UNITY_ANDROID || UNITY_IPHONE))
 //#define UTT_SOCKETS_SUPPORTED
 //#endif
 using System;
@@ -55,7 +55,7 @@ namespace UnityTest
                         return false;
                     }
 
-                    var bf = new BinaryFormatter();
+                    var bf = new DTOFormatter();
                     bf.Serialize(tcpClient.GetStream(), dto);
                     tcpClient.GetStream().Close();
                     tcpClient.Close();

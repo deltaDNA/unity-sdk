@@ -12,7 +12,8 @@ using DeltaDNA.Messaging;
 
 namespace DeltaDNA
 {
-	public sealed class SDK : Singleton<SDK>
+	[Obsolete("SDK is deprecated, use DDNA instead, it will be removed in a future update.")]
+	public class SDK : Singleton<SDK>
 	{
 		static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
 		static readonly string PF_KEY_FIRST_RUN = "DDSDK_FIRST_RUN";
@@ -38,14 +39,16 @@ namespace DeltaDNA
 
 		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
+		private EventBuilder _launchNotificationEventParams = null;
 		
 		private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc); 
 
 		private static object _lock = new object();
 
-		private SDK()
+		protected SDK()
 		{
 			this.Settings = new Settings();	// default configuration
+					
 			this.Transaction = new TransactionBuilder(this);
 
 			this.eventStore = new EventStore(
@@ -55,6 +58,14 @@ namespace DeltaDNA
 			this.engageArchive = new EngageArchive(
 				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
 			);
+		}
+		
+		void Awake()
+		{
+			// Attach additional behaviours as children of this gameObject
+			GameObject notifications = new GameObject();			
+			this.Notifications = notifications.AddComponent<NotificationsPlugin>();
+			notifications.transform.parent = gameObject.transform;
 		}
 
 		#region Client Interface
@@ -93,7 +104,11 @@ namespace DeltaDNA
 
 				this.initialised = true;
 
-				// must do this once we're initialised
+				if (_launchNotificationEventParams != null) {
+					RecordEvent("notificationOpened", _launchNotificationEventParams);
+					_launchNotificationEventParams = null;
+				}
+				
 				TriggerDefaultEvents();
 
 				// Setup automated event uploads
@@ -117,11 +132,18 @@ namespace DeltaDNA
 		/// </summary>
 		public void StopSDK()
 		{
-			Logger.LogDebug("Stopping SDK");
-			RecordEvent("gameEnded");
-			CancelInvoke();
-			Upload();
-			this.initialised = false;
+			lock (_lock) 
+			{
+				if (this.initialised) {
+					Logger.LogDebug("Stopping SDK");
+					RecordEvent("gameEnded");
+					CancelInvoke();
+					Upload();
+					this.initialised = false;
+				} else {
+					Logger.LogDebug("SDK not running");
+				}
+			}
 		}
 
 		/// <summary>
@@ -280,6 +302,37 @@ namespace DeltaDNA
 
 			RequestEngagement(decisionPoint, engageParams, imageCallback);
 		}
+		
+		/// <summary>
+		/// Records that the game received a push notification.  It is safe to call this method
+		/// Before calling StartSDK, the 'notificationOpened' event will be sent at that time. 
+		/// </summary>
+		/// <param name="payload">Payload.</param>
+		public void RecordPushNotification(Dictionary<string, object> payload)
+		{
+			Logger.LogDebug("Received push notification: "+payload);
+			
+			EventBuilder eventParams = new EventBuilder();			
+			try {
+				if (payload.ContainsKey("_ddId")) {
+					eventParams.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
+				}
+				if (payload.ContainsKey("_ddName")) {
+					eventParams.AddParam("notificationName", payload["_ddName"]);
+				}
+				if (payload.ContainsKey("_ddLaunch")) {
+					eventParams.AddParam("notificationLaunch", Convert.ToBoolean(payload["_ddLaunch"]));
+				}
+			} catch (Exception ex) {
+				Logger.LogError("Error parsing push notification payload: "+ex);
+			}
+			
+			if (this.IsInitialised) {
+				this.RecordEvent("notificationOpened", eventParams);
+			} else {
+				this._launchNotificationEventParams = eventParams;
+			}
+		}
 
 		/// <summary>
 		/// Uploads waiting events to our Collect service.  By default this is called automatically in the
@@ -314,6 +367,9 @@ namespace DeltaDNA
 		/// Controls default behaviour of the SDK.  Set prior to initialisation.
 		/// </summary>
 		public Settings Settings { get; set; }
+		
+		
+		public NotificationsPlugin Notifications { get; private set; }
 
 		/// <summary>
 		/// Helper for building common transaction type events.
@@ -503,10 +559,6 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_PUSH_NOTIFICATION_TOKEN, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					if (ClientInfo.Platform.Contains("IOS"))
-					{
-						Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
-					}
 					return null;
 				}
 				return v;
@@ -532,10 +584,6 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_ANDROID_REGISTRATION_ID, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					if (ClientInfo.Platform.Contains("ANDROID"))
-					{
-						Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
-					}
 					return null;
 				}
 				return v;
@@ -850,7 +898,7 @@ namespace DeltaDNA
 			}
 			else
 			{
-				Logger.LogDebug("WWW.error: "+www.error);
+				Logger.LogDebug("WWW.error: "+www.error+" url: "+url);
 				if (responseCallback != null) responseCallback(statusCode, null);
 			}
 		}
@@ -980,6 +1028,15 @@ namespace DeltaDNA
 			if (Settings.OnInitSendGameStartedEvent)
 			{
 				Logger.LogDebug("Sending 'gameStarted' event");
+				
+				if (ClientInfo.Platform.Contains("IOS") && String.IsNullOrEmpty(this.PushNotificationToken))
+				{
+					Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
+				}
+				else if (ClientInfo.Platform.Contains("ANDROID") && String.IsNullOrEmpty(this.AndroidRegistrationID))
+				{
+					Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
+				}
 
 				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
@@ -1010,4 +1067,9 @@ namespace DeltaDNA
 		#endregion
 
 	}
+	
+	/// <summary>
+	/// Typedef the SDK to make client code more readable.
+	/// </summary>
+	public class DDNA : SDK {}
 }
