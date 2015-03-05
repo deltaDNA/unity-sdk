@@ -1,6 +1,14 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK should work with any recent version of Unity - get in touch if it doesn't.
 
+## 3.5 - 2015-03-05
+### Added
+* Integration for iOS push notifications.  The `NotificationsPlugin` can register a game for push notifications, and has events that trigger when the push token is acquired and notifications are received.  Integrates with the existing SDK to send a `notificationOpened` event automatically.
+* An example scene to show off the platform's features.  This can be found under DeltaDNA/Example.
+
+### Changed
+* `DeltaDNA.SDK` has been deprecated in favour of `DeltaDNA.DDNA`.  This makes the code more readable and brings the naming inline with our other SDK's.  
+
 ## 3.4.3 - 2015-02-27
 ### Added
 * You can return null from the timestamp function, which prevents using the device clock and relies on Collect injecting the timestamp when it receives the event.  This behaviour can be controlled with `UseCollectTimestamp`.  

@@ -99,7 +99,7 @@ public class DeltaDNAExample : MonoBehaviour {
 				{ "missionName", "Disco Volante" }
 			};
 
-			SDK.Instance.RequestEngagement("gameLoaded", engageParams, (response) =>
+			DDNA.Instance.RequestEngagement("gameLoaded", engageParams, (response) =>
 			{
 				popupContent = DeltaDNA.MiniJSON.Json.Serialize(response);
 			});
