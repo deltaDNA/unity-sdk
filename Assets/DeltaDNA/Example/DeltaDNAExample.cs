@@ -15,35 +15,22 @@ public class DeltaDNAExample : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
+		// Configure the SDK
 		DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 		DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 		DDNA.Instance.ClientVersion = "1.0.0";
 
-		#if UNITY_IPHONE
-		NotificationsPlugin.RegisterForPushNotifications();
-		#endif
+		// Enable push notifications (iOS Only)
+		DDNA.Instance.Notifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("We got a push notification! "+n);};
+		DDNA.Instance.Notifications.RegisterForPushNotifications();
 		
+		// Start collecting data
 		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
-
 	}
 
 	// Update is called once per frame
 	void Update () {
-		// Pickup up the Apple Push Notification Token
-		// Putting this code here means the push notification won't be available
-		// on the first play of the game, since the gameStarted event will have
-		// already been sent.
-		#if UNITY_IPHONE
-		if (DDNA.Instance.PushNotificationToken == null) {
-			byte[] token = NotificationServices.deviceToken;
-			//Debug.Log("Push Token: "+token);
-			if (token != null) {
-				string tokenStr = System.BitConverter.ToString(token).Replace("-", "").ToLower();
-				Debug.Log("Push Token: "+tokenStr);
-				DDNA.Instance.PushNotificationToken = tokenStr;
-			}
-		}
-		#endif
+
 	}
 
 	void FixedUpdate() {

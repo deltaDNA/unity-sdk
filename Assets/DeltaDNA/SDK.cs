@@ -47,6 +47,7 @@ namespace DeltaDNA
 		protected SDK()
 		{
 			this.Settings = new Settings();	// default configuration
+					
 			this.Transaction = new TransactionBuilder(this);
 
 			this.eventStore = new EventStore(
@@ -56,6 +57,14 @@ namespace DeltaDNA
 			this.engageArchive = new EngageArchive(
 				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
 			);
+		}
+		
+		void Awake()
+		{
+			// Attach additional behaviours as children of this gameObject
+			GameObject notifications = new GameObject();			
+			this.Notifications = notifications.AddComponent<NotificationsPlugin>();
+			notifications.transform.parent = gameObject.transform;
 		}
 
 		#region Client Interface
@@ -352,6 +361,9 @@ namespace DeltaDNA
 		/// Controls default behaviour of the SDK.  Set prior to initialisation.
 		/// </summary>
 		public Settings Settings { get; set; }
+		
+		
+		public NotificationsPlugin Notifications { get; private set; }
 
 		/// <summary>
 		/// Helper for building common transaction type events.

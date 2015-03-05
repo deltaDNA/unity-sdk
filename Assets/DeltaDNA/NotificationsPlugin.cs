@@ -15,16 +15,16 @@ namespace DeltaDNA
 public class NotificationsPlugin : MonoBehaviour
 {
 	// Called with JSON string of the notification payload.
-	public static event Action<string> OnDidLaunchWithPushNotification;
+	public event Action<string> OnDidLaunchWithPushNotification;
 
 	// Called with JSON string of the notification payload.
-	public static event Action<string> OnDidReceivePushNotification;
+	public event Action<string> OnDidReceivePushNotification;
 
 	// Called with the deviceToken.
-	public static event Action<string> OnDidRegisterForPushNotifications;
+	public event Action<string> OnDidRegisterForPushNotifications;
 
 	// Called with the error string.
-	public static event Action<string> OnDidFailToRegisterForPushNotifications;
+	public event Action<string> OnDidFailToRegisterForPushNotifications;
 
 	void Awake()
 	{
@@ -32,15 +32,10 @@ public class NotificationsPlugin : MonoBehaviour
 		DontDestroyOnLoad(this);
 	}
 
-    #if UNITY_IPHONE
-
-//    [DllImport("__Internal")]
-//    private static extern void _registerForPushNotifications();
-
 	/// <summary>
 	/// Registers for push notifications.  Only iOS supported.
 	/// </summary>
-    public static void RegisterForPushNotifications()
+    public void RegisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
 			NotificationServices.RegisterForRemoteNotificationTypes(
@@ -50,13 +45,10 @@ public class NotificationsPlugin : MonoBehaviour
         }
     }
 
-//    [DllImport("__Internal")]
-//    private static extern void _unregisterForPushNotifications();
-
 	/// <summary>
 	/// Unregisters for push notifications.  Only iOS supported.
 	/// </summary>
-    public static void UnregisterForPushNotifications()
+    public void UnregisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
             NotificationServices.UnregisterForRemoteNotifications();
@@ -111,7 +103,6 @@ public class NotificationsPlugin : MonoBehaviour
 
     #endregion
 
-    #endif // UNITY_IPHONE
 }
 
 } // namespace DeltaDNA
