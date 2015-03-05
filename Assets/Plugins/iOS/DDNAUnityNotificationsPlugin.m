@@ -69,7 +69,7 @@ static NSDictionary *_remoteNotification = nil;
 {
     NSDictionary *launchOptions = [notification userInfo];
     if (launchOptions != nil) {
-        NSMutableDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
         if (payload != nil) {
             payload[@"_ddLaunch"] = @YES;
             UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidLaunchWithPushNotification",

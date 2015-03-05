@@ -38,6 +38,7 @@ namespace DeltaDNA
 
 		private EventStore eventStore = null;
 		private EngageArchive engageArchive = null;
+		private EventBuilder _launchNotificationEventParams = null;
 		
 		private static Func<DateTime> TimestampFunc = new Func<DateTime>(DefaultTimestampFunc); 
 
@@ -93,7 +94,11 @@ namespace DeltaDNA
 
 				this.initialised = true;
 
-				// must do this once we're initialised
+				if (_launchNotificationEventParams != null) {
+					RecordEvent("notificationOpened", _launchNotificationEventParams);
+					_launchNotificationEventParams = null;
+				}
+				
 				TriggerDefaultEvents();
 
 				// Setup automated event uploads
@@ -283,6 +288,11 @@ namespace DeltaDNA
 			RequestEngagement(decisionPoint, engageParams, imageCallback);
 		}
 		
+		/// <summary>
+		/// Records that the game received a push notification.  It is safe to call this method
+		/// Before calling StartSDK, the 'notificationOpened' event will be sent at that time. 
+		/// </summary>
+		/// <param name="payload">Payload.</param>
 		public void RecordPushNotification(Dictionary<string, object> payload)
 		{
 			Logger.LogDebug("Received push notification: "+payload);
@@ -302,7 +312,11 @@ namespace DeltaDNA
 				Logger.LogError("Error parsing push notification payload: "+ex);
 			}
 			
-			this.RecordEvent("notificationOpened", eventParams);
+			if (this.IsInitialised) {
+				this.RecordEvent("notificationOpened", eventParams);
+			} else {
+				this._launchNotificationEventParams = eventParams;
+			}
 		}
 
 		/// <summary>
