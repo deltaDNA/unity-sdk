@@ -9,6 +9,17 @@ extern NSString *kUnityDidReceiveRemoteNotification;
 extern NSString *kUnityDidRegisterForRemoteNotificationsWithDeviceToken;
 extern NSString *kUnityDidFailToRegisterForRemoteNotificationsWithError;
 
+// Extenal functions called from Unity
+void _registerForPushNotifications()
+{
+    [[DDNAUnityNotificationsPlugin sharedPlugin] registerForPushNotifications];
+}
+
+void _unregisterForPushNotifications()
+{
+    [[DDNAUnityNotificationsPlugin sharedPlugin] unregisterForPushNotifications];
+}
+
 @interface DDNAUnityNotificationsPlugin ()
 {
 
@@ -26,6 +37,18 @@ extern NSString *kUnityDidFailToRegisterForRemoteNotificationsWithError;
 
 static BOOL _didLaunchWithNotification = NO;
 static NSDictionary *_remoteNotification = nil;
+
++ (instancetype)sharedPlugin
+{
+    static id sharedPlugin = nil;
+
+    static dispatch_once_t pred;
+    dispatch_once(&pred, ^{
+        sharedPlugin = [[self alloc] init];
+    });
+    return sharedPlugin;
+}
+
 
 + (void)load
 {
@@ -91,15 +114,35 @@ static NSDictionary *_remoteNotification = nil;
         [errorMsg UTF8String]);
 }
 
-+ (BOOL)applicationDidLaunchWithRemoteNotification
+- (void)registerForPushNotifications
+{
+    NSLog(@"DDNA Registering for push notifications");
+
+    UIUserNotificationType types = UIUserNotificationTypeBadge |
+                 UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
+
+    UIUserNotificationSettings *mySettings =
+                [UIUserNotificationSettings settingsForTypes:types categories:nil];
+
+    [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
+
+}
+
+- (void)unregisterForPushNotifications
+{
+    NSLog(@"DDNA Unregistering for push notifications");
+
+    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+}
+
+- (BOOL)applicationDidLaunchWithRemoteNotification
 {
     return _didLaunchWithNotification;
 }
 
-+ (NSDictionary *)getRemoteNotification
+- (NSDictionary *)getRemoteNotification
 {
     return _remoteNotification;
 }
-
 
 @end

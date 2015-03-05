@@ -1,8 +1,16 @@
 #include <Foundation/Foundation.h>
 
-@interface DDNAUnityNotificationsPlugin
+// Unity native interface
+void _registerForPushNotifications();
+void _unregisterForPushNotifications();
 
-+ (BOOL) applicationDidLaunchWithRemoteNotification;
-+ (NSDictionary *) getRemoteNotification;
+@interface DDNAUnityNotificationsPlugin : NSObject
+
++ (instancetype)sharedPlugin;
+
+- (void)registerForPushNotifications;
+- (void)unregisterForPushNotifications;
+- (BOOL)applicationDidLaunchWithRemoteNotification;
+- (NSDictionary *)getRemoteNotification;
 
 @end

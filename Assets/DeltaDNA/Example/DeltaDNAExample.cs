@@ -20,18 +20,9 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.ClientVersion = "1.0.0";
 
 		#if UNITY_IPHONE
-		// TODO: Get the push notification token.
-		NotificationServices.RegisterForRemoteNotificationTypes(
-			RemoteNotificationType.Alert |
-			RemoteNotificationType.Badge |
-			RemoteNotificationType.Sound);
-
-		// Try it with our own plugin...
-		
 		NotificationsPlugin.RegisterForPushNotifications();
-		#else
-		DDNAAndroid.RegisterForPushNotifications();
 		#endif
+		
 		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 
 	}

@@ -977,11 +977,11 @@ namespace DeltaDNA
 			{
 				Logger.LogDebug("Sending 'gameStarted' event");
 				
-				if (ClientInfo.Platform.Contains("IOS"))
+				if (ClientInfo.Platform.Contains("IOS") && String.IsNullOrEmpty(this.PushNotificationToken))
 				{
 					Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
 				}
-				else if (ClientInfo.Platform.Contains("ANDROID"))
+				else if (ClientInfo.Platform.Contains("ANDROID") && String.IsNullOrEmpty(this.AndroidRegistrationID))
 				{
 					Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
 				}

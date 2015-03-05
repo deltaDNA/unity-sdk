@@ -14,11 +14,18 @@ namespace DeltaDNA
 /// </summary>
 public class NotificationsPlugin : MonoBehaviour
 {
+	// Called with JSON string of the notification payload.
 	public static event Action<string> OnDidLaunchWithPushNotification;
+
+	// Called with JSON string of the notification payload.
 	public static event Action<string> OnDidReceivePushNotification;
+
+	// Called with the deviceToken.
 	public static event Action<string> OnDidRegisterForPushNotifications;
+
+	// Called with the error string.
 	public static event Action<string> OnDidFailToRegisterForPushNotifications;
-	
+
 	void Awake()
 	{
 		gameObject.name = this.GetType().ToString();
@@ -27,51 +34,56 @@ public class NotificationsPlugin : MonoBehaviour
 
     #if UNITY_IPHONE
 
-    [DllImport("__Internal")]
-    private static extern void _registerForPushNotifications();
+//    [DllImport("__Internal")]
+//    private static extern void _registerForPushNotifications();
 
 	/// <summary>
-	/// Registers for push notifications.  This is equivalent to calling Unity's
-	/// NotificationServices.RegisterForRemoteNotificationTypes.
+	/// Registers for push notifications.  Only iOS supported.
 	/// </summary>
     public static void RegisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
-            _registerForPushNotifications();
+			NotificationServices.RegisterForRemoteNotificationTypes(
+				RemoteNotificationType.Alert |
+				RemoteNotificationType.Badge |
+				RemoteNotificationType.Sound);
         }
     }
 
-    [DllImport("__Internal")]
-    private static extern void _unregisterForPushNotifications();
+//    [DllImport("__Internal")]
+//    private static extern void _unregisterForPushNotifications();
 
 	/// <summary>
-	/// Unregisters for push notifications.  This is equivalent to calling Unity's
-	/// NotificationServices.UnregisterForRemoteNotifications
+	/// Unregisters for push notifications.  Only iOS supported.
 	/// </summary>
     public static void UnregisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
-            _unregisterForPushNotifications();
+            NotificationServices.UnregisterForRemoteNotifications();
         }
     }
-    
+
 	#region Native Bridge
-	 
+
     public void DidLaunchWithPushNotification(string notification)
     {
+		Logger.LogDebug("Did launch with push notification");
+
     	var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
     	DDNA.Instance.RecordPushNotification(payload);
-    	
+
     	if (OnDidLaunchWithPushNotification != null) {
     		OnDidLaunchWithPushNotification(notification);
     	}
     }
-    
+
     public void DidReceivePushNotification(string notification)
     {
+		Logger.LogDebug("Did receive push notification");
+
 		var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
 		DDNA.Instance.RecordPushNotification(payload);
-    	
+
     	if (OnDidReceivePushNotification != null) {
     		OnDidReceivePushNotification(notification);
     	}
@@ -79,6 +91,8 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidRegisterForPushNotifications(string deviceToken)
     {
+		Logger.LogDebug("Did register for push notifications: "+deviceToken);
+
         DDNA.Instance.PushNotificationToken = deviceToken;
 
         if (OnDidRegisterForPushNotifications != null) {
@@ -88,11 +102,13 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidFailToRegisterForPushNotifications(string error)
     {
+		Logger.LogDebug("Did fail to register for push notifications: "+error);
+
         if (OnDidFailToRegisterForPushNotifications != null) {
             OnDidFailToRegisterForPushNotifications(error);
         }
     }
-    
+
     #endregion
 
     #endif // UNITY_IPHONE
