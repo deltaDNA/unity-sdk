@@ -1,6 +1,6 @@
 #include <Foundation/Foundation.h>
 
-@interface DDNANotificationManager
+@interface DDNAUnityNotificationsPlugin
 
 + (BOOL) applicationDidLaunchWithRemoteNotification;
 + (NSDictionary *) getRemoteNotification;

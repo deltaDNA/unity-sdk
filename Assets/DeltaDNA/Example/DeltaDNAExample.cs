@@ -19,6 +19,7 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 		DDNA.Instance.ClientVersion = "1.0.0";
 
+		#if UNITY_IPHONE
 		// TODO: Get the push notification token.
 		NotificationServices.RegisterForRemoteNotificationTypes(
 			RemoteNotificationType.Alert |
@@ -26,8 +27,11 @@ public class DeltaDNAExample : MonoBehaviour {
 			RemoteNotificationType.Sound);
 
 		// Try it with our own plugin...
-		IOSPluginManager.RegisterForPushNotifications();
-
+		
+		NotificationsPlugin.RegisterForPushNotifications();
+		#else
+		DDNAAndroid.RegisterForPushNotifications();
+		#endif
 		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 
 	}
@@ -38,6 +42,7 @@ public class DeltaDNAExample : MonoBehaviour {
 		// Putting this code here means the push notification won't be available
 		// on the first play of the game, since the gameStarted event will have
 		// already been sent.
+		#if UNITY_IPHONE
 		if (DDNA.Instance.PushNotificationToken == null) {
 			byte[] token = NotificationServices.deviceToken;
 			//Debug.Log("Push Token: "+token);
@@ -47,6 +52,7 @@ public class DeltaDNAExample : MonoBehaviour {
 				DDNA.Instance.PushNotificationToken = tokenStr;
 			}
 		}
+		#endif
 	}
 
 	void FixedUpdate() {

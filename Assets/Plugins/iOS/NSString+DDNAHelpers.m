@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 deltadna. All rights reserved.
 //
 
-#import "NSString+Helpers.h"
+#import "NSString+DDNAHelpers.h"
 #import <CommonCrypto/CommonDigest.h>
 
-@implementation NSString (Helpers)
+@implementation NSString (DDNAHelpers)
 
 + (BOOL) stringIsNilOrEmpty: (NSString*) aString
 {

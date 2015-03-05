@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (Helpers)
+@interface NSString (DDNAHelpers)
 
 + (BOOL) stringIsNilOrEmpty: (NSString*) aString;
 

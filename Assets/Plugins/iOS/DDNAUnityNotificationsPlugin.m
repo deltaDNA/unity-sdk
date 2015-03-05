@@ -1,16 +1,15 @@
-#include "DDNANotificationManager.h"
-#include "NSString+Helpers.h"
+#include "DDNAUnityNotificationsPlugin.h"
+#include "NSString+DDNAHelpers.h"
 
 
 void UnitySendMessage(const char *className, const char *methodName, const char *parameter);
-UIViewController *UnityGetGLViewController();
 
-// Unity custom notifications
+// Unity's internal custom notifications to listen to
 extern NSString *kUnityDidReceiveRemoteNotification;
 extern NSString *kUnityDidRegisterForRemoteNotificationsWithDeviceToken;
 extern NSString *kUnityDidFailToRegisterForRemoteNotificationsWithError;
 
-@interface DDNANotificationManager ()
+@interface DDNAUnityNotificationsPlugin ()
 {
 
 }
@@ -23,7 +22,7 @@ extern NSString *kUnityDidFailToRegisterForRemoteNotificationsWithError;
 @end
 
 
-@implementation DDNANotificationManager
+@implementation DDNAUnityNotificationsPlugin
 
 static BOOL _didLaunchWithNotification = NO;
 static NSDictionary *_remoteNotification = nil;
@@ -50,7 +49,7 @@ static NSDictionary *_remoteNotification = nil;
         NSMutableDictionary *payload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         if (payload != nil) {
             payload[@"_ddLaunch"] = @YES;
-            UnitySendMessage("DeltaDNA.IOSPluginManager", "didLaunchWithPushNotification",
+            UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidLaunchWithPushNotification",
                 [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
         }
     }
@@ -62,7 +61,7 @@ static NSDictionary *_remoteNotification = nil;
     if (payload != nil) {
         UIApplication *application = [UIApplication sharedApplication];
         payload[@"_ddLaunch"] = [NSNumber numberWithBool:application.applicationState != UIApplicationStateActive];
-        UnitySendMessage("DeltaDNA.IOSPluginManager", "didReceivePushNotification",
+        UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidReceivePushNotification",
             [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
     }
 }
@@ -74,7 +73,7 @@ static NSDictionary *_remoteNotification = nil;
         NSString *deviceToken = [userInfo description];
         deviceToken = [deviceToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
         deviceToken = [deviceToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-        UnitySendMessage("DeltaDNA.IOSPluginManager", "didRegisterForPushNotifications",
+        UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidRegisterForPushNotifications",
             [deviceToken UTF8String]);
     }
 }
@@ -88,7 +87,7 @@ static NSDictionary *_remoteNotification = nil;
         errorMsg = [error localizedDescription];
     }
 
-    UnitySendMessage("DeltaDNA.IOSPluginManager", "didFailToRegisterForPushNotifications",
+    UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidFailToRegisterForPushNotifications",
         [errorMsg UTF8String]);
 }
 
