@@ -661,7 +661,12 @@ namespace DeltaDNA
 		{
 			DateTime? dt = TimestampFunc();
 			if (dt.HasValue) {
-				return dt.Value.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+				String ts = dt.Value.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+				// Fix for millisecond timestamp format bug seen on Android.
+				if (ts.EndsWith(".1000")) {
+					ts.Replace(".1000", ".999");
+				}
+				return ts;
 			}
 			return null;	// Collect will insert a timestamp for us.
 		}
