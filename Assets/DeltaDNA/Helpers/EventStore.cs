@@ -13,6 +13,12 @@ using Windows.Storage.Streams;
 namespace DeltaDNA
 {
 
+	/// <summary>
+	/// The Event Store queues game events until they are ready to be sent to Collect.  It is a 
+	/// double buffer queue, events are written to one queue whilst being read from another.  
+	/// Mostly files are used to hold the events as UTF8 json strings.  For platforms that don't 
+	/// support filesystem, such as Webplayer in memory files are used instead.
+	/// </summary>
     public class EventStore : IDisposable
     {
         private static readonly string PF_KEY_IN_FILE = "DDSDK_EVENT_IN_FILE";
@@ -30,6 +36,10 @@ namespace DeltaDNA
 
         private static object _lock = new object();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DeltaDNA.EventStore"/> class.
+		/// </summary>
+		/// <param name="dir">Full path on the filesystem where to create the files.</param>
         public EventStore(string dir)
         {
             Logger.LogInfo("Creating Event Store");
@@ -44,6 +54,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Add a new event to the in buffer.
+		/// </summary>
         public bool Push(string obj)
         {
             lock (_lock)
@@ -67,6 +80,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Swap the in and out buffers over.
+		/// </summary>
         public bool Swap()
         {
             lock (_lock)
@@ -90,6 +106,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Reads events from the out buffer.
+		/// </summary>
         public List<string> Read()
         {
             lock (_lock)
@@ -107,6 +126,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Clears the out buffer.
+		/// </summary>
         public void ClearOut()
         {
             lock (_lock)
@@ -115,6 +137,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Clears both in and out buffers.
+		/// </summary>
         public void ClearAll()
         {
             lock (_lock)
@@ -127,6 +152,9 @@ namespace DeltaDNA
             }
         }
 
+		/// <summary>
+		/// Flushs the buffers to disk.
+		/// </summary>
         public void FlushBuffers()
         {
             lock (_lock)
@@ -152,23 +180,31 @@ namespace DeltaDNA
 
         protected virtual void Dispose(bool disposing)
         {
-            Logger.LogDebug("Disposing EventStore " + this);
-            try
-            {
-                if (!_disposed)
-                {
-                    if (disposing)
-                    {
-                        Logger.LogDebug("Disposing filestreams");
-                        _infs.Dispose();
-                        _outfs.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                _disposed = true;
-            }
+        	lock (_lock)
+        	{
+	            try
+	            {
+	                if (!_disposed)
+	                {
+	                    if (disposing)
+	                    {
+	                        if (_infs != null) 
+	                        	_infs.Dispose();
+	                        	
+	                        if (_outfs != null)
+	                        	_outfs.Dispose();
+	                    }
+	                }
+	            }
+	            catch (Exception e) 
+	            {
+	            	Logger.LogError("Failed to dispose EventStore cleanly. "+e.Message);
+	            }
+	            finally
+	            {
+	                _disposed = true;
+	            }
+	       	}
         }
 
         private bool InitialiseFileStreams(string dir)
