@@ -94,6 +94,12 @@ namespace DeltaDNA
 		{
 			lock (_lock)
 			{
+				Logger.LogInfo("Starting DDNA SDK");
+								
+				if (!PlayerPrefs.HasKey(PF_KEY_USER_ID)) {
+					Logger.LogDebug("No UserID key found in PlayerPrefs, starting from fresh.");
+				}
+			
 				SetUserID(userID);
 
 				this.EnvironmentKey = envKey;
@@ -135,7 +141,7 @@ namespace DeltaDNA
 			lock (_lock) 
 			{
 				if (this.initialised) {
-					Logger.LogDebug("Stopping SDK");
+					Logger.LogInfo("Stopping DDNA SDK");
 					RecordEvent("gameEnded");
 					CancelInvoke();
 					Upload();
@@ -466,7 +472,6 @@ namespace DeltaDNA
 				string v = PlayerPrefs.GetString(PF_KEY_USER_ID, null);
 				if (String.IsNullOrEmpty(v))
 				{
-					Logger.LogDebug("No existing User ID found.");
 					return null;
 				}
 				return v;
@@ -994,7 +999,9 @@ namespace DeltaDNA
 				if (String.IsNullOrEmpty (this.UserID))
 				{
 					// we have no user id and the we've not been given one so make one up
-					this.UserID = GetUserID ();
+					string uid = GetUserID();
+					Logger.LogDebug("Setting new generated user id "+uid);
+					this.UserID = uid;
 				}
 				else
 				{
@@ -1007,6 +1014,7 @@ namespace DeltaDNA
 				{
 					// new user ID given or not been sent one yet
 					PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
+					Logger.LogDebug("Setting new provided user id "+userID);
 					this.UserID = userID;
 				}
 				else

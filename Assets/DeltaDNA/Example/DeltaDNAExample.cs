@@ -11,7 +11,7 @@ public class DeltaDNAExample : MonoBehaviour {
 
 	private string popupContent = "";
 	private string popupTitle = "DeltaDNA Example";
-
+	
 	// Use this for initialization
 	void Start () {
 

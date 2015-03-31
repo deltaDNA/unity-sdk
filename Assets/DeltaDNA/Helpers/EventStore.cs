@@ -95,10 +95,19 @@ namespace DeltaDNA
 
                     // Swap the filenames
                     string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE);
-                    string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE);
-                    PlayerPrefs.SetString(PF_KEY_IN_FILE, outFile);
-                    PlayerPrefs.SetString(PF_KEY_OUT_FILE, inFile);
-
+					string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE);
+					
+					if (String.IsNullOrEmpty(inFile)) {
+                    	Logger.LogError("Event Store corruption, PlayerPrefs in file key is missing");
+                    }
+                    else if (String.IsNullOrEmpty(outFile)) {
+						Logger.LogError("Event Store corruption, PlayerPrefs out file key is missing");
+					}
+					else {
+						PlayerPrefs.SetString(PF_KEY_IN_FILE, outFile);
+						PlayerPrefs.SetString(PF_KEY_OUT_FILE, inFile);
+					}
+					
                     return true;
                 }
 
