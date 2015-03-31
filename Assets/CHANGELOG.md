@@ -1,5 +1,5 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.  The SDK should work with any recent version of Unity - get in touch if it doesn't.
+Change log for deltaDNA's Unity SDK.  The SDK should work with any recent 4.* version of Unity.
 
 ## 3.5 - 2015-03-05
 ### Added
@@ -8,6 +8,11 @@ Change log for deltaDNA's Unity SDK.  The SDK should work with any recent versio
 
 ### Changed
 * `DeltaDNA.SDK` has been deprecated in favour of `DeltaDNA.DDNA`.  This makes the code more readable and brings the naming inline with our other SDK's.  
+
+### Fixed
+* Help event store to recover if PlayerPrefs keys accidentally deleted.
+* Event store dispose is more robust.
+* Workaround for timestamps with > 999 milliseconds on Android devices.
 
 ## 3.4.3 - 2015-02-27
 ### Added
