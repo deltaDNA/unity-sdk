@@ -354,7 +354,7 @@ namespace DeltaDNA
 
 			if (this.IsUploading)
 			{
-				Logger.LogWarning("Event upload already in progress, aborting");
+				Logger.LogWarning("Event upload already in progress, try again later.");
 				return;
 			}
 
