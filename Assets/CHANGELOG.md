@@ -7,7 +7,7 @@ Change log for deltaDNA's Unity SDK.  The SDK should work with any recent 4.* ve
 * An example scene to show off the platform's features.  This can be found under DeltaDNA/Example.
 
 ### Changed
-* `DeltaDNA.SDK` has been deprecated in favour of `DeltaDNA.DDNA`.  This makes the code more readable and brings the naming inline with our other SDK's.  
+* `DeltaDNA.SDK` has been renamed to `DeltaDNA.DDNA`.  This makes the code more readable and brings the naming inline with our other SDK's.  
 
 ### Fixed
 * Help event store to recover if PlayerPrefs keys accidentally deleted.
