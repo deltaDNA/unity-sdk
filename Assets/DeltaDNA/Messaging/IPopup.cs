@@ -34,19 +34,5 @@ namespace DeltaDNA.Messaging
 		void OnDismiss(PopupEventArgs eventArgs);
 		void OnAction(PopupEventArgs eventArgs);
 	}
-
-	public class PopupException : Exception
-	{
-		public PopupException()
-		{}
-		
-		public PopupException(string message)
-			: base(message)
-		{}
-		
-		public PopupException(string message, Exception inner)
-			: base(message, inner)
-		{}
-	}
 }
 

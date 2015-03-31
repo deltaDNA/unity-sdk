@@ -212,7 +212,8 @@ namespace DeltaDNA
 		{
 			if (!this.initialised)
 			{
-				throw new NotStartedException("You must first start the SDK via the StartSDK method");
+				Logger.LogError("You must first start the SDK via the StartSDK method.");
+				return;
 			}
 
 			// the header for every event is eventName, userID, sessionID and timestamp
@@ -246,7 +247,7 @@ namespace DeltaDNA
 			}
 			else if (!this.eventStore.Push(MiniJSON.Json.Serialize(eventRecord)))
 			{
-				Logger.LogWarning("Event Store full, unable to handle event");
+				Logger.LogWarning("Event Store full, unable to handle event.");
 			}
 		}
 
@@ -260,7 +261,8 @@ namespace DeltaDNA
 		{
 			if (!this.initialised)
 			{
-				throw new NotStartedException("You must first start the SDK via the StartSDK method");
+				Logger.LogError("You must first start the SDK via the StartSDK method.");
+				return;
 			}
 
 			if (String.IsNullOrEmpty(this.EngageURL))
@@ -349,7 +351,8 @@ namespace DeltaDNA
 		{
 			if (!this.initialised)
 			{
-				throw new NotStartedException("You must first start the SDK via the StartSDK method");
+				Logger.LogDebug("You must first start the SDK via the StartSDK method.");
+				return;
 			}
 
 			if (this.IsUploading)

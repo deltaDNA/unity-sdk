@@ -18,7 +18,8 @@ namespace DeltaDNA
 		{
 			if (this.realCurrency != null)
 			{
-				throw new InvalidOperationException("A Product may only have one real currency");
+				Logger.LogError("A Product may only have one real currency.");
+				return this;
 			}
 			
 			this.realCurrency = new Dictionary<string, object>()

@@ -259,7 +259,8 @@ namespace DeltaDNA.Messaging
 			if (www.error == null) {
 				www.LoadImageIntoTexture(_spriteMap);
 			} else {
-				throw new PopupException("Failed to load resource "+url+" "+www.error);
+				Logger.LogError("Failed to load resource "+url+" "+www.error);
+				yield break;
 			}
 		
 			callback();
