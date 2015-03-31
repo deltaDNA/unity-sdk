@@ -17,6 +17,7 @@ namespace UnityTest
                        StackTrace = result.StackTrace,
                        Duration = result.Time,
                        Test = new UnitTestInfo(result.Test.TestName.TestID.ToString()),
+                       IsIgnored = (result.ResultState == NUnit.Core.ResultState.Ignored) || result.Test.RunState == NUnit.Core.RunState.Ignored
                    };
         }
     }

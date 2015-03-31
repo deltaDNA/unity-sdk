@@ -16,6 +16,7 @@ namespace UnityTest
         public double Duration { get; set; }
         public string Message { get; set; }
         public string StackTrace { get; set; }
+        public bool IsIgnored { get; set; }
 
         public string Logs { get; set; }
 
@@ -29,6 +30,7 @@ namespace UnityTest
             Logs = source.Logs;
             StackTrace = source.StackTrace;
             Executed = source.Executed;
+            IsIgnored = source.IsIgnored || (Test != null && Test.IsIgnored);
             Outdated = outdated;
         }
 
@@ -52,11 +54,6 @@ namespace UnityTest
         public bool IsInconclusive
         {
             get { return ResultState == TestResultState.Inconclusive; }
-        }
-
-        public bool IsIgnored
-        {
-            get { return ResultState == TestResultState.Ignored; }
         }
 
         #endregion

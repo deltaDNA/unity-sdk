@@ -24,4 +24,6 @@ public interface ITestResult
     double Duration { get; }
 
     string StackTrace { get; }
+    
+    bool IsIgnored { get; }
 }

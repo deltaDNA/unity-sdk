@@ -45,12 +45,17 @@ namespace UnityTest
         {
             var component = (TestComponent)target;
 
-            if (component.dynamic && GUILayout.Button("Reload dynamic tests"))
+            if (component.dynamic)
             {
-                TestComponent.DestroyAllDynamicTests();
-                Selection.objects = new Object[0];
-                IntegrationTestsRunnerWindow.selectedInHierarchy = false;
-                return;
+				if(GUILayout.Button("Reload dynamic tests"))
+				{
+					TestComponent.DestroyAllDynamicTests();
+	                Selection.objects = new Object[0];
+	                IntegrationTestsRunnerWindow.selectedInHierarchy = false;
+	                GUIUtility.ExitGUI();
+	                return;
+				}
+				EditorGUILayout.HelpBox("This is a test generated from code. No changes in the component will be persisted.", MessageType.Info);
             }
 
             if (component.IsTestGroup())

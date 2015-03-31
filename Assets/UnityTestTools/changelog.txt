@@ -1,3 +1,28 @@
+Version 1.5.1
+
+- removed redundant and not applicable options
+- fixed 5.0 related bugs
+
+Version 1.5.0
+
+- Unity 5 related compatibility changes
+
+Version 1.4.5
+
+- Added "Pause on test failure" option for integration tests
+- bugfixes and code refactorization
+- fixed UI bug where test details were not refreshed is the label was focused
+
+Version 1.4.4
+
+- Minimal supported Unity version is now 4.3
+- UI changes
+- code refactoring
+
+Version 1.4.3
+
+- Remove reference to Resources.LoadAssetAtPath from runtime code
+
 Version 1.4.2
 
 (assertion component)

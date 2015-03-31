@@ -80,6 +80,7 @@ namespace UnityTest
             str.isSuccess = test.IsSuccess;
             str.duration = test.duration;
             str.stackTrace = test.stacktrace;
+            str.isIgnored = test.IsIgnored;
 
             return str;
         }
@@ -98,6 +99,7 @@ namespace UnityTest
         public bool isSuccess;
         public double duration;
         public string stackTrace;
+        public bool isIgnored;
 
         public TestResultState ResultState
         {
@@ -147,6 +149,11 @@ namespace UnityTest
         public string StackTrace
         {
             get { return stackTrace; }
+        }
+        
+        public bool IsIgnored 
+        {
+            get { return isIgnored; }
         }
     }
     #endregion
