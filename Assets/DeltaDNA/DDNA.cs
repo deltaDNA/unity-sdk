@@ -981,9 +981,8 @@ namespace DeltaDNA
 		}
 
 		private static string GenerateHash(string data, string secret){
-			var md5 = MD5.Create();
 			var inputBytes = Encoding.UTF8.GetBytes(data + secret);
-			var hash = md5.ComputeHash(inputBytes);
+			var hash = Utils.ComputeMD5Hash(inputBytes);
 
 			var sb = new StringBuilder();
 			for (int i = 0; i < hash.Length; i++)
