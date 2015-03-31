@@ -4,11 +4,11 @@ namespace DeltaDNA
 {
 	public class TransactionBuilder
 	{
-		private SDK sdk;
+		private DDNA ddna;
 	
-		internal TransactionBuilder(SDK sdk)
+		internal TransactionBuilder(DDNA ddna)
 		{
-			this.sdk = sdk;
+			this.ddna = ddna;
 		}
 		
 		public void BuyVirtualCurrency(
@@ -30,7 +30,7 @@ namespace DeltaDNA
 					.AddVirtualCurrency(virtualCurrencyName, virtualCurrencyType, virtualCurrencyAmount))
 				.AddParam("transactionReceipt", transactionReceipt);
 				
-			sdk.RecordEvent("transaction", eventParams);
+			ddna.RecordEvent("transaction", eventParams);
 		}
 	}
 }

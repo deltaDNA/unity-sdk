@@ -12,8 +12,7 @@ using DeltaDNA.Messaging;
 
 namespace DeltaDNA
 {
-	[Obsolete("SDK is deprecated, use DDNA instead, it will be removed in a future update.")]
-	public class SDK : Singleton<SDK>
+	public class DDNA : Singleton<DDNA>
 	{
 		static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
 		static readonly string PF_KEY_FIRST_RUN = "DDSDK_FIRST_RUN";
@@ -45,7 +44,7 @@ namespace DeltaDNA
 
 		private static object _lock = new object();
 
-		protected SDK()
+		protected DDNA()
 		{
 			this.Settings = new Settings();	// default configuration
 					
@@ -427,7 +426,7 @@ namespace DeltaDNA
 		/// <param name="TimestampFunc">Timestamp func.</param>
 		public void SetTimestampFunc(Func<DateTime?> TimestampFunc) 
 		{
-			SDK.TimestampFunc = TimestampFunc;
+			DDNA.TimestampFunc = TimestampFunc;
 		}
 
 		#endregion
@@ -1083,9 +1082,4 @@ namespace DeltaDNA
 		#endregion
 
 	}
-	
-	/// <summary>
-	/// Typedef the SDK to make client code more readable.
-	/// </summary>
-	public class DDNA : SDK {}
 }
