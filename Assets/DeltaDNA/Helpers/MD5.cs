@@ -14,7 +14,7 @@ namespace DeltaDNA
 		
 		public byte[] ComputeHash(byte[] buffer)
 		{
-			#if NETFX_CORE
+			#if UNITY_WINRT
 
 			return UnityEngine.Windows.Crypto.ComputeMD5Hash(buffer);
 			
