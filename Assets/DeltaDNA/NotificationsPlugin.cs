@@ -38,10 +38,12 @@ public class NotificationsPlugin : MonoBehaviour
     public void RegisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
+        #if UNITY_IPHONE
 			NotificationServices.RegisterForRemoteNotificationTypes(
 				RemoteNotificationType.Alert |
 				RemoteNotificationType.Badge |
 				RemoteNotificationType.Sound);
+		#endif
         }
     }
 
@@ -51,7 +53,9 @@ public class NotificationsPlugin : MonoBehaviour
     public void UnregisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
+        #if UNITY_IPHONE
             NotificationServices.UnregisterForRemoteNotifications();
+		#endif
         }
     }
 
