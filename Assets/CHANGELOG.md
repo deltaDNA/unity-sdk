@@ -1,5 +1,5 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.  The SDK should work with any recent 4.* version of Unity.
+Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.0.
 
 ## 3.5 - 2015-03-05
 ### Added
