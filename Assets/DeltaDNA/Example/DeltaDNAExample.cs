@@ -14,15 +14,16 @@ public class DeltaDNAExample : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-
+	
 		// Configure the SDK
 		DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 		DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 		DDNA.Instance.ClientVersion = "1.0.0";
 
 		// Enable push notifications (iOS Only)
+		DDNA.Instance.Notifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("We get push token: "+n);};
 		DDNA.Instance.Notifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("We got a push notification! "+n);};
-		DDNA.Instance.Notifications.RegisterForPushNotifications();
+		DDNA.Instance.Notifications.RegisterForPushNotifications("701083724825");	// Notify App
 		
 		// Start collecting data
 		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);

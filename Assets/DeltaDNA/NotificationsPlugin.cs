@@ -14,6 +14,10 @@ namespace DeltaDNA
 /// </summary>
 public class NotificationsPlugin : MonoBehaviour
 {
+	#if UNITY_ANDROID
+	private DeltaDNA.Android.GcmClient gcmClient;
+	#endif
+
 	// Called with JSON string of the notification payload.
 	public event Action<string> OnDidLaunchWithPushNotification;
 
@@ -35,7 +39,7 @@ public class NotificationsPlugin : MonoBehaviour
 	/// <summary>
 	/// Registers for push notifications.  Only iOS supported.
 	/// </summary>
-    public void RegisterForPushNotifications()
+    public void RegisterForPushNotifications(string senderId)
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
         
@@ -52,6 +56,15 @@ public class NotificationsPlugin : MonoBehaviour
 				UnityEngine.iOS.NotificationType.Sound);		
 			#endif
 			#endif
+        }
+        
+        if (Application.platform == RuntimePlatform.Android) {
+        
+        	#if UNITY_ANDROID
+			DeltaDNA.Android.GcmListener listener = new DeltaDNA.Android.GcmListener(this);
+			gcmClient = new DeltaDNA.Android.GcmClient(listener);	
+        	gcmClient.RegisterForGcm(senderId);
+        	#endif        
         }
     }
 
