@@ -10,16 +10,16 @@ namespace DeltaDNA.Android
 	
 		private AndroidJavaObject gcmClient;
 		
-		public GcmClient(GcmListener listener) {
-			
-			AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
-			AndroidJavaObject activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");
-			gcmClient = new AndroidJavaObject(Utils.GcmClientClassName, activity, listener);
-			
+		public GcmClient() {
+			gcmClient = new AndroidJavaObject(Utils.GcmClientClassName);
 		}
 		
-		public void RegisterForGcm(string senderId) {
-			gcmClient.Call("registerForGcm", senderId);
+		public void Register(string senderId) {
+			gcmClient.Call("register", senderId);
+		}
+		
+		public void Unregister() {
+			gcmClient.Call("unregister");
 		}
 	
 	}

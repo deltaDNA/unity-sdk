@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Windows;
 #endif
 using DeltaDNA.Messaging;
+using DeltaDNA.Notifications;
 
 namespace DeltaDNA
 {
@@ -62,9 +63,13 @@ namespace DeltaDNA
 		void Awake()
 		{
 			// Attach additional behaviours as children of this gameObject
-			GameObject notifications = new GameObject();			
-			this.Notifications = notifications.AddComponent<NotificationsPlugin>();
-			notifications.transform.parent = gameObject.transform;
+			GameObject iosNotifications = new GameObject();			
+			this.IosNotifications = iosNotifications.AddComponent<IosNotifications>();
+			iosNotifications.transform.parent = gameObject.transform;
+			
+			GameObject androidNotifications = new GameObject();
+			this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
+			androidNotifications.transform.parent = gameObject.transform;
 		}
 
 		#region Client Interface
@@ -376,8 +381,15 @@ namespace DeltaDNA
 		/// </summary>
 		public Settings Settings { get; set; }
 		
+		/// <summary>
+		/// Helper for iOS push notifications.
+		/// </summary>
+		public IosNotifications IosNotifications { get; private set; }
 		
-		public NotificationsPlugin Notifications { get; private set; }
+		/// <summary>
+		/// Helper for Android push notifications.
+		/// </summary>
+		public AndroidNotifications AndroidNotifications { get; private set; }
 
 		/// <summary>
 		/// Helper for building common transaction type events.

@@ -3,21 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace DeltaDNA
+namespace DeltaDNA.Notifications
 {
 
 /// <summary>
-/// Notifications Plugin enables a game to register with Apple's push notification service.  It provides
+/// iOS Notifications Plugin enables a game to register with Apple's push notification service.  It provides
 /// some additional functionality not easily accessible from Unity.  By using the events, a game can be
 /// notified when a game has registered with the service and when push notification has occured.  We use
 /// these events to log notifications with the DeltaDNA platform.
 /// </summary>
-public class NotificationsPlugin : MonoBehaviour
+public class IosNotifications : MonoBehaviour
 {
-	#if UNITY_ANDROID
-	private DeltaDNA.Android.GcmClient gcmClient;
-	#endif
-
 	// Called with JSON string of the notification payload.
 	public event Action<string> OnDidLaunchWithPushNotification;
 
@@ -37,9 +33,9 @@ public class NotificationsPlugin : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Registers for push notifications.  Only iOS supported.
+	/// Registers for push notifications.
 	/// </summary>
-    public void RegisterForPushNotifications(string senderId)
+    public void RegisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
         
@@ -57,19 +53,10 @@ public class NotificationsPlugin : MonoBehaviour
 			#endif
 			#endif
         }
-        
-        if (Application.platform == RuntimePlatform.Android) {
-        
-        	#if UNITY_ANDROID
-			DeltaDNA.Android.GcmListener listener = new DeltaDNA.Android.GcmListener(this);
-			gcmClient = new DeltaDNA.Android.GcmClient(listener);	
-        	gcmClient.RegisterForGcm(senderId);
-        	#endif        
-        }
     }
 
 	/// <summary>
-	/// Unregisters for push notifications.  Only iOS supported.
+	/// Unregisters for push notifications.
 	/// </summary>
     public void UnregisterForPushNotifications()
     {
@@ -88,7 +75,7 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidLaunchWithPushNotification(string notification)
     {
-		Logger.LogDebug("Did launch with push notification");
+		Logger.LogDebug("Did launch with iOS push notification");
 
     	var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
     	DDNA.Instance.RecordPushNotification(payload);
@@ -100,7 +87,7 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidReceivePushNotification(string notification)
     {
-		Logger.LogDebug("Did receive push notification");
+		Logger.LogDebug("Did receive iOS push notification");
 
 		var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
 		DDNA.Instance.RecordPushNotification(payload);
@@ -112,7 +99,7 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidRegisterForPushNotifications(string deviceToken)
     {
-		Logger.LogDebug("Did register for push notifications: "+deviceToken);
+		Logger.LogDebug("Did register for iOS push notifications: "+deviceToken);
 
         DDNA.Instance.PushNotificationToken = deviceToken;
 
@@ -123,7 +110,7 @@ public class NotificationsPlugin : MonoBehaviour
 
     public void DidFailToRegisterForPushNotifications(string error)
     {
-		Logger.LogDebug("Did fail to register for push notifications: "+error);
+		Logger.LogDebug("Did fail to register for iOS push notifications: "+error);
 
         if (OnDidFailToRegisterForPushNotifications != null) {
             OnDidFailToRegisterForPushNotifications(error);

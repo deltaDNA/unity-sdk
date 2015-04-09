@@ -72,7 +72,7 @@ static NSDictionary *_remoteNotification = nil;
         NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
         if (payload != nil) {
             payload[@"_ddLaunch"] = @YES;
-            UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidLaunchWithPushNotification",
+            UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidLaunchWithPushNotification",
                 [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
         }
     }
@@ -84,7 +84,7 @@ static NSDictionary *_remoteNotification = nil;
     if (payload != nil) {
         UIApplication *application = [UIApplication sharedApplication];
         payload[@"_ddLaunch"] = [NSNumber numberWithBool:application.applicationState != UIApplicationStateActive];
-        UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidReceivePushNotification",
+        UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidReceivePushNotification",
             [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
     }
 }
@@ -96,7 +96,7 @@ static NSDictionary *_remoteNotification = nil;
         NSString *deviceToken = [userInfo description];
         deviceToken = [deviceToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
         deviceToken = [deviceToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-        UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidRegisterForPushNotifications",
+        UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidRegisterForPushNotifications",
             [deviceToken UTF8String]);
     }
 }
@@ -110,7 +110,7 @@ static NSDictionary *_remoteNotification = nil;
         errorMsg = [error localizedDescription];
     }
 
-    UnitySendMessage("DeltaDNA.NotificationsPlugin", "DidFailToRegisterForPushNotifications",
+    UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidFailToRegisterForPushNotifications",
         [errorMsg UTF8String]);
 }
 

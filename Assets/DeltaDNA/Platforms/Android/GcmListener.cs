@@ -1,26 +1,27 @@
 ﻿#if UNITY_ANDROID
 
 using UnityEngine;
+using DeltaDNA.Notifications;
 
 namespace DeltaDNA.Android
 {
 
 	internal class GcmListener : AndroidJavaProxy {
 	
-		private NotificationsPlugin notificationsPlugin;
+		private AndroidNotifications notifications;
 	
-		internal GcmListener(NotificationsPlugin notificationsPlugin)
+		internal GcmListener(AndroidNotifications notifications)
 			: base(Utils.UnityGcmListenerClassName) 
 		{
-			this.notificationsPlugin = notificationsPlugin;
+			this.notifications = notifications;
 		}
 		
 		void onRegisteredForGcm(string registrationId) {
-			notificationsPlugin.DidRegisterForPushNotifications(registrationId);
+			notifications.DidRegisterForPushNotifications(registrationId);
 		}
 		
 		void onFailedToRegisterForGcm(string reason) {
-			notificationsPlugin.DidFailToRegisterForPushNotifications(reason);
+			notifications.DidFailToRegisterForPushNotifications(reason);
 		}
 		
 	}
