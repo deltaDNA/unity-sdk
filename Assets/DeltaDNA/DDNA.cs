@@ -70,6 +70,10 @@ namespace DeltaDNA
 			GameObject androidNotifications = new GameObject();
 			this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
 			androidNotifications.transform.parent = gameObject.transform;
+			
+			GameObject ads = new GameObject();
+			this.Ads = ads.AddComponent<Ads>();
+			ads.transform.parent = gameObject.transform;
 		}
 
 		#region Client Interface
@@ -390,6 +394,11 @@ namespace DeltaDNA
 		/// Helper for Android push notifications.
 		/// </summary>
 		public AndroidNotifications AndroidNotifications { get; private set; }
+		
+		/// <summary>
+		/// Access the ad behaviour.
+		/// </summary>
+		public Ads Ads { get; private set; }
 
 		/// <summary>
 		/// Helper for building common transaction type events.
