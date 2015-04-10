@@ -26,8 +26,16 @@ namespace DeltaDNA.Android
 			Logger.LogDebug("Interstitial ad ready");
 		}
 		
+		void onInterstitalAdClosed() {
+			Logger.LogDebug("Interstitial ad closed");
+		}
+		
 		void onVideoAdReady() {
 			Logger.LogDebug("Video ad ready");
+		}
+		
+		string toString() {
+			return "AdListener";
 		}
 		
 	}

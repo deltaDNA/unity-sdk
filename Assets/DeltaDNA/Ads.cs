@@ -22,5 +22,19 @@ namespace DeltaDNA
 			adService.RegisterForAds();	
 			#endif
 		}
+		
+		public bool IsInterstitialAdReady()
+		{
+			#if UNITY_ANDROID
+			return adService.IsInterstitialReady();		
+			#endif
+		}
+		
+		public void ShowInterstitialAd()
+		{
+			#if UNITY_ANDROID
+			adService.ShowInterstitialAd();
+			#endif
+		}
 	}
 }

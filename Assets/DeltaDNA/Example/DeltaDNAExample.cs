@@ -28,9 +28,6 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an Android registration id: "+n);};
 		DDNA.Instance.AndroidNotifications.RegisterForPushNotifications("701083724825");	// Notify App
 		
-		// Ads
-		DDNA.Instance.Ads.RegisterForAds();
-		
 		// Start collecting data
 		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 	}

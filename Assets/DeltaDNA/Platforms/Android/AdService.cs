@@ -25,6 +25,7 @@ namespace DeltaDNA.Android
 		}
 		
 		public void ShowInterstitialAd() {
+			Logger.LogDebug("Show Interstitial");
 			adService.Call("showInterstitialAd");
 		}
 	}
