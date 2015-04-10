@@ -646,6 +646,7 @@ namespace DeltaDNA
 		{
 			// see if this game ran with the previous SDK and look for
 			// a user id.
+			#if !UNITY_WEBPLAYER
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
 			if (File.Exists(legacySettingsPath))
 			{
@@ -675,6 +676,7 @@ namespace DeltaDNA
 					}
 				}
 			}
+			#endif
 
 			Logger.LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
