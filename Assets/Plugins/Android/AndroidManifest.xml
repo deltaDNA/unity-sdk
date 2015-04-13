@@ -13,6 +13,10 @@
       </intent-filter>
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
     </activity>
+
+    <!-- Additional Activities Required for Ads -->
+    <activity android:name="com.google.android.gms.ads.AdActivity" android:theme="@android:style/Theme.Translucent" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+
   </application>
 
   <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="22" />
