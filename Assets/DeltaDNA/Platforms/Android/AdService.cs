@@ -17,16 +17,44 @@ namespace DeltaDNA.Android
 			
 		internal void RegisterForAds() {
 			Logger.LogDebug("Registering for Ads");
-			adService.Call("init");
+			if (adService != null) {
+				adService.Call("init");
+			}
 		}
 
 		public bool IsInterstitialReady() {
-			return adService.Call<bool>("isInterstitialAdReady");
+			if (adService != null) {
+				return adService.Call<bool>("isInterstitialAdReady");
+			}
+			return false;
 		}
 		
 		public void ShowInterstitialAd() {
 			Logger.LogDebug("Show Interstitial");
-			adService.Call("showInterstitialAd");
+			if (adService != null) {
+				adService.Call("showInterstitialAd");
+			}
+		}
+		
+		public void OnPause() {
+			Logger.LogDebug("Ad Service OnPause");
+			if (adService != null) {
+				adService.Call("onPause");
+			}
+		}
+		
+		public void OnResume() {
+			Logger.LogDebug("Ad Service OnResume");
+			if (adService != null) {
+				adService.Call("onResume");
+			}
+		}
+		
+		public void OnDestroy() {
+			Logger.LogDebug("Ad Service OnDestroy");
+			if (adService != null) {
+				adService.Call("onDestroy");
+			}
 		}
 	}
 }

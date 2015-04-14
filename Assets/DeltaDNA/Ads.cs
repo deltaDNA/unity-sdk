@@ -14,6 +14,28 @@ namespace DeltaDNA
 			gameObject.name = this.GetType().ToString();
 			DontDestroyOnLoad(this);
 		}
+		
+		void OnApplicationPause(bool pauseStatus)
+		{
+			#if UNITY_ANDROID
+			if (adService != null) {
+				if (pauseStatus) {
+					adService.OnPause();
+				} else {
+					adService.OnResume();
+				}
+			}
+			#endif 
+		}
+		
+		void OnDestroy()
+		{
+			#if UNITY_ANDROID
+			if (adService != null) {
+				adService.OnDestroy();
+			}			
+			#endif
+		}
 	
 		public void RegisterForAds()
 		{
@@ -26,14 +48,22 @@ namespace DeltaDNA
 		public bool IsInterstitialAdReady()
 		{
 			#if UNITY_ANDROID
-			return adService.IsInterstitialReady();		
+			if (adService != null) {
+				return adService.IsInterstitialReady();	
+			}	
+			Logger.LogError("You must first register for ads");
+			return false;
 			#endif
 		}
 		
 		public void ShowInterstitialAd()
 		{
 			#if UNITY_ANDROID
-			adService.ShowInterstitialAd();
+			if (adService != null) {
+				adService.ShowInterstitialAd();
+			} else {
+				Logger.LogError("You must first register for ads");
+			}
 			#endif
 		}
 	}
