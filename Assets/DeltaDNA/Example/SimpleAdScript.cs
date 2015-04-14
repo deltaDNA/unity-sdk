@@ -8,6 +8,11 @@ namespace DeltaDNA
 		// Use this for initialization
 		void Start () {
 			// Ads
+			DDNA.Instance.Ads.OnDidRegisterForAds += () => { Debug.Log("Registered for Ads.");};
+			DDNA.Instance.Ads.OnDidFailToRegisterForAds += (string reason) => { Debug.Log ("Problem registering for Ads. "+reason);};
+			DDNA.Instance.Ads.OnInterstitialAdReady += () => { Debug.Log("Ad ready to show");};
+			DDNA.Instance.Ads.OnInterstitialAdClosed += () => { Debug.Log("Ad closed");};
+			
 			DDNA.Instance.Ads.RegisterForAds();
 		}
 		

@@ -1,33 +1,39 @@
 ﻿#if UNITY_ANDROID
 
 using UnityEngine;
-using DeltaDNA.Notifications;
+using DeltaDNA;
 
 namespace DeltaDNA.Android
 {
 	
 	internal class AdListener : AndroidJavaProxy {
+	
+		private Ads ads;
 		
-		internal AdListener()
+		internal AdListener(Ads ads)
 			: base(Utils.AdServiceListenerClassName) 
 		{
-			
+			this.ads = ads;
 		}
 		
 		void onRegisteredForAds() {
 			Logger.LogDebug("Registered for ads");
+			ads.DidRegisterForAds();
 		}
 		
 		void onFailedToRegisterForAds(string reason) {
 			Logger.LogDebug("Failed to register for ads "+reason);
+			ads.DidFailToRegisterForAds(reason);
 		}
 		
 		void onInterstitialAdReady() {
 			Logger.LogDebug("Interstitial ad ready");
+			ads.InterstitialAdReady();
 		}
 		
-		void onInterstitalAdClosed() {
+		void onInterstitialAdClosed() {
 			Logger.LogDebug("Interstitial ad closed");
+			ads.InterstitialAdClosed();
 		}
 		
 		void onVideoAdReady() {
