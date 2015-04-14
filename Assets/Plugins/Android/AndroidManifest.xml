@@ -17,11 +17,16 @@
     <!-- Additional Activities Required for Ads -->
     <activity android:name="com.google.android.gms.ads.AdActivity" android:theme="@android:style/Theme.Translucent" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
 
+    <activity android:name="com.inmobi.androidsdk.IMBrowserActivity"
+            android:configChanges="keyboardHidden|orientation|keyboard|smallestScreenSize|screenSize"    android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:hardwareAccelerated="true" />
+
   </application>
 
   <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="22" />
   <uses-feature android:glEsVersion="0x00020000" />
   <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
