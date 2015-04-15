@@ -1,3 +1,4 @@
+#if UNITY_5
 #if !UNITY_METRO && (UNITY_PRO_LICENSE || !(UNITY_ANDROID || UNITY_IPHONE))
 #define UTT_SOCKETS_SUPPORTED
 #endif
@@ -105,3 +106,5 @@ namespace UnityTest
         }
     }
 }
+
+#endif

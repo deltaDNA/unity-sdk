@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -26,3 +27,5 @@ public abstract class UnityUnitTest
         return p;
     }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -164,3 +165,5 @@ namespace UnityTest
         public abstract bool SetCurrentTest(TestComponent tc);
     }
 }
+
+#endif

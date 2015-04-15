@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,3 +108,5 @@ namespace UnityTest.IntegrationTestRunner
         }
     }
 }
+
+#endif

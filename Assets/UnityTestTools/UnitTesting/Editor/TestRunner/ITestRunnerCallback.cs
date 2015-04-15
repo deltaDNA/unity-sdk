@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,3 +14,5 @@ namespace UnityTest.UnitTestRunner
         void RunFinishedException(Exception exception);
     }
 }
+
+#endif

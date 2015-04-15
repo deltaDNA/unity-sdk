@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,3 +23,5 @@ public class IntegrationTestAttribute : Attribute
         return fileName == m_Path;
     }
 }
+
+#endif
