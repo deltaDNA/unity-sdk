@@ -40,7 +40,7 @@ public class IosNotifications : MonoBehaviour
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
         
         	#if UNITY_IPHONE    
-        	#if UNITY_4		
+        	#if UNITY_4_5 || UNITY_4_6		
 			NotificationServices.RegisterForRemoteNotificationTypes(
 				RemoteNotificationType.Alert |
 				RemoteNotificationType.Badge |
@@ -62,7 +62,7 @@ public class IosNotifications : MonoBehaviour
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
         	#if UNITY_IPHONE
-        	#if UNITY_4 
+        	#if UNITY_4_5 || UNITY_4_6 
 			NotificationServices.UnregisterForRemoteNotifications();
 			#else
 			UnityEngine.iOS.NotificationServices.UnregisterForRemoteNotifications();

@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,3 +82,5 @@ public class TestResultRenderer
         return m_FailureCount;
     }
 }
+
+#endif

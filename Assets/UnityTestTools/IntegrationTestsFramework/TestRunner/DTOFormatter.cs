@@ -1,3 +1,4 @@
+#if UNITY_5
 ﻿using UnityEngine;
 using System;
 using System.IO;
@@ -129,3 +130,4 @@ namespace UnityTest
     }
 
 }
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_5
 // #define IMITATE_BATCH_MODE //uncomment if you want to imitate batch mode behaviour in non-batch mode mode run
 
 using System;
@@ -413,3 +414,5 @@ namespace UnityTest
         }
     }
 }
+
+#endif

@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -119,3 +120,5 @@ namespace UnityTest
         protected override bool UseCache { get { return true; } }
     }
 }
+
+#endif

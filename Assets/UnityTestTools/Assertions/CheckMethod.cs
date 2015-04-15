@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,3 +35,5 @@ namespace UnityTest
             OnCollisionStay2D       = 1 << 24,
     }
 }
+
+#endif

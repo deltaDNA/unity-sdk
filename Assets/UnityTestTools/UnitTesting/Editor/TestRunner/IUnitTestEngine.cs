@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,3 +12,5 @@ namespace UnityTest
         void RunTests(TestFilter filter, ITestRunnerCallback testRunnerEventListener);
     }
 }
+
+#endif
