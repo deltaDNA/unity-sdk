@@ -1,3 +1,4 @@
+#if UNITY_5
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEditor;
@@ -42,3 +43,4 @@ namespace UnityTest
     }
 
 }
+#endif
