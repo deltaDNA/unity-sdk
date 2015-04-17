@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.0.
 
+## 3.5.1 - 2015-04-17
+### Fixed
+* Allows https urls again.
+
 ## 3.5 - 2015-03-05
 ### Added
 * Integration for iOS push notifications.  The `NotificationsPlugin` can register a game for push notifications, and has events that trigger when the push token is acquired and notifications are received.  Integrates with the existing SDK to send a `notificationOpened` event automatically.
