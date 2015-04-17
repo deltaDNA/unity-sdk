@@ -8,6 +8,7 @@ public class DeltaDNAExample : MonoBehaviour {
 	public const string ENVIRONMENT_KEY = "76410301326725846610230818914037";
 	public const string COLLECT_URL = "http://collect2470ntysd.deltadna.net/collect/api";
 	public const string ENGAGE_URL = "http://engage2470ntysd.deltadna.net";
+	public const string ENGAGE_TEST_URL = "http://www.deltadna.net/qa/engage";
 
 	private string popupContent = "";
 	private string popupTitle = "DeltaDNA Example";
@@ -29,7 +30,7 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.AndroidNotifications.RegisterForPushNotifications("701083724825");	// Notify App
 		
 		// Start collecting data
-		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
+		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_TEST_URL, DDNA.AUTO_GENERATED_USER_ID);
 	}
 
 	// Update is called once per frame
