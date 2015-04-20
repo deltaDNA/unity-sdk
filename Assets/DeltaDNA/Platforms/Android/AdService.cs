@@ -54,6 +54,20 @@ namespace DeltaDNA.Android
 			}
 		}
 		
+		internal bool IsVideoReady() {
+			if (adService != null) {
+				return adService.Call<bool>("isVideoAdReady");
+			}
+			return false;
+		}
+		
+		internal void ShowVideoAd() {
+			Logger.LogDebug("Show Video");
+			if (adService != null) {
+				adService.Call("showVideoAd");
+			}
+		}
+		
 		internal void OnPause() {
 			Logger.LogDebug("Ad Service OnPause");
 			if (adService != null) {

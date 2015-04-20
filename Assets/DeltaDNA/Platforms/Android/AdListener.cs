@@ -38,6 +38,12 @@ namespace DeltaDNA.Android
 		
 		void onVideoAdReady() {
 			Logger.LogDebug("Video ad ready");
+			ads.VideoAdReady();
+		}
+		
+		void onVideoAdClosed() {
+			Logger.LogDebug("Video ad closed");
+			ads.VideoAdClosed();
 		}
 		
 		string toString() {

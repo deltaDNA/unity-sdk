@@ -10,11 +10,6 @@ namespace DeltaDNA
 		#endif
 		
 		#region Public interface
-		
-		public event Action OnDidRegisterForAds;
-		public event Action<string> OnDidFailToRegisterForAds;
-		public event Action OnInterstitialAdReady;
-		public event Action OnInterstitialAdClosed;
 	
 		public void RegisterForAds()
 		{
@@ -53,36 +48,65 @@ namespace DeltaDNA
 			}
 		}
 		
+		public bool IsVideoAdReady()
+		{
+			if (Application.platform == RuntimePlatform.Android) {
+				#if UNITY_ANDROID
+				if (adService != null) {
+					return adService.IsVideoReady();	
+				}	
+				Logger.LogError("You must first register for ads");
+				#endif
+			}
+			
+			return false;
+		}
+		
+		public void ShowVideoAd()
+		{
+			if (Application.platform == RuntimePlatform.Android) {
+				#if UNITY_ANDROID
+				if (adService != null) {
+					adService.ShowVideoAd();
+				} else {
+					Logger.LogError("You must first register for ads");
+				}
+				#endif
+			}
+		}
+		
 		#endregion
 		
 		#region Native Bridge
 		
 		public void DidRegisterForAds()
 		{
-			if (OnDidRegisterForAds != null) {
-				OnDidRegisterForAds();
-			}			
+					
 		}
 		
 		public void DidFailToRegisterForAds(string reason)
 		{
-			if (OnDidFailToRegisterForAds != null) {
-				OnDidFailToRegisterForAds(reason);
-			}
+			
 		}
 		
 		public void InterstitialAdReady()
 		{
-			if (OnInterstitialAdReady != null) {
-				OnInterstitialAdReady();
-			}
+			
 		}
 		
 		public void InterstitialAdClosed()
 		{
-			if (OnInterstitialAdClosed != null) {
-				OnInterstitialAdClosed();
-			}
+			
+		}
+		
+		public void VideoAdReady()
+		{
+			
+		}
+		
+		public void VideoAdClosed()
+		{
+		
 		}
 		
 		#endregion
