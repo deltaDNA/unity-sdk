@@ -30,7 +30,7 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.AndroidNotifications.RegisterForPushNotifications("701083724825");	// Notify App
 		
 		// Start collecting data
-		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_TEST_URL, DDNA.AUTO_GENERATED_USER_ID);
+		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 	}
 
 	// Update is called once per frame
@@ -47,11 +47,12 @@ public class DeltaDNAExample : MonoBehaviour {
 
 		int x = 10;
 		int y = 10;
-		int width = 150;
-		int height = 50;
+		int width = 180;
+		int height = 70;
 		int space = height + 5;
 
 		GUI.skin.textField.wordWrap = true;
+		GUI.skin.button.fontSize = 18;
 
 		if (GUI.Button(new Rect(x, y, width, height), "Simple Event")) {
 
