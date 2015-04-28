@@ -139,7 +139,10 @@ namespace DeltaDNA
             if (RuntimePlatformIs("FlashPlayer")) return "WEB";
             if (RuntimePlatformIs("MetroPlayerX86") ||
                 RuntimePlatformIs("MetroPlayerX64") ||
-                RuntimePlatformIs("MetroPlayerARM"))
+                RuntimePlatformIs("MetroPlayerARM") ||
+                RuntimePlatformIs("WSAPlayerX86") ||
+                RuntimePlatformIs("WSAPlayerX64") ||
+                RuntimePlatformIs("WSAPlayerARM"))
             {
                 // Metro Apps can run anywhere...
                 if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld)
