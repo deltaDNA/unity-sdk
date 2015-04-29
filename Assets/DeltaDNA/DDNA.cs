@@ -625,7 +625,7 @@ namespace DeltaDNA
 		{
 			// see if this game ran with the previous SDK and look for
 			// a user id.
-			#if !UNITY_WEBPLAYER
+			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
 			if (File.Exists(legacySettingsPath))
 			{
@@ -813,7 +813,7 @@ namespace DeltaDNA
                     // Collect was happy.
                     if (status == 200 || status == 204) succeeded = true;
                     else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
-                    #if UNITY_WEBPLAYER
+                    #if UNITY_WEBPLAYER || UNITY_WEBGL
 					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
 					// although Collect receives the data fine.
 					else if (status == 0) { Logger.LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
@@ -895,15 +895,14 @@ namespace DeltaDNA
 			byte[] bytes = Encoding.UTF8.GetBytes(json);
 
 			// silence deprecation warning
-			# if UNITY_4_5 || UNITY_4_6
+			# if UNITY_4_5 || UNITY_4_6 || UNITY_5
 			WWW www = new WWW(url, bytes, Utils.HashtableToDictionary<string, string>(headers));
 			# else
 			WWW www = new WWW(url, bytes, headers);
 			# endif
 
-
 			yield return www;
-
+			
 			int statusCode = ReadWWWStatusCode(www);
 
 			if (www.error == null)

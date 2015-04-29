@@ -70,7 +70,7 @@ namespace DeltaDNA
 
             throw thread.Exception;
 
-            #elif UNITY_WEBPLAYER
+            #elif UNITY_WEBPLAYER || UNITY_WEBGL
             Logger.LogDebug("Creating memory based stream");
             return new MemoryStream();
             #else
@@ -91,7 +91,7 @@ namespace DeltaDNA
                 return thread.Result;
 
             throw thread.Exception;
-            #elif UNITY_WEBPLAYER
+            #elif UNITY_WEBPLAYER || UNITY_WEBGL
             Logger.LogDebug("Opening memory based stream");
             return new MemoryStream();
             #else

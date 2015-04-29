@@ -52,7 +52,7 @@ namespace UnityTest
 
         private static Texture2D LoadTexture(string fileName)
         {
-            return (Texture2D)Resources.LoadAssetAtPath(k_IconsAssetsPath + Path.DirectorySeparatorChar + fileName, typeof(Texture2D));
+            return (Texture2D)AssetDatabase.LoadAssetAtPath(k_IconsAssetsPath + Path.DirectorySeparatorChar + fileName, typeof(Texture2D));
         }
     }
 }

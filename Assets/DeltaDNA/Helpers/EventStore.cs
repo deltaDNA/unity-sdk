@@ -218,7 +218,7 @@ namespace DeltaDNA
 
         private bool InitialiseFileStreams(string dir)
         {
-        	#if !UNITY_WEBPLAYER
+            #if !UNITY_WEBPLAYER && !UNITY_WEBGL
             if (!Directory.Exists(dir))
             {
                 Logger.LogDebug("Directory not found, creating");
