@@ -50,13 +50,16 @@ namespace DeltaDNA
 					
 			this.Transaction = new TransactionBuilder(this);
 
-			this.eventStore = new EventStore(
-				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
-			);
+			// WebGL builds in an iFrame have problems accessing Application.persistentDataPath
+			string eventStorePath = "";
+			string archiveStorePath = "";
+			#if !UNITY_WEBGL
+			eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+			archiveStorePath = Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);			
+			#endif
 
-			this.engageArchive = new EngageArchive(
-				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
-			);
+			this.eventStore = new EventStore(eventStorePath);
+			this.engageArchive = new EngageArchive(archiveStorePath);
 		}
 		
 		void Awake()
