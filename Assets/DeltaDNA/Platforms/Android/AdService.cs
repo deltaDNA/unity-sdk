@@ -26,6 +26,7 @@ namespace DeltaDNA.Android
 				adService.Call("init", 
 					DECISION_POINT,
 					ddna.EngageURL, 
+					ddna.CollectURL,
 				    ddna.EnvironmentKey, 
 				    ddna.HashSecret, 
 				    ddna.UserID, 
