@@ -15,12 +15,14 @@ namespace DeltaDNA
 			
 			if (GUI.Button(new Rect(250, 20, 200, 80), "Show Interstitial")) {
 				
-				StartCoroutine(ShowInterstitialWhenReady());
+				//StartCoroutine(ShowInterstitialWhenReady());
+				DDNA.Instance.Ads.ShowInterstitialAd();
 			}
 			
 			if (GUI.Button(new Rect(250, 120, 200, 80), "Show Video")) {
 				
-				StartCoroutine(ShowVideoWhenReady());
+				//StartCoroutine(ShowVideoWhenReady());
+				DDNA.Instance.Ads.ShowVideoAd();
 			}
 			
 		}
