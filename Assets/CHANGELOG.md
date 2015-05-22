@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.0.
 
+## 3.5.2 - 2015-05-22
+### Added
+* Added userLocale to gameStarted event.
+
 ## 3.5.1 - 2015-04-17
 ### Fixed
 * Allows https urls again.
