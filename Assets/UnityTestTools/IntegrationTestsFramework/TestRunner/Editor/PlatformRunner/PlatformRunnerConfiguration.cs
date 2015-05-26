@@ -1,3 +1,4 @@
+#if UNITY_5
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,3 +76,5 @@ public class PlatformRunnerConfiguration
         return port;
     }
 }
+
+#endif

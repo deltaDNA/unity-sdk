@@ -637,6 +637,7 @@ namespace DeltaDNA
 		{
 			// see if this game ran with the previous SDK and look for
 			// a user id.
+			#if !UNITY_WEBPLAYER
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
 			if (File.Exists(legacySettingsPath))
 			{
@@ -666,6 +667,7 @@ namespace DeltaDNA
 					}
 				}
 			}
+			#endif
 
 			Logger.LogDebug("Creating a new user id for player");
 			return Guid.NewGuid().ToString();
@@ -986,7 +988,7 @@ namespace DeltaDNA
 		}
 
 		private static string ValidateURL(string url) {
-			if (!url.ToLower().StartsWith("http://")) {
+			if (!url.ToLower().StartsWith("http://") && !url.ToLower().StartsWith("https://")) {
 				url = "http://" + url;
 			}
 			return url;
@@ -1067,7 +1069,8 @@ namespace DeltaDNA
 				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
 					.AddParam("pushNotificationToken", this.PushNotificationToken)
-					.AddParam("androidRegistrationID", this.AndroidRegistrationID);
+					.AddParam("androidRegistrationID", this.AndroidRegistrationID)
+					.AddParam("userLocale", ClientInfo.Locale);
 
 				this.RecordEvent("gameStarted", gameStartedParams);
 			}

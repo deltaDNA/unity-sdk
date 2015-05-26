@@ -13,6 +13,7 @@ bin/
 *.csproj
 *.userprefs
 *.unityproj
+*.unitypackage
 
 # Other
 *.pfx
