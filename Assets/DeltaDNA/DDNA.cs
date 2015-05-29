@@ -1078,7 +1078,8 @@ namespace DeltaDNA
 				var gameStartedParams = new EventBuilder()
 					.AddParam("clientVersion", this.ClientVersion)
 					.AddParam("pushNotificationToken", this.PushNotificationToken)
-					.AddParam("androidRegistrationID", this.AndroidRegistrationID);
+					.AddParam("androidRegistrationID", this.AndroidRegistrationID)
+					.AddParam("userLocale", ClientInfo.Locale);
 
 				this.RecordEvent("gameStarted", gameStartedParams);
 			}
