@@ -30,7 +30,7 @@ public class DeltaDNAExample : MonoBehaviour {
 		DDNA.Instance.AndroidNotifications.RegisterForPushNotifications("719394647546");	// Project Number / Sender Id
 		
 		// Start collecting data
-		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_TEST_URL, DDNA.AUTO_GENERATED_USER_ID);
+		DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 	}
 
 	// Update is called once per frame

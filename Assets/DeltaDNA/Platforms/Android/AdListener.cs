@@ -17,32 +17,34 @@ namespace DeltaDNA.Android
 		}
 		
 		void onRegisteredForAds() {
-			Logger.LogDebug("Registered for ads");
 			ads.DidRegisterForAds();
 		}
 		
 		void onFailedToRegisterForAds(string reason) {
-			Logger.LogDebug("Failed to register for ads "+reason);
 			ads.DidFailToRegisterForAds(reason);
 		}
 		
+		void onAdReady() {
+			ads.AdReady();
+		}
+		
+		void onAdClosed() {
+			ads.AdClosed();
+		}
+		
 		void onInterstitialAdReady() {
-			Logger.LogDebug("Interstitial ad ready");
 			ads.InterstitialAdReady();
 		}
 		
 		void onInterstitialAdClosed() {
-			Logger.LogDebug("Interstitial ad closed");
 			ads.InterstitialAdClosed();
 		}
 		
 		void onVideoAdReady() {
-			Logger.LogDebug("Video ad ready");
 			ads.VideoAdReady();
 		}
 		
 		void onVideoAdClosed() {
-			Logger.LogDebug("Video ad closed");
 			ads.VideoAdClosed();
 		}
 		
