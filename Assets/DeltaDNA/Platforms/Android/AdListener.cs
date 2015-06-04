@@ -32,22 +32,6 @@ namespace DeltaDNA.Android
 			ads.AdClosed();
 		}
 		
-		void onInterstitialAdReady() {
-			ads.InterstitialAdReady();
-		}
-		
-		void onInterstitialAdClosed() {
-			ads.InterstitialAdClosed();
-		}
-		
-		void onVideoAdReady() {
-			ads.VideoAdReady();
-		}
-		
-		void onVideoAdClosed() {
-			ads.VideoAdClosed();
-		}
-		
 		string toString() {
 			return "AdListener";
 		}

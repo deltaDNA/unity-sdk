@@ -48,38 +48,19 @@ namespace DeltaDNA.Android
 			return false;
 		}
 		
+		internal void ShowAd() {
+			Logger.LogDebug("Show Ad");
+			if (adService != null) {
+				adService.Call("showAd");
+			}
+		}
+		
 		internal void ShowAd(string adPoint) {
-			Logger.LogDebug("Show Ad "+adPoint);
-			if (adService != null) {
+			if (string.IsNullOrEmpty(adPoint)) {
+				this.ShowAd();
+			} else if (adService != null) {
+				Logger.LogDebug("Show Ad "+adPoint);
 				adService.Call("showAd", adPoint);
-			}
-		}
-
-		internal bool IsInterstitialReady() {
-			if (adService != null) {
-				return adService.Call<bool>("isInterstitialAdReady");
-			}
-			return false;
-		}
-		
-		internal void ShowInterstitialAd() {
-			Logger.LogDebug("Show Interstitial");
-			if (adService != null) {
-				adService.Call("showInterstitialAd");
-			}
-		}
-		
-		internal bool IsVideoReady() {
-			if (adService != null) {
-				return adService.Call<bool>("isVideoAdReady");
-			}
-			return false;
-		}
-		
-		internal void ShowVideoAd() {
-			Logger.LogDebug("Show Video");
-			if (adService != null) {
-				adService.Call("showVideoAd");
 			}
 		}
 		
