@@ -136,6 +136,7 @@ namespace DeltaDNA
             }
             if (RuntimePlatformIs("NaCL")) return "WEB";
             if (RuntimePlatformIs("LinuxPlayer")) return "PC_CLIENT";
+            if (RuntimePlatformIs("WebGLPlayer")) return "WEB";
             if (RuntimePlatformIs("FlashPlayer")) return "WEB";
             if (RuntimePlatformIs("MetroPlayerX86") ||
                 RuntimePlatformIs("MetroPlayerX64") ||

@@ -29,10 +29,8 @@ namespace DeltaDNA
 		/// </summary>
 		public EngageArchive(string path)
 		{
-			//#if !UNITY_WEBPLAYER
 			Load(path);
 			this._path = path;
-			//#endif
 		}
 
 		/// <summary>
@@ -68,7 +66,7 @@ namespace DeltaDNA
 		/// </summary>
 		private void Load(string path)
 		{
-			#if !UNITY_WEBPLAYER
+			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			lock(_lock)
 			{
 				try
@@ -119,7 +117,7 @@ namespace DeltaDNA
 			{
 				try
 				{
-					#if !UNITY_WEBPLAYER
+					#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 					if (!Directory.Exists(this._path))
 					{
 						Utils.CreateDirectory(this._path);

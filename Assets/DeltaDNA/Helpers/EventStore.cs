@@ -218,23 +218,26 @@ namespace DeltaDNA
 
         private bool InitialiseFileStreams(string dir)
         {
-        	#if !UNITY_WEBPLAYER
-            if (!Directory.Exists(dir))
-            {
-                Logger.LogDebug("Directory not found, creating");
-                Utils.CreateDirectory(dir);
-            }
-			#endif
-
             try
             {
-                string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
-                string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
-
-                string inPath = Path.Combine(dir, inFilename);
-                string outPath = Path.Combine(dir, outFilename);
-
-                // NB as seperate call after creation resets the files
+            	string inPath = null;
+            	string outPath = null;
+				string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
+				string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
+				
+				if (!String.IsNullOrEmpty(dir)) 
+            	{
+					if (!Directory.Exists(dir))
+					{
+						Logger.LogDebug("Directory not found, creating "+dir);
+						Utils.CreateDirectory(dir);
+					}
+					
+					inPath = Path.Combine(dir, inFilename);
+					outPath = Path.Combine(dir, outFilename);
+				}
+				
+				// NB as seperate call after creation resets the files
                 _infs = Utils.CreateStream(inPath);
                 _infs.Seek(0, SeekOrigin.End);
                 _outfs = Utils.CreateStream(outPath);
