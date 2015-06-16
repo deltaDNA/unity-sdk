@@ -816,7 +816,7 @@ namespace DeltaDNA
 					succeeded = true;
 				}
 				else {
-					Logger.LogDebug("Problem posting events: '"+error+"'");
+					Logger.LogDebug("Problem posting events: "+statusCode+" '"+error+"'");
 				}
 				status = statusCode;
 			};
