@@ -697,18 +697,21 @@ namespace DeltaDNA
 
 				if (events.Count > 0)
 				{
-					Logger.LogDebug("Starting event upload");
+					Logger.LogDebug("Starting event upload.");
 
-                    Action<bool> postCb = (succeeded) =>
+                    Action<bool, int> postCb = (succeeded, statusCode) =>
                     {
                         if (succeeded)
                         {
-                            Logger.LogDebug("Event upload successful");
+                            Logger.LogDebug("Event upload successful.");
                             this.eventStore.ClearOut();
                         }
-                        else
-                        {
-                            Logger.LogWarning("Event upload failed - try again later");
+                        else if (statusCode == 400) {
+                        	Logger.LogDebug("Collect rejected events, possible corruption.");
+                        	this.eventStore.ClearOut();
+                        }
+                        else {
+                            Logger.LogWarning("Event upload failed - try again later.");
                         }
                     };
 
@@ -790,7 +793,7 @@ namespace DeltaDNA
 			yield return StartCoroutine(EngageRequest(engageJSON, requestCb));
 		}
 
-		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)
+		private IEnumerator PostEvents(string[] events, Action<bool, int> resultCallback)
 		{
 			string bulkEvent = "{\"eventList\":[" + String.Join(",", events) + "]}";
 			string url;
@@ -806,9 +809,42 @@ namespace DeltaDNA
 
 			int attempts = 0;
 			bool succeeded = false;
-
+			int status = 0;
+			
+			Action<int, string, string> completionHandler = (statusCode, data, error) => {
+				if (statusCode < 400) {
+					succeeded = true;
+				}
+				else {
+					Logger.LogDebug("Problem posting events: '"+error+"'");
+				}
+				status = statusCode;
+			};
+			
+			Request request = new Request(url);
+			request.HTTPMethod = Request.HTTPMethodType.POST;
+			request.HTTPBody = bulkEvent;
+			request.setHeader("Content-Type", "application/json");
+			
+			while (attempts < Settings.HttpRequestMaxRetries) {
+				
+				yield return StartCoroutine(Network.SendRequest(request, completionHandler));
+				
+				if (succeeded) break;
+				
+				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
+				
+				attempts += 1;
+			}
+			
+			resultCallback(succeeded, status);	// pass status code back so we know to throw away events.
+			// don't forget to check unity webplayer on ie!.
+			
+			/*
 			do
 			{
+				
+			
                 Action<int, string> httpCb = (status, response) =>
                 {
                     // Unity doesn't handle 100 response correctly, so you can't know
@@ -830,6 +866,7 @@ namespace DeltaDNA
 			while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
 
 			resultCallback(succeeded);
+			*/
 		}
 
 		private IEnumerator EngageRequest(string engagement, Action<string> callback)
@@ -844,23 +881,29 @@ namespace DeltaDNA
 			{
 				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
 			}
+			
+			Request request = new Request(url);
+			request.HTTPMethod = Request.HTTPMethodType.POST;
+			request.HTTPBody = engagement;
+			request.setHeader("Content-Type", "application/json");
 
-            Action<int, string> httpCb = (status, response) =>
+            Action<int, string, string> completionHandler = (status, response, error) =>
 			{
-				if (status == 200 || status == 100)
+				if (status < 400)
 				{
 					if (callback != null) callback(response);
 				}
 				else
 				{
-					Logger.LogDebug("Error requesting engagement, Engage returned: "+status);
+					Logger.LogDebug("Error requesting engagement, Engage returned: "+error);
 					if (callback != null) callback(null);
 				}
 			};
 
-			yield return StartCoroutine(HttpPOST(url, engagement, httpCb));
+			//yield return StartCoroutine(HttpPOST(url, engagement, httpCb));
+			yield return StartCoroutine(Network.SendRequest(request, completionHandler));
 		}
-
+/*
 		private IEnumerator HttpGET(string url, Action<int, string> responseCallback = null)
 		{
 			Logger.LogDebug("HttpGET " + url);
@@ -968,7 +1011,7 @@ namespace DeltaDNA
 
 			return statusCode;
 		}
-
+*/
 		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null)
 		{
 			var uri = uriPattern.Replace("{host}", apiHost);
