@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace DeltaDNA {
 
-	internal class Request {
+	internal class HttpRequest {
 		
 		private Dictionary<string, string> headers = new Dictionary<string, string>();
 		
@@ -16,7 +16,7 @@ namespace DeltaDNA {
 			POST
 		}
 		
-		internal Request(string url) {
+		internal HttpRequest(string url) {
 			this.URL = url;
 		}
 		
@@ -41,11 +41,11 @@ namespace DeltaDNA {
 		const string StatusRegex = @"^.*\s(\d{3})\s.*$";
 		const string ErrorRegex = @"^(\d{3})\s.*$";
 	
-		internal static IEnumerator SendRequest(Request request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler) {
+		internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler) {
 		
 			WWW www;
 			
-			if (request.HTTPMethod == Request.HTTPMethodType.POST) {
+			if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST) {
 				Dictionary<string, string> headers = new Dictionary<string, string>();
 				
 				WWWForm form = new WWWForm();

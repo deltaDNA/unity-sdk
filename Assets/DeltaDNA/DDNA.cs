@@ -821,8 +821,8 @@ namespace DeltaDNA
 				status = statusCode;
 			};
 			
-			Request request = new Request(url);
-			request.HTTPMethod = Request.HTTPMethodType.POST;
+			HttpRequest request = new HttpRequest(url);
+			request.HTTPMethod = HttpRequest.HTTPMethodType.POST;
 			request.HTTPBody = bulkEvent;
 			request.setHeader("Content-Type", "application/json");
 			
@@ -837,36 +837,7 @@ namespace DeltaDNA
 				attempts += 1;
 			}
 			
-			resultCallback(succeeded, status);	// pass status code back so we know to throw away events.
-			// don't forget to check unity webplayer on ie!.
-			
-			/*
-			do
-			{
-				
-			
-                Action<int, string> httpCb = (status, response) =>
-                {
-                    // Unity doesn't handle 100 response correctly, so you can't know
-                    // if it succeeded or failed.  We can assume if no response text came back
-                    // Collect was happy.
-                    if (status == 200 || status == 204) succeeded = true;
-                    else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
-                    #if UNITY_WEBPLAYER || UNITY_WEBGL
-					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
-					// although Collect receives the data fine.
-					else if (status == 0) { Logger.LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
-                    #endif
-                    else Logger.LogDebug("Error uploading events, Collect returned: " + status + " " + response);
-                };
-
-				yield return StartCoroutine(HttpPOST(url, bulkEvent, httpCb));
-				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
-			}
-			while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
-
-			resultCallback(succeeded);
-			*/
+			resultCallback(succeeded, status);
 		}
 
 		private IEnumerator EngageRequest(string engagement, Action<string> callback)
@@ -882,8 +853,8 @@ namespace DeltaDNA
 				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
 			}
 			
-			Request request = new Request(url);
-			request.HTTPMethod = Request.HTTPMethodType.POST;
+			HttpRequest request = new HttpRequest(url);
+			request.HTTPMethod = HttpRequest.HTTPMethodType.POST;
 			request.HTTPBody = engagement;
 			request.setHeader("Content-Type", "application/json");
 
@@ -900,118 +871,9 @@ namespace DeltaDNA
 				}
 			};
 
-			//yield return StartCoroutine(HttpPOST(url, engagement, httpCb));
 			yield return StartCoroutine(Network.SendRequest(request, completionHandler));
 		}
-/*
-		private IEnumerator HttpGET(string url, Action<int, string> responseCallback = null)
-		{
-			Logger.LogDebug("HttpGET " + url);
 
-			WWW www = new WWW(url);
-			yield return www;
-
-			int statusCode = 0;
-			if (www.error == null)
-			{
-				statusCode = 200;
-				if (responseCallback != null) responseCallback(statusCode, www.text);
-			}
-			else
-			{
-				statusCode = ReadWWWResponse(www.error);
-				if (responseCallback != null) responseCallback(statusCode, null);
-			}
-		}
-
-		private IEnumerator HttpPOST(string url, string json, Action<int, string> responseCallback = null)
-		{
-			Logger.LogDebug("HttpPOST " + url + " " + json);
-
-			WWWForm form = new WWWForm();
-			var headers = form.headers;
-			headers["Content-Type"] = "application/json";
-			// Annoyingly when posting large amounts of data, a 100-continue
-			// response is generated.  This becomes the status code of the
-			// response so we can't tell if the request was successull or
-			// not. You should be able to prevent this behaviour by removing
-			// the expect header, but since Unity 4.3 this header is protected.
-			//headers["Expect"] = "";
-
-			byte[] bytes = Encoding.UTF8.GetBytes(json);
-
-			// silence deprecation warning
-			# if UNITY_4_5 || UNITY_4_6 || UNITY_5
-			WWW www = new WWW(url, bytes, Utils.HashtableToDictionary<string, string>(headers));
-			# else
-			WWW www = new WWW(url, bytes, headers);
-			# endif
-
-			yield return www;
-			
-			int statusCode = ReadWWWStatusCode(www);
-
-			if (www.error == null)
-			{
-				if (responseCallback != null) responseCallback(statusCode, www.text);
-			}
-			else
-			{
-				Logger.LogDebug("WWW.error: "+www.error+" url: "+url);
-				if (responseCallback != null) responseCallback(statusCode, null);
-			}
-		}
-
-		private static int ReadWWWResponse(string response)
-		{
-			System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(response, @"^.*\s(\d{3})\s.*$");
-			if (matches.Count > 0 && matches[0].Groups.Count > 0)
-			{
-				return Convert.ToInt32(matches[0].Groups[1].Value);
-			}
-			return 0;
-		}
-
-		private int ReadWWWStatusCode(WWW www)
-		{
-			// As of Unity 4.5 WWW is not great for http requests.  Reading the http status is not offically supported,
-			// and although the responseHeaders generally contain the status, not all platforms have implemented this the same way.
-			// If it looks like the responseHeader doesn't have a STATUS key I fall back to the official method of testing
-			// WWW.error.  If this is empty we can assume success i.e. 200 else the error text might have a status code in it
-			// to return.
-
-			int statusCode = 0;
-			#if UNITY_ANDROID
-			// see http://issuetracker.unity3d.com/issues/www-dot-responseheaders-status-key-is-null-in-android
-			string headerKey = "NULL";
-			#else
-			string headerKey = "STATUS";
-			#endif
-
-			if (www.responseHeaders.ContainsKey(headerKey))
-			{
-				string status = www.responseHeaders[headerKey];
-				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP.*\s(\d{3})\s.*$");
-				if (matches.Count > 0 && matches[0].Groups.Count > 0)
-				{
-					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
-				}
-			}
-			else
-			{
-				if (String.IsNullOrEmpty(www.error))
-				{
-					statusCode = 200;
-				}
-				else
-				{
-					statusCode = ReadWWWResponse(www.error);
-				}
-			}
-
-			return statusCode;
-		}
-*/
 		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null)
 		{
 			var uri = uriPattern.Replace("{host}", apiHost);
