@@ -130,8 +130,10 @@ namespace DeltaDNA
                 catch (Exception e)
                 {
                     Logger.LogError("Problem reading events: " + e.Message);
-                }
-                return events;
+					ClearStream(_outfs);
+					return null;
+				}
+				return events;
             }
         }
 

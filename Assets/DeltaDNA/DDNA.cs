@@ -695,7 +695,7 @@ namespace DeltaDNA
 				// Create bulk event message to post.
 				List<string> events = eventStore.Read();
 
-				if (events.Count > 0)
+				if (events != null && events.Count > 0)
 				{
 					Logger.LogDebug("Starting event upload.");
 
