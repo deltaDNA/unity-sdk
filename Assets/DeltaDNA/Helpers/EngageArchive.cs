@@ -113,16 +113,15 @@ namespace DeltaDNA
 		/// </summary>
 		public void Save()
 		{
+			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			lock(_lock)
 			{
 				try
 				{
-					#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 					if (!Directory.Exists(this._path))
 					{
 						Utils.CreateDirectory(this._path);
 					}
-					#endif
 
 					var bytes = new List<byte>();
 
@@ -155,6 +154,7 @@ namespace DeltaDNA
 					Logger.LogWarning("Unable to save Engagement archive: "+e.Message);
 				}
 			}
+			#endif
 		}
 
 		/// <summary>
