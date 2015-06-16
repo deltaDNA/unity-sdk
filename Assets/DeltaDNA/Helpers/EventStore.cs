@@ -27,7 +27,7 @@ namespace DeltaDNA
         private static readonly string FILE_A = "A";
         private static readonly string FILE_B = "B";
 
-        private static readonly long MAX_FILE_SIZE = 40 * 1024 * 1024;
+        private static readonly long MAX_FILE_SIZE = 4 * 1024 * 1024;	// 4MB
 
         private bool _initialised = false;
         private bool _disposed = false;
