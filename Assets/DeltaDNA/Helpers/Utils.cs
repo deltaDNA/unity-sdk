@@ -45,8 +45,10 @@ namespace DeltaDNA
 		{
 			#if UNITY_WINRT
 			return UnityEngine.Windows.File.Exists(path);
+			#elif UNITY_WEBPLAYER || UNITY_WEBGL
+			return false; // since we won't actually make a file
 			#else
-			return System.IO.File.FileExists(path);
+			return System.IO.File.Exists(path);
 			#endif
 		}
 
@@ -54,8 +56,10 @@ namespace DeltaDNA
 		{
 			#if UNITY_WINRT
 			return UnityEngine.Windows.Directory.Exists(path);
+			#elif UNITY_WEBPLAYER || UNITY_WEBGL
+			return false; // since we won't actually make a file
 			#else
-			return System.IO.DirectoryExists(path);
+			return System.IO.Directory.Exists(path);
 			#endif
 		}
 
@@ -69,6 +73,8 @@ namespace DeltaDNA
                 CreateDirectory(parent);
             }
             UnityEngine.Windows.Directory.CreateDirectory(path);
+			#elif UNITY_WEBPLAYER || UNITY_WEBGL
+			return;
             #else
             System.IO.Directory.CreateDirectory(path);
             #endif

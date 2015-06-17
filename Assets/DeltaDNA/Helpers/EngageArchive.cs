@@ -32,7 +32,7 @@ namespace DeltaDNA
 		private object _lock = new object();
 
 		private static readonly string FILENAME = "ENGAGEMENTS";
-		private string _path;
+		private string _path = "";
 
 		/// <summary>
 		/// Creates a new EnagageArchive, loading any previously saved Engagements from
@@ -40,8 +40,10 @@ namespace DeltaDNA
 		/// </summary>
 		public EngageArchive(string path)
 		{
-			Load(path);
-			this._path = path;
+			if (!String.IsNullOrEmpty(path)) {
+				Load(path);
+				this._path = path;
+			}
 		}
 
 		/// <summary>
@@ -77,7 +79,6 @@ namespace DeltaDNA
 		/// </summary>
 		private void Load(string path)
 		{
-			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			lock(_lock)
 			{
 				try
@@ -116,7 +117,6 @@ namespace DeltaDNA
 					Logger.LogWarning("Unable to load Engagement archive: "+e.Message);
 				}
 			}
-			#endif
 		}
 
 		/// <summary>
@@ -124,7 +124,6 @@ namespace DeltaDNA
 		/// </summary>
 		public void Save()
 		{
-			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			lock(_lock)
 			{
 				try
@@ -165,7 +164,6 @@ namespace DeltaDNA
 					Logger.LogWarning("Unable to save Engagement archive: "+e.Message);
 				}
 			}
-			#endif
 		}
 
 		/// <summary>
