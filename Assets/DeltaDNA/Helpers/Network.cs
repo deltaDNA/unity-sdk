@@ -49,7 +49,7 @@ namespace DeltaDNA {
 				Dictionary<string, string> headers = new Dictionary<string, string>();
 				
 				WWWForm form = new WWWForm();
-				foreach (var entry in form.headers) {
+				foreach (var entry in Utils.HashtableToDictionary<string, string>(form.headers)) {
 					headers[entry.Key] = entry.Value;
 				}
 				
