@@ -5,21 +5,6 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-//#if NETFX_CORE
-//using UnityEngine.Windows;
-//#endif
-
-//using Stream = System.IO.Stream;
-//using SeekOrigin = System.IO.SeekOrigin;
-//using Path = System.IO.Path;
-//#if UNITY_WINRT
-//using File = UnityEngine.Windows.File;
-//using Directory = UnityEngine.Windows.Directory;
-//#else
-//using File = System.IO.File;
-//using Directory = System.IO.Directory;
-//#endif
-
 namespace DeltaDNA
 {
 	/// <summary>

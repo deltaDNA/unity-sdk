@@ -5,18 +5,6 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//#if NETFX_CORE
-//using UnityEngine.Windows;
-//#endif
-
-//using Stream = System.IO.Stream;
-//#if UNITY_WINRT
-//using File = UnityEngine.Windows.File;
-//#else
-//using File = System.IO.File;
-//#endif
-
-
 
 using DeltaDNA.Messaging;
 
