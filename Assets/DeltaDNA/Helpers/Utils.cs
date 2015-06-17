@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 
 #if NETFX_CORE
-using UnityEngine.Windows;
-using Windows.Storage;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Streams;
 #endif
 
@@ -42,13 +41,31 @@ namespace DeltaDNA
 			#endif
 		}
 
+		public static bool FileExists(string path)
+		{
+			#if UNITY_WINRT
+			return UnityEngine.Windows.File.Exists(path);
+			#else
+			return System.IO.File.FileExists(path);
+			#endif
+		}
+
+		public static bool DirectoryExists(string path)
+		{
+			#if UNITY_WINRT
+			return UnityEngine.Windows.Directory.Exists(path);
+			#else
+			return System.IO.DirectoryExists(path);
+			#endif
+		}
+
         public static void CreateDirectory(string path)
         {
-            #if NETFX_CORE
+			#if UNITY_WINRT
             // Unity's WP8.1 version from Windows.Storage doesn't do it recursively
             path = path.Replace('/', '\\');
             string parent = path.Substring(0, path.LastIndexOf('\\'));
-            if (!Directory.Exists(parent)) {
+            if (!UnityEngine.Windows.Directory.Exists(parent)) {
                 CreateDirectory(parent);
             }
             UnityEngine.Windows.Directory.CreateDirectory(path);

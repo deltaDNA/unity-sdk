@@ -5,9 +5,19 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if NETFX_CORE
-using UnityEngine.Windows;
-#endif
+//#if NETFX_CORE
+//using UnityEngine.Windows;
+//#endif
+
+//using Stream = System.IO.Stream;
+//#if UNITY_WINRT
+//using File = UnityEngine.Windows.File;
+//#else
+//using File = System.IO.File;
+//#endif
+
+
+
 using DeltaDNA.Messaging;
 
 namespace DeltaDNA
@@ -295,7 +305,7 @@ namespace DeltaDNA
 			string decisionPoint,
 			Dictionary<string, object> engageParams,
 			IPopup popup,
-			Action<Dictionary<string, object>> callback = null)
+			Action<Dictionary<string, object>> callback)
 		{
             Action<Dictionary<string, object>> imageCallback = (response) =>
             {
@@ -630,7 +640,7 @@ namespace DeltaDNA
 			// a user id.
 			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
-			if (File.Exists(legacySettingsPath))
+			if (Utils.FileExists(legacySettingsPath))
 			{
 				Logger.LogDebug("Found a legacy file in "+legacySettingsPath);
 				using (Stream fs = Utils.OpenStream(legacySettingsPath))
@@ -804,7 +814,7 @@ namespace DeltaDNA
 			}
 			else
 			{
-				url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
+				url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey, null);
 			}
 
 			int attempts = 0;
@@ -850,7 +860,7 @@ namespace DeltaDNA
 			}
 			else
 			{
-				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
+				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, null);
 			}
 			
 			HttpRequest request = new HttpRequest(url);
@@ -874,7 +884,7 @@ namespace DeltaDNA
 			yield return StartCoroutine(Network.SendRequest(request, completionHandler));
 		}
 
-		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null)
+		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash)
 		{
 			var uri = uriPattern.Replace("{host}", apiHost);
 			uri = uri.Replace("{env_key}", envKey);

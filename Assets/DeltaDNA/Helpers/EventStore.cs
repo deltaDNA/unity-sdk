@@ -3,12 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if NETFX_CORE
-using UnityEngine.Windows;
-using Windows.Storage;
-using System.Threading.Tasks;
-using Windows.Storage.Streams;
-#endif
 
 namespace DeltaDNA
 {
@@ -229,7 +223,7 @@ namespace DeltaDNA
 				
 				if (!String.IsNullOrEmpty(dir)) 
             	{
-					if (!Directory.Exists(dir))
+					if (!Utils.DirectoryExists(dir))
 					{
 						Logger.LogDebug("Directory not found, creating "+dir);
 						Utils.CreateDirectory(dir);

@@ -131,7 +131,7 @@ public class DeltaDNAExample : MonoBehaviour {
 				Debug.Log("Popup actioned by "+e.ID+" with command "+e.ActionValue);
 			};
 			// Start Request
-			DDNA.Instance.RequestImageMessage("pickUp", engageParams, imagePopup);
+			DDNA.Instance.RequestImageMessage("pickUp", engageParams, imagePopup, null);
 
 		}
 

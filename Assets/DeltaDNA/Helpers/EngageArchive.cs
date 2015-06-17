@@ -5,9 +5,20 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-#if NETFX_CORE
-using UnityEngine.Windows;
-#endif
+//#if NETFX_CORE
+//using UnityEngine.Windows;
+//#endif
+
+//using Stream = System.IO.Stream;
+//using SeekOrigin = System.IO.SeekOrigin;
+//using Path = System.IO.Path;
+//#if UNITY_WINRT
+//using File = UnityEngine.Windows.File;
+//using Directory = UnityEngine.Windows.Directory;
+//#else
+//using File = System.IO.File;
+//using Directory = System.IO.Directory;
+//#endif
 
 namespace DeltaDNA
 {
@@ -73,7 +84,7 @@ namespace DeltaDNA
 				{
 					string filename = Path.Combine(path, FILENAME);
 					Logger.LogDebug("Loading Engage from "+filename);
-					if (File.Exists(filename))
+					if (Utils.FileExists(filename))
 					{
 						using (Stream fs = Utils.OpenStream(filename))
 						{
@@ -118,7 +129,7 @@ namespace DeltaDNA
 			{
 				try
 				{
-					if (!Directory.Exists(this._path))
+					if (!Utils.DirectoryExists(this._path))
 					{
 						Utils.CreateDirectory(this._path);
 					}

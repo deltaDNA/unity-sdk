@@ -5,7 +5,7 @@ namespace DeltaDNA.Messaging
 {
 	public class PopupEventArgs: EventArgs
 	{
-		public PopupEventArgs(string id, string type, string value=null)
+		public PopupEventArgs(string id, string type, string value)
 		{
 			this.ID = id;
 			this.ActionType = type;

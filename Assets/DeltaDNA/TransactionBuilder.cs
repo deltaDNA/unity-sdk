@@ -18,7 +18,7 @@ namespace DeltaDNA
 			string virtualCurrencyName,
 			string virtualCurrencyType,
 			int virtualCurrencyAmount,
-			string transactionReceipt = null
+			string transactionReceipt
 		)
 		{
 			var eventParams = new EventBuilder()
