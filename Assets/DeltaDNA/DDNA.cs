@@ -279,6 +279,22 @@ namespace DeltaDNA
 
 			StartCoroutine(EngageCoroutine(decisionPoint, engageParams, callback));
 		}
+		
+		/// <summary>
+		/// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
+		/// that loads the image resource automatically from the original engage request.  Register a function with the
+		/// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
+		/// </summary>
+		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
+		/// <param name="engageParams">Additional parameters for the engagement.</param>
+		/// <param name="popup">A Popup object to display the image.</param>
+		public void RequestImageMessage(
+			string decisionPoint,
+			Dictionary<string, object> engageParams,
+			IPopup popup)
+		{
+			this.RequestImageMessage(decisionPoint, engageParams, popup, null);	
+		}
 
 		/// <summary>
 		/// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
@@ -288,7 +304,7 @@ namespace DeltaDNA
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
 		/// <param name="popup">A Popup object to display the image.</param>
-		/// <param name="callback">Optionally pass the full engage response back to the caller.</param>
+		/// <param name="callback">A callback with the engage response as the parameter.</param>
 		public void RequestImageMessage(
 			string decisionPoint,
 			Dictionary<string, object> engageParams,

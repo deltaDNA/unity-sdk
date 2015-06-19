@@ -17,6 +17,25 @@ namespace DeltaDNA
 			int realCurrencyAmount,
 			string virtualCurrencyName,
 			string virtualCurrencyType,
+			int virtualCurrencyAmount
+		)
+		{
+			this.BuyVirtualCurrency(
+				transactionName, 
+				realCurrencyType, 
+				realCurrencyAmount, 
+				virtualCurrencyName, 
+				virtualCurrencyType, 
+				virtualCurrencyAmount, 
+				null);
+		}
+		
+		public void BuyVirtualCurrency(
+			string transactionName,
+			string realCurrencyType,
+			int realCurrencyAmount,
+			string virtualCurrencyName,
+			string virtualCurrencyType,
 			int virtualCurrencyAmount,
 			string transactionReceipt
 		)
