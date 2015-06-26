@@ -5,10 +5,6 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-#if NETFX_CORE
-using UnityEngine.Windows;
-#endif
-
 namespace DeltaDNA
 {
 	/// <summary>
@@ -21,7 +17,7 @@ namespace DeltaDNA
 		private object _lock = new object();
 
 		private static readonly string FILENAME = "ENGAGEMENTS";
-		private string _path;
+		private string _path = "";
 
 		/// <summary>
 		/// Creates a new EnagageArchive, loading any previously saved Engagements from
@@ -29,10 +25,10 @@ namespace DeltaDNA
 		/// </summary>
 		public EngageArchive(string path)
 		{
-			//#if !UNITY_WEBPLAYER
-			Load(path);
-			this._path = path;
-			//#endif
+			if (!String.IsNullOrEmpty(path)) {
+				Load(path);
+				this._path = path;
+			}
 		}
 
 		/// <summary>
@@ -68,14 +64,13 @@ namespace DeltaDNA
 		/// </summary>
 		private void Load(string path)
 		{
-			#if !UNITY_WEBPLAYER
 			lock(_lock)
 			{
 				try
 				{
 					string filename = Path.Combine(path, FILENAME);
 					Logger.LogDebug("Loading Engage from "+filename);
-					if (File.Exists(filename))
+					if (Utils.FileExists(filename))
 					{
 						using (Stream fs = Utils.OpenStream(filename))
 						{
@@ -107,7 +102,6 @@ namespace DeltaDNA
 					Logger.LogWarning("Unable to load Engagement archive: "+e.Message);
 				}
 			}
-			#endif
 		}
 
 		/// <summary>
@@ -119,12 +113,10 @@ namespace DeltaDNA
 			{
 				try
 				{
-					#if !UNITY_WEBPLAYER
-					if (!Directory.Exists(this._path))
+					if (!Utils.DirectoryExists(this._path))
 					{
 						Utils.CreateDirectory(this._path);
 					}
-					#endif
 
 					var bytes = new List<byte>();
 

@@ -1,5 +1,10 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.0.
+Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.1.
+
+## 3.5.3 - 2015-06-19
+### Fixed
+* Event store improvements.
+* Better support for Windows Phone under Unity 5.1
 
 ## 3.5.2 - 2015-05-22
 ### Added

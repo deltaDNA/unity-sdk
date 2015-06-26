@@ -5,9 +5,7 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#if NETFX_CORE
-using UnityEngine.Windows;
-#endif
+
 using DeltaDNA.Messaging;
 using DeltaDNA.Notifications;
 
@@ -51,13 +49,16 @@ namespace DeltaDNA
 					
 			this.Transaction = new TransactionBuilder(this);
 
-			this.eventStore = new EventStore(
-				Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
-			);
+			// WebGL builds in an iFrame have problems accessing Application.persistentDataPath
+			string eventStorePath = null;
+			string archiveStorePath = null;
+			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
+			eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+			archiveStorePath = Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);			
+			#endif
 
-			this.engageArchive = new EngageArchive(
-				Settings.ENGAGE_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath)
-			);
+			this.eventStore = new EventStore(eventStorePath);
+			this.engageArchive = new EngageArchive(archiveStorePath);
 		}
 		
 		void Awake()
@@ -287,6 +288,22 @@ namespace DeltaDNA
 
 			StartCoroutine(EngageCoroutine(decisionPoint, engageParams, callback));
 		}
+		
+		/// <summary>
+		/// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
+		/// that loads the image resource automatically from the original engage request.  Register a function with the
+		/// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
+		/// </summary>
+		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
+		/// <param name="engageParams">Additional parameters for the engagement.</param>
+		/// <param name="popup">A Popup object to display the image.</param>
+		public void RequestImageMessage(
+			string decisionPoint,
+			Dictionary<string, object> engageParams,
+			IPopup popup)
+		{
+			this.RequestImageMessage(decisionPoint, engageParams, popup, null);	
+		}
 
 		/// <summary>
 		/// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
@@ -296,12 +313,12 @@ namespace DeltaDNA
 		/// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
 		/// <param name="engageParams">Additional parameters for the engagement.</param>
 		/// <param name="popup">A Popup object to display the image.</param>
-		/// <param name="callback">Optionally pass the full engage response back to the caller.</param>
+		/// <param name="callback">A callback with the engage response as the parameter.</param>
 		public void RequestImageMessage(
 			string decisionPoint,
 			Dictionary<string, object> engageParams,
 			IPopup popup,
-			Action<Dictionary<string, object>> callback = null)
+			Action<Dictionary<string, object>> callback)
 		{
             Action<Dictionary<string, object>> imageCallback = (response) =>
             {
@@ -646,9 +663,9 @@ namespace DeltaDNA
 		{
 			// see if this game ran with the previous SDK and look for
 			// a user id.
-			#if !UNITY_WEBPLAYER
+			#if !UNITY_WEBPLAYER && !UNITY_WEBGL
 			string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
-			if (File.Exists(legacySettingsPath))
+			if (Utils.FileExists(legacySettingsPath))
 			{
 				Logger.LogDebug("Found a legacy file in "+legacySettingsPath);
 				using (Stream fs = Utils.OpenStream(legacySettingsPath))
@@ -713,20 +730,23 @@ namespace DeltaDNA
 				// Create bulk event message to post.
 				List<string> events = eventStore.Read();
 
-				if (events.Count > 0)
+				if (events != null && events.Count > 0)
 				{
-					Logger.LogDebug("Starting event upload");
+					Logger.LogDebug("Starting event upload.");
 
-                    Action<bool> postCb = (succeeded) =>
+                    Action<bool, int> postCb = (succeeded, statusCode) =>
                     {
                         if (succeeded)
                         {
-                            Logger.LogDebug("Event upload successful");
+                            Logger.LogDebug("Event upload successful.");
                             this.eventStore.ClearOut();
                         }
-                        else
-                        {
-                            Logger.LogWarning("Event upload failed - try again later");
+                        else if (statusCode == 400) {
+                        	Logger.LogDebug("Collect rejected events, possible corruption.");
+                        	this.eventStore.ClearOut();
+                        }
+                        else {
+                            Logger.LogWarning("Event upload failed - try again later.");
                         }
                     };
 
@@ -808,7 +828,7 @@ namespace DeltaDNA
 			yield return StartCoroutine(EngageRequest(engageJSON, requestCb));
 		}
 
-		private IEnumerator PostEvents(string[] events, Action<bool> resultCallback)
+		private IEnumerator PostEvents(string[] events, Action<bool, int> resultCallback)
 		{
 			string bulkEvent = "{\"eventList\":[" + String.Join(",", events) + "]}";
 			string url;
@@ -819,35 +839,40 @@ namespace DeltaDNA
 			}
 			else
 			{
-				url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey);
+				url = FormatURI(Settings.COLLECT_URL_PATTERN, this.CollectURL, this.EnvironmentKey, null);
 			}
 
 			int attempts = 0;
 			bool succeeded = false;
-
-			do
-			{
-                Action<int, string> httpCb = (status, response) =>
-                {
-                    // Unity doesn't handle 100 response correctly, so you can't know
-                    // if it succeeded or failed.  We can assume if no response text came back
-                    // Collect was happy.
-                    if (status == 200 || status == 204) succeeded = true;
-                    else if (status == 100 && String.IsNullOrEmpty(response)) succeeded = true;
-                    #if UNITY_WEBPLAYER
-					// Unity Webplayer on IE will report the request to Collect as 'failed to download'
-					// although Collect receives the data fine.
-					else if (status == 0) { Logger.LogDebug("Webplayer ignoring bad status code"); succeeded = true; }
-                    #endif
-                    else Logger.LogDebug("Error uploading events, Collect returned: " + status + " " + response);
-                };
-
-				yield return StartCoroutine(HttpPOST(url, bulkEvent, httpCb));
+			int status = 0;
+			
+			Action<int, string, string> completionHandler = (statusCode, data, error) => {
+				if (statusCode < 400) {
+					succeeded = true;
+				}
+				else {
+					Logger.LogDebug("Problem posting events: "+statusCode+" '"+error+"'");
+				}
+				status = statusCode;
+			};
+			
+			HttpRequest request = new HttpRequest(url);
+			request.HTTPMethod = HttpRequest.HTTPMethodType.POST;
+			request.HTTPBody = bulkEvent;
+			request.setHeader("Content-Type", "application/json");
+			
+			while (attempts < Settings.HttpRequestMaxRetries) {
+				
+				yield return StartCoroutine(Network.SendRequest(request, completionHandler));
+				
+				if (succeeded) break;
+				
 				yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
+				
+				attempts += 1;
 			}
-			while (!succeeded && ++attempts < Settings.HttpRequestMaxRetries);
-
-			resultCallback(succeeded);
+			
+			resultCallback(succeeded, status);
 		}
 
 		private IEnumerator EngageRequest(string engagement, Action<string> callback)
@@ -860,135 +885,31 @@ namespace DeltaDNA
 			}
 			else
 			{
-				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey);
+				url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, null);
 			}
+			
+			HttpRequest request = new HttpRequest(url);
+			request.HTTPMethod = HttpRequest.HTTPMethodType.POST;
+			request.HTTPBody = engagement;
+			request.setHeader("Content-Type", "application/json");
 
-            Action<int, string> httpCb = (status, response) =>
+            Action<int, string, string> completionHandler = (status, response, error) =>
 			{
-				if (status == 200 || status == 100)
+				if (status < 400)
 				{
 					if (callback != null) callback(response);
 				}
 				else
 				{
-					Logger.LogDebug("Error requesting engagement, Engage returned: "+status);
+					Logger.LogDebug("Error requesting engagement, Engage returned: "+error);
 					if (callback != null) callback(null);
 				}
 			};
 
-			yield return StartCoroutine(HttpPOST(url, engagement, httpCb));
+			yield return StartCoroutine(Network.SendRequest(request, completionHandler));
 		}
 
-		private IEnumerator HttpGET(string url, Action<int, string> responseCallback = null)
-		{
-			Logger.LogDebug("HttpGET " + url);
-
-			WWW www = new WWW(url);
-			yield return www;
-
-			int statusCode = 0;
-			if (www.error == null)
-			{
-				statusCode = 200;
-				if (responseCallback != null) responseCallback(statusCode, www.text);
-			}
-			else
-			{
-				statusCode = ReadWWWResponse(www.error);
-				if (responseCallback != null) responseCallback(statusCode, null);
-			}
-		}
-
-		private IEnumerator HttpPOST(string url, string json, Action<int, string> responseCallback = null)
-		{
-			Logger.LogDebug("HttpPOST " + url + " " + json);
-
-			WWWForm form = new WWWForm();
-			var headers = form.headers;
-			headers["Content-Type"] = "application/json";
-			// Annoyingly when posting large amounts of data, a 100-continue
-			// response is generated.  This becomes the status code of the
-			// response so we can't tell if the request was successull or
-			// not. You should be able to prevent this behaviour by removing
-			// the expect header, but since Unity 4.3 this header is protected.
-			//headers["Expect"] = "";
-
-			byte[] bytes = Encoding.UTF8.GetBytes(json);
-
-			// silence deprecation warning
-			# if UNITY_4_5 || UNITY_4_6
-			WWW www = new WWW(url, bytes, Utils.HashtableToDictionary<string, string>(headers));
-			# else
-			WWW www = new WWW(url, bytes, headers);
-			# endif
-
-
-			yield return www;
-
-			int statusCode = ReadWWWStatusCode(www);
-
-			if (www.error == null)
-			{
-				if (responseCallback != null) responseCallback(statusCode, www.text);
-			}
-			else
-			{
-				Logger.LogDebug("WWW.error: "+www.error+" url: "+url);
-				if (responseCallback != null) responseCallback(statusCode, null);
-			}
-		}
-
-		private static int ReadWWWResponse(string response)
-		{
-			System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(response, @"^.*\s(\d{3})\s.*$");
-			if (matches.Count > 0 && matches[0].Groups.Count > 0)
-			{
-				return Convert.ToInt32(matches[0].Groups[1].Value);
-			}
-			return 0;
-		}
-
-		private int ReadWWWStatusCode(WWW www)
-		{
-			// As of Unity 4.5 WWW is not great for http requests.  Reading the http status is not offically supported,
-			// and although the responseHeaders generally contain the status, not all platforms have implemented this the same way.
-			// If it looks like the responseHeader doesn't have a STATUS key I fall back to the official method of testing
-			// WWW.error.  If this is empty we can assume success i.e. 200 else the error text might have a status code in it
-			// to return.
-
-			int statusCode = 0;
-			#if UNITY_ANDROID
-			// see http://issuetracker.unity3d.com/issues/www-dot-responseheaders-status-key-is-null-in-android
-			string headerKey = "NULL";
-			#else
-			string headerKey = "STATUS";
-			#endif
-
-			if (www.responseHeaders.ContainsKey(headerKey))
-			{
-				string status = www.responseHeaders[headerKey];
-				System.Text.RegularExpressions.MatchCollection matches = System.Text.RegularExpressions.Regex.Matches(status, @"^HTTP.*\s(\d{3})\s.*$");
-				if (matches.Count > 0 && matches[0].Groups.Count > 0)
-				{
-					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
-				}
-			}
-			else
-			{
-				if (String.IsNullOrEmpty(www.error))
-				{
-					statusCode = 200;
-				}
-				else
-				{
-					statusCode = ReadWWWResponse(www.error);
-				}
-			}
-
-			return statusCode;
-		}
-
-		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash=null)
+		private static string FormatURI(string uriPattern, string apiHost, string envKey, string hash)
 		{
 			var uri = uriPattern.Replace("{host}", apiHost);
 			uri = uri.Replace("{env_key}", envKey);

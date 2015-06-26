@@ -3,12 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if NETFX_CORE
-using UnityEngine.Windows;
-using Windows.Storage;
-using System.Threading.Tasks;
-using Windows.Storage.Streams;
-#endif
 
 namespace DeltaDNA
 {
@@ -27,7 +21,7 @@ namespace DeltaDNA
         private static readonly string FILE_A = "A";
         private static readonly string FILE_B = "B";
 
-        private static readonly long MAX_FILE_SIZE = 40 * 1024 * 1024;
+        private static readonly long MAX_FILE_SIZE = 4 * 1024 * 1024;	// 4MB
 
         private bool _initialised = false;
         private bool _disposed = false;
@@ -130,8 +124,10 @@ namespace DeltaDNA
                 catch (Exception e)
                 {
                     Logger.LogError("Problem reading events: " + e.Message);
-                }
-                return events;
+					ClearStream(_outfs);
+					return null;
+				}
+				return events;
             }
         }
 
@@ -218,23 +214,26 @@ namespace DeltaDNA
 
         private bool InitialiseFileStreams(string dir)
         {
-        	#if !UNITY_WEBPLAYER
-            if (!Directory.Exists(dir))
-            {
-                Logger.LogDebug("Directory not found, creating");
-                Utils.CreateDirectory(dir);
-            }
-			#endif
-
             try
             {
-                string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
-                string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
-
-                string inPath = Path.Combine(dir, inFilename);
-                string outPath = Path.Combine(dir, outFilename);
-
-                // NB as seperate call after creation resets the files
+            	string inPath = null;
+            	string outPath = null;
+				string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
+				string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
+				
+				if (!String.IsNullOrEmpty(dir)) 
+            	{
+					if (!Utils.DirectoryExists(dir))
+					{
+						Logger.LogDebug("Directory not found, creating "+dir);
+						Utils.CreateDirectory(dir);
+					}
+					
+					inPath = Path.Combine(dir, inFilename);
+					outPath = Path.Combine(dir, outFilename);
+				}
+				
+				// NB as seperate call after creation resets the files
                 _infs = Utils.CreateStream(inPath);
                 _infs.Seek(0, SeekOrigin.End);
                 _outfs = Utils.CreateStream(outPath);
