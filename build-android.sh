@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Build Android Plugin
-( cd ../android-sdk ; gradle makeJar )
+( cd ../android-sdk ; gradle clean makeJar )
 
 ## Copy into Assets/Plugins/Android
 cp ../android-sdk/ddnasdk/build/libs/ddnasdk.jar Assets/Plugins/Android/
