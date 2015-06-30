@@ -1,7 +1,9 @@
 ﻿#if UNITY_ANDROID
 
+using System.Collections.Generic;
 using UnityEngine;
 using DeltaDNA;
+using DeltaDNA.MiniJSON;
 
 namespace DeltaDNA.Android
 {
@@ -34,6 +36,11 @@ namespace DeltaDNA.Android
 		
 		string toString() {
 			return "AdListener";
+		}
+		
+		void onRecordEvent(string eventName, string eventParamsJson) {
+			var eventParams = Json.Deserialize(eventParamsJson) as Dictionary<string,object>;
+			ads.RecordEvent(eventName, eventParams);
 		}
 		
 	}

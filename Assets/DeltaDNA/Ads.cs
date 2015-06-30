@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace DeltaDNA
 {
@@ -7,6 +8,10 @@ namespace DeltaDNA
 	
 		#if UNITY_ANDROID
 		private DeltaDNA.Android.AdService adService;	
+		
+		private System.Object queueLock = new System.Object();
+		private List<Action> eventQueue = new List<Action>();
+		
 		#endif
 		
 		#region Public interface
@@ -106,6 +111,17 @@ namespace DeltaDNA
 			DontDestroyOnLoad(this);
 		}
 		
+		void Update() {
+			// Post any events that may have come from background threads
+			lock(queueLock) {
+				while (eventQueue.Count > 0) {
+					Action e = eventQueue[0];
+					e();
+					eventQueue.RemoveAt(0);
+				}
+			}
+		}
+		
 		void OnApplicationPause(bool pauseStatus)
 		{
 			if (Application.platform == RuntimePlatform.Android) {
@@ -130,6 +146,15 @@ namespace DeltaDNA
 					adService.OnDestroy();
 				}			
 				#endif
+			}
+		}
+		
+		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
+		{
+			lock(queueLock) {
+				eventQueue.Add(() => {
+					DDNA.Instance.RecordEvent(eventName, eventParams);
+				});
 			}
 		}
 	}
