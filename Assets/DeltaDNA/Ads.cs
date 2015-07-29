@@ -112,6 +112,8 @@ namespace DeltaDNA
 		}
 		
 		void Update() {
+		
+			#if UNITY_ANDROID
 			// Post any events that may have come from background threads
 			lock(queueLock) {
 				while (eventQueue.Count > 0) {
@@ -120,6 +122,7 @@ namespace DeltaDNA
 					eventQueue.RemoveAt(0);
 				}
 			}
+			#endif
 		}
 		
 		void OnApplicationPause(bool pauseStatus)
@@ -151,11 +154,13 @@ namespace DeltaDNA
 		
 		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
 		{
+			#if UNITY_ANDROID
 			lock(queueLock) {
 				eventQueue.Add(() => {
 					DDNA.Instance.RecordEvent(eventName, eventParams);
 				});
 			}
+			#endif
 		}
 	}
 }
