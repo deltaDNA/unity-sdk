@@ -18,7 +18,8 @@ namespace DeltaDNA
 		
 		public event Action OnDidRegisterForAds;
 		public event Action<string> OnDidFailToRegisterForAds;
-		public event Action OnAdReady;
+		public event Action OnAdOpened;
+		public event Action OnAdFailedToOpen;
 		public event Action OnAdClosed;
 	
 		public void RegisterForAds()
@@ -29,20 +30,6 @@ namespace DeltaDNA
 				adService.RegisterForAds();	
 				#endif
 			}
-		}
-		
-		public bool IsAdReady()
-		{
-			if (Application.platform == RuntimePlatform.Android) {
-				#if UNITY_ANDROID
-				if (adService != null) {
-					return adService.IsAdReady();	
-				}	
-				Logger.LogError("You must first register for ads");
-				#endif
-			}
-			
-			return false;
 		}
 		
 		public void ShowAd()
@@ -89,10 +76,17 @@ namespace DeltaDNA
 			}
 		}
 		
-		public void AdReady()
+		public void AdOpened()
 		{
-			if (OnAdReady != null) {
-				OnAdReady();
+			if (OnAdOpened != null) {
+				OnAdOpened();
+			}
+		}
+		
+		public void AdFailedToOpen()
+		{
+			if (OnAdFailedToOpen != null) {
+				OnAdFailedToOpen();
 			}
 		}
 		

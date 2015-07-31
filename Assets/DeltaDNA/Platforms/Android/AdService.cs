@@ -41,13 +41,6 @@ namespace DeltaDNA.Android
 			}
 		}
 		
-		internal bool IsAdReady() {
-			if (adService != null) {
-				return adService.Call<bool>("isAdReady");
-			}
-			return false;
-		}
-		
 		internal void ShowAd() {
 			Logger.LogDebug("Show Ad");
 			if (adService != null) {

@@ -26,8 +26,12 @@ namespace DeltaDNA.Android
 			ads.DidFailToRegisterForAds(reason);
 		}
 		
-		void onAdReady() {
-			ads.AdReady();
+		void onAdOpened() {
+			ads.AdOpened();
+		}
+		
+		void onAdFailedToOpen() {
+			ads.AdFailedToOpen();
 		}
 		
 		void onAdClosed() {

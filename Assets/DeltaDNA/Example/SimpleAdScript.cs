@@ -11,7 +11,8 @@ namespace DeltaDNA
 
 			DDNA.Instance.Ads.OnDidRegisterForAds += () => { Logger.LogDebug("Registered for ads.");};
 			DDNA.Instance.Ads.OnDidFailToRegisterForAds += (string reason) => { Logger.LogDebug("Failed to register for ads, "+reason);};
-			DDNA.Instance.Ads.OnAdReady += () => { Logger.LogDebug("An ad is ready.");};
+			DDNA.Instance.Ads.OnAdOpened += () => { Logger.LogDebug("An ad opened.");};
+			DDNA.Instance.Ads.OnAdFailedToOpen += () => { Logger.LogDebug("Failed to open ad.");};
 			DDNA.Instance.Ads.OnAdClosed += () => { Logger.LogDebug("Ad closed.");};
 
 			DDNA.Instance.Ads.RegisterForAds();
