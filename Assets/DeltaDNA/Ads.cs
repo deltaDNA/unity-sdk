@@ -41,6 +41,8 @@ namespace DeltaDNA
 				} else {
 					Logger.LogError("You must first register for ads");
 				}
+				#else 
+				this.AdFailedToOpen();
 				#endif
 			}
 		}
@@ -54,6 +56,8 @@ namespace DeltaDNA
 				} else {
 					Logger.LogError("You must first register for ads");
 				}
+				#else
+				this.AdFailedToOpen();
 				#endif
 			}
 		}
