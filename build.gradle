@@ -1,0 +1,54 @@
+ext {
+    unityVersion = "0.0"
+}
+
+task getVersion << {
+
+    def versionFile = file("Assets/DeltaDNA/Helpers/Settings.cs")
+
+    def p = ~"/SDK_VERSION/"
+
+    def m = versionFile.text =~ /SDK_VERSION\s*=\s*\"(.+)\";/
+    if (!m) {
+        throw new RuntimeException("Oops, text not found!")
+    }
+
+    def versionStr = m[0][1]
+    unityVersion = versionStr.substring(versionStr.indexOf('v'))
+}
+
+task hideManifest << {
+    def manifest = file('Assets/Plugins/Android/AndroidManifest.xml')
+    println manifest.name
+    manifest.renameTo("Assets/Plugins/Android/.AndroidManifest.xml")
+}
+
+task unhideManifest << {
+    def manifest = file('Assets/Plugins/Android/.AndroidManifest.xml')
+    println manifest.name
+    manifest.renameTo("Assets/Plugins/Android/AndroidManifest.xml")
+}
+
+task unityPackage(dependsOn: [getVersion, hideManifest]) << {
+
+    def unityExecutable = project.hasProperty('unityExecutable') ?
+        project.property('unityExecutable') :
+        '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
+
+    def logFile = file("$buildDir/unityPackage.log")
+    logFile.parentFile.mkdirs()
+
+    project.exec {
+        commandLine unityExecutable
+        args '-batchMode'
+        args '-quit'
+        args '-logFile'
+        args logFile
+        args '-exportPackage'
+        args 'Assets/DeltaDNA'
+        args 'Assets/Plugins'
+        args file("$buildDir/deltaDNA-"+unityVersion+".unitypackage")
+    }
+}
+
+unityPackage.finalizedBy unhideManifest
