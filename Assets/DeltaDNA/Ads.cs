@@ -24,6 +24,11 @@ namespace DeltaDNA
 	
 		public void RegisterForAds()
 		{
+			if (!DDNA.Instance.IsInitialised) {
+				Logger.LogError("You must first start the SDK.");
+				return;
+			}
+		
 			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
 				adService = new DeltaDNA.Android.AdService(new DeltaDNA.Android.AdListener(this));	
@@ -39,7 +44,7 @@ namespace DeltaDNA
 				if (adService != null) {
 					adService.ShowAd();
 				} else {
-					Logger.LogError("You must first register for ads");
+					Logger.LogError("You must first register for ads.");
 				}
 				#else 
 				this.AdFailedToOpen();
@@ -54,7 +59,7 @@ namespace DeltaDNA
 				if (adService != null) {
 					adService.ShowAd(adPoint);
 				} else {
-					Logger.LogError("You must first register for ads");
+					Logger.LogError("You must first register for ads.");
 				}
 				#else
 				this.AdFailedToOpen();
