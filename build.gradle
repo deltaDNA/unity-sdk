@@ -1,8 +1,21 @@
 ext {
     unityVersion = "0.0"
+    buildNumber = "0"
 }
 
-task getVersion << {
+task getBuildNumber << {
+
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+
+    project.exec {
+        commandLine 'bash', '-c', 'git log --oneline | wc -l | sed -e "s/[ \t]*//g"'
+        standardOutput = outputStream
+    }
+
+    buildNumber = outputStream.toString().trim()
+}
+
+task getVersion(dependsOn: getBuildNumber) << {
 
     def versionFile = file("Assets/DeltaDNA/Helpers/Settings.cs")
 
@@ -13,19 +26,18 @@ task getVersion << {
         throw new RuntimeException("Oops, text not found!")
     }
 
-    def versionStr = m[0][1]
-    unityVersion = versionStr.substring(versionStr.indexOf('v'))
+    def versionStr = (m[0][1]).substring(m[0][1].indexOf('v'))
+    unityVersion = "$versionStr.$buildNumber"
+    println unityVersion
 }
 
 task hideManifest << {
     def manifest = file('Assets/Plugins/Android/AndroidManifest.xml')
-    println manifest.name
     manifest.renameTo("Assets/Plugins/Android/.AndroidManifest.xml")
 }
 
 task unhideManifest << {
     def manifest = file('Assets/Plugins/Android/.AndroidManifest.xml')
-    println manifest.name
     manifest.renameTo("Assets/Plugins/Android/AndroidManifest.xml")
 }
 
@@ -47,7 +59,7 @@ task unityPackage(dependsOn: [getVersion, hideManifest]) << {
         args '-exportPackage'
         args 'Assets/DeltaDNA'
         args 'Assets/Plugins'
-        args file("$buildDir/deltaDNA-"+unityVersion+".unitypackage")
+        args file("$buildDir/deltaDNA-Ads-"+unityVersion+".unitypackage")
     }
 }
 
