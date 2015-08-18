@@ -41,7 +41,17 @@ task unhideManifest << {
     manifest.renameTo("Assets/Plugins/Android/AndroidManifest.xml")
 }
 
-task unityPackage(dependsOn: [getVersion, hideManifest]) << {
+task hideAdhancr << {
+    def adhancr = file('Assets/Plugins/Android/Adhancr.aar')
+    adhancr.renameTo("Assets/Plugins/Android/.Adhancr.aar")
+}
+
+task unhideAdhancr << {
+    def adhancr = file('Assets/Plugins/Android/.Adhancr.aar')
+    adhancr.renameTo("Assets/Plugins/Android/Adhancr.aar")
+}
+
+task unityAdPackage(dependsOn: [getVersion, hideManifest]) << {
 
     def unityExecutable = project.hasProperty('unityExecutable') ?
         project.property('unityExecutable') :
@@ -63,4 +73,28 @@ task unityPackage(dependsOn: [getVersion, hideManifest]) << {
     }
 }
 
-unityPackage.finalizedBy unhideManifest
+unityAdPackage.finalizedBy unhideManifest
+
+task unityPackage(dependsOn: [getVersion, hideManifest, hideAdhancr]) << {
+
+    def unityExecutable = project.hasProperty('unityExecutable') ?
+        project.property('unityExecutable') :
+        '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
+
+    def logFile = file("$buildDir/unityPackage.log")
+    logFile.parentFile.mkdirs()
+
+    project.exec {
+        commandLine unityExecutable
+        args '-batchMode'
+        args '-quit'
+        args '-logFile'
+        args logFile
+        args '-exportPackage'
+        args 'Assets/DeltaDNA'
+        args 'Assets/Plugins'
+        args file("$buildDir/deltaDNA-"+unityVersion+".unitypackage")
+    }
+}
+
+unityPackage.finalizedBy unhideManifest, unhideAdhancr
