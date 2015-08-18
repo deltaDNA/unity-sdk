@@ -1,6 +1,15 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.1.
 
+## 3.6.0 - 2015-08-18
+### Added
+* Smart Ads functionality.  Enable smart ads in your game by calling `DDNA.Instance.Ads.RegisterForAds` and then `DDNA.Instance.Ads.ShowAd` when you want to display an ad.  See http://docs.deltadna.com/advanced-integration/smart-ads/unity-ad-serving-extension-beta/ for details.  This will only work with the ads version of our unitypackage, which contains the required ads plugin.  Calling these methods without the plugin will have no effect.
+
+* Android push notifications.  You can not use the sdk to get an Android registration id, required to send push notifications to Android devices.  Call `DDNA.Instance.AndroidNotifications.RegisterForPushNotifications` with your senderId and the sdk will request an id.  See DeltaDNAExample.cs for an example.
+
+### Changed
+* Ios notification interface moved under `IosNotifications` to make it consistent with `AndroidNotifications`.
+
 ## 3.5.3 - 2015-06-19
 ### Fixed
 * Event store improvements.
