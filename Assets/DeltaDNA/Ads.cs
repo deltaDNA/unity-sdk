@@ -8,11 +8,9 @@ namespace DeltaDNA
 	
 		#if UNITY_ANDROID
 		private DeltaDNA.Android.AdService adService;	
-		
-		private System.Object queueLock = new System.Object();
-		private List<Action> eventQueue = new List<Action>();
-		
 		#endif
+		
+		private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
 		
 		#region Public interface
 		
@@ -71,39 +69,63 @@ namespace DeltaDNA
 		
 		#region Native Bridge
 		
-		public void DidRegisterForAds()
-		{
-			if (OnDidRegisterForAds != null) {
-				OnDidRegisterForAds();
-			}
+		// Methods will be called from the Android UI thread, so must pass them back to UnityMain thread
+		internal void DidRegisterForAds()
+		{	
+			actions.Enqueue(() => { 
+				Logger.LogDebug("Did register for ads");
+				if (OnDidRegisterForAds != null) {
+					OnDidRegisterForAds(); 
+				}
+			});
 		}
 		
-		public void DidFailToRegisterForAds(string reason)
+		internal void DidFailToRegisterForAds(string reason)
 		{
-			if (OnDidFailToRegisterForAds != null) {
-				OnDidFailToRegisterForAds(reason);
-			}
+			actions.Enqueue(() => { 
+				Logger.LogDebug("Did fail to register for ads: "+reason);
+				if (OnDidFailToRegisterForAds != null) {
+					OnDidFailToRegisterForAds(reason); 
+				}	
+			});
 		}
 		
-		public void AdOpened()
+		internal void AdOpened()
 		{
-			if (OnAdOpened != null) {
-				OnAdOpened();
-			}
+			actions.Enqueue(() => {
+				Logger.LogDebug("Did open an ad");
+				if (OnAdOpened != null) {
+					OnAdOpened();
+				}
+			});
 		}
 		
-		public void AdFailedToOpen()
-		{
-			if (OnAdFailedToOpen != null) {
-				OnAdFailedToOpen();
-			}
+		internal void AdFailedToOpen()
+		{	
+			actions.Enqueue(() => {
+				Logger.LogDebug("Did fail to open an ad");
+				if (OnAdFailedToOpen != null) {
+					OnAdFailedToOpen();
+				}
+			});
 		}
 		
-		public void AdClosed()
+		internal void AdClosed()
 		{
-			if (OnAdClosed != null) {
-				OnAdClosed();
-			}
+			actions.Enqueue(() => {
+				Logger.LogDebug("Did close an ad");
+				if (OnAdClosed != null) {
+					OnAdClosed();
+				}
+			});
+		}
+		
+		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
+		{					
+			actions.Enqueue(() => {
+				Logger.LogDebug("Recording Android event "+eventName);
+				DDNA.Instance.RecordEvent(eventName, eventParams);
+			});
 		}
 		
 		#endregion
@@ -114,18 +136,14 @@ namespace DeltaDNA
 			DontDestroyOnLoad(this);
 		}
 		
-		void Update() {
-		
-			#if UNITY_ANDROID
-			// Post any events that may have come from background threads
-			lock(queueLock) {
-				while (eventQueue.Count > 0) {
-					Action e = eventQueue[0];
-					e();
-					eventQueue.RemoveAt(0);
-				}
+		void Update() 
+		{
+			// Action tasks from Android thread
+			while (actions.Count > 0) {
+				Logger.LogDebug("Processing Android thread action");
+				Action action = actions.Dequeue();
+				action();
 			}
-			#endif
 		}
 		
 		void OnApplicationPause(bool pauseStatus)
@@ -153,17 +171,6 @@ namespace DeltaDNA
 				}			
 				#endif
 			}
-		}
-		
-		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
-		{
-			#if UNITY_ANDROID
-			lock(queueLock) {
-				eventQueue.Add(() => {
-					DDNA.Instance.RecordEvent(eventName, eventParams);
-				});
-			}
-			#endif
 		}
 	}
 }

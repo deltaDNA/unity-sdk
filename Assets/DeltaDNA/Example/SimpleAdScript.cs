@@ -25,11 +25,32 @@ namespace DeltaDNA
 				DDNA.Instance.Ads.ShowAd();
 			}
 
-			if (GUI.Button(new Rect(250, 120, 200, 80), "Engage Ad")) {
+			if (GUI.Button(new Rect(250, 120, 200, 80), "Engage Ad 1")) {
 
 				DDNA.Instance.Ads.ShowAd("testAdPoint");
 			}
+			
+			if (GUI.Button(new Rect(250, 220, 200, 80), "Engage Ad 2")) {
+				
+				DDNA.Instance.Ads.ShowAd("testAdPoint2");
+			}
+			
+			if (GUI.Button(new Rect(250, 320, 200, 80), "Swamp event Queue")) {
+				
+				StartCoroutine(Swamp());
+			}
 
+		}
+		
+		IEnumerator Swamp() {
+		
+			int count = 5000;
+			do {
+				DDNA.Instance.RecordEvent("swamp");
+				yield return new WaitForSeconds(.001f);
+				count--;
+			} while (count > 0);
+		
 		}
 	}
 }
