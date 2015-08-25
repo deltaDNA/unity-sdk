@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.1.
 
+## 3.6.1 - 2015-08-25
+### Fixed
+* Extra calls to PlayerPrefs.Save() to ensure settings are saved when running on Windows Phone.
+
 ## 3.6.0 - 2015-08-18
 ### Added
 * Smart Ads functionality.  Enable smart ads in your game by calling `DDNA.Instance.Ads.RegisterForAds` and then `DDNA.Instance.Ads.ShowAd` when you want to display an ad.  See http://docs.deltadna.com/advanced-integration/smart-ads/unity-ad-serving-extension-beta/ for details.  This will only work with the ads version of our unitypackage, which contains the required ads plugin.  Calling these methods without the plugin will have no effect.
