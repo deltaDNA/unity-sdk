@@ -651,6 +651,7 @@ namespace DeltaDNA
 		{
 			if (this.eventStore != null) this.eventStore.Dispose();
 			if (this.engageArchive != null) this.engageArchive.Save();
+			PlayerPrefs.Save();
 			base.OnDestroy();
 		}
 
@@ -981,6 +982,7 @@ namespace DeltaDNA
 				this.RecordEvent("newPlayer", newPlayerParams);
 
 				PlayerPrefs.SetInt(PF_KEY_FIRST_RUN, 0);
+				PlayerPrefs.Save();
 			}
 
 			if (Settings.OnInitSendGameStartedEvent)
