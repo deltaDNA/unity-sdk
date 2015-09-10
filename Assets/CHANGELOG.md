@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.1.
 
+## 3.6.2 - 2015-09-10
+### Added
+* Updated included Android SDK to v3.4.1
+
 ## 3.6.1 - 2015-08-25
 ### Fixed
 * Extra calls to PlayerPrefs.Save() to ensure settings are saved when running on Windows Phone.
