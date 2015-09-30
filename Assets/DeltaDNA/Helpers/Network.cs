@@ -95,6 +95,8 @@ namespace DeltaDNA {
 				MatchCollection matches = Regex.Matches(www.error, ErrorRegex);
 				if (matches.Count > 0 && matches[0].Groups.Count > 0) {
 					statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
+				} else {
+					statusCode = 503; // Assume service is unavailable, likely no network connection.
 				}
 			}
 			else if (String.IsNullOrEmpty(www.text)) {
