@@ -852,7 +852,7 @@ namespace DeltaDNA
 					succeeded = true;
 				}
 				else {
-					Logger.LogDebug("Problem posting events: "+statusCode+" '"+error+"'");
+					Logger.LogDebug("Error posting events: "+error+" "+data);
 				}
 				status = statusCode;
 			};
@@ -902,7 +902,7 @@ namespace DeltaDNA
 				}
 				else
 				{
-					Logger.LogDebug("Error requesting engagement, Engage returned: "+error);
+					Logger.LogDebug("Error requesting engagement: "+error+" "+response);
 					if (callback != null) callback(null);
 				}
 			};

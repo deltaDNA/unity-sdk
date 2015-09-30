@@ -37,7 +37,6 @@ namespace DeltaDNA
 		/// </summary>
 		public bool Contains(string decisionPoint)
 		{
-			Logger.LogDebug("Does Engage contain "+decisionPoint);
 			return _table.ContainsKey(decisionPoint);
 		}
 

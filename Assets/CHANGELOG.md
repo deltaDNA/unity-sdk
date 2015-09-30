@@ -1,5 +1,10 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.1.
+Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.2.
+
+## 3.6.3 - 2015-09-30
+### Fixed
+* Correctly handles how WWW reports no network connectivity since Unity 5.2.1.
+* Better reports network errors to log.
 
 ## 3.6.2 - 2015-09-10
 ### Added
