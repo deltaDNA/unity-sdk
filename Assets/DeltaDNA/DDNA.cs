@@ -72,9 +72,9 @@ namespace DeltaDNA
 			this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
 			androidNotifications.transform.parent = gameObject.transform;
 			
-			GameObject ads = new GameObject();
-			this.Ads = ads.AddComponent<Ads>();
-			ads.transform.parent = gameObject.transform;
+			//GameObject ads = new GameObject();
+			//this.Ads = ads.AddComponent<Ads>();
+			//ads.transform.parent = gameObject.transform;
 		}
 
 		#region Client Interface
@@ -415,6 +415,7 @@ namespace DeltaDNA
 		/// <summary>
 		/// Access the ad behaviour.
 		/// </summary>
+		[Obsolete("Use DDNAAds instead.")]
 		public Ads Ads { get; private set; }
 
 		/// <summary>

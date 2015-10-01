@@ -2,8 +2,9 @@
 
 using UnityEngine;
 using System.Collections;
+using DeltaDNA;
 
-namespace DeltaDNA.Android 
+namespace DeltaDNAAds.Android 
 {
 	internal class AdService 
 	{

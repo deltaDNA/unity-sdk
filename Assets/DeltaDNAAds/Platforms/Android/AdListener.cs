@@ -5,14 +5,14 @@ using UnityEngine;
 using DeltaDNA;
 using DeltaDNA.MiniJSON;
 
-namespace DeltaDNA.Android
+namespace DeltaDNAAds.Android
 {
 	
 	internal class AdListener : AndroidJavaProxy {
 	
-		private Ads ads;
+		private DDNAAds ads;
 		
-		internal AdListener(Ads ads)
+		internal AdListener(DDNAAds ads)
 			: base(Utils.AdServiceListenerClassName) 
 		{
 			this.ads = ads;
