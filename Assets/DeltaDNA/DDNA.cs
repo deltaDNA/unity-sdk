@@ -75,6 +75,7 @@ namespace DeltaDNA
 			//GameObject ads = new GameObject();
 			//this.Ads = ads.AddComponent<Ads>();
 			//ads.transform.parent = gameObject.transform;
+			this.Ads = new Ads();
 		}
 
 		#region Client Interface
@@ -415,7 +416,6 @@ namespace DeltaDNA
 		/// <summary>
 		/// Access the ad behaviour.
 		/// </summary>
-		[Obsolete("Use DDNAAds instead.")]
 		public Ads Ads { get; private set; }
 
 		/// <summary>

@@ -24,7 +24,7 @@ namespace DeltaDNAAds
 		public void RegisterForAds()
 		{
 			if (!DDNA.Instance.IsInitialised) {
-				Logger.LogError("You must first start the SDK.");
+				Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
 				return;
 			}
 		
@@ -33,6 +33,9 @@ namespace DeltaDNAAds
 				adService = new DeltaDNAAds.Android.AdService(new DeltaDNAAds.Android.AdListener(this));	
 				adService.RegisterForAds();	
 				#endif
+			}
+			else {
+				Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
 			}
 		}
 		
@@ -43,11 +46,12 @@ namespace DeltaDNAAds
 				if (adService != null) {
 					adService.ShowAd();
 				} else {
-					Logger.LogError("You must first register for ads.");
+					Logger.LogError("RegisterForAds must be called before calling ShowAd.");
 				}
-				#else 
-				this.AdFailedToOpen();
 				#endif
+			}
+			else {
+				this.AdFailedToOpen();
 			}
 		}
 		
@@ -58,11 +62,12 @@ namespace DeltaDNAAds
 				if (adService != null) {
 					adService.ShowAd(adPoint);
 				} else {
-					Logger.LogError("You must first register for ads.");
+					Logger.LogError("RegisterForAds must be called before calling ShowAd.");
 				}
-				#else
-				this.AdFailedToOpen();
 				#endif
+			}
+			else {
+				this.AdFailedToOpen();
 			}
 		}
 		
@@ -124,7 +129,6 @@ namespace DeltaDNAAds
 		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
 		{					
 			actions.Enqueue(() => {
-				Logger.LogDebug("Recording Android event "+eventName);
 				DDNA.Instance.RecordEvent(eventName, eventParams);
 			});
 		}
@@ -141,7 +145,6 @@ namespace DeltaDNAAds
 		{
 			// Action tasks from Android thread
 			while (actions.Count > 0) {
-				Logger.LogDebug("Processing Android thread action");
 				Action action = actions.Dequeue();
 				action();
 			}
@@ -149,8 +152,7 @@ namespace DeltaDNAAds
 		
 		void OnApplicationPause(bool pauseStatus)
 		{
-			if (Application.platform == RuntimePlatform.Android) {
-				
+			if (Application.platform == RuntimePlatform.Android) {				
 				#if UNITY_ANDROID
 				if (adService != null) {
 					if (pauseStatus) {
@@ -165,8 +167,6 @@ namespace DeltaDNAAds
 		
 		public override void OnDestroy()
 		{
-			this.OnDestroy();
-		
 			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
 				if (adService != null) {
@@ -174,6 +174,8 @@ namespace DeltaDNAAds
 				}			
 				#endif
 			}
+			
+			base.OnDestroy();
 		}
 	}
 }

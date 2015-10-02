@@ -9,7 +9,7 @@ namespace DeltaDNA
 	/// The Ads class is deprecated and no longer does anything.  This class is provided to enable
 	/// existing code to run.  It won't show any ads.  Use DeltaDNAAds instead.
 	/// </summary>
-	public class Ads : MonoBehaviour {
+	public class Ads {
 		
 		#region Public interface
 		
@@ -39,25 +39,5 @@ namespace DeltaDNA
 		
 		#endregion
 		
-		void Awake()
-		{
-			gameObject.name = this.GetType().ToString();
-			DontDestroyOnLoad(this);
-		}
-		
-		void Update() 
-		{
-
-		}
-		
-		void OnApplicationPause(bool pauseStatus)
-		{
-
-		}
-		
-		void OnDestroy()
-		{
-
-		}
 	}
 }
