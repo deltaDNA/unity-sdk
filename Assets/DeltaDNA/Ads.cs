@@ -13,10 +13,15 @@ namespace DeltaDNA
 		
 		#region Public interface
 		
+		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
 		public event Action OnDidRegisterForAds;
+		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
 		public event Action<string> OnDidFailToRegisterForAds;
+		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
 		public event Action OnAdOpened;
+		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
 		public event Action OnAdFailedToOpen;
+		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
 		public event Action OnAdClosed;
 	
 		[Obsolete("Use DDNAAds instead, this no longer does anything.")]
