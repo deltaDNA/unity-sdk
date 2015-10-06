@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.2.
 
+## 3.7.0 - 2015-10-06
+### Changed
+* SmartAds now available as a separate package - see DeltaDNAAds.  Deprecated existing ad related functionality.
+
 ## 3.6.3 - 2015-09-30
 ### Fixed
 * Correctly handles how WWW reports no network connectivity since Unity 5.2.1.
