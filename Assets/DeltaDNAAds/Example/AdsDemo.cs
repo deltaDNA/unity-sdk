@@ -20,17 +20,17 @@ namespace DeltaDNAAds
 			DDNA.Instance.ClientVersion = "1.0.0";
 		
 			// Setup Ad notifications
-			DDNAAds.Instance.OnDidRegisterForAds += () => { Logger.LogDebug("Registered for ads.");};
-			DDNAAds.Instance.OnDidFailToRegisterForAds += (string reason) => { Logger.LogDebug("Failed to register for ads, "+reason);};
-			DDNAAds.Instance.OnAdOpened += () => { Logger.LogDebug("An ad opened.");};
-			DDNAAds.Instance.OnAdFailedToOpen += () => { Logger.LogDebug("Failed to open ad.");};
-			DDNAAds.Instance.OnAdClosed += () => { Logger.LogDebug("Ad closed.");};
+			DDNASmartAds.Instance.OnDidRegisterForAds += () => { Logger.LogDebug("Registered for ads.");};
+			DDNASmartAds.Instance.OnDidFailToRegisterForAds += (string reason) => { Logger.LogDebug("Failed to register for ads, "+reason);};
+			DDNASmartAds.Instance.OnAdOpened += () => { Logger.LogDebug("An ad opened.");};
+			DDNASmartAds.Instance.OnAdFailedToOpen += () => { Logger.LogDebug("Failed to open ad.");};
+			DDNASmartAds.Instance.OnAdClosed += () => { Logger.LogDebug("Ad closed.");};
 			
 			// Start collecting data
 			DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
 
 			// Register for ads
-			DDNAAds.Instance.RegisterForAds();
+			DDNASmartAds.Instance.RegisterForAds();
 		}
 		
 		void FixedUpdate() {
@@ -42,17 +42,17 @@ namespace DeltaDNAAds
 
 			if (GUI.Button(new Rect(10, 20, 200, 80), "Show Ad")) {
 
-				DDNAAds.Instance.ShowAd();
+				DDNASmartAds.Instance.ShowAd();
 			}
 
 			if (GUI.Button(new Rect(10, 120, 200, 80), "Engage Ad 1")) {
 
-				DDNAAds.Instance.ShowAd("testAdPoint");
+				DDNASmartAds.Instance.ShowAd("testAdPoint");
 			}
 			
 			if (GUI.Button(new Rect(10, 220, 200, 80), "Engage Ad 2")) {
 				
-				DDNAAds.Instance.ShowAd("testAdPoint2");
+				DDNASmartAds.Instance.ShowAd("testAdPoint2");
 			}
 
 		}

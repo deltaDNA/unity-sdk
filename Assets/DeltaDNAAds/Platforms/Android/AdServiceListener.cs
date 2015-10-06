@@ -10,9 +10,9 @@ namespace DeltaDNAAds.Android
 	
 	internal class AdServiceListener : AndroidJavaProxy {
 	
-		private DDNAAds ads;
+		private DDNASmartAds ads;
 		
-		internal AdServiceListener(DDNAAds ads)
+		internal AdServiceListener(DDNASmartAds ads)
 			: base(Utils.AdServiceListenerClassName) 
 		{
 			this.ads = ads;

@@ -5,7 +5,7 @@ using DeltaDNA;
 
 namespace DeltaDNAAds
 {
-	public class DDNAAds : Singleton<DDNAAds> {
+	public class DDNASmartAds : Singleton<DDNASmartAds> {
 	
 		#if UNITY_ANDROID
 		private DeltaDNAAds.Android.AdService adService;	
