@@ -30,7 +30,7 @@ namespace DeltaDNAAds
 		
 			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
-				adService = new DeltaDNAAds.Android.AdService(new DeltaDNAAds.Android.AdListener(this));	
+				adService = new DeltaDNAAds.Android.AdService(new DeltaDNAAds.Android.AdServiceListener(this));	
 				adService.RegisterForAds();	
 				#endif
 			}

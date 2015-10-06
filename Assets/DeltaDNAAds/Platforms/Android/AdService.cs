@@ -12,7 +12,7 @@ namespace DeltaDNAAds.Android
 	
 		private AndroidJavaObject adService;
 		
-		internal AdService(AdListener listener) {
+		internal AdService(AdServiceListener listener) {
 			AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
 			AndroidJavaObject activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");			
 			this.adService = new AndroidJavaObject(Utils.AdServiceClassName, activity, listener);

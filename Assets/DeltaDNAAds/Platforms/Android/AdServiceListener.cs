@@ -8,11 +8,11 @@ using DeltaDNA.MiniJSON;
 namespace DeltaDNAAds.Android
 {
 	
-	internal class AdListener : AndroidJavaProxy {
+	internal class AdServiceListener : AndroidJavaProxy {
 	
 		private DDNAAds ads;
 		
-		internal AdListener(DDNAAds ads)
+		internal AdServiceListener(DDNAAds ads)
 			: base(Utils.AdServiceListenerClassName) 
 		{
 			this.ads = ads;
