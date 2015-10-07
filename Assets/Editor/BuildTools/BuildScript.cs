@@ -87,7 +87,8 @@ namespace DeltaDNA {
 		static void ExportDeltaDNAPackage()
 		{
 			string[] fixedAssets = {
-				"Assets/DeltaDNA"
+				"Assets/DeltaDNA",
+				"Assets/Plugins/iOS"
 			};
 			
 			string[] androidAssets = Directory.GetFiles("Assets/Plugins/Android", "ddnasdk-v*.aar");
