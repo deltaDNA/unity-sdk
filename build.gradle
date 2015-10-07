@@ -1,100 +1,37 @@
-ext {
-    unityVersion = "0.0"
-    buildNumber = "0"
-}
+/**
+    Builds unitypackages for the Analytics and SmartAds projects.
+*/
 
-task getBuildNumber << {
+task deltaDNAPackage(type: Exec) {
 
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
-
-    project.exec {
-        commandLine 'bash', '-c', 'git log --oneline | wc -l | sed -e "s/[ \t]*//g"'
-        standardOutput = outputStream
-    }
-
-    buildNumber = outputStream.toString().trim()
-}
-
-task getVersion(dependsOn: getBuildNumber) << {
-
-    def versionFile = file("Assets/DeltaDNA/Helpers/Settings.cs")
-
-    def p = ~"/SDK_VERSION/"
-
-    def m = versionFile.text =~ /SDK_VERSION\s*=\s*\"(.+)\";/
-    if (!m) {
-        throw new RuntimeException("Oops, text not found!")
-    }
-
-    def versionStr = (m[0][1]).substring(m[0][1].indexOf('v'))
-    unityVersion = "$versionStr.$buildNumber"
-    println unityVersion
-}
-
-task hideManifest << {
-    def manifest = file('Assets/Plugins/Android/AndroidManifest.xml')
-    manifest.renameTo("Assets/Plugins/Android/.AndroidManifest.xml")
-}
-
-task unhideManifest << {
-    def manifest = file('Assets/Plugins/Android/.AndroidManifest.xml')
-    manifest.renameTo("Assets/Plugins/Android/AndroidManifest.xml")
-}
-
-task hideAdhancr << {
-    def adhancr = file('Assets/Plugins/Android/Adhancr.aar')
-    adhancr.renameTo("Assets/Plugins/Android/.Adhancr.aar")
-}
-
-task unhideAdhancr << {
-    def adhancr = file('Assets/Plugins/Android/.Adhancr.aar')
-    adhancr.renameTo("Assets/Plugins/Android/Adhancr.aar")
-}
-
-task unityAdPackage(dependsOn: [getVersion, hideManifest]) << {
-
-    def unityExecutable = project.hasProperty('unityExecutable') ?
-        project.property('unityExecutable') :
-        '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
+    executable = '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
 
     def logFile = file("$buildDir/unityPackage.log")
     logFile.parentFile.mkdirs()
 
-    project.exec {
-        commandLine unityExecutable
-        args '-batchMode'
-        args '-quit'
-        args '-logFile'
-        args logFile
-        args '-exportPackage'
-        args 'Assets/DeltaDNA'
-        args 'Assets/Plugins'
-        args file("$buildDir/deltaDNA-Ads-"+unityVersion+".unitypackage")
-    }
+    args = ['-batchMode',
+        '-quit',
+        '-logFile',
+        logFile,
+        '-executeMethod',
+        'DeltaDNA.BuildScript.ExportDeltaDNAPackage']
 }
 
-unityAdPackage.finalizedBy unhideManifest
+task deltaDNAAdsPackage(type: Exec) {
 
-task unityPackage(dependsOn: [getVersion, hideManifest, hideAdhancr]) << {
-
-    def unityExecutable = project.hasProperty('unityExecutable') ?
-        project.property('unityExecutable') :
-        '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
+    executable = '/Applications/Unity/Unity.app/Contents/MacOS/Unity'
 
     def logFile = file("$buildDir/unityPackage.log")
     logFile.parentFile.mkdirs()
 
-    project.exec {
-        commandLine unityExecutable
-        args '-batchMode'
-        args '-quit'
-        args '-logFile'
-        args logFile
-        args '-exportPackage'
-        args 'Assets/DeltaDNA'
-        args 'Assets/Plugins'
-        args file("$buildDir/deltaDNA-"+unityVersion+".unitypackage")
-    }
+    args = ['-batchMode',
+        '-quit',
+        '-logFile',
+        logFile,
+        '-executeMethod',
+        'DeltaDNA.BuildScript.ExportDeltaDNAAdsPackage']
 }
 
-unityPackage.finalizedBy unhideManifest, unhideAdhancr
+task buildUnityPackages(dependsOn: [deltaDNAPackage, deltaDNAAdsPackage]) {
+
+}

@@ -7,6 +7,8 @@ namespace DeltaDNAAds
 {
 	public class DDNASmartAds : Singleton<DDNASmartAds> {
 	
+		public const string SMARTADS_VERSION = "SmartAds v0.8.0";
+	
 		#if UNITY_ANDROID
 		private DeltaDNAAds.Android.AdService adService;	
 		#endif
