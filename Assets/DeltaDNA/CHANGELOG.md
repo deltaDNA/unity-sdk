@@ -1,6 +1,10 @@
 # Change Log
 Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.2.
 
+## 3.7.1 - 2015-12-09
+### Fixed
+* Workaround for WebPlayer on IE11 not able to handle 204 response from Collect.
+
 ## 3.7.0 - 2015-10-06
 ### Changed
 * SmartAds now available as a separate package - see DeltaDNAAds.  Deprecated existing ad related functionality.

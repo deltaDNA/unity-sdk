@@ -6,41 +6,41 @@ using DeltaDNA;
 namespace DeltaDNAAds
 {
 	public class DDNASmartAds : Singleton<DDNASmartAds> {
-	
-		public const string SMARTADS_VERSION = "SmartAds v0.8.0";
-	
+
+		public const string SMARTADS_VERSION = "SmartAds v0.8.1";
+
 		#if UNITY_ANDROID
-		private DeltaDNAAds.Android.AdService adService;	
+		private DeltaDNAAds.Android.AdService adService;
 		#endif
-		
+
 		private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
-		
+
 		#region Public interface
-		
+
 		public event Action OnDidRegisterForAds;
 		public event Action<string> OnDidFailToRegisterForAds;
 		public event Action OnAdOpened;
 		public event Action OnAdFailedToOpen;
 		public event Action OnAdClosed;
-	
+
 		public void RegisterForAds()
 		{
 			if (!DDNA.Instance.IsInitialised) {
 				Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
 				return;
 			}
-		
+
 			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
-				adService = new DeltaDNAAds.Android.AdService(new DeltaDNAAds.Android.AdServiceListener(this));	
-				adService.RegisterForAds();	
+				adService = new DeltaDNAAds.Android.AdService(new DeltaDNAAds.Android.AdServiceListener(this));
+				adService.RegisterForAds();
 				#endif
 			}
 			else {
 				Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
 			}
 		}
-		
+
 		public void ShowAd()
 		{
 			if (Application.platform == RuntimePlatform.Android) {
@@ -56,7 +56,7 @@ namespace DeltaDNAAds
 				this.AdFailedToOpen();
 			}
 		}
-		
+
 		public void ShowAd(string adPoint)
 		{
 			if (Application.platform == RuntimePlatform.Android) {
@@ -72,32 +72,32 @@ namespace DeltaDNAAds
 				this.AdFailedToOpen();
 			}
 		}
-		
+
 		#endregion
-		
+
 		#region Native Bridge
-		
+
 		// Methods will be called from the Android UI thread, so must pass them back to UnityMain thread
 		internal void DidRegisterForAds()
-		{	
-			actions.Enqueue(() => { 
+		{
+			actions.Enqueue(() => {
 				Logger.LogDebug("Did register for ads");
 				if (OnDidRegisterForAds != null) {
-					OnDidRegisterForAds(); 
+					OnDidRegisterForAds();
 				}
 			});
 		}
-		
+
 		internal void DidFailToRegisterForAds(string reason)
 		{
-			actions.Enqueue(() => { 
+			actions.Enqueue(() => {
 				Logger.LogDebug("Did fail to register for ads: "+reason);
 				if (OnDidFailToRegisterForAds != null) {
-					OnDidFailToRegisterForAds(reason); 
-				}	
+					OnDidFailToRegisterForAds(reason);
+				}
 			});
 		}
-		
+
 		internal void AdOpened()
 		{
 			actions.Enqueue(() => {
@@ -107,9 +107,9 @@ namespace DeltaDNAAds
 				}
 			});
 		}
-		
+
 		internal void AdFailedToOpen()
-		{	
+		{
 			actions.Enqueue(() => {
 				Logger.LogDebug("Did fail to open an ad");
 				if (OnAdFailedToOpen != null) {
@@ -117,7 +117,7 @@ namespace DeltaDNAAds
 				}
 			});
 		}
-		
+
 		internal void AdClosed()
 		{
 			actions.Enqueue(() => {
@@ -127,23 +127,23 @@ namespace DeltaDNAAds
 				}
 			});
 		}
-		
+
 		internal void RecordEvent(string eventName, Dictionary<string,object> eventParams)
-		{					
+		{
 			actions.Enqueue(() => {
 				DDNA.Instance.RecordEvent(eventName, eventParams);
 			});
 		}
-		
+
 		#endregion
-		
+
 		void Awake()
 		{
 			gameObject.name = this.GetType().ToString();
 			DontDestroyOnLoad(this);
 		}
-		
-		void Update() 
+
+		void Update()
 		{
 			// Action tasks from Android thread
 			while (actions.Count > 0) {
@@ -151,10 +151,10 @@ namespace DeltaDNAAds
 				action();
 			}
 		}
-		
+
 		void OnApplicationPause(bool pauseStatus)
 		{
-			if (Application.platform == RuntimePlatform.Android) {				
+			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
 				if (adService != null) {
 					if (pauseStatus) {
@@ -163,20 +163,20 @@ namespace DeltaDNAAds
 						adService.OnResume();
 					}
 				}
-				#endif 	
+				#endif
 			}
 		}
-		
+
 		public override void OnDestroy()
 		{
 			if (Application.platform == RuntimePlatform.Android) {
 				#if UNITY_ANDROID
 				if (adService != null) {
 					adService.OnDestroy();
-				}			
+				}
 				#endif
 			}
-			
+
 			base.OnDestroy();
 		}
 	}
