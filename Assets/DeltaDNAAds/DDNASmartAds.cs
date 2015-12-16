@@ -48,7 +48,7 @@ namespace DeltaDNAAds
 				if (adService != null) {
 					adService.ShowAd();
 				} else {
-					Logger.LogError("RegisterForAds must be called before calling ShowAd.");
+					DeltaDNA.Logger.LogError("RegisterForAds must be called before calling ShowAd.");
 				}
 				#endif
 			}
@@ -64,7 +64,7 @@ namespace DeltaDNAAds
 				if (adService != null) {
 					adService.ShowAd(adPoint);
 				} else {
-					Logger.LogError("RegisterForAds must be called before calling ShowAd.");
+					DeltaDNA.Logger.LogError("RegisterForAds must be called before calling ShowAd.");
 				}
 				#endif
 			}

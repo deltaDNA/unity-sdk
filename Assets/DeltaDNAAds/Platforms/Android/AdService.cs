@@ -19,7 +19,7 @@ namespace DeltaDNAAds.Android
 		}
 			
 		internal void RegisterForAds() {
-			Logger.LogDebug("Registering for Ads");
+			DeltaDNA.Logger.LogDebug("Registering for Ads");
 			if (adService != null) {
 			
 				DDNA ddna = DDNA.Instance;
@@ -43,7 +43,7 @@ namespace DeltaDNAAds.Android
 		}
 		
 		internal void ShowAd() {
-			Logger.LogDebug("Show Ad");
+			DeltaDNA.Logger.LogDebug("Show Ad");
 			if (adService != null) {
 				adService.Call("showAd");
 			}
@@ -53,27 +53,27 @@ namespace DeltaDNAAds.Android
 			if (string.IsNullOrEmpty(adPoint)) {
 				this.ShowAd();
 			} else if (adService != null) {
-				Logger.LogDebug("Show Ad "+adPoint);
+				DeltaDNA.Logger.LogDebug("Show Ad "+adPoint);
 				adService.Call("showAd", adPoint);
 			}
 		}
 		
 		internal void OnPause() {
-			Logger.LogDebug("Ad Service OnPause");
+			DeltaDNA.Logger.LogDebug("Ad Service OnPause");
 			if (adService != null) {
 				adService.Call("onPause");
 			}
 		}
 		
 		internal void OnResume() {
-			Logger.LogDebug("Ad Service OnResume");
+			DeltaDNA.Logger.LogDebug("Ad Service OnResume");
 			if (adService != null) {
 				adService.Call("onResume");
 			}
 		}
 		
 		internal void OnDestroy() {
-			Logger.LogDebug("Ad Service OnDestroy");
+			DeltaDNA.Logger.LogDebug("Ad Service OnDestroy");
 			if (adService != null) {
 				adService.Call("onDestroy");
 			}
