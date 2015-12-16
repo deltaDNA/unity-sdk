@@ -17,7 +17,7 @@ public class DeltaDNAExample : MonoBehaviour {
 	void Start () {
 	
 		// Configure the SDK
-		DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
+		DDNA.Instance.SetLoggingLevel(DeltaDNA.Logger.Level.DEBUG);
 		DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 		DDNA.Instance.ClientVersion = "1.0.0";
 

@@ -26,7 +26,7 @@ namespace DeltaDNAAds
 		public void RegisterForAds()
 		{
 			if (!DDNA.Instance.IsInitialised) {
-				Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
+				DeltaDNA.Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
 				return;
 			}
 
@@ -37,7 +37,7 @@ namespace DeltaDNAAds
 				#endif
 			}
 			else {
-				Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
+				DeltaDNA.Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
 			}
 		}
 
@@ -81,7 +81,7 @@ namespace DeltaDNAAds
 		internal void DidRegisterForAds()
 		{
 			actions.Enqueue(() => {
-				Logger.LogDebug("Did register for ads");
+				DeltaDNA.Logger.LogDebug("Did register for ads");
 				if (OnDidRegisterForAds != null) {
 					OnDidRegisterForAds();
 				}
@@ -91,7 +91,7 @@ namespace DeltaDNAAds
 		internal void DidFailToRegisterForAds(string reason)
 		{
 			actions.Enqueue(() => {
-				Logger.LogDebug("Did fail to register for ads: "+reason);
+				DeltaDNA.Logger.LogDebug("Did fail to register for ads: "+reason);
 				if (OnDidFailToRegisterForAds != null) {
 					OnDidFailToRegisterForAds(reason);
 				}
@@ -101,7 +101,7 @@ namespace DeltaDNAAds
 		internal void AdOpened()
 		{
 			actions.Enqueue(() => {
-				Logger.LogDebug("Did open an ad");
+				DeltaDNA.Logger.LogDebug("Did open an ad");
 				if (OnAdOpened != null) {
 					OnAdOpened();
 				}
@@ -111,7 +111,7 @@ namespace DeltaDNAAds
 		internal void AdFailedToOpen()
 		{
 			actions.Enqueue(() => {
-				Logger.LogDebug("Did fail to open an ad");
+				DeltaDNA.Logger.LogDebug("Did fail to open an ad");
 				if (OnAdFailedToOpen != null) {
 					OnAdFailedToOpen();
 				}
@@ -121,7 +121,7 @@ namespace DeltaDNAAds
 		internal void AdClosed()
 		{
 			actions.Enqueue(() => {
-				Logger.LogDebug("Did close an ad");
+				DeltaDNA.Logger.LogDebug("Did close an ad");
 				if (OnAdClosed != null) {
 					OnAdClosed();
 				}

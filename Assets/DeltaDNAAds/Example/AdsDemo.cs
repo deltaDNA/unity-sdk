@@ -15,16 +15,16 @@ namespace DeltaDNAAds
 		void Start () {
 		
 			// Configure the SDK
-			DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
+			DDNA.Instance.SetLoggingLevel(DeltaDNA.Logger.Level.DEBUG);
 			DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
 			DDNA.Instance.ClientVersion = "1.0.0";
 		
 			// Setup Ad notifications
-			DDNASmartAds.Instance.OnDidRegisterForAds += () => { Logger.LogDebug("Registered for ads.");};
-			DDNASmartAds.Instance.OnDidFailToRegisterForAds += (string reason) => { Logger.LogDebug("Failed to register for ads, "+reason);};
-			DDNASmartAds.Instance.OnAdOpened += () => { Logger.LogDebug("An ad opened.");};
-			DDNASmartAds.Instance.OnAdFailedToOpen += () => { Logger.LogDebug("Failed to open ad.");};
-			DDNASmartAds.Instance.OnAdClosed += () => { Logger.LogDebug("Ad closed.");};
+			DDNASmartAds.Instance.OnDidRegisterForAds += () => { DeltaDNA.Logger.LogDebug("Registered for ads.");};
+			DDNASmartAds.Instance.OnDidFailToRegisterForAds += (string reason) => { DeltaDNA.Logger.LogDebug("Failed to register for ads, "+reason);};
+			DDNASmartAds.Instance.OnAdOpened += () => { DeltaDNA.Logger.LogDebug("An ad opened.");};
+			DDNASmartAds.Instance.OnAdFailedToOpen += () => { DeltaDNA.Logger.LogDebug("Failed to open ad.");};
+			DDNASmartAds.Instance.OnAdClosed += () => { DeltaDNA.Logger.LogDebug("Ad closed.");};
 			
 			// Start collecting data
 			DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
