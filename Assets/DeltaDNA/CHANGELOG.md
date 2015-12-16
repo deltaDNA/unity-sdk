@@ -1,5 +1,9 @@
 # Change Log
-Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.2.
+Change log for deltaDNA's Unity SDK.  The SDK supports Unity 4.5 -> Unity 5.3.
+
+## 3.7.2 - 2015-12-16
+### Fixed
+* Fixed ambiguous import of DeltaDNA.Logger after introduction of UnityEngine.Logger.
 
 ## 3.7.1 - 2015-12-09
 ### Fixed
