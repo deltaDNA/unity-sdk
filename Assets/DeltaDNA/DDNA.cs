@@ -21,6 +21,7 @@ namespace DeltaDNA
 		static readonly string PF_KEY_ANDROID_REGISTRATION_ID = "DDSDK_ANDROID_REGISTRATION_ID";
 
 		static readonly string EV_KEY_NAME = "eventName";
+		static readonly string EV_KEY_UUID = "eventUUID";
 		static readonly string EV_KEY_USER_ID = "userID";
 		static readonly string EV_KEY_SESSION_ID = "sessionID";
 		static readonly string EV_KEY_TIMESTAMP = "eventTimestamp";
@@ -226,9 +227,10 @@ namespace DeltaDNA
 				return;
 			}
 
-			// the header for every event is eventName, userID, sessionID and timestamp
+			// the header for every event is eventName, eventUUID, userID, sessionID and timestamp
 			var eventRecord = new Dictionary<string, object>();
 			eventRecord[EV_KEY_NAME] 		= eventName;
+			eventRecord[EV_KEY_UUID] 		= Guid.NewGuid().ToString();
 			eventRecord[EV_KEY_USER_ID] 	= this.UserID;
 			eventRecord[EV_KEY_SESSION_ID] 	= this.SessionID;
 			
