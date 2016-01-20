@@ -25,10 +25,15 @@ public class DeltaDNAExample : MonoBehaviour {
         DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an iOS push token: "+n);};
         DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("Got an iOS push notification! "+n);};
         DDNA.Instance.IosNotifications.RegisterForPushNotifications();
-        
-        DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an Android registration id: "+n);};
-        DDNA.Instance.AndroidNotifications.RegisterForPushNotifications("719394647546");    // Project Number / Sender Id
-        
+
+        DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => {
+            Debug.Log("Got an Android registration token: " + n);
+        };
+        DDNA.Instance.AndroidNotifications.OnDidFailToRegisterForPushNotifications += (string n) => {
+            Debug.Log("Failed getting an Android registration token: " + n);
+        };
+        DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
+
         // Start collecting data
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
     }
