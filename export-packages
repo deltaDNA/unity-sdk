@@ -1,0 +1,8 @@
+#!/bin/sh
+
+/Applications/Unity/Unity.app/Contents/MacOS/Unity \
+    -batchMode \
+    -quit \
+    -nographics \
+    -logFile ./unity-build.log \
+    -executeMethod DeltaDNA.BuildScripts.ExportPackages

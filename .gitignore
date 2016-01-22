@@ -1,0 +1,33 @@
+# Folders
+Library/
+Temp/
+Build/
+obj/
+bin/
+.gradle/
+
+# Project/User Preference Files
+*.pidb
+*.user
+*.suo
+*.sln
+*.csproj
+*.userprefs
+*.unityproj
+unity-build.log
+ProjectSettings/*
+!ProjectSettings/ProjectSettings.asset
+
+# Native dependencies (add exclusions below)
+Assets/Plugins/Android/*
+
+# Other
+*.pfx
+Assets/MetroTestCertificate.pfx.meta
+Assets/WSATestCertificate.pfx.meta
+
+# OS Junk
+Thumbs.db
+.DS_Store*
+ehthumbs.db
+Icon7
