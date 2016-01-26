@@ -42,12 +42,16 @@ namespace DeltaDNAAds
 
             try {
                 if (Application.platform == RuntimePlatform.IPhonePlayer) {
+                    #if UNITY_IOS
                     manager = new DeltaDNAAds.iOS.SmartAdsManager();
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
+                    #endif
                 }
                 else if (Application.platform == RuntimePlatform.Android) {
+                    #if UNITY_ANDROID
                     manager = new DeltaDNAAds.Android.AdService(this);
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
+                    #endif
                 }
                 else {
                     Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
@@ -264,8 +268,10 @@ namespace DeltaDNAAds
         {
             if (manager != null) {
                 if (pauseStatus) {
+                    Logger.LogDebug("Pausing SmartAds");
                     manager.OnPause();
                 } else {
+                    Logger.LogDebug("Resuming SmartAds");
                     manager.OnResume();
                 }
             }
@@ -273,7 +279,10 @@ namespace DeltaDNAAds
 
         public override void OnDestroy()
         {
-            if (manager != null) manager.OnDestroy();
+            if (manager != null) {
+                Logger.LogDebug("Destroying StartAds");
+                manager.OnDestroy();
+            }
             base.OnDestroy();
         }
     }

@@ -3,7 +3,7 @@ source 'https://github.com/deltaDNA/CocoaPods.git'
 
 platform :ios, '8.0'
 
-pod 'DeltaDNAAds', '~>0.10.3'
+pod 'DeltaDNAAds', '~>0.10.4'
 
 # Enable extra logging
 post_install do |installer|

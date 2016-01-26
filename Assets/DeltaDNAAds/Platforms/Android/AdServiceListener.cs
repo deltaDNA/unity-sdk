@@ -1,5 +1,7 @@
 ﻿namespace DeltaDNAAds.Android
 {
+    #if UNITY_ANDROID
+
     internal class AdServiceListener : UnityEngine.AndroidJavaProxy {
 
         private DDNASmartAds ads;
@@ -58,4 +60,5 @@
             return "AdListener";
         }
     }
+    #endif
 }

@@ -25,6 +25,15 @@ namespace DeltaDNAAds.iOS {
         [DllImport("__Internal")]
         private static extern void _engageResponse(string id, string response, int statusCode, string error);
 
+        [DllImport("__Internal")]
+        private static extern void _pause();
+
+        [DllImport("__Internal")]
+        private static extern void _resume();
+
+        [DllImport("__Internal")]
+        private static extern void _destroy();
+
         #endregion
 
         #region Public interface
@@ -71,17 +80,17 @@ namespace DeltaDNAAds.iOS {
 
         public void OnPause()
         {
-            // TODO: Pass Pause to iOS SDK
+            _pause();
         }
 
         public void OnResume()
         {
-            // TODO: Pass Resume to iOS SDK
+            _resume();
         }
 
         public void OnDestroy()
         {
-            // TODO: Pass Destroy to iOS SDK
+            _destroy();
         }
 
         #endregion

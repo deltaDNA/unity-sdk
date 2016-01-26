@@ -2,6 +2,7 @@
 
 namespace DeltaDNAAds.Android 
 {
+    #if UNITY_ANDROID
     internal class AdService : ISmartAdsManager
     {
         private AndroidJavaObject adService;
@@ -90,4 +91,5 @@ namespace DeltaDNAAds.Android
             adService.Call("onDestroy");
         }
     }
+    #endif
 }
