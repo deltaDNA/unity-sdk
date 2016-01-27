@@ -1,0 +1,12 @@
+{
+    "notifications": true,
+    "smartads": true,
+    "networks": [
+        "admob",
+        "amazon",
+        "flurry",
+        "chartboost",
+        "adcolony",
+        "unity",
+        "vungle"]
+}
