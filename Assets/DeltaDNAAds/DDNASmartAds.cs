@@ -1,15 +1,15 @@
-﻿//using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using DeltaDNA;
 
-using Application = UnityEngine.Application;
-using RuntimePlatform = UnityEngine.RuntimePlatform;
-using JSONObject = System.Collections.Generic.Dictionary<string, object>;
-using DeltaDNA.MiniJSON;
 
 namespace DeltaDNAAds
 {
+    using Application = UnityEngine.Application;
+    using RuntimePlatform = UnityEngine.RuntimePlatform;
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
+    using DeltaDNA.MiniJSON;
+
     public class DDNASmartAds : Singleton<DDNASmartAds> {
 
         public const string SMARTADS_DECISION_POINT = "advertising";

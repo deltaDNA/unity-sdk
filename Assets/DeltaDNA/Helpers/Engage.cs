@@ -2,19 +2,20 @@
 using System;
 using System.Collections;
 
-using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
 namespace DeltaDNA {
+
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     public delegate void EngageResponse(string response, int statusCode, string error);
 
     internal class EngageRequest {
 
-        public EngageRequest(string decisionPoint) 
+        public EngageRequest(string decisionPoint)
         { 
             this.DecisionPoint = decisionPoint;
             this.Flavour = "engagement";
-            this.Parameters = new JSONObject(); 
+            this.Parameters = new JSONObject();
         }
 
         public string DecisionPoint { get; private set; }
@@ -35,12 +36,12 @@ namespace DeltaDNA {
                     { "platform", DDNA.Instance.Platform },
                     { "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset) }
                 };
-                
+
                 if (ClientInfo.Locale != null)
                 {
                     request.Add("locale", ClientInfo.Locale);
                 }
-                
+
                 if (this.Parameters != null && this.Parameters.Count > 0)
                 {
                     request.Add("parameters", this.Parameters);
@@ -67,11 +68,9 @@ namespace DeltaDNA {
 
         internal static IEnumerator Request(MonoBehaviour caller, EngageRequest request, EngageResponse response)
         {
-            // TODO - what happens if requestJSON is null?
-            // TODO - what happens if URL is null?
             string requestJSON = request.ToJSON();
             string url = DDNA.Instance.ResolveEngageURL(requestJSON);
-            
+
             HttpRequest httpRequest = new HttpRequest(url);
             httpRequest.HTTPMethod = HttpRequest.HTTPMethodType.POST;
             httpRequest.HTTPBody = requestJSON;
@@ -79,7 +78,6 @@ namespace DeltaDNA {
             httpRequest.setHeader("Content-Type", "application/json");
 
             System.Action<int, string, string> httpHandler = (statusCode, data, error) => {
-
 
                 string engagementKey = "DDSDK_ENGAGEMENT_" + request.DecisionPoint + "_" + request.Flavour;
                 if (statusCode < 400 && error == null) {
@@ -91,26 +89,17 @@ namespace DeltaDNA {
                     }
                 } else {
                     Logger.LogDebug("Engagement failed with "+statusCode+" "+error);
-                    if (PlayerPrefs.HasKey(engagementKey)) { 
+                    if (PlayerPrefs.HasKey(engagementKey)) {
                         Logger.LogDebug("Using cached response");
                         data = PlayerPrefs.GetString(engagementKey);
                     }
-                } 
-
-//                JSONObject responseJSON = null;
-//                if (data != null) {
-//                    try {
-//                        responseJSON = DeltaDNA.MiniJSON.Json.Deserialize(data) as JSONObject;
-//                    } catch (Exception exception) {
-//                        Logger.LogError("Engagement "+request.DecisionPoint+" responded with invalid JSON: "+exception.Message);
-//                    }
-//                }
+                }
 
                 response(data, statusCode, error);
             };
 
             yield return caller.StartCoroutine(Network.SendRequest(httpRequest, httpHandler));
-        }   
+        }
 
         internal static void ClearCache()
         {
