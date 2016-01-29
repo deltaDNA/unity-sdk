@@ -49,11 +49,12 @@
         }
 
         void onRewardedAdClosed(bool completed) {
-            ads.DidCloseRewardedAd("{reward:"+completed+"}");
+            string reward = completed ? "true" : "false";
+            ads.DidCloseRewardedAd("{\"reward\":"+reward+"}");
         }
 
         void onRecordEvent(string eventName, string eventParamsJson) {
-            ads.RecordEvent("{eventName:"+eventName+",parameters:"+eventParamsJson+"}");
+            ads.RecordEvent("{\"eventName\":\""+eventName+"\",\"parameters\":"+eventParamsJson+"}");
         }
 
         string toString() {
