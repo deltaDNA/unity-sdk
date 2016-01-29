@@ -64,10 +64,10 @@ task wrapper(type: Wrapper) {
 }
 
 task clean(type: Delete) {
-    delete '../../../Plugins/Android'
+    delete '../../Plugins/Android'
 }
 
 task download(type: Copy) {
     from configurations.compile
-    into '../../../Plugins/Android'
+    into '../../Plugins/Android'
 }
