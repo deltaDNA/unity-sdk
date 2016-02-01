@@ -32,10 +32,10 @@ android {
 
 dependencies {
     if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk:3.5.0'
+        compile 'com.deltadna.android:deltadna-sdk:3.5.1'
     }
     if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads:0.10.5'
+        compile 'com.deltadna.android:deltadna-smartads:0.10.6'
     }
 
     // published networks
