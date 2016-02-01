@@ -1,2 +1,4 @@
 .gradle/
 local.properties
+local.properties.meta
+
