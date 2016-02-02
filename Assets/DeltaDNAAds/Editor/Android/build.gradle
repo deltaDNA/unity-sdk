@@ -35,7 +35,7 @@ dependencies {
         compile 'com.deltadna.android:deltadna-sdk:3.5.1'
     }
     if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads:0.10.6'
+        compile 'com.deltadna.android:deltadna-smartads:0.10.7'
     }
 
     // published networks
