@@ -40,12 +40,12 @@ dependencies {
 
     // published networks
     network('admob', 'com.google.android.gms:play-services-ads:7.8.0')
+    network('amazon', 'com.amazon.android:mobile-ads:5.6.20')
     network('mobfox', 'com.adsdk.sdk:MobFox-Android-SDK:7.0.8')
     network('mopub', 'com.mopub:mopub-sdk:3.10.0')
 
     // third-party networks published by us
     network('adcolony', 'com.adcolony:adcolony:2.3.0')
-    network('amazon', 'com.amazon:amazon-ads:5.6.20')
     network('chartboost', 'com.chartboost:chartboost:6.0.2')
     network('flurry', 'com.flurry:FlurryAds:6.0.0')
     network('inmobi', 'com.inmobi:InMobi:5.1.1')
