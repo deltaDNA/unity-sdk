@@ -23,6 +23,7 @@ repositories {
     mavenCentral()
     maven { url 'http://jcenter.bintray.com' }
     maven { url "http://deltadna.bintray.com/android" }
+    mavenLocal() // TODO remove for release
 }
 
 android {
@@ -32,10 +33,10 @@ android {
 
 dependencies {
     if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk:3.5.1'
+        compile 'com.deltadna.android:deltadna-sdk:3.5.2'
     }
     if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads:0.10.7'
+        compile 'com.deltadna.android:deltadna-smartads-core:0.10.8'
     }
 
     // published networks
