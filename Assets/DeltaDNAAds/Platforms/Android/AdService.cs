@@ -1,44 +1,31 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace DeltaDNAAds.Android 
 {
     #if UNITY_ANDROID
     internal class AdService : ISmartAdsManager
     {
+        private readonly IDictionary<string, AndroidJavaObject> engageListeners;
+        private readonly AndroidJavaObject activity;
         private AndroidJavaObject adService;
-        private DDNASmartAds ads;
         
-        internal AdService(DDNASmartAds ads) 
-        {
+        internal AdService(DDNASmartAds ads) {
+            engageListeners = new Dictionary<string, AndroidJavaObject>();
+
             try {
                 AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
-                AndroidJavaObject activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");           
-                this.adService = new AndroidJavaObject(Utils.AdServiceClassName, activity, new AdServiceListener(ads));
+                activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");           
+                adService = new AndroidJavaObject(Utils.AdServiceClassName, activity, new AdServiceListener(ads, engageListeners));
             } catch (AndroidJavaException exception) {
                 DeltaDNA.Logger.LogDebug("Exception creating Android AdService: "+exception.Message);
                 throw new System.Exception("Native Android SmartAds AAR not found.");
             }
         }
-            
+        
         public void RegisterForAds(string decisionPoint) 
         {
-            DeltaDNA.DDNA ddna = DeltaDNA.DDNA.Instance;
-        
-            adService.Call("init", 
-                decisionPoint,
-                ddna.EngageURL, 
-                ddna.CollectURL,
-                ddna.EnvironmentKey, 
-                ddna.HashSecret, 
-                ddna.UserID, 
-                ddna.SessionID, 
-                DeltaDNA.Settings.ENGAGE_API_VERSION, 
-                DeltaDNA.Settings.SDK_VERSION, 
-                ddna.Platform, 
-                DeltaDNA.ClientInfo.TimezoneOffset, 
-                DeltaDNA.ClientInfo.Manufacturer, 
-                DeltaDNA.ClientInfo.OperatingSystemVersion
-            );
+            adService.Call("init", decisionPoint);
         }
 
         public bool IsInterstitialAdAvailable()
@@ -71,9 +58,20 @@ namespace DeltaDNAAds.Android
             adService.Call("showRewardedAd", adPoint);
         }
 
-        public void EngageResponse(string id, string response, int statusCode, string error)
-        {
-            // TODO: Pass back to Android SDK
+        public void EngageResponse(string id, string response, int statusCode, string error) {
+            // android sdk expects request listener callbacks on the main thread
+            activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+                AndroidJavaObject listener;
+                if (engageListeners.TryGetValue(id, out listener)) {
+                    if (statusCode >= 200 && statusCode < 300) {
+                        listener.Call("onSuccess", new AndroidJavaObject(Utils.JSONObjectClassName, response));
+                    } else {
+                        listener.Call("onFailure", new AndroidJavaObject(Utils.ThrowableClassName, error));
+                    }
+
+                    engageListeners.Remove(id);
+                }
+            }));
         }
         
         public void OnPause() 
