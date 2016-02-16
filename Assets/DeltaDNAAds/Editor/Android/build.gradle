@@ -31,6 +31,10 @@ android {
     compileSdkVersion 23
 }
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 dependencies {
     if (notifications) {
         compile('com.deltadna.android:deltadna-notifications:1.0.0-SNAPSHOT') {
