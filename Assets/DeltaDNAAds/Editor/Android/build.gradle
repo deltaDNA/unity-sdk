@@ -37,10 +37,7 @@ configurations.all {
 
 dependencies {
     if (notifications) {
-        compile('com.deltadna.android:deltadna-notifications:1.0.0-SNAPSHOT') {
-            // measurement 8.4 includes special replacement syntax in the manifest which Unity falls apart on
-            exclude module: 'play-services-measurement'
-        }
+        compile 'com.deltadna.android:deltadna-notifications:1.0.0-SNAPSHOT'
     }
     if (smartads) {
         compile 'com.deltadna.android:deltadna-smartads-core:1.0.0-SNAPSHOT'
