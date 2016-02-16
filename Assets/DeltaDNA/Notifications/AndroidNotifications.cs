@@ -12,7 +12,7 @@ namespace DeltaDNA.Notifications
     public class AndroidNotifications : MonoBehaviour
     {
         #if UNITY_ANDROID
-        private DeltaDNA.Android.DdnaNotifications ddnaNotifications;
+        private Android.DdnaNotifications ddnaNotifications;
         #endif
         
         // Called with the registrationId.
