@@ -7,6 +7,9 @@ void _showInterstitialAd(const char * adPoint);
 BOOL _isRewardedAdAvailable();
 void _showRewardedAd(const char * adPoint);
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
+void _pause();
+void _resume();
+void _destroy();
 
 
 @interface DDNASmartAdsUnityPlugin : NSObject
@@ -22,5 +25,8 @@ void _engageResponse(const char * engagementId, const char * response, int statu
                    response:(NSString *)response
                  statusCode:(NSInteger)statusCode
                       error:(NSString *)error;
+- (void)pause;
+- (void)resume;
+- (void)destroy;
 
 @end

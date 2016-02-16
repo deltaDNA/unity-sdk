@@ -42,6 +42,21 @@ void _engageResponse(const char * engagementId, const char * response, int statu
                                                           error:GetStringParam(error)];
 }
 
+void _pause()
+{
+    [[DDNASmartAdsUnityPlugin sharedPlugin] pause];
+}
+
+void _resume()
+{
+    [[DDNASmartAdsUnityPlugin sharedPlugin] resume];
+}
+
+void _destroy()
+{
+    [[DDNASmartAdsUnityPlugin sharedPlugin] destroy];
+}
+
 const char * SmartAdsObject = "DeltaDNAAds.DDNASmartAds";
 
 UIViewController *UnityGetGLViewController();
@@ -160,6 +175,21 @@ UIViewController *UnityGetGLViewController();
             NSLog(@"Engagement with id %@ not found", engagementId);
         }
     }
+}
+
+- (void)pause
+{
+    [self.adService pause];
+}
+
+- (void)resume
+{
+    [self.adService resume];
+}
+
+- (void)destroy
+{
+    self.adService = nil;
 }
 
 #pragma mark DDNASmartAdServiceDelegate

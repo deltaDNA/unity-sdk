@@ -1,8 +1,20 @@
 #!/bin/sh
 
+rm -f deltadna-*.unitypackage
+
 /Applications/Unity/Unity.app/Contents/MacOS/Unity \
     -batchMode \
     -quit \
     -nographics \
+    -projectPath $(pwd) \
     -logFile ./unity-build.log \
     -executeMethod DeltaDNA.BuildScripts.ExportPackages
+
+if grep -q 'Exiting batchmode successfully now!' unity-build.log
+then
+    echo "Exported packages successfully."
+else
+    grep 'Fatal error!' unity-build.log
+    grep -m 1 "executeMethod class 'BuildScripts' could not be found." unity-build.log
+    echo "Failed to export packages."
+fi

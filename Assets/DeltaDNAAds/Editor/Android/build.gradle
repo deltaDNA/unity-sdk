@@ -1,0 +1,74 @@
+apply plugin: 'com.android.application'
+
+def notifications = hasProperty('notifications')
+def smartads = hasProperty('smartads')
+def networks = hasProperty('networks') ? networks.split(',') : []
+def network = { network, compile ->
+    if (network in networks) {
+        dependencies.compile(compile)
+    }
+}
+
+buildscript {
+    repositories {
+        maven { url 'http://jcenter.bintray.com' }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'http://jcenter.bintray.com' }
+    maven { url 'http://edinlin01:8082/artifactory/libs-snapshot-local' }
+    maven { url "http://deltadna.bintray.com/android" }
+}
+
+android {
+    buildToolsVersion '23.0.2'
+    compileSdkVersion 23
+}
+
+dependencies {
+    if (notifications) {
+        compile 'com.deltadna.android:deltadna-sdk:4.0.0-SNAPSHOT'
+    }
+    if (smartads) {
+        compile 'com.deltadna.android:deltadna-smartads-core:1.0.0-SNAPSHOT'
+    }
+
+    // published networks
+    network('admob', 'com.google.android.gms:play-services-ads:7.8.0')
+    network('amazon', 'com.amazon.android:mobile-ads:5.6.20')
+    network('mobfox', 'com.adsdk.sdk:MobFox-Android-SDK:7.0.8')
+    network('mopub', 'com.mopub:mopub-sdk:3.10.0')
+
+    // third-party networks published by us
+    network('adcolony', 'com.adcolony:adcolony:2.3.0')
+    network('chartboost', 'com.chartboost:chartboost:6.0.2')
+    network('flurry', 'com.flurry:FlurryAds:6.0.0')
+    network('inmobi', 'com.inmobi:InMobi:5.1.1')
+    network('unity', 'com.unity:unity-ads:1.5.0')
+    // vungle is special... :(
+    if ('vungle' in networks) {
+        compile('com.vungle:vungle-publisher-adaptive-id:3.3.1') {
+            exclude module: 'support-v4'
+        }
+        compile 'com.android.support:support-v4:18.0.0'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}
+
+task clean(type: Delete) {
+    delete '../../Plugins/Android'
+}
+
+task download(type: Copy) {
+    from configurations.compile
+    into '../../Plugins/Android'
+}

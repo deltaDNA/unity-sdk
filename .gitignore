@@ -18,7 +18,9 @@ unity-build.log
 ProjectSettings/*
 !ProjectSettings/ProjectSettings.asset
 
+
 # Native dependencies (add exclusions below)
+Assets/Plugins/Android.meta
 Assets/Plugins/Android/*
 
 # Other
