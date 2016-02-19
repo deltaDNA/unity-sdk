@@ -20,8 +20,8 @@ ProjectSettings/*
 
 
 # Native dependencies (add exclusions below)
-Assets/Plugins/Android.meta
-Assets/Plugins/Android/*
+Assets/DeltaDNAAds/Plugins/Android.meta
+Assets/DeltaDNAAds/Plugins/Android/*
 
 # Other
 *.pfx
