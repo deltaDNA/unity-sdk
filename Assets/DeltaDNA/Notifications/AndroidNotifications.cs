@@ -54,31 +54,31 @@ namespace DeltaDNA.Notifications
                 #endif
             }
         }
-		
-		#region Native Bridge
-		
-		public void DidRegisterForPushNotifications(string registrationId)
-		{
-			Logger.LogDebug("Did register for Android push notifications: "+registrationId);
-			
-			DDNA.Instance.AndroidRegistrationID = registrationId;
-			
-			if (OnDidRegisterForPushNotifications != null) {
-				OnDidRegisterForPushNotifications(registrationId);
-			}
-		}
-		
-		public void DidFailToRegisterForPushNotifications(string error)
-		{
-			Logger.LogDebug("Did fail to register for push notifications: "+error);
-			
-			if (OnDidFailToRegisterForPushNotifications != null) {
-				OnDidFailToRegisterForPushNotifications(error);
-			}
-		}
-		
-		#endregion
-		
-	}
+        
+        #region Native Bridge
+        
+        public void DidRegisterForPushNotifications(string registrationId)
+        {
+            Logger.LogDebug("Did register for Android push notifications: "+registrationId);
+            
+            DDNA.Instance.AndroidRegistrationID = registrationId;
+            
+            if (OnDidRegisterForPushNotifications != null) {
+                OnDidRegisterForPushNotifications(registrationId);
+            }
+        }
+        
+        public void DidFailToRegisterForPushNotifications(string error)
+        {
+            Logger.LogDebug("Did fail to register for push notifications: "+error);
+            
+            if (OnDidFailToRegisterForPushNotifications != null) {
+                OnDidFailToRegisterForPushNotifications(error);
+            }
+        }
+        
+        #endregion
+        
+    }
 
 } // namespace DeltaDNA
