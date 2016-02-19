@@ -5,11 +5,11 @@ using UnityEngine;
 namespace DeltaDNA.Android
 {
 
-	internal class DdnaNotifications {
+	internal class DDNANotifications {
 	
 		private AndroidJavaClass ddnaNotifications;
 		
-		public DdnaNotifications() {
+		public DDNANotifications() {
             ddnaNotifications = new AndroidJavaClass(Utils.DdnaNotificationsClassName);
 		}
 		

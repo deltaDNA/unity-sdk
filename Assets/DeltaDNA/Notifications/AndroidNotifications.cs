@@ -12,7 +12,7 @@ namespace DeltaDNA.Notifications
     public class AndroidNotifications : MonoBehaviour
     {
         #if UNITY_ANDROID
-        private Android.DdnaNotifications ddnaNotifications;
+        private Android.DDNANotifications ddnaNotifications;
         #endif
         
         // Called with the registrationId.
@@ -34,7 +34,7 @@ namespace DeltaDNA.Notifications
             if (Application.platform == RuntimePlatform.Android)
             {
                 #if UNITY_ANDROID
-                ddnaNotifications = new Android.DdnaNotifications();
+                ddnaNotifications = new Android.DDNANotifications();
                 ddnaNotifications.Register(
                     new AndroidJavaClass("com.unity3d.player.UnityPlayer")
                     .GetStatic<AndroidJavaObject>("currentActivity"));
