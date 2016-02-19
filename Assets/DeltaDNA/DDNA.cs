@@ -718,7 +718,7 @@ namespace DeltaDNA
                 String ts = dt.Value.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
                 // Fix for millisecond timestamp format bug seen on Android.
                 if (ts.EndsWith(".1000")) {
-                    ts.Replace(".1000", ".999");
+                    ts = ts.Replace(".1000", ".999");
                 }
                 return ts;
             }
