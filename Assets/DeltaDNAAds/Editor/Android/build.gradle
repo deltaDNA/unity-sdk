@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 def notifications = hasProperty('notifications')
 def smartads = hasProperty('smartads')
 def networks = hasProperty('networks') ? networks.split(',') : []
-def network = { network, compile ->
+def network = { network ->
     if (network in networks) {
-        dependencies.compile(compile)
+        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.0.0-SNAPSHOT")
     }
 }
 
@@ -39,25 +39,16 @@ dependencies {
         compile 'com.deltadna.android:deltadna-smartads-core:1.0.0-SNAPSHOT'
     }
 
-    // published networks
-    network('admob', 'com.google.android.gms:play-services-ads:7.8.0')
-    network('amazon', 'com.amazon.android:mobile-ads:5.6.20')
-    network('mobfox', 'com.adsdk.sdk:MobFox-Android-SDK:7.0.8')
-    network('mopub', 'com.mopub:mopub-sdk:3.10.0')
-
-    // third-party networks published by us
-    network('adcolony', 'com.adcolony:adcolony:2.3.0')
-    network('chartboost', 'com.chartboost:chartboost:6.0.2')
-    network('flurry', 'com.flurry:FlurryAds:6.0.0')
-    network('inmobi', 'com.inmobi:InMobi:5.1.1')
-    network('unity', 'com.unity:unity-ads:1.5.0')
-    // vungle is special... :(
-    if ('vungle' in networks) {
-        compile('com.vungle:vungle-publisher-adaptive-id:3.3.1') {
-            exclude module: 'support-v4'
-        }
-        compile 'com.android.support:support-v4:18.0.0'
-    }
+    network('admob')
+    network('amazon')
+    network('mobfox')
+    network('mopub')
+    network('adcolony')
+    network('chartboost')
+    network('flurry')
+    network('inmobi')
+    network('unity')
+    network('vungle')
 }
 
 task wrapper(type: Wrapper) {
