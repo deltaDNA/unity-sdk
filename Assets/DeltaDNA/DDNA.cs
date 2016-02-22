@@ -16,9 +16,6 @@ namespace DeltaDNA
     public class DDNA : Singleton<DDNA>
     {
         static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
-        static readonly string PF_KEY_FIRST_RUN = "DDSDK_FIRST_RUN";
-        static readonly string PF_KEY_HASH_SECRET = "DDSDK_HASH_SECRET";
-        static readonly string PF_KEY_CLIENT_VERSION = "DDSDK_CLIENT_VERSION";
         static readonly string PF_KEY_PUSH_NOTIFICATION_TOKEN = "DDSDK_PUSH_NOTIFICATION_TOKEN";
         static readonly string PF_KEY_ANDROID_REGISTRATION_ID = "DDSDK_ANDROID_REGISTRATION_ID";
 
@@ -89,7 +86,20 @@ namespace DeltaDNA
         {
             lock (_lock)
             {
-                Logger.LogInfo("Starting DDNA SDK");
+                bool newPlayer = false;
+                if (String.IsNullOrEmpty(this.UserID) || this.UserID != userID) {
+                    userID = String.IsNullOrEmpty(userID) ? GenerateUserID() : userID;
+                    newPlayer = true;
+                } 
+
+                Logger.LogInfo("Starting DDNA SDK with UserID "+userID);
+                this.UserID = userID;
+
+                this.EnvironmentKey = envKey;
+                this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
+                this.EngageURL = engageURL;
+                this.Platform = ClientInfo.Platform;
+                this.NewSession();
 
                 if (this.eventStore == null) {
                     string eventStorePath = null;
@@ -99,18 +109,6 @@ namespace DeltaDNA
                     this.eventStore = new EventStore(eventStorePath);
                 }
 
-                if (!PlayerPrefs.HasKey(PF_KEY_USER_ID)) {
-                    Logger.LogDebug("No UserID key found in PlayerPrefs, starting from fresh.");
-                }
-
-                SetUserID(userID);
-
-                this.EnvironmentKey = envKey;
-                this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
-                this.EngageURL = engageURL;
-                this.Platform = ClientInfo.Platform;
-                this.SessionID = GetSessionID();
-
                 this.initialised = true;
 
                 if (_launchNotificationEventParams != null) {
@@ -118,7 +116,7 @@ namespace DeltaDNA
                     _launchNotificationEventParams = null;
                 }
 
-                TriggerDefaultEvents();
+                TriggerDefaultEvents(newPlayer);
 
                 // Setup automated event uploads
                 if (Settings.BackgroundEventUpload && !IsInvoking("Upload"))
@@ -133,7 +131,9 @@ namespace DeltaDNA
         /// </summary>
         public void NewSession()
         {
-            this.SessionID = GetSessionID();
+            string sessionID = GenerateSessionID();
+            Logger.LogDebug("Beginning new session "+sessionID);
+            this.SessionID = sessionID;
         }
 
         /// <summary>
@@ -437,9 +437,6 @@ namespace DeltaDNA
         {
             // PlayerPrefs
             PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
-            PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
-            PlayerPrefs.DeleteKey(PF_KEY_HASH_SECRET);
-            PlayerPrefs.DeleteKey(PF_KEY_CLIENT_VERSION);
             PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
             PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);
 
@@ -553,52 +550,13 @@ namespace DeltaDNA
         /// To disable hashing set it to null, which is the default.  This must be
         /// set before calling <see cref="Init"/>.
         /// </summary>
-        public string HashSecret
-        {
-            get
-            {
-                string v = PlayerPrefs.GetString(PF_KEY_HASH_SECRET, null);
-                if (String.IsNullOrEmpty(v))
-                {
-                    Logger.LogDebug("Event hashing not enabled.");
-                    return null;
-                }
-                return v;
-            }
-            set
-            {
-                Logger.LogDebug("Setting Hash Secret '"+value+"'");
-                PlayerPrefs.SetString(PF_KEY_HASH_SECRET, value);
-                PlayerPrefs.Save();
-            }
-        }
+        public string HashSecret { get; set; }
 
         /// <summary>
         /// A version string for your game that will be reported to us.  This must
         /// be set before calling <see cref="Init"/>.
         /// </summary>
-        public string ClientVersion
-        {
-            get
-            {
-                string v = PlayerPrefs.GetString(PF_KEY_CLIENT_VERSION, null);
-                if (String.IsNullOrEmpty(v))
-                {
-                    Logger.LogWarning("No client game version set.");
-                    return null;
-                }
-                return v;
-            }
-            set
-            {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    Logger.LogDebug("Setting ClientVersion '"+value+"'");
-                    PlayerPrefs.SetString(PF_KEY_CLIENT_VERSION, value);
-                    PlayerPrefs.Save();
-                }
-            }
-        }
+        public string ClientVersion { get; set; }
 
         /// <summary>
         /// The push notification token from Apple that is associated with this device if
@@ -661,48 +619,13 @@ namespace DeltaDNA
             base.OnDestroy();
         }
 
-        private string GetSessionID()
+        private string GenerateSessionID()
         {
             return Guid.NewGuid().ToString();
         }
 
-        private string GetUserID()
+        private string GenerateUserID()
         {
-            // see if this game ran with the previous SDK and look for
-            // a user id.
-            #if !UNITY_WEBPLAYER && !UNITY_WEBGL
-            string legacySettingsPath = Settings.LEGACY_SETTINGS_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
-            if (Utils.FileExists(legacySettingsPath))
-            {
-                Logger.LogDebug("Found a legacy file in "+legacySettingsPath);
-                using (Stream fs = Utils.OpenStream(legacySettingsPath))
-                {
-                    try
-                    {
-                        var bytes = new List<byte>();
-                        byte[] buffer = new byte[1024];
-                        while (fs.Read(buffer, 0, buffer.Length) > 0)
-                        {
-                            bytes.AddRange(buffer);
-                        }
-                        byte[] byteArray = bytes.ToArray();
-                        string json = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-                        var settings = MiniJSON.Json.Deserialize(json) as Dictionary<string, object>;
-                        if (settings.ContainsKey("userID"))
-                        {
-                            Logger.LogDebug("Found a legacy user id for player");
-                            return settings["userID"] as string;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.LogWarning("Problem reading legacy user id: "+e.Message);
-                    }
-                }
-            }
-            #endif
-
-            Logger.LogDebug("Creating a new user id for player");
             return Guid.NewGuid().ToString();
         }
 
@@ -855,41 +778,9 @@ namespace DeltaDNA
             return sb.ToString();
         }
 
-        private void SetUserID(string userID)
+        private void TriggerDefaultEvents(bool newPlayer)
         {
-            if (String.IsNullOrEmpty (userID))
-            {
-                if (String.IsNullOrEmpty (this.UserID))
-                {
-                    // we have no user id and the we've not been given one so make one up
-                    string uid = GetUserID();
-                    Logger.LogDebug("Setting new generated user id "+uid);
-                    this.UserID = uid;
-                }
-                else
-                {
-                    // leave the user ID alone
-                }
-            }
-            else
-            {
-                if (this.UserID != userID)
-                {
-                    // new user ID given or not been sent one yet
-                    PlayerPrefs.DeleteKey(PF_KEY_FIRST_RUN);
-                    Logger.LogDebug("Setting new provided user id "+userID);
-                    this.UserID = userID;
-                }
-                else
-                {
-                    // leave the user ID alone
-                }
-            }
-        }
-
-        private void TriggerDefaultEvents()
-        {
-            if (Settings.OnFirstRunSendNewPlayerEvent && PlayerPrefs.GetInt(PF_KEY_FIRST_RUN, 1) > 0)
+            if (Settings.OnFirstRunSendNewPlayerEvent && newPlayer)
             {
                 Logger.LogDebug("Sending 'newPlayer' event");
 
@@ -897,9 +788,6 @@ namespace DeltaDNA
                     .AddParam("userCountry", ClientInfo.CountryCode);
 
                 this.RecordEvent("newPlayer", newPlayerParams);
-
-                PlayerPrefs.SetInt(PF_KEY_FIRST_RUN, 0);
-                PlayerPrefs.Save();
             }
 
             if (Settings.OnInitSendGameStartedEvent)
