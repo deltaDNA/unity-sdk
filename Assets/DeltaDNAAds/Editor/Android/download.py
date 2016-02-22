@@ -89,7 +89,7 @@ if __name__ == '__main__':
         try:
             with open(CONFIG) as config_file:
                 config = json.load(config_file)
-                smartads = config['smartads']
+                smartads = True
                 networks = config['networks']
 
                 if smartads and len(networks) is 0:
@@ -102,7 +102,7 @@ if __name__ == '__main__':
                     exit(1)
 
                 exit(download(args,
-                              config['notifications'],
+                              False,
                               smartads,
                               networks))
         except IOError:

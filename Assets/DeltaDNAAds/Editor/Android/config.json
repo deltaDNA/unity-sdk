@@ -1,6 +1,4 @@
 {
-    "notifications": true,
-    "smartads": true,
     "networks": [
         "admob",
         "amazon",

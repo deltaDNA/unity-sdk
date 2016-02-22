@@ -33,6 +33,14 @@ android {
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+
+    // included as part of notifications
+    if (!notifications) {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.google.android.gms', module: 'play-services-gcm'
+        exclude group: 'com.google.android.gms', module: 'play-services-base'
+    }
 }
 
 dependencies {
