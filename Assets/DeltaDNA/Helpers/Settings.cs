@@ -36,6 +36,12 @@ namespace DeltaDNA
             BackgroundEventUpload = true;   // send events automatically by default
             BackgroundEventUploadStartDelaySeconds = 0;
             BackgroundEventUploadRepeatRateSeconds = 60;
+
+            #if UNITY_WEBPLAYER || UNITY_WEBGL
+            UseEventStore = false;
+            #else
+            UseEventStore = true;
+            #endif
         }
 
         /// <summary>
@@ -104,5 +110,11 @@ namespace DeltaDNA
         /// Controls how fequently events are uploaded automatically.
         /// </summary>
         public int BackgroundEventUploadRepeatRateSeconds { get; set; }
+
+        /// <summary>
+        /// Controls if the event store should be used or not.  The default
+        /// is for TRUE unless UNITY_WEBPLAYER or UNITY_WEBGL is defined.
+        /// </summary>
+        public bool UseEventStore { get; set; }
     }
 }

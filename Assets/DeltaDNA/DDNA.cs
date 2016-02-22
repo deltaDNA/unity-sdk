@@ -39,33 +39,25 @@ namespace DeltaDNA
 
         private EventStore eventStore = null;
         private EventBuilder _launchNotificationEventParams = null;
-        
-        private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc); 
+
+        private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc);
 
         private static object _lock = new object();
 
         protected DDNA()
         {
             this.Settings = new Settings(); // default configuration
-                    
+
             this.Transaction = new TransactionBuilder(this);
-
-            // WebGL builds in an iFrame have problems accessing Application.persistentDataPath
-            string eventStorePath = null;
-            #if !UNITY_WEBPLAYER && !UNITY_WEBGL
-            eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);          
-            #endif
-
-            this.eventStore = new EventStore(eventStorePath);
         }
-        
+
         void Awake()
         {
             // Attach additional behaviours as children of this gameObject
-            GameObject iosNotifications = new GameObject();         
+            GameObject iosNotifications = new GameObject();
             this.IosNotifications = iosNotifications.AddComponent<IosNotifications>();
             iosNotifications.transform.parent = gameObject.transform;
-            
+
             GameObject androidNotifications = new GameObject();
             this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
             androidNotifications.transform.parent = gameObject.transform;
@@ -98,11 +90,19 @@ namespace DeltaDNA
             lock (_lock)
             {
                 Logger.LogInfo("Starting DDNA SDK");
-                                
+
+                if (this.eventStore == null) {
+                    string eventStorePath = null;
+                    if (this.Settings.UseEventStore) {
+                        eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+                    }
+                    this.eventStore = new EventStore(eventStorePath);
+                }
+
                 if (!PlayerPrefs.HasKey(PF_KEY_USER_ID)) {
                     Logger.LogDebug("No UserID key found in PlayerPrefs, starting from fresh.");
                 }
-            
+
                 SetUserID(userID);
 
                 this.EnvironmentKey = envKey;
@@ -117,7 +117,7 @@ namespace DeltaDNA
                     RecordEvent("notificationOpened", _launchNotificationEventParams);
                     _launchNotificationEventParams = null;
                 }
-                
+
                 TriggerDefaultEvents();
 
                 // Setup automated event uploads
@@ -141,7 +141,7 @@ namespace DeltaDNA
         /// </summary>
         public void StopSDK()
         {
-            lock (_lock) 
+            lock (_lock)
             {
                 if (this.initialised) {
                     Logger.LogInfo("Stopping DDNA SDK");
@@ -224,7 +224,7 @@ namespace DeltaDNA
             eventRecord[EV_KEY_NAME]        = eventName;
             eventRecord[EV_KEY_USER_ID]     = this.UserID;
             eventRecord[EV_KEY_SESSION_ID]  = this.SessionID;
-            
+
             // Collect will insert it's own timestamp if null is returned by the timestamp function
             string currentTimestamp = GetCurrentTimestamp();
             if (!String.IsNullOrEmpty(currentTimestamp)) {
@@ -268,13 +268,13 @@ namespace DeltaDNA
                 Logger.LogError("You must first start the SDK via the StartSDK method.");
                 return;
             }
-            
+
             if (String.IsNullOrEmpty(this.EngageURL))
             {
                 Logger.LogWarning("Engage URL not configured, can not make engagement.");
                 return;
             }
-            
+
             if (String.IsNullOrEmpty(decisionPoint))
             {
                 Logger.LogWarning("No decision point set, can not make engagement.");
@@ -300,7 +300,7 @@ namespace DeltaDNA
 
             StartCoroutine(Engage.Request(this, request, handler));
         }
-        
+
         /// <summary>
         /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
         /// that loads the image resource automatically from the original engage request.  Register a function with the
@@ -314,7 +314,7 @@ namespace DeltaDNA
             Dictionary<string, object> engageParams,
             IPopup popup)
         {
-            this.RequestImageMessage(decisionPoint, engageParams, popup, null); 
+            this.RequestImageMessage(decisionPoint, engageParams, popup, null);
         }
 
         /// <summary>
@@ -347,17 +347,17 @@ namespace DeltaDNA
 
             RequestEngagement(decisionPoint, engageParams, imageCallback);
         }
-        
+
         /// <summary>
         /// Records that the game received a push notification.  It is safe to call this method
-        /// Before calling StartSDK, the 'notificationOpened' event will be sent at that time. 
+        /// Before calling StartSDK, the 'notificationOpened' event will be sent at that time.
         /// </summary>
         /// <param name="payload">Payload.</param>
         public void RecordPushNotification(Dictionary<string, object> payload)
         {
             Logger.LogDebug("Received push notification: "+payload);
-            
-            EventBuilder eventParams = new EventBuilder();          
+
+            EventBuilder eventParams = new EventBuilder();
             try {
                 if (payload.ContainsKey("_ddId")) {
                     eventParams.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
@@ -371,7 +371,7 @@ namespace DeltaDNA
             } catch (Exception ex) {
                 Logger.LogError("Error parsing push notification payload: "+ex);
             }
-            
+
             if (this.IsInitialised) {
                 this.RecordEvent("notificationOpened", eventParams);
             } else {
@@ -413,12 +413,12 @@ namespace DeltaDNA
         /// Controls default behaviour of the SDK.  Set prior to initialisation.
         /// </summary>
         public Settings Settings { get; set; }
-        
+
         /// <summary>
         /// Helper for iOS push notifications.
         /// </summary>
         public IosNotifications IosNotifications { get; private set; }
-        
+
         /// <summary>
         /// Helper for Android push notifications.
         /// </summary>
@@ -446,14 +446,14 @@ namespace DeltaDNA
             this.eventStore.ClearAll();
             Engage.ClearCache();
         }
-        
+
         /// <summary>
-        /// Controls if the device is used as the event timestamp source or our Collect server.  
+        /// Controls if the device is used as the event timestamp source or our Collect server.
         /// Using the device time (the default) ensures the events will have the correct timestamp
-        /// while no internet connection is available to upload events.  But the device time relies 
-        /// on the user having set their system clock correctly.  If you disable the device 
-        /// timestamp, our Collect server will inject the time it received the event.  If you 
-        /// require more control over the timestamp, use <see cref="SetTimestampFunc"/>. 
+        /// while no internet connection is available to upload events.  But the device time relies
+        /// on the user having set their system clock correctly.  If you disable the device
+        /// timestamp, our Collect server will inject the time it received the event.  If you
+        /// require more control over the timestamp, use <see cref="SetTimestampFunc"/>.
         /// </summary>
         /// <param name="useCollect">If set to <c>true</c> use Collect server for event timestamps.</param>
         public void UseCollectTimestamp(bool useCollect) {
@@ -463,13 +463,13 @@ namespace DeltaDNA
                 SetTimestampFunc(() => { return null; });
             }
         }
-        
+
         /// <summary>
         /// If more control is required over the event timestamp source, you can override the default
-        /// behaviour with a function that returns a DateTime. 
+        /// behaviour with a function that returns a DateTime.
         /// </summary>
         /// <param name="TimestampFunc">Timestamp func.</param>
-        public void SetTimestampFunc(Func<DateTime?> TimestampFunc) 
+        public void SetTimestampFunc(Func<DateTime?> TimestampFunc)
         {
             DDNA.TimestampFunc = TimestampFunc;
         }
@@ -705,7 +705,7 @@ namespace DeltaDNA
             Logger.LogDebug("Creating a new user id for player");
             return Guid.NewGuid().ToString();
         }
-        
+
         private static DateTime? DefaultTimestampFunc()
         {
             return DateTime.UtcNow;
@@ -783,7 +783,7 @@ namespace DeltaDNA
             int attempts = 0;
             bool succeeded = false;
             int status = 0;
-            
+
             Action<int, string, string> completionHandler = (statusCode, data, error) => {
                 if (statusCode < 400) {
                     succeeded = true;
@@ -793,23 +793,23 @@ namespace DeltaDNA
                 }
                 status = statusCode;
             };
-            
+
             HttpRequest request = new HttpRequest(url);
             request.HTTPMethod = HttpRequest.HTTPMethodType.POST;
             request.HTTPBody = bulkEvent;
             request.setHeader("Content-Type", "application/json");
-            
+
             while (attempts < Settings.HttpRequestMaxRetries) {
-                
+
                 yield return StartCoroutine(Network.SendRequest(request, completionHandler));
-                
+
                 if (succeeded) break;
-                
+
                 yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
-                
+
                 attempts += 1;
             }
-            
+
             resultCallback(succeeded, status);
         }
         internal string ResolveEngageURL(string httpBody)
@@ -905,7 +905,7 @@ namespace DeltaDNA
             if (Settings.OnInitSendGameStartedEvent)
             {
                 Logger.LogDebug("Sending 'gameStarted' event");
-                
+
                 if (ClientInfo.Platform.Contains("IOS") && String.IsNullOrEmpty(this.PushNotificationToken))
                 {
                     Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
