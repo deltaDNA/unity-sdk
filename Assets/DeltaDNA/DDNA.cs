@@ -63,9 +63,15 @@ namespace DeltaDNA
             lock (_lock)
             {
                 bool newPlayer = false;
-                if (String.IsNullOrEmpty(this.UserID) || this.UserID != userID) {
-                    userID = String.IsNullOrEmpty(userID) ? GenerateUserID() : userID;
+                if (String.IsNullOrEmpty(this.UserID)) {    // first time!
                     newPlayer = true;
+                    if (String.IsNullOrEmpty(userID)) {     // generate a user id
+                        userID = GenerateUserID();
+                    }
+                } else if (!String.IsNullOrEmpty(userID)) { // use offered user id
+                    if (this.UserID != userID) {
+                        newPlayer = true;
+                    }
                 } 
 
                 Logger.LogInfo("Starting DDNA SDK with UserID "+userID);
