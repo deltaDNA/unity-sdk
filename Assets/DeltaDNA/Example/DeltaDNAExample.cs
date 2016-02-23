@@ -61,13 +61,6 @@ public class DeltaDNAExample : MonoBehaviour {
 
         if (GUI.Button(new Rect(x, y, width, height), "Simple Event")) {
 
-//            EventBuilder eventParams = new EventBuilder();
-//            eventParams.AddParam("option", "sword");
-//            eventParams.AddParam("action", "sell");
-//
-//            DDNA.Instance.RecordEvent("options", eventParams);
-
-            // new event syntax
             GameEvent gameEvent = new GameEvent("options")
                 .AddParam("option", "sword")
                 .AddParam("action", "sell");
@@ -78,19 +71,6 @@ public class DeltaDNAExample : MonoBehaviour {
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Achievement Event")) {
 
-//            EventBuilder achievementParams = new EventBuilder()
-//                .AddParam("achievementName", "Sunday Showdown Tournament Win")
-//                .AddParam("achievementID", "SS-2014-03-02-01")
-//                .AddParam("reward", new EventBuilder()
-//                    .AddParam("rewardProducts", new ProductBuilder()
-//                        .AddRealCurrency("USD", 5000)
-//                        .AddVirtualCurrency("VIP Points", "GRIND", 20)
-//                        .AddItem("Sunday Showdown Medal", "Victory Badge", 1))
-//                        .AddParam("rewardName", "Medal"));
-//
-//            DDNA.Instance.RecordEvent("achievement", achievementParams);
-
-            // new event syntax
             GameEvent gameEvent = new GameEvent("achievement")
                 .AddParam("achievementName", "Sunday Showdown Tournament Win")
                 .AddParam("achievementID", "SS-2014-03-02-01")
@@ -109,21 +89,6 @@ public class DeltaDNAExample : MonoBehaviour {
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Transaction Event")) {
 
-//            EventBuilder transactionParams = new EventBuilder()
-//                .AddParam("transactionName", "Weapon type 11 manual repair")
-//                .AddParam("transactionID", "47891208312996456524019-178.149.115.237:51787")
-//                .AddParam("transactorID", "62.212.91.84:15116")
-//                .AddParam("productID", "4019")
-//                .AddParam("transactionType", "PURCHASE")
-//                .AddParam("paymentCountry", "GB")
-//                .AddParam("productsReceived", new ProductBuilder()
-//                    .AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
-//                    .AddParam("productsSpent", new ProductBuilder()
-//                        .AddVirtualCurrency("Credit", "GRIND", 710));
-//
-//            DDNA.Instance.RecordEvent("transaction", transactionParams);
-
-            // new event syntax
             Transaction transaction = new Transaction(
                 "Weapon type 11 manual repair", 
                 "PURCHASE", 
@@ -138,14 +103,12 @@ public class DeltaDNAExample : MonoBehaviour {
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Engagement")) {
 
-            var engageParams = new Dictionary<string, object>()
-            {
-                { "userLevel", 4 },
-                { "experience", 1000 },
-                { "missionName", "Disco Volante" }
-            };
+            var engagement = new Engagement("gameLoaded")
+                .AddParam("userLevel", 4)
+                .AddParam("experience", 1000)
+                .AddParam("missionName", "Disco Volante");
 
-            DDNA.Instance.RequestEngagement("gameLoaded", engageParams, (response) =>
+            DDNA.Instance.RequestEngagement(engagement, (response) =>
             {
                 popupContent = DeltaDNA.MiniJSON.Json.Serialize(response);
             });
@@ -154,11 +117,6 @@ public class DeltaDNAExample : MonoBehaviour {
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Popup Image")) {
-
-            var engageParams = new Dictionary<string, object>() {
-                { "userScore", 42 },
-                { "secondsPlayed", 20 }
-            };
 
             // Create Popup Object
             IPopup imagePopup = new Popup();
@@ -176,9 +134,13 @@ public class DeltaDNAExample : MonoBehaviour {
             imagePopup.Action += (sender, e) => {
                 Debug.Log("Popup actioned by "+e.ID+" with command "+e.ActionValue);
             };
-            // Start Request
-            DDNA.Instance.RequestImageMessage("pickUp", engageParams, imagePopup);
 
+            // Start Request
+            var engagement = new Engagement("pickUp")
+                .AddParam("userScore", 42)
+                .AddParam("secondsPlayed", 20);
+
+            DDNA.Instance.RequestImageMessage(engagement, imagePopup);
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Notification Opened")) {

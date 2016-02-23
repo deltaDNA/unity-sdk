@@ -201,44 +201,57 @@ namespace DeltaDNA
         /// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
         /// <param name="engageParams">Additional parameters for the engagement.</param>
         /// <param name="callback">Method called with the response from our server.</param>
+        [Obsolete("Prefer 'RequestEngagement' with an 'Engagement' instead.")]
         public void RequestEngagement(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
         {
-            if (!this.started)
-            {
-                Logger.LogError("You must first start the SDK via the StartSDK method.");
-                return;
+            var engagement = new Engagement(decisionPoint);
+            foreach (var key in engageParams.Keys) {
+                engagement.AddParam(key, engageParams[key]);
+            }
+            RequestEngagement(engagement, callback);
+        }
+
+        /// <summary>
+        /// Makes an Engage request.  The result of the engagement will be passed as a dictionary object to your callback method. The response
+        /// will be null is no response is available.
+        /// </summary>
+        /// <param name="engagement">The engagement the request is for.</param>
+        /// <param name="callback">Method called with the response from Engage.</param>
+        public void RequestEngagement(Engagement engagement, Action<Dictionary<string, object>> callback)
+        {
+            if (!this.started) {
+                throw new Exception("You must first start the SDK via the StartSDK method.");
             }
 
-            if (String.IsNullOrEmpty(this.EngageURL))
-            {
-                Logger.LogWarning("Engage URL not configured, can not make engagement.");
-                return;
+            if (String.IsNullOrEmpty(this.EngageURL)) {
+                throw new Exception("Engage URL not configured.");
             }
 
-            if (String.IsNullOrEmpty(decisionPoint))
-            {
-                Logger.LogWarning("No decision point set, can not make engagement.");
-                return;
-            }
+            try {
 
-            EngageRequest request = new EngageRequest(decisionPoint);
-            if (engageParams != null && engageParams.Count > 0) {
-                request.Parameters = engageParams;
-            }
+                var dict = engagement.AsDictionary();
 
-            EngageResponse handler = (string response, int statusCode, string error) => {
-                JSONObject responseJSON = null;
-                if (response != null) {
-                    try {
-                        responseJSON = DeltaDNA.MiniJSON.Json.Deserialize(response) as JSONObject;
-                    } catch (Exception exception) {
-                        Logger.LogError("Engagement "+decisionPoint+" responded with invalid JSON: "+exception.Message);
+                var request = new EngageRequest(dict["decisionPoint"] as string);
+                request.Flavour = dict["flavour"] as string;
+                request.Parameters = dict["parameters"] as Dictionary<string, object>;
+
+                EngageResponse handler = (string response, int statusCode, string error) => {
+                    JSONObject responseJSON = null;
+                    if (response != null) {
+                        try {
+                            responseJSON = DeltaDNA.MiniJSON.Json.Deserialize(response) as JSONObject;
+                        } catch (Exception exception) {
+                            Logger.LogError("Engagement "+engagement.DecisionPoint+" responded with invalid JSON: "+exception.Message);
+                        }
                     }
-                }
-                callback(responseJSON);
-            };
+                    callback(responseJSON);
+                };
+                
+                StartCoroutine(Engage.Request(this, request, handler));
 
-            StartCoroutine(Engage.Request(this, request, handler));
+            } catch (Exception ex) {
+                Logger.LogWarning("Engagement request failed: "+ex.Message);
+            }
         }
 
         /// <summary>
@@ -249,12 +262,14 @@ namespace DeltaDNA
         /// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
         /// <param name="engageParams">Additional parameters for the engagement.</param>
         /// <param name="popup">A Popup object to display the image.</param>
-        public void RequestImageMessage(
-            string decisionPoint,
-            Dictionary<string, object> engageParams,
-            IPopup popup)
+        [Obsolete("Prefer 'RequestImageMessage' with an 'Engagement' instead.")]
+        public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, IPopup popup)
         {
-            this.RequestImageMessage(decisionPoint, engageParams, popup, null);
+            var engagement = new Engagement(decisionPoint);
+            foreach (var key in engageParams.Keys) {
+                engagement.AddParam(key, engageParams[key]);
+            }
+            RequestImageMessage(engagement, popup, null);
         }
 
         /// <summary>
@@ -266,11 +281,37 @@ namespace DeltaDNA
         /// <param name="engageParams">Additional parameters for the engagement.</param>
         /// <param name="popup">A Popup object to display the image.</param>
         /// <param name="callback">A callback with the engage response as the parameter.</param>
-        public void RequestImageMessage(
-            string decisionPoint,
-            Dictionary<string, object> engageParams,
-            IPopup popup,
-            Action<Dictionary<string, object>> callback)
+        [Obsolete("Prefer 'RequestImageMessage' with an 'Engagement' instead.")]
+        public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, IPopup popup, Action<Dictionary<string, object>> callback)
+        {
+            var engagement = new Engagement(decisionPoint);
+            foreach (var key in engageParams.Keys) {
+                engagement.AddParam(key, engageParams[key]);
+            }
+            RequestImageMessage(engagement, popup, callback);
+        }
+
+        /// <summary>
+        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
+        /// that loads the image resource automatically from the original engage request.  Register a function with the
+        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
+        /// </summary>
+        /// <param name="engagement">The engagement the request is for.</param>
+        /// <param name="popup">A Popup object to display the image.</param>
+        public void RequestImageMessage(Engagement engagement, IPopup popup)
+        {
+            RequestImageMessage(engagement, popup, null);
+        }
+
+        /// <summary>
+        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
+        /// that loads the image resource automatically from the original engage request.  Register a function with the
+        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
+        /// </summary>
+        /// <param name="engagement">The engagement the request is for.</param>
+        /// <param name="popup">A Popup object to display the image.</param>
+        /// <param name="callback">Method called with the response from Engage.</param>
+        public void RequestImageMessage(Engagement engagement, IPopup popup, Action<Dictionary<string, object>> callback)
         {
             Action<Dictionary<string, object>> imageCallback = (response) =>
             {
@@ -285,7 +326,7 @@ namespace DeltaDNA
                 }
             };
 
-            RequestEngagement(decisionPoint, engageParams, imageCallback);
+            RequestEngagement(engagement, imageCallback);
         }
 
         /// <summary>
