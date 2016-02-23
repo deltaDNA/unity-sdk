@@ -61,44 +61,79 @@ public class DeltaDNAExample : MonoBehaviour {
 
         if (GUI.Button(new Rect(x, y, width, height), "Simple Event")) {
 
-            EventBuilder eventParams = new EventBuilder();
-            eventParams.AddParam("option", "sword");
-            eventParams.AddParam("action", "sell");
+//            EventBuilder eventParams = new EventBuilder();
+//            eventParams.AddParam("option", "sword");
+//            eventParams.AddParam("action", "sell");
+//
+//            DDNA.Instance.RecordEvent("options", eventParams);
 
-            DDNA.Instance.RecordEvent("options", eventParams);
+            // new event syntax
+            GameEvent gameEvent = new GameEvent("options")
+                .AddParam("option", "sword")
+                .AddParam("action", "sell");
+
+            DDNA.Instance.RecordEvent(gameEvent);
+
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Achievement Event")) {
 
-            EventBuilder achievementParams = new EventBuilder()
+//            EventBuilder achievementParams = new EventBuilder()
+//                .AddParam("achievementName", "Sunday Showdown Tournament Win")
+//                .AddParam("achievementID", "SS-2014-03-02-01")
+//                .AddParam("reward", new EventBuilder()
+//                    .AddParam("rewardProducts", new ProductBuilder()
+//                        .AddRealCurrency("USD", 5000)
+//                        .AddVirtualCurrency("VIP Points", "GRIND", 20)
+//                        .AddItem("Sunday Showdown Medal", "Victory Badge", 1))
+//                        .AddParam("rewardName", "Medal"));
+//
+//            DDNA.Instance.RecordEvent("achievement", achievementParams);
+
+            // new event syntax
+            GameEvent gameEvent = new GameEvent("achievement")
                 .AddParam("achievementName", "Sunday Showdown Tournament Win")
                 .AddParam("achievementID", "SS-2014-03-02-01")
-                .AddParam("reward", new EventBuilder()
-                    .AddParam("rewardProducts", new ProductBuilder()
-                        .AddRealCurrency("USD", 5000)
+                .AddParam("reward", new Params()
+                    .AddParam("rewardName", "Medal")
+                    .AddParam("rewardProducts", new Product()
+                        .SetRealCurrency("USD", 5000)
                         .AddVirtualCurrency("VIP Points", "GRIND", 20)
-                        .AddItem("Sunday Showdown Medal", "Victory Badge", 1))
-                        .AddParam("rewardName", "Medal"));
+                        .AddItem("Sunday Showdown Medal", "Victory Badge", 1)
+                    )
+                );
 
-            DDNA.Instance.RecordEvent("achievement", achievementParams);
+            DDNA.Instance.RecordEvent(gameEvent);
+                                    
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Transaction Event")) {
 
-            EventBuilder transactionParams = new EventBuilder()
-                .AddParam("transactionName", "Weapon type 11 manual repair")
-                .AddParam("transactionID", "47891208312996456524019-178.149.115.237:51787")
-                .AddParam("transactorID", "62.212.91.84:15116")
-                .AddParam("productID", "4019")
-                .AddParam("transactionType", "PURCHASE")
-                .AddParam("paymentCountry", "GB")
-                .AddParam("productsReceived", new ProductBuilder()
-                    .AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
-                    .AddParam("productsSpent", new ProductBuilder()
-                        .AddVirtualCurrency("Credit", "GRIND", 710));
+//            EventBuilder transactionParams = new EventBuilder()
+//                .AddParam("transactionName", "Weapon type 11 manual repair")
+//                .AddParam("transactionID", "47891208312996456524019-178.149.115.237:51787")
+//                .AddParam("transactorID", "62.212.91.84:15116")
+//                .AddParam("productID", "4019")
+//                .AddParam("transactionType", "PURCHASE")
+//                .AddParam("paymentCountry", "GB")
+//                .AddParam("productsReceived", new ProductBuilder()
+//                    .AddItem("WeaponMaxConditionRepair:11", "WeaponMaxConditionRepair", 5))
+//                    .AddParam("productsSpent", new ProductBuilder()
+//                        .AddVirtualCurrency("Credit", "GRIND", 710));
+//
+//            DDNA.Instance.RecordEvent("transaction", transactionParams);
 
-            DDNA.Instance.RecordEvent("transaction", transactionParams);
+            // new event syntax
+            Transaction transaction = new Transaction(
+                "Weapon type 11 manual repair", 
+                "PURCHASE", 
+                new Product().AddItem("WeaponsMaxConditionRepair:11", "WeaponMaxConditionRepair", 5),
+                new Product().AddVirtualCurrency("Credit", "GRIND", 710))
+                .SetTransactorId("2.212.91.84:15116")
+                .SetProductId("4019")
+                .AddParam("paymentCountry", "GB");
 
+            DDNA.Instance.RecordEvent(transaction);
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Engagement")) {

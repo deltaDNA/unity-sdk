@@ -19,15 +19,6 @@ namespace DeltaDNA
         static readonly string PF_KEY_PUSH_NOTIFICATION_TOKEN = "DDSDK_PUSH_NOTIFICATION_TOKEN";
         static readonly string PF_KEY_ANDROID_REGISTRATION_ID = "DDSDK_ANDROID_REGISTRATION_ID";
 
-        static readonly string EV_KEY_NAME = "eventName";
-        static readonly string EV_KEY_USER_ID = "userID";
-        static readonly string EV_KEY_SESSION_ID = "sessionID";
-        static readonly string EV_KEY_TIMESTAMP = "eventTimestamp";
-        static readonly string EV_KEY_PARAMS = "eventParams";
-
-        static readonly string EP_KEY_PLATFORM = "platform";
-        static readonly string EP_KEY_SDK_VERSION = "sdkVersion";
-
         public static readonly string AUTO_GENERATED_USER_ID = null;
 
         private bool initialised = false;
@@ -35,7 +26,7 @@ namespace DeltaDNA
         private string engageURL;
 
         private EventStore eventStore = null;
-        private EventBuilder _launchNotificationEventParams = null;
+        private GameEvent launchNotificationEvent = null;
 
         private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc);
 
@@ -44,8 +35,6 @@ namespace DeltaDNA
         protected DDNA()
         {
             this.Settings = new Settings(); // default configuration
-
-            this.Transaction = new TransactionBuilder(this);
         }
 
         void Awake()
@@ -61,19 +50,6 @@ namespace DeltaDNA
         }
 
         #region Client Interface
-
-        /// <summary>
-        /// Initialises the SDK.  Call before sending events or making engagements.
-        /// </summary>
-        /// <param name="envKey">The unique environment key for this game environment.</param>
-        /// <param name="collectURL">The Collect URL for this game.</param>
-        /// <param name="engageURL">The Engage URL for this game.</param>
-        /// <param name="userID">The user id for the player, if set to AUTO_GENERATED_USER_ID we create one for you.</param>
-        [Obsolete("Prefer 'StartSDK' instead, Init will be removed in a future update.")]
-        public void Init(string envKey, string collectURL, string engageURL, string userID)
-        {
-            StartSDK(envKey, collectURL, engageURL, userID);
-        }
 
         /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.
@@ -111,9 +87,9 @@ namespace DeltaDNA
 
                 this.initialised = true;
 
-                if (_launchNotificationEventParams != null) {
-                    RecordEvent("notificationOpened", _launchNotificationEventParams);
-                    _launchNotificationEventParams = null;
+                if (this.launchNotificationEvent != null) {
+                    RecordEvent(this.launchNotificationEvent);
+                    this.launchNotificationEvent = null;
                 }
 
                 TriggerDefaultEvents(newPlayer);
@@ -156,102 +132,60 @@ namespace DeltaDNA
         }
 
         /// <summary>
-        /// Sends an event to Collect, with no additional event parameters.
+        /// Records an event using the GameEvent class.  
         /// </summary>
-        /// <param name="eventName">Name of the event.</param>
-        [Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
-        public void TriggerEvent(string eventName)
+        /// <param name="gameEvent">Event to record.</param>
+        public void RecordEvent<T>(T gameEvent) where T : GameEvent<T>
         {
-            RecordEvent(eventName, new Dictionary<string, object>());
+            if (!this.initialised) {
+                throw new Exception("You must first start the SDK via the StartSDK method");
+            }
+
+            gameEvent.AddParam("platform", this.Platform);
+            gameEvent.AddParam("sdkVersion", Settings.SDK_VERSION);
+
+            var eventSchema = gameEvent.AsDictionary();
+            eventSchema["userID"] = this.UserID;
+            eventSchema["sessionID"] = this.SessionID;
+
+            string currentTimestmp = GetCurrentTimestamp();
+            if (currentTimestmp != null) {
+                eventSchema["eventTimestamp"] = GetCurrentTimestamp();
+            }
+
+            try {
+                string json = MiniJSON.Json.Serialize(eventSchema);
+                if (!this.eventStore.Push(json)) {
+                    Logger.LogWarning("Event store full, unable to handle event.");
+                }
+            } catch (Exception ex) {
+                Logger.LogWarning("Unable to generate JSON for "+gameEvent.Name+" event. "+ex.Message);
+            }
         }
 
         /// <summary>
-        /// Sends an event to Collect, with no additional event parameters.
+        /// Records an event with no custom parameters.
         /// </summary>
         /// <param name="eventName">Name of the event.</param>
         public void RecordEvent(string eventName)
         {
-            RecordEvent(eventName, new Dictionary<string, object>());
+            var gameEvent = new GameEvent(eventName);
+            RecordEvent(gameEvent);
         }
 
         /// <summary>
-        /// Sends an event to Collect.
+        /// Records an event with a name and a dictionary of event parameters.  The eventParams dictionary
+        /// should match the 'eventParams' branch of the event schema.
         /// </summary>
-        /// <param name="eventName">Name of the event schema.</param>
-        /// <param name="eventParams">An EventBuilder that describes the event params for the event.</param>
-        [Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
-        public void TriggerEvent(string eventName, EventBuilder eventParams)
-        {
-            RecordEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
-        }
-
-        /// <summary>
-        /// Sends an event to Collect.
-        /// </summary>
-        /// <param name="eventName">Name of the event schema.</param>
-        /// <param name="eventParams">An EventBuilder that describes the event params for the event.</param>
-        public void RecordEvent(string eventName, EventBuilder eventParams)
-        {
-            RecordEvent(eventName, eventParams == null ? new Dictionary<string, object>() : eventParams.ToDictionary());
-        }
-
-        /// <summary>
-        /// Sends an event to Collect.
-        /// </summary>
-        /// <param name="eventName">Name of the event schema.</param>
-        /// <param name="eventParams">Event parameters for the event.</param>
-        [Obsolete("Prefer 'RecordEvent' instead, Trigger will be removed in a future update.")]
-        public void TriggerEvent(string eventName, Dictionary<string, object> eventParams)
-        {
-            RecordEvent(eventName, eventParams);
-        }
-
-        /// <summary>
-        /// Sends an event to Collect.
-        /// </summary>
-        /// <param name="eventName">Name of the event schema.</param>
-        /// <param name="eventParams">Event parameters for the event.</param>
+        /// <param name="eventName">Event name.</param>
+        /// <param name="eventParams">Event parameters.</param>
         public void RecordEvent(string eventName, Dictionary<string, object> eventParams)
         {
-            if (!this.initialised)
-            {
-                Logger.LogError("You must first start the SDK via the StartSDK method.");
-                return;
+            var gameEvent = new GameEvent(eventName);
+            foreach (var key in eventParams.Keys) {
+                gameEvent.AddParam(key, eventParams[key]);
             }
-
-            // the header for every event is eventName, userID, sessionID and timestamp
-            var eventRecord = new Dictionary<string, object>();
-            eventRecord[EV_KEY_NAME]        = eventName;
-            eventRecord[EV_KEY_USER_ID]     = this.UserID;
-            eventRecord[EV_KEY_SESSION_ID]  = this.SessionID;
-
-            // Collect will insert it's own timestamp if null is returned by the timestamp function
-            string currentTimestamp = GetCurrentTimestamp();
-            if (!String.IsNullOrEmpty(currentTimestamp)) {
-                eventRecord[EV_KEY_TIMESTAMP]   = GetCurrentTimestamp();
-            }
-
-            // every template should support sdkVersion and platform in it's event params
-            if (!eventParams.ContainsKey(EP_KEY_PLATFORM))
-            {
-                eventParams.Add(EP_KEY_PLATFORM, this.Platform);
-            }
-
-            if (!eventParams.ContainsKey(EP_KEY_SDK_VERSION))
-            {
-                eventParams.Add(EP_KEY_SDK_VERSION, Settings.SDK_VERSION);
-            }
-
-            eventRecord[EV_KEY_PARAMS] = eventParams;
-
-            if (String.IsNullOrEmpty(this.UserID))
-            {
-
-            }
-            else if (!this.eventStore.Push(MiniJSON.Json.Serialize(eventRecord)))
-            {
-                Logger.LogWarning("Event Store full, unable to handle event.");
-            }
+            RecordEvent(gameEvent);
         }
 
         /// <summary>
@@ -350,32 +284,32 @@ namespace DeltaDNA
 
         /// <summary>
         /// Records that the game received a push notification.  It is safe to call this method
-        /// Before calling StartSDK, the 'notificationOpened' event will be sent at that time.
+        /// before calling StartSDK, the 'notificationOpened' event will be sent at that time.
         /// </summary>
-        /// <param name="payload">Payload.</param>
+        /// <param name="payload">The notification payload.</param>
         public void RecordPushNotification(Dictionary<string, object> payload)
         {
             Logger.LogDebug("Received push notification: "+payload);
-
-            EventBuilder eventParams = new EventBuilder();
+ 
+            var notificationEvent = new GameEvent("notificationOpened");
             try {
                 if (payload.ContainsKey("_ddId")) {
-                    eventParams.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
+                    notificationEvent.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
                 }
                 if (payload.ContainsKey("_ddName")) {
-                    eventParams.AddParam("notificationName", payload["_ddName"]);
+                    notificationEvent.AddParam("notificationName", payload["_ddName"]);
                 }
                 if (payload.ContainsKey("_ddLaunch")) {
-                    eventParams.AddParam("notificationLaunch", Convert.ToBoolean(payload["_ddLaunch"]));
+                    notificationEvent.AddParam("notificationLaunch", Convert.ToBoolean(payload["_ddLaunch"]));
                 }
             } catch (Exception ex) {
-                Logger.LogError("Error parsing push notification payload: "+ex);
+                Logger.LogError("Error parsing push notification payload. "+ex.Message);
             }
 
             if (this.IsInitialised) {
-                this.RecordEvent("notificationOpened", eventParams);
+                this.RecordEvent(notificationEvent);
             } else {
-                this._launchNotificationEventParams = eventParams;
+                this.launchNotificationEvent = notificationEvent;
             }
         }
 
@@ -423,12 +357,6 @@ namespace DeltaDNA
         /// Helper for Android push notifications.
         /// </summary>
         public AndroidNotifications AndroidNotifications { get; private set; }
-
-        /// <summary>
-        /// Helper for building common transaction type events.
-        /// </summary>
-        /// <value>The transaction.</value>
-        public TransactionBuilder Transaction { get; private set; }
 
         /// <summary>
         /// Clears the persistent data such as user id.  Useful for testing purposes.
@@ -784,39 +712,36 @@ namespace DeltaDNA
             {
                 Logger.LogDebug("Sending 'newPlayer' event");
 
-                var newPlayerParams = new EventBuilder()
+                var newPlayerEvent = new GameEvent("newPlayer")
                     .AddParam("userCountry", ClientInfo.CountryCode);
 
-                this.RecordEvent("newPlayer", newPlayerParams);
+                RecordEvent(newPlayerEvent);
             }
 
             if (Settings.OnInitSendGameStartedEvent)
             {
                 Logger.LogDebug("Sending 'gameStarted' event");
 
-                if (ClientInfo.Platform.Contains("IOS") && String.IsNullOrEmpty(this.PushNotificationToken))
-                {
-                    Logger.LogWarning("No Apple push notification token set, sending push notifications to iOS devices will be unavailable.");
-                }
-                else if (ClientInfo.Platform.Contains("ANDROID") && String.IsNullOrEmpty(this.AndroidRegistrationID))
-                {
-                    Logger.LogWarning("No Android registration id set, sending push notifications to Android devices will be unavailable.");
-                }
-
-                var gameStartedParams = new EventBuilder()
+                var gameStartedEvent = new GameEvent("gameStarted")
                     .AddParam("clientVersion", this.ClientVersion)
-                    .AddParam("pushNotificationToken", this.PushNotificationToken)
-                    .AddParam("androidRegistrationID", this.AndroidRegistrationID)
                     .AddParam("userLocale", ClientInfo.Locale);
 
-                this.RecordEvent("gameStarted", gameStartedParams);
+                if (!String.IsNullOrEmpty(this.PushNotificationToken)) {
+                    gameStartedEvent.AddParam("pushNotificationToken", this.PushNotificationToken);
+                }
+
+                if (!String.IsNullOrEmpty(this.AndroidRegistrationID)) {
+                    gameStartedEvent.AddParam("androidRegistrationID", this.AndroidRegistrationID);
+                }
+
+                RecordEvent(gameStartedEvent);
             }
 
             if (Settings.OnInitSendClientDeviceEvent)
             {
                 Logger.LogDebug("Sending 'clientDevice' event");
 
-                EventBuilder clientDeviceParams = new EventBuilder()
+                var clientDeviceEvent = new GameEvent("clientDevice")
                     .AddParam("deviceName", ClientInfo.DeviceName)
                     .AddParam("deviceType", ClientInfo.DeviceType)
                     .AddParam("hardwareVersion", ClientInfo.DeviceModel)
@@ -826,7 +751,7 @@ namespace DeltaDNA
                     .AddParam("timezoneOffset", ClientInfo.TimezoneOffset)
                     .AddParam("userLanguage", ClientInfo.LanguageCode);
 
-                this.RecordEvent("clientDevice", clientDeviceParams);
+                RecordEvent(clientDeviceEvent);
             }
         }
 
