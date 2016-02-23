@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using DeltaDNA;
 
@@ -35,7 +35,7 @@ namespace DeltaDNAAds
         {
             Logger.LogInfo("Registering for ads");
 
-            if (!DDNA.Instance.IsInitialised) {
+            if (!DDNA.Instance.HasStarted) {
                 Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
                 return;
             }

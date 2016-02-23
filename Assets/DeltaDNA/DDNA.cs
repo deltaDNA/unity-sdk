@@ -21,7 +21,7 @@ namespace DeltaDNA
 
         public static readonly string AUTO_GENERATED_USER_ID = null;
 
-        private bool initialised = false;
+        private bool started = false;
         private string collectURL;
         private string engageURL;
 
@@ -91,7 +91,7 @@ namespace DeltaDNA
                     this.eventStore = new EventStore(eventStorePath);
                 }
 
-                this.initialised = true;
+                this.started = true;
 
                 if (this.launchNotificationEvent != null) {
                     RecordEvent(this.launchNotificationEvent);
@@ -125,12 +125,12 @@ namespace DeltaDNA
         {
             lock (_lock)
             {
-                if (this.initialised) {
+                if (this.started) {
                     Logger.LogInfo("Stopping DDNA SDK");
                     RecordEvent("gameEnded");
                     CancelInvoke();
                     Upload();
-                    this.initialised = false;
+                    this.started = false;
                 } else {
                     Logger.LogDebug("SDK not running");
                 }
@@ -143,7 +143,7 @@ namespace DeltaDNA
         /// <param name="gameEvent">Event to record.</param>
         public void RecordEvent<T>(T gameEvent) where T : GameEvent<T>
         {
-            if (!this.initialised) {
+            if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method");
             }
 
@@ -203,7 +203,7 @@ namespace DeltaDNA
         /// <param name="callback">Method called with the response from our server.</param>
         public void RequestEngagement(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
         {
-            if (!this.initialised)
+            if (!this.started)
             {
                 Logger.LogError("You must first start the SDK via the StartSDK method.");
                 return;
@@ -312,7 +312,7 @@ namespace DeltaDNA
                 Logger.LogError("Error parsing push notification payload. "+ex.Message);
             }
 
-            if (this.IsInitialised) {
+            if (this.started) {
                 this.RecordEvent(notificationEvent);
             } else {
                 this.launchNotificationEvent = notificationEvent;
@@ -326,7 +326,7 @@ namespace DeltaDNA
         /// </summary>
         public void Upload()
         {
-            if (!this.initialised)
+            if (!this.started)
             {
                 Logger.LogDebug("You must first start the SDK via the StartSDK method.");
                 return;
@@ -467,7 +467,7 @@ namespace DeltaDNA
         /// <summary>
         /// Gets a value indicating whether this instance is initialised.
         /// </summary>
-        public bool IsInitialised { get { return this.initialised; }}
+        public bool HasStarted { get { return this.started; }}
 
         /// <summary>
         /// Gets a value indicating whether an event upload is in progress.
