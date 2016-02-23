@@ -16,8 +16,6 @@ namespace DeltaDNA
     public class DDNA : Singleton<DDNA>
     {
         static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
-        static readonly string PF_KEY_PUSH_NOTIFICATION_TOKEN = "DDSDK_PUSH_NOTIFICATION_TOKEN";
-        static readonly string PF_KEY_ANDROID_REGISTRATION_ID = "DDSDK_ANDROID_REGISTRATION_ID";
 
         public static readonly string AUTO_GENERATED_USER_ID = null;
 
@@ -27,6 +25,8 @@ namespace DeltaDNA
 
         private EventStore eventStore = null;
         private GameEvent launchNotificationEvent = null;
+        private string pushNotificationToken = null;
+        private string androidRegistrationId = null;
 
         private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc);
 
@@ -371,8 +371,6 @@ namespace DeltaDNA
         {
             // PlayerPrefs
             PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
-            PlayerPrefs.DeleteKey(PF_KEY_PUSH_NOTIFICATION_TOKEN);
-            PlayerPrefs.DeleteKey(PF_KEY_ANDROID_REGISTRATION_ID);
 
             this.eventStore.ClearAll();
             Engage.ClearCache();
@@ -500,20 +498,20 @@ namespace DeltaDNA
         {
             get
             {
-                string v = PlayerPrefs.GetString(PF_KEY_PUSH_NOTIFICATION_TOKEN, null);
-                if (String.IsNullOrEmpty(v))
-                {
-                    return null;
-                }
-                return v;
+                return this.pushNotificationToken;
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    PlayerPrefs.SetString(PF_KEY_PUSH_NOTIFICATION_TOKEN, value);
-                    PlayerPrefs.Save();
+                if (!String.IsNullOrEmpty(value)) {
+                    var notificationServicesEvent = new GameEvent("notificationServices")
+                        .AddParam("pushNotificationToken", value);
+
+                    if (this.started) {
+                        RecordEvent(notificationServicesEvent);
+                    } // else send with clientDevice event
+                    this.pushNotificationToken = value;
                 }
+
             }
         }
 
@@ -525,19 +523,18 @@ namespace DeltaDNA
         {
             get
             {
-                string v = PlayerPrefs.GetString(PF_KEY_ANDROID_REGISTRATION_ID, null);
-                if (String.IsNullOrEmpty(v))
-                {
-                    return null;
-                }
-                return v;
+                return this.androidRegistrationId;
             }
             set
             {
-                if (!String.IsNullOrEmpty(value))
-                {
-                    PlayerPrefs.SetString(PF_KEY_ANDROID_REGISTRATION_ID, value);
-                    PlayerPrefs.Save();
+                if (!String.IsNullOrEmpty(value)) {
+                    var notificationServicesEvent = new GameEvent("notificationServices")
+                        .AddParam("androidRegistrationID", value);
+                    
+                    if (this.started) {
+                        RecordEvent(notificationServicesEvent);
+                    } // else send with clientDevice event
+                    this.androidRegistrationId = value;
                 }
             }
         }
@@ -669,6 +666,7 @@ namespace DeltaDNA
 
             resultCallback(succeeded, status);
         }
+
         internal string ResolveEngageURL(string httpBody)
         {
             string url;
