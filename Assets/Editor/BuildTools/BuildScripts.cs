@@ -90,9 +90,7 @@ namespace DeltaDNA {
         static void ExportSmartAdsPackage()
         {
             string[] assets = {
-                "Assets/DeltaDNAAds",
-                "Assets/Plugins/iOS/DDNASmartAdsUnityPlugin.h",
-                "Assets/Plugins/iOS/DDNASmartAdsUnityPlugin.m"
+                "Assets/DeltaDNAAds"
             };
 
             string filename = OutputFilename("deltadna-smartads", SdkVersion());
