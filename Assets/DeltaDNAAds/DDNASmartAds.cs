@@ -1,3 +1,7 @@
+//
+// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+//
+
 using System;
 using System.Collections.Generic;
 using DeltaDNA;

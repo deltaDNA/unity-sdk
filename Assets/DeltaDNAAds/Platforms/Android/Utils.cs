@@ -1,4 +1,8 @@
-﻿namespace DeltaDNAAds.Android
+﻿//
+// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+//
+
+namespace DeltaDNAAds.Android
 {
     public class Utils {
 

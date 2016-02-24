@@ -1,4 +1,8 @@
-﻿using DeltaDNA;
+﻿//
+// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+//
+
+using DeltaDNA;
 using System.Runtime.InteropServices;
 
 namespace DeltaDNAAds.iOS {

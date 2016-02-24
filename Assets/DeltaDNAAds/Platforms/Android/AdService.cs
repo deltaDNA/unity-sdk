@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿//
+// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+//
+
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace DeltaDNAAds.Android 
