@@ -543,7 +543,7 @@ namespace DeltaDNA
             }
             set
             {
-                if (!String.IsNullOrEmpty(value)) {
+                if (!String.IsNullOrEmpty(value) && value != this.pushNotificationToken) {
                     var notificationServicesEvent = new GameEvent("notificationServices")
                         .AddParam("pushNotificationToken", value);
 
@@ -568,7 +568,7 @@ namespace DeltaDNA
             }
             set
             {
-                if (!String.IsNullOrEmpty(value)) {
+                if (!String.IsNullOrEmpty(value) && value != this.androidRegistrationId) {
                     var notificationServicesEvent = new GameEvent("notificationServices")
                         .AddParam("androidRegistrationID", value);
                     
