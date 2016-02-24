@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace DeltaDNA.Messaging
+namespace DeltaDNA
 {
     public class Popup : IPopup
     {

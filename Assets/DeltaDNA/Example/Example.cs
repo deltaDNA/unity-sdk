@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using DeltaDNA;
-using DeltaDNA.Messaging;
 
-public class DeltaDNAExample : MonoBehaviour {
+namespace DeltaDNA {
+
+public class Example : MonoBehaviour {
 
     public const string ENVIRONMENT_KEY = "76410301326725846610230818914037";
     public const string COLLECT_URL = "http://collect2470ntysd.deltadna.net/collect/api";
@@ -179,3 +179,5 @@ public class DeltaDNAExample : MonoBehaviour {
         GUI.TextField(new Rect(0, 25, 300, 175), popupContent);
     }
 }
+
+} // namespace DeltaDNA

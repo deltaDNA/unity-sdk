@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DeltaDNA.Messaging
+namespace DeltaDNA
 {
     public class PopupEventArgs: EventArgs
     {
