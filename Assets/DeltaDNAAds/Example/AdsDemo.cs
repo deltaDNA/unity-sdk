@@ -52,7 +52,7 @@ namespace DeltaDNAAds
             };
             
             // Start collecting data
-            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
+            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
 
             // Register for ads
             DDNASmartAds.Instance.RegisterForAds();

@@ -35,7 +35,7 @@ public class DeltaDNAExample : MonoBehaviour {
         DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
 
         // Start collecting data
-        DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
+        DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
     }
 
     // Update is called once per frame
@@ -156,7 +156,7 @@ public class DeltaDNAExample : MonoBehaviour {
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Start SDK")) {
-            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL, DDNA.AUTO_GENERATED_USER_ID);
+            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Stop SDK")) {

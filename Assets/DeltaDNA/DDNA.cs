@@ -16,9 +16,7 @@ namespace DeltaDNA
     public class DDNA : Singleton<DDNA>
     {
         static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
-
-        public static readonly string AUTO_GENERATED_USER_ID = null;
-
+ 
         private bool started = false;
         private string collectURL;
         private string engageURL;
@@ -52,12 +50,24 @@ namespace DeltaDNA
         #region Client Interface
 
         /// <summary>
+        /// Starts the SDK.  Call before sending events or making engagements.  The SDK will 
+        /// generate a new user id if this is the first run.
+        /// </summary>
+        /// <param name="envKey">The unique environment key for this game environment.</param>
+        /// <param name="collectURL">The Collect URL for this game.</param>
+        /// <param name="engageURL">The Engage URL for this game.</param>
+        public void StartSDK(string envKey, string collectURL, string engageURL)
+        {
+            StartSDK(envKey, collectURL, engageURL, null);
+        }
+
+        /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.
         /// </summary>
         /// <param name="envKey">The unique environment key for this game environment.</param>
         /// <param name="collectURL">The Collect URL for this game.</param>
         /// <param name="engageURL">The Engage URL for this game.</param>
-        /// <param name="userID">The user id for the player, if set to AUTO_GENERATED_USER_ID we create one for you.</param>
+        /// <param name="userID">The user id for the player, if set to null we create one for you.</param>
         public void StartSDK(string envKey, string collectURL, string engageURL, string userID)
         {
             lock (_lock)
