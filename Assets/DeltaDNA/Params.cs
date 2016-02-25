@@ -26,6 +26,8 @@ namespace DeltaDNA {
 
         public Params AddParam(string key, object value)
         {
+            if (value == null) return this;
+
             try {
                 if (value is Params) {
                     _params[key] = ((Params) value).AsDictionary();
