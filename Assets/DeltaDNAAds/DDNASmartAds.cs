@@ -119,142 +119,198 @@ namespace DeltaDNAAds
         #region Native Bridge
 
         // Methods may be called from threads other than UnityMain, action queue ensures methods
-        // execute on the UnityMain thread.
+        // execute on the UnityMain thread.  Actions created explicity to avoid variables not being
+        // captured correctly.
 
         internal void DidRegisterForInterstitialAds()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Registered for interstitial ads");
-                if (OnDidRegisterForInterstitialAds != null) OnDidRegisterForInterstitialAds();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Registered for interstitial ads");
+
+                if (OnDidRegisterForInterstitialAds != null) {
+                    OnDidRegisterForInterstitialAds();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidFailToRegisterForInterstitialAds(string reason)
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Failed to register for interstitial ads: "+reason);
-                if (OnDidFailToRegisterForInterstitialAds != null) OnDidFailToRegisterForInterstitialAds(reason);
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Failed to register for interstitial ads: "+reason);
+
+                if (OnDidFailToRegisterForInterstitialAds != null) {
+                    OnDidFailToRegisterForInterstitialAds(reason);
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidOpenInterstitialAd()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Opened an interstitial ad");
-                if (OnInterstitialAdOpened != null) OnInterstitialAdOpened();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Opened an interstitial ad");
+
+                if (OnInterstitialAdOpened != null) {
+                    OnInterstitialAdOpened();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidFailToOpenInterstitialAd()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Failed to open an insterstital ad");
-                if (OnInterstitialAdFailedToOpen != null) OnInterstitialAdFailedToOpen();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Failed to open an insterstital ad");
+
+                if (OnInterstitialAdFailedToOpen != null) {
+                    OnInterstitialAdFailedToOpen();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidCloseInterstitialAd()
         {
-            Logger.LogInfo("Closed an interstitial ad");
-            actions.Enqueue(() => {
-                if (OnInterstitialAdClosed != null) OnInterstitialAdClosed();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Closed an interstitial ad");
+
+                if (OnInterstitialAdClosed != null) {
+                    OnInterstitialAdClosed();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidRegisterForRewardedAds()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Registered for rewarded ads");
-                if (OnDidRegisterForRewardedAds != null) OnDidRegisterForRewardedAds();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Registered for rewarded ads");
+
+                if (OnDidRegisterForRewardedAds != null) {
+                    OnDidRegisterForRewardedAds();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidFailToRegisterForRewardedAds(string reason)
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Failed to register for rewarded ads: "+reason);
-                if (OnDidFailToRegisterForRewardedAds != null) OnDidFailToRegisterForRewardedAds(reason);
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Failed to register for rewarded ads: "+reason);
+
+                if (OnDidFailToRegisterForRewardedAds != null) {
+                    OnDidFailToRegisterForRewardedAds(reason);
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidOpenRewardedAd()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Opened a rewarded ad");
-                if (OnRewardedAdOpened != null) OnRewardedAdOpened();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Opened a rewarded ad");
+
+                if (OnRewardedAdOpened != null) {
+                    OnRewardedAdOpened();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidFailToOpenRewardedAd()
         {
-            actions.Enqueue(() => {
-                Logger.LogInfo("Failed to open a rewarded ad");
-                if (OnRewardedAdFailedToOpen != null) OnRewardedAdFailedToOpen();
-            });
+            Action action = delegate() {
+                Logger.LogDebug("Failed to open a rewarded ad");
+
+                if (OnRewardedAdFailedToOpen != null) {
+                    OnRewardedAdFailedToOpen();
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void DidCloseRewardedAd(string rewardJSON)
         {
-            bool reward = false;
-            try {
-                JSONObject obj = Json.Deserialize(rewardJSON) as JSONObject;
-                if (obj.ContainsKey("reward")) {
-                    reward = (bool)obj["reward"];
-                }
-            } catch (Exception) {}
+            Action action = delegate() {
+                bool reward = false;
+                try {
+                    JSONObject obj = Json.Deserialize(rewardJSON) as JSONObject;
+                    if (obj.ContainsKey("reward")) {
+                        reward = (bool)obj["reward"];
+                    }
+                } catch (Exception) {}
 
-            actions.Enqueue(() => {
-                Logger.LogInfo("Closed a rewarded ad: reward="+reward);
-                if (OnRewardedAdClosed != null) OnRewardedAdClosed(reward);
-            });
+                Logger.LogDebug("Closed a rewarded ad: reward="+reward);
+
+                if (OnRewardedAdClosed != null) {
+                    OnRewardedAdClosed(reward);
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void RecordEvent(string message)
         {
-            JSONObject obj = null;
-            try {
-                obj = Json.Deserialize(message) as JSONObject;
-            } catch (Exception exception) {
-                Logger.LogError("Failed to record event: "+exception.Message);
-            }
+            Action action = delegate() {
+                JSONObject obj = null;
+                try {
+                    obj = Json.Deserialize(message) as JSONObject;
 
-            var eventName = obj["eventName"] as String;
-            var eventParameters = obj["parameters"] as JSONObject;
+                    var eventName = obj["eventName"] as String;
+                    var eventParameters = obj["parameters"] as JSONObject;
 
-            if (obj != null) {
-                actions.Enqueue(() => {
-                    DDNA.Instance.RecordEvent(eventName, eventParameters);
-                });
-            }
+                    if (obj != null) {
+                        DDNA.Instance.RecordEvent(eventName, eventParameters);
+                    }
+
+                } catch (Exception exception) {
+                    Logger.LogError("Failed to record event: "+exception.Message);
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         internal void RequestEngagement(string request)
         {
-            JSONObject engagement = null;
-            try {
-                engagement = Json.Deserialize(request) as JSONObject;
-            } catch (Exception exception) {
-                Logger.LogError("Failed to deserialise engage request: "+exception.Message);
-            }
+            Action action = delegate() {
+                JSONObject engagement = null;
+                try {
+                    engagement = Json.Deserialize(request) as JSONObject;
+                } catch (Exception exception) {
+                    Logger.LogError("Failed to deserialise engage request: "+exception.Message);
+                }
 
-            if (engagement != null) {
-                var decisionPoint = engagement["decisionPoint"] as string;
-                var flavour = engagement["flavour"] as string;
-                var parameters = engagement["parameters"] as JSONObject;
-                var id = engagement["id"] as string;
+                if (engagement != null) {
+                    var decisionPoint = engagement["decisionPoint"] as string;
+                    var flavour = engagement["flavour"] as string;
+                    var parameters = engagement["parameters"] as JSONObject;
+                    var id = engagement["id"] as string;
 
-                EngageResponse engageResponse = (response, statusCode, error) => {
-                    manager.EngageResponse(id, response, statusCode, error);
-                };
+                    EngageResponse engageResponse = (response, statusCode, error) => {
+                        manager.EngageResponse(id, response, statusCode, error);
+                    };
 
-                actions.Enqueue(() => {
                     EngageRequest engageRequest = new EngageRequest(decisionPoint);
                     engageRequest.Flavour = flavour;
                     engageRequest.Parameters = parameters;
 
                     StartCoroutine(Engage.Request(this, engageRequest, engageResponse));
-                });
-            }
+                }
+            };
+
+            actions.Enqueue(action);
         }
 
         #endregion
