@@ -815,7 +815,6 @@ namespace DeltaDNA
                     .AddParam("hardwareVersion", ClientInfo.DeviceModel)
                     .AddParam("operatingSystem", ClientInfo.OperatingSystem)
                     .AddParam("operatingSystemVersion", ClientInfo.OperatingSystemVersion)
-                    .AddParam("manufacturer", ClientInfo.Manufacturer)
                     .AddParam("timezoneOffset", ClientInfo.TimezoneOffset)
                     .AddParam("userLanguage", ClientInfo.LanguageCode);
 

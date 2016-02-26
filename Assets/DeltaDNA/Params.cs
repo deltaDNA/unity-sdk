@@ -26,7 +26,9 @@ namespace DeltaDNA {
 
         public Params AddParam(string key, object value)
         {
-            if (value == null) return this;
+            if (value == null) {
+                throw new ArgumentNullException("Value for key "+key+" can not be null");
+            }
 
             try {
                 if (value is Params) {
