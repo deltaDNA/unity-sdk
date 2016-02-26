@@ -22,6 +22,8 @@ ProjectSettings/*
 # Native dependencies (add exclusions below)
 Assets/DeltaDNAAds/Plugins/Android.meta
 Assets/DeltaDNAAds/Plugins/Android/*
+Assets/DeltaDNA/Plugins/Android/*
+!Assets/DeltaDNA/Plugins/Android/deltadna-notifications-*
 
 # Other
 *.pfx
