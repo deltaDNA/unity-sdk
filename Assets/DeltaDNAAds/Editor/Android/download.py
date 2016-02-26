@@ -11,7 +11,6 @@ LIBS = 'Assets/DeltaDNAAds/Plugins/Android'
 CONFIG = 'config.json'
 NETWORKS = [
 'admob',
-'mobfox',
 'mopub',
 'adcolony',
 'amazon',
