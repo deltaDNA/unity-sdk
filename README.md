@@ -6,7 +6,30 @@ Our analytics SDK is written entirely in Unity with no native code requirements.
 
 ## Quick Start
 
-For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).
+For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).  *Beware*, the API changes for starting the SDK and using event builders since beta 4 are outdated on the platform docs.
+
+Checkout the example in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
+
+```csharp
+DDNA.Instance.ClientVersion = "1.0.0";
+DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
+                       "YOUR_COLLECT_URL",
+                       "YOUR_ENGAGE_URL");
+```
+
+On the first run this will create new user id and send a `newPlayer` event. On every call it will send a `gameStarted` and `clientDevice` event.
+
+#### Custom Events
+
+You can easily record custom events by using the `GameEvent` class.  Create a `GameEvent` with the name of your event schema.  Call `AddParam` to add custom event parameters to the event.  For example:
+
+```csharp
+GameEvent gameEvent = new GameEvent("myEvent")
+    .AddParam("option", "sword")
+    .AddParam("action", "sell");
+
+DDNA.Instance.RecordEvent(gameEvent);
+```
 
 ## SmartAds
 
@@ -22,8 +45,7 @@ Start the analytics SDK.
 DDNA.Instance.ClientVersion = "1.0.0";
 DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
                        "YOUR_COLLECT_URL",
-                       "YOUR_ENGAGE_URL",
-                       DDNA.AUTO_GENERATED_USER_ID);
+                       "YOUR_ENGAGE_URL");
 ```
 
 Register for ads.
@@ -67,4 +89,8 @@ Once Unity has generated the XCode project, run the `pods.command` file, which w
 
 ### Android Integration
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\Plugins\Android` folder.  Unity will pick these up when you build the APK.
+We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\Plugins\Android` folder.  Unity will pick these up when you build the APK.  *Note* the download script will not run properly, contact deltaDNA to get hold of the dependencies.
+
+## License
+
+The analytics sources under Assets/DeltaDNA are available under the Apache 2.0 license.  The SmartAds sources under Assets/DeltaDNAAds are available under deltaDNA's commercial license.
