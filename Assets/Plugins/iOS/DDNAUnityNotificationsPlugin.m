@@ -9,17 +9,6 @@ extern NSString *kUnityDidReceiveRemoteNotification;
 extern NSString *kUnityDidRegisterForRemoteNotificationsWithDeviceToken;
 extern NSString *kUnityDidFailToRegisterForRemoteNotificationsWithError;
 
-// Extenal functions called from Unity
-void _registerForPushNotifications()
-{
-    [[DDNAUnityNotificationsPlugin sharedPlugin] registerForPushNotifications];
-}
-
-void _unregisterForPushNotifications()
-{
-    [[DDNAUnityNotificationsPlugin sharedPlugin] unregisterForPushNotifications];
-}
-
 @interface DDNAUnityNotificationsPlugin ()
 {
 
@@ -72,7 +61,7 @@ static NSDictionary *_remoteNotification = nil;
         NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
         if (payload != nil) {
             payload[@"_ddLaunch"] = @YES;
-            UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidLaunchWithPushNotification",
+            UnitySendMessage("DeltaDNA.IosNotifications", "DidLaunchWithPushNotification",
                 [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
         }
     }
@@ -84,7 +73,7 @@ static NSDictionary *_remoteNotification = nil;
     if (payload != nil) {
         UIApplication *application = [UIApplication sharedApplication];
         payload[@"_ddLaunch"] = [NSNumber numberWithBool:application.applicationState != UIApplicationStateActive];
-        UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidReceivePushNotification",
+        UnitySendMessage("DeltaDNA.IosNotifications", "DidReceivePushNotification",
             [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
     }
 }
@@ -96,7 +85,7 @@ static NSDictionary *_remoteNotification = nil;
         NSString *deviceToken = [userInfo description];
         deviceToken = [deviceToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
         deviceToken = [deviceToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-        UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidRegisterForPushNotifications",
+        UnitySendMessage("DeltaDNA.IosNotifications", "DidRegisterForPushNotifications",
             [deviceToken UTF8String]);
     }
 }
@@ -110,7 +99,7 @@ static NSDictionary *_remoteNotification = nil;
         errorMsg = [error localizedDescription];
     }
 
-    UnitySendMessage("DeltaDNA.Notifications.IosNotifications", "DidFailToRegisterForPushNotifications",
+    UnitySendMessage("DeltaDNA.IosNotifications", "DidFailToRegisterForPushNotifications",
         [errorMsg UTF8String]);
 }
 
