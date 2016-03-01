@@ -26,10 +26,6 @@ namespace DeltaDNA {
 
         public Params AddParam(string key, object value)
         {
-            if (value == null) {
-                throw new ArgumentNullException("Value for key "+key+" can not be null");
-            }
-
             try {
                 if (value is Params) {
                     _params[key] = ((Params) value).AsDictionary();
@@ -41,7 +37,7 @@ namespace DeltaDNA {
                     _params[key] = value;
                 }
             } catch (ArgumentNullException ex) {
-                throw new Exception("Key can not be null.", ex);
+                throw new ArgumentNullException("Key can not be null.", ex);
             }
 
             return this;

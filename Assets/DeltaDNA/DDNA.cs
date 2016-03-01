@@ -29,7 +29,7 @@ namespace DeltaDNA
     public class DDNA : Singleton<DDNA>
     {
         static readonly string PF_KEY_USER_ID = "DDSDK_USER_ID";
- 
+
         private bool started = false;
         private string collectURL;
         private string engageURL;
@@ -63,7 +63,7 @@ namespace DeltaDNA
         #region Client Interface
 
         /// <summary>
-        /// Starts the SDK.  Call before sending events or making engagements.  The SDK will 
+        /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
         /// generate a new user id if this is the first run.
         /// </summary>
         /// <param name="envKey">The unique environment key for this game environment.</param>
@@ -95,10 +95,15 @@ namespace DeltaDNA
                     if (this.UserID != userID) {
                         newPlayer = true;
                     }
-                } 
+                }
 
-                Logger.LogInfo("Starting DDNA SDK with UserID "+userID);
                 this.UserID = userID;
+
+                if (newPlayer) {
+                    Logger.LogInfo("Starting DDNA SDK with new user "+UserID);
+                } else {
+                    Logger.LogInfo("Starting DDNA SDK with existing user "+UserID);
+                }
 
                 this.EnvironmentKey = envKey;
                 this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
@@ -137,7 +142,7 @@ namespace DeltaDNA
         public void NewSession()
         {
             string sessionID = GenerateSessionID();
-            Logger.LogDebug("Beginning new session "+sessionID);
+            Logger.LogDebug("Starting new session "+sessionID);
             this.SessionID = sessionID;
         }
 
@@ -161,7 +166,7 @@ namespace DeltaDNA
         }
 
         /// <summary>
-        /// Records an event using the GameEvent class.  
+        /// Records an event using the GameEvent class.
         /// </summary>
         /// <param name="gameEvent">Event to record.</param>
         public void RecordEvent<T>(T gameEvent) where T : GameEvent<T>
@@ -269,7 +274,7 @@ namespace DeltaDNA
                     }
                     callback(responseJSON);
                 };
-                
+
                 StartCoroutine(Engage.Request(this, request, handler));
 
             } catch (Exception ex) {
@@ -360,7 +365,7 @@ namespace DeltaDNA
         public void RecordPushNotification(Dictionary<string, object> payload)
         {
             Logger.LogDebug("Received push notification: "+payload);
- 
+
             var notificationEvent = new GameEvent("notificationOpened");
             try {
                 if (payload.ContainsKey("_ddId")) {
@@ -594,7 +599,7 @@ namespace DeltaDNA
                 if (!String.IsNullOrEmpty(value) && value != this.androidRegistrationId) {
                     var notificationServicesEvent = new GameEvent("notificationServices")
                         .AddParam("androidRegistrationID", value);
-                    
+
                     if (this.started) {
                         RecordEvent(notificationServicesEvent);
                     } // else send with clientDevice event
@@ -780,8 +785,10 @@ namespace DeltaDNA
             {
                 Logger.LogDebug("Sending 'newPlayer' event");
 
-                var newPlayerEvent = new GameEvent("newPlayer")
-                    .AddParam("userCountry", ClientInfo.CountryCode);
+                var newPlayerEvent = new GameEvent("newPlayer");
+                if (ClientInfo.CountryCode != null) {
+                    newPlayerEvent.AddParam("userCountry", ClientInfo.CountryCode);
+                }
 
                 RecordEvent(newPlayerEvent);
             }
@@ -817,6 +824,10 @@ namespace DeltaDNA
                     .AddParam("operatingSystemVersion", ClientInfo.OperatingSystemVersion)
                     .AddParam("timezoneOffset", ClientInfo.TimezoneOffset)
                     .AddParam("userLanguage", ClientInfo.LanguageCode);
+
+                if (ClientInfo.Manufacturer != null) {
+                    clientDeviceEvent.AddParam("manufacturer", ClientInfo.Manufacturer);
+                }
 
                 RecordEvent(clientDeviceEvent);
             }
