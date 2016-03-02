@@ -89,7 +89,11 @@ Once Unity has generated the XCode project, run the `pods.command` file, which w
 
 ### Android Integration
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\Plugins\Android` folder.  Unity will pick these up when you build the APK.  *Note* the download script will not run properly, contact deltaDNA to get hold of the dependencies.
+We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK.
+
+The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
+
+*Note* if the download script will not run properly, please contact deltaDNA to get a hold of the dependencies.
 
 ## License
 
