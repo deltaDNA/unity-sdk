@@ -10,13 +10,13 @@ from os import name,sys
 LIBS = 'Assets/DeltaDNAAds/Plugins/Android'
 CONFIG = 'config.json'
 NETWORKS = [
-'admob',
-'mopub',
 'adcolony',
+'admob',
 'amazon',
 'chartboost',
 'flurry',
 'inmobi',
+'mopub',
 'unity',
 'vungle']
 GRADLE = './gradlew' if name is 'posix' else 'gradlew.bat'

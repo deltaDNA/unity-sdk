@@ -51,13 +51,13 @@ dependencies {
         compile 'com.deltadna.android:deltadna-smartads-core:1.0.0-SNAPSHOT'
     }
 
+    network('adcolony')
     network('admob')
     network('amazon')
-    network('mopub')
-    network('adcolony')
     network('chartboost')
     network('flurry')
     network('inmobi')
+    network('mopub')
     network('unity')
     network('vungle')
 }
