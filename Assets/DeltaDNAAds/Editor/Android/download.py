@@ -13,10 +13,12 @@ NETWORKS = [
 'adcolony',
 'admob',
 'amazon',
+'applovin',
 'chartboost',
 'flurry',
 'inmobi',
 'mopub',
+'supersonic',
 'unity',
 'vungle']
 GRADLE = './gradlew' if name is 'posix' else 'gradlew.bat'

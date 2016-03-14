@@ -54,10 +54,12 @@ dependencies {
     network('adcolony')
     network('admob')
     network('amazon')
+    network('applovin')
     network('chartboost')
     network('flurry')
     network('inmobi')
     network('mopub')
+    network('supersonic')
     network('unity')
     network('vungle')
 }
