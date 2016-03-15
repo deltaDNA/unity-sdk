@@ -50,6 +50,14 @@ namespace DeltaDNA
 
         void Awake()
         {
+            if (this.eventStore == null) {
+                string eventStorePath = null;
+                if (this.Settings.UseEventStore) {
+                    eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+                }
+                this.eventStore = new EventStore(eventStorePath);
+            }
+
             // Attach additional behaviours as children of this gameObject
             GameObject iosNotifications = new GameObject();
             this.IosNotifications = iosNotifications.AddComponent<IosNotifications>();
@@ -110,14 +118,6 @@ namespace DeltaDNA
                 this.EngageURL = engageURL;
                 this.Platform = ClientInfo.Platform;
                 this.NewSession();
-
-                if (this.eventStore == null) {
-                    string eventStorePath = null;
-                    if (this.Settings.UseEventStore) {
-                        eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
-                    }
-                    this.eventStore = new EventStore(eventStorePath);
-                }
 
                 this.started = true;
 
@@ -438,10 +438,12 @@ namespace DeltaDNA
         /// </summary>
         public void ClearPersistentData()
         {
-            // PlayerPrefs
             PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
 
-            this.eventStore.ClearAll();
+            if (this.eventStore != null) {
+                this.eventStore.ClearAll();
+            }
+
             Engage.ClearCache();
         }
 
