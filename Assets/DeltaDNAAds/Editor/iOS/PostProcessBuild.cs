@@ -36,6 +36,9 @@ public class PostProcessBuild {
             project.AddBuildProperty(target, "OTHER_CFLAGS", "$(inherited)");
             project.AddBuildProperty(target, "OTHER_LDFLAGS", "$(inherited)");
 
+            // Disable Bitcode
+            project.SetBuildProperty(target, "ENABLE_BITCODE", "NO");
+
             // Copy Podfile into project
             string unityProjectRootPath = Path.GetFullPath("./").Normalize();
             Debug.Log(unityProjectRootPath);
@@ -45,7 +48,7 @@ public class PostProcessBuild {
 
             // Update the XCode project on disk
             project.WriteToFile(projectPath);
-            
+
             // Useful automation...
 
             // Run pod update
