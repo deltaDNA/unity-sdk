@@ -1,5 +1,17 @@
-﻿//
+//
 // Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //
 
 using DeltaDNA;
@@ -8,7 +20,7 @@ using System.Runtime.InteropServices;
 namespace DeltaDNAAds.iOS {
 
     internal class SmartAdsManager : ISmartAdsManager {
-    
+
         #region Interface to native implementation
 
         [DllImport("__Internal")]
@@ -18,13 +30,13 @@ namespace DeltaDNAAds.iOS {
         private static extern bool _isInterstitialAdAvailable();
 
         [DllImport("__Internal")]
-        private static extern void _showInterstitialAd(string adPoint); 
+        private static extern void _showInterstitialAd(string adPoint);
 
         [DllImport("__Internal")]
         private static extern bool _isRewardedAdAvailable();
-        
+
         [DllImport("__Internal")]
-        private static extern void _showRewardedAd(string adPoint); 
+        private static extern void _showRewardedAd(string adPoint);
 
         [DllImport("__Internal")]
         private static extern void _engageResponse(string id, string response, int statusCode, string error);
@@ -42,7 +54,7 @@ namespace DeltaDNAAds.iOS {
 
         #region Public interface
 
-        public void RegisterForAds(string decisionPoint) 
+        public void RegisterForAds(string decisionPoint)
         {
             _registerForAds(decisionPoint);
         }
@@ -98,7 +110,7 @@ namespace DeltaDNAAds.iOS {
         }
 
         #endregion
-    
+
     }
 
 }
