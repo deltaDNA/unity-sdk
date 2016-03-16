@@ -88,17 +88,17 @@ namespace DeltaDNAAds
             ShowInterstitialAd(null);
         }
 
-        public void ShowInterstitialAd(string adPoint)
+        public void ShowInterstitialAd(string decisionPoint)
         {
             if (manager == null) {
                 Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
                 this.DidFailToOpenInterstitialAd();
-            } else if (String.IsNullOrEmpty(adPoint)) {
+            } else if (String.IsNullOrEmpty(decisionPoint)) {
                 Logger.LogInfo("Showing interstitial ad");
                 manager.ShowInterstitialAd();
             } else {
-                Logger.LogInfo("Showing interstitial ad for "+adPoint);
-                manager.ShowInterstitialAd(adPoint);
+                Logger.LogInfo("Showing interstitial ad for "+decisionPoint);
+                manager.ShowInterstitialAd(decisionPoint);
             }
         }
 
@@ -112,17 +112,17 @@ namespace DeltaDNAAds
             ShowRewardedAd(null);
         }
 
-        public void ShowRewardedAd(string adPoint)
+        public void ShowRewardedAd(string decisionPoint)
         {
             if (manager == null) {
                 Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
                 this.DidFailToOpenRewardedAd();
-            } else if (String.IsNullOrEmpty(adPoint)) {
+            } else if (String.IsNullOrEmpty(decisionPoint)) {
                 Logger.LogInfo("Showing rewarded ad");
                 manager.ShowRewardedAd();
             } else {
-                Logger.LogInfo("Showing rewarded ad for "+adPoint);
-                manager.ShowRewardedAd(adPoint);
+                Logger.LogInfo("Showing rewarded ad for "+decisionPoint);
+                manager.ShowRewardedAd(decisionPoint);
             }
         }
 

@@ -54,9 +54,9 @@ namespace DeltaDNAAds.Android
             adService.Call("showAd");
         }
 
-        public void ShowInterstitialAd(string adPoint)
+        public void ShowInterstitialAd(string decisionPoint)
         {
-            adService.Call("showAd", adPoint);
+            adService.Call("showAd", decisionPoint);
         }
 
         public bool IsRewardedAdAvailable()
@@ -69,9 +69,9 @@ namespace DeltaDNAAds.Android
             adService.Call("showRewardedAd");
         }
 
-        public void ShowRewardedAd(string adPoint)
+        public void ShowRewardedAd(string decisionPoint)
         {
-            adService.Call("showRewardedAd", adPoint);
+            adService.Call("showRewardedAd", decisionPoint);
         }
 
         public void EngageResponse(string id, string response, int statusCode, string error) {

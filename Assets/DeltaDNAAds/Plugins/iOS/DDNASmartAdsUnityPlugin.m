@@ -35,9 +35,9 @@ BOOL _isInterstitialAdAvailable()
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAvailable];
 }
 
-void _showInterstitialAd(const char * adPoint)
+void _showInterstitialAd(const char * decisionPoint)
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAdWithAdPoint:GetStringParam(adPoint)];
+    [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAdWithDecisionPoint:GetStringParam(decisionPoint)];
 }
 
 BOOL _isRewardedAdAvailable()
@@ -45,9 +45,9 @@ BOOL _isRewardedAdAvailable()
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAvailable];
 }
 
-void _showRewardedAd(const char * adPoint)
+void _showRewardedAd(const char * decisionPoint)
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] showRewardedAdWithAdPoint:GetStringParam(adPoint)];
+    [[DDNASmartAdsUnityPlugin sharedPlugin] showRewardedAdWithDecisionPoint:GetStringParam(decisionPoint)];
 }
 
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error)
@@ -151,10 +151,10 @@ UIViewController *UnityGetGLViewController();
     }
 }
 
-- (void)showInterstitialAdWithAdPoint:(NSString *)adPoint
+- (void)showInterstitialAdWithDecisionPoint:(NSString *)decisionPoint
 {
     @synchronized(self) {
-        [self.adService showInterstitialAdFromRootViewController:UnityGetGLViewController() adPoint:adPoint];
+        [self.adService showInterstitialAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint];
     }
 }
 
@@ -169,10 +169,10 @@ UIViewController *UnityGetGLViewController();
     }
 }
 
-- (void)showRewardedAdWithAdPoint:(NSString *)adPoint
+- (void)showRewardedAdWithDecisionPoint:(NSString *)decisionPoint
 {
     @synchronized(self) {
-        [self.adService showRewardedAdFromRootViewController:UnityGetGLViewController() adPoint:adPoint];
+        [self.adService showRewardedAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint];
     }
 }
 

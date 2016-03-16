@@ -88,7 +88,7 @@ namespace DeltaDNAAds
             }
 
             if (GUI.Button(new Rect(10, 120, 200, 80), "Interstitial with Ad Point")) {
-                DDNASmartAds.Instance.ShowInterstitialAd("testAdPoint");
+                DDNASmartAds.Instance.ShowInterstitialAd("testDecisionPoint");
             }
 
             GUI.enabled = DDNASmartAds.Instance.IsRewardedAdAvailable();
@@ -98,7 +98,7 @@ namespace DeltaDNAAds
             }
 
             if (GUI.Button(new Rect(10, 320, 200, 80), "Rewarded with Ad Point")) {
-                DDNASmartAds.Instance.ShowRewardedAd("testAdPoint2");
+                DDNASmartAds.Instance.ShowRewardedAd("testDecisionPoint2");
             }
 
         }

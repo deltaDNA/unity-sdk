@@ -19,9 +19,9 @@
 // Unity Binding
 void _registerForAds(const char * decisionPoint);
 BOOL _isInterstitialAdAvailable();
-void _showInterstitialAd(const char * adPoint);
+void _showInterstitialAd(const char * decisionPoint);
 BOOL _isRewardedAdAvailable();
-void _showRewardedAd(const char * adPoint);
+void _showRewardedAd(const char * decisionPoint);
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
 void _pause();
 void _resume();
@@ -34,9 +34,9 @@ void _destroy();
 
 - (void)registerForAds:(NSString *)decisionPoint;
 - (BOOL)isInterstitialAdAvailable;
-- (void)showInterstitialAdWithAdPoint:(NSString *)adPoint;
+- (void)showInterstitialAdWithDecisionPoint:(NSString *)decisionPoint;
 - (BOOL)isRewardedAdAvailable;
-- (void)showRewardedAdWithAdPoint:(NSString *)adPoint;
+- (void)showRewardedAdWithDecisionPoint:(NSString *)decisionPoint;
 - (void)engageResponseForId:(NSString *)engagementId
                    response:(NSString *)response
                  statusCode:(NSInteger)statusCode

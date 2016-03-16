@@ -24,10 +24,10 @@ namespace DeltaDNAAds {
         void RegisterForAds(string decisionPoint);
         bool IsInterstitialAdAvailable();
         void ShowInterstitialAd();
-        void ShowInterstitialAd(string adPoint);
+        void ShowInterstitialAd(string decisionPoint);
         bool IsRewardedAdAvailable();
         void ShowRewardedAd();
-        void ShowRewardedAd(string adPoint);
+        void ShowRewardedAd(string decisionPoint);
         void EngageResponse(string id, string response, int statusCode, string error);
         void OnPause();
         void OnResume();

@@ -30,13 +30,13 @@ namespace DeltaDNAAds.iOS {
         private static extern bool _isInterstitialAdAvailable();
 
         [DllImport("__Internal")]
-        private static extern void _showInterstitialAd(string adPoint);
+        private static extern void _showInterstitialAd(string decisionPoint);
 
         [DllImport("__Internal")]
         private static extern bool _isRewardedAdAvailable();
 
         [DllImport("__Internal")]
-        private static extern void _showRewardedAd(string adPoint);
+        private static extern void _showRewardedAd(string decisionPoint);
 
         [DllImport("__Internal")]
         private static extern void _engageResponse(string id, string response, int statusCode, string error);
@@ -69,9 +69,9 @@ namespace DeltaDNAAds.iOS {
             _showInterstitialAd(null);
         }
 
-        public void ShowInterstitialAd(string adPoint)
+        public void ShowInterstitialAd(string decisionPoint)
         {
-            _showInterstitialAd(adPoint);
+            _showInterstitialAd(decisionPoint);
         }
 
         public bool IsRewardedAdAvailable()
@@ -84,9 +84,9 @@ namespace DeltaDNAAds.iOS {
             _showRewardedAd(null);
         }
 
-        public void ShowRewardedAd(string adPoint)
+        public void ShowRewardedAd(string decisionPoint)
         {
-            _showRewardedAd(adPoint);
+            _showRewardedAd(decisionPoint);
         }
 
         public void EngageResponse(string id, string response, int statusCode, string error)
