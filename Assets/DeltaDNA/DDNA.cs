@@ -181,6 +181,7 @@ namespace DeltaDNA
             var eventSchema = gameEvent.AsDictionary();
             eventSchema["userID"] = this.UserID;
             eventSchema["sessionID"] = this.SessionID;
+            eventSchema["eventUUID"] = Guid.NewGuid().ToString();
 
             string currentTimestmp = GetCurrentTimestamp();
             if (currentTimestmp != null) {
