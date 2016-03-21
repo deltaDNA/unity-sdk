@@ -186,6 +186,7 @@ namespace DeltaDNA
             if (RuntimePlatformIs("PSMPlayer")) return "WEB";
             if (RuntimePlatformIs("XboxOne")) return "XBOXONE";
             if (RuntimePlatformIs("SamsungTVPlayer")) return "ANDROID_CONSOLE";
+            if (RuntimePlatformIs("tvOS")) return "IOS_TV";
 
             return "UNKNOWN";
         }
@@ -281,6 +282,7 @@ namespace DeltaDNA
         private static string GetDeviceType()
         {
             if (RuntimePlatformIs("SamsungTVPlayer")) return "TV";
+            if (RuntimePlatformIs("tvOS")) return "TV";
 
             switch (SystemInfo.deviceType)
             {
@@ -299,6 +301,8 @@ namespace DeltaDNA
 
         private static string GetOperatingSystem()
         {
+            if (RuntimePlatformIs("tvOS")) return "TVOS";
+
             // Unity gives a string with os plus version.  It's not documented
             // how this string is generated but I can have a good guess.
             string os = SystemInfo.operatingSystem.ToUpper();
@@ -316,7 +320,7 @@ namespace DeltaDNA
             if (os.Contains("BLACKBERRY")) return "BLACKBERRY";
             return "UNKNOWN";
         }
-        
+
         private static string GetOperatingSystemVersion()
         {
             try {
