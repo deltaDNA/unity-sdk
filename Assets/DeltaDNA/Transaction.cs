@@ -62,7 +62,7 @@ namespace DeltaDNA {
                 throw new ArgumentException("receipt cannot be null or empty");
             }
 
-            AddParam("receipt", receipt);
+            AddParam("transactionReceipt", receipt);
             return (T) this;
         }
 
@@ -72,7 +72,7 @@ namespace DeltaDNA {
                 throw new ArgumentException("server cannot be null or empty");
             }
 
-            AddParam("server", server);
+            AddParam("transactionServer", server);
             return (T) this;
         }
 
