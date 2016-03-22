@@ -1,6 +1,6 @@
 ![deltaDNA logo](https://deltadna.com/wp-content/uploads/2015/06/deltadna_www@1x.png)
 
-## deltaDNA Analytics and SmartAds Unity SDK
+## deltaDNA 分析和智能广告 Unity SDK
 
 The repository contains the sources for both the analytics and SmartAds SDKs.  They are packaged into separate unitypackages for easy installation.  The analytics can be installed independently, but the SmartAds depends on the analytics.  The unitypackages can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.  
 
