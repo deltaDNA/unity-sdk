@@ -24,9 +24,9 @@ namespace DeltaDNA
 {
 
     /// <summary>
-    /// The Event Store queues game events until they are ready to be sent to Collect.  It is a 
-    /// double buffer queue, events are written to one queue whilst being read from another.  
-    /// Mostly files are used to hold the events as UTF8 json strings.  For platforms that don't 
+    /// The Event Store queues game events until they are ready to be sent to Collect.  It is a
+    /// double buffer queue, events are written to one queue whilst being read from another.
+    /// Mostly files are used to hold the events as UTF8 json strings.  For platforms that don't
     /// support filesystem, such as Webplayer in memory files are used instead.
     /// </summary>
     public class EventStore : IDisposable
@@ -37,7 +37,7 @@ namespace DeltaDNA
         private static readonly string FILE_A = "A";
         private static readonly string FILE_B = "B";
 
-        private static readonly long MAX_FILE_SIZE = 4 * 1024 * 1024;   // 4MB
+        private static readonly long MAX_FILE_SIZE_BYTES = 1024 * 1024;   // 1MB
 
         private bool _initialised = false;
         private bool _disposed = false;
@@ -77,16 +77,7 @@ namespace DeltaDNA
                     return false;
                 }
 
-                if (_infs.Length < MAX_FILE_SIZE)
-                {
-                    PushEvent(obj, _infs);
-                    return true;
-                }
-                else
-                {
-                    Logger.LogWarning("Event Store full");
-                    return false;
-                }
+                return PushEvent(obj, _infs);
             }
         }
 
@@ -106,7 +97,7 @@ namespace DeltaDNA
                     // Swap the filenames
                     string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE);
                     string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE);
-                    
+
                     if (String.IsNullOrEmpty(inFile)) {
                         Logger.LogError("Event Store corruption, PlayerPrefs in file key is missing");
                     }
@@ -117,7 +108,7 @@ namespace DeltaDNA
                         PlayerPrefs.SetString(PF_KEY_IN_FILE, outFile);
                         PlayerPrefs.SetString(PF_KEY_OUT_FILE, inFile);
                     }
-                    
+
                     return true;
                 }
 
@@ -209,15 +200,15 @@ namespace DeltaDNA
                     {
                         if (disposing)
                         {
-                            if (_infs != null) 
+                            if (_infs != null)
                                 _infs.Dispose();
-                                
+
                             if (_outfs != null)
                                 _outfs.Dispose();
                         }
                     }
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 {
                     Logger.LogError("Failed to dispose EventStore cleanly. "+e.Message);
                 }
@@ -236,19 +227,19 @@ namespace DeltaDNA
                 string outPath = null;
                 string inFilename = PlayerPrefs.GetString(PF_KEY_IN_FILE, FILE_A);
                 string outFilename = PlayerPrefs.GetString(PF_KEY_OUT_FILE, FILE_B);
-                
-                if (!String.IsNullOrEmpty(dir)) 
+
+                if (!String.IsNullOrEmpty(dir))
                 {
                     if (!Utils.DirectoryExists(dir))
                     {
                         Logger.LogDebug("Directory not found, creating "+dir);
                         Utils.CreateDirectory(dir);
                     }
-                    
+
                     inPath = Path.Combine(dir, inFilename);
                     outPath = Path.Combine(dir, outFilename);
                 }
-                
+
                 // NB as seperate call after creation resets the files
                 _infs = Utils.CreateStream(inPath);
                 _infs.Seek(0, SeekOrigin.End);
@@ -267,17 +258,21 @@ namespace DeltaDNA
             return false;
         }
 
-        public static void PushEvent(string obj, Stream stream)
+        public static bool PushEvent(string obj, Stream stream)
         {
             byte[] record = Encoding.UTF8.GetBytes(obj);
             byte[] length = BitConverter.GetBytes(record.Length);
 
-            var bytes = new List<byte>();
-            bytes.AddRange(length);
-            bytes.AddRange(record);
-            byte[] byteArray = bytes.ToArray();
+            if (stream.Length + record.Length < MAX_FILE_SIZE_BYTES) {
+                var bytes = new List<byte>();
+                bytes.AddRange(length);
+                bytes.AddRange(record);
+                byte[] byteArray = bytes.ToArray();
 
-            stream.Write(byteArray, 0, byteArray.Length);
+                stream.Write(byteArray, 0, byteArray.Length);
+                return true;
+            }
+            return false;
         }
 
         public static void ReadEvents(Stream stream, IList<string> events)

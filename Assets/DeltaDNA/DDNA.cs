@@ -191,10 +191,10 @@ namespace DeltaDNA
             try {
                 string json = MiniJSON.Json.Serialize(eventSchema);
                 if (!this.eventStore.Push(json)) {
-                    Logger.LogWarning("Event store full, unable to handle event.");
+                    Logger.LogWarning("Event store full, dropping '"+gameEvent.Name+"' event.");
                 }
             } catch (Exception ex) {
-                Logger.LogWarning("Unable to generate JSON for "+gameEvent.Name+" event. "+ex.Message);
+                Logger.LogWarning("Unable to generate JSON for '"+gameEvent.Name+"' event. "+ex.Message);
             }
         }
 
