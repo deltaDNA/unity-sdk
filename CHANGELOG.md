@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Added
+- Limit max event size to 1MB.
 - Support event deduplication with eventUUID field.
 
 ## [4.0.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.0.0) (2016-03-15)
