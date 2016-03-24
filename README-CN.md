@@ -1,22 +1,22 @@
 ![deltaDNA logo](https://deltadna.com/wp-content/uploads/2015/06/deltadna_www@1x.png)
 
-## deltaDNA 分析和智能广告 Unity SDK
+## deltaDNA分析和智能广告Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  They are packaged into separate unitypackages for easy installation.  The analytics can be installed independently, but the SmartAds depends on the analytics.  The unitypackages can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.  
+资源库包含了分析和智能广告SDK两部分源码。为了便于安装，它们被打包成相互分离的Unity包。分析SDK可以被独立安装，但智能广告SDK需要依赖于分析SDK。Unity包可以从GitHub直接下载，通过输入文件名查找到最新版本。通过“资源（Assets）->导入包（Import Package）->定制包（Custom Package）”导入到Unity。
 
-The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
+分析SDK可以支持Unity 4和Unity 5，但是智能广告SDK只能支持Unity 5。
 
-SmartAds is currently an Enterprise only feature.  SmartAds On Demand will be available soon, meanwhile once you've completed the integration steps below, contact <louise.cameron@deltadna.com> to enable the service.
+智能广告SDK目前只能支持企业版（Enterprise）。“On-demand”版不久就会面市，当你完成了下述的集成步骤后，请联系louise.cameron@deltadna.com以咨询启用该服务。
 
-## Analytics
+## 分析
 
-Our analytics SDK is written entirely in Unity with no native code requirements.  Out of the box it runs on any platform that Unity supports.  The easiest way to get started is to download the `deltadna-sdk-*.unitypackage` from this repository, and import into your Unity project.
+我们的分析SDK已经完成了在Unity中的全部代码，不需要任何本地代码支持。在Unity支持的任何平台中都可以直接运行。入门的最简单方式是从资源库中下载`deltadna-sdk-*.unitypackage`，并导入到你的Unity项目中。
 
-## Quick Start
+## 快速开始
 
-For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).  *Beware*, the API changes for starting the SDK and using event builders since beta 4 are outdated on the platform docs.
+有关于如何使用分析SDK的全部信息，请参阅我们的文档[网站](http://docs.deltadna.com/advanced-integration/unity-sdk/)。*特别注意*，从测试版4起，启用分析SDK和使用事件创建者的API已经改变，对于网站上的文档已经过时。
 
-Checkout the example in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
+查看在`Assets\DeltaDNA\Example`的这个例子以了解如何使用这个SDK.。你只需要设置客户端版本和通过一个定制方法`MonoBehaviour`启用这个SDK。
 
 ```csharp
 DDNA.Instance.ClientVersion = "1.0.0";
@@ -25,11 +25,11 @@ DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
                        "YOUR_ENGAGE_URL");
 ```
 
-On the first run this will create new user id and send a `newPlayer` event. On every call it will send a `gameStarted` and `clientDevice` event.
+第一次运行时，这将创建新用户的id并发送一个`newPlayer`事件。每次调用时，它将发送一个`gameStarted`和`clientDevice`事件。
 
-#### Custom Events
+#### 定制事件
 
-You can easily record custom events by using the `GameEvent` class.  Create a `GameEvent` with the name of your event schema.  Call `AddParam` to add custom event parameters to the event.  For example:
+你可以轻松的通过使用`GameEvent`类标记定制事件。使用你的事件项目名称创建一个`GameEvent`方法。调用`AddParam`函数来给这个事件添加定制事件属性。例如：
 
 ```csharp
 var gameEvent = new GameEvent("myEvent")
@@ -39,9 +39,9 @@ var gameEvent = new GameEvent("myEvent")
 DDNA.Instance.RecordEvent(gameEvent);
 ```
 
-#### Engage
+#### 契约
 
-Change the behaviour of the game with an `Engagement`.  For example:
+通过一个`Engagement`方法改变游戏的行为。例如：
 
 ```csharp
 var engagement = new Engagement("gameLoaded")
@@ -51,19 +51,19 @@ var engagement = new Engagement("gameLoaded")
 
 DDNA.Instance.RequestEngagement(engagement, (response) =>
 {
-    // Response is a dictionary of key-values returned from Engage.
+    // 响应（Response）是一个从契约（Engage）返回的键值字典
 });
 ```
 
-## SmartAds
+## 智能广告
 
-Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  To add the Unity extensions download and import the `deltadna-smartads-*.unitypackage`.  We support iOS and Android platforms.
+将智能广告集成到你的Unity项目中需要与我们提供的源码相分离的本地代码扩展。[这里](http://docs.deltadna.com/advanced-integration/smart-ads/)提供了关于如何接入我们智能广告平台的更多信息。添加Unity扩展需要下载和导入`deltadna-smartads-*.unitypackage`。我们支持iOS和Andriod平台。
 
-### Usage
+### 用法
 
-The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNAAds\Example`.  The `AdsDemo` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
+学习如何使用智能广告的最快方法是查阅`Assets\DeltaDNAAds\Example`中的例子。`AdsDemo`类展示了如何使用空隙广告和付费广告。通过调用`RegisterForAds`函数可以激活对智能广告的支持。这必须在开启了分析SDK以后才能够被调用。`DDNASmartAds`类定义了一系列的事件，你可以通过标记回调来获知广告何时开启或关闭。
 
-Start the analytics SDK.
+开启分析SDK。
 
 ```csharp
 DDNA.Instance.ClientVersion = "1.0.0";
@@ -72,51 +72,51 @@ DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
                        "YOUR_ENGAGE_URL");
 ```
 
-Register for ads.
+标记广告。
 
 ```csharp
 DDNASmartAds.Instance.RegisterForAds();
 ```
 
-You can test if an interstitial ad is ready to be displayed with `DDNASmartAds.Instance.IsInterstitialAdAvailable()`.
+你可以使用`DDNASmartAds.Instance.IsInterstitialAdAvailable()`函数测试一个空隙广告是否可以显示。
 
-Show an interstitial ad by calling `DDNASmartAds.Instance.ShowInterstitialAd()`.
+通过调用`DDNASmartAds.Instance.ShowInterstitialAd()`函数展示一个空隙广告。
 
-You can test if a rewarded ad is ready to be displayed with `DDNASmartAds.Instance.IsRewardedAdAvailable()`.
+你可以使用`DDNASmartAds.Instance.IsRewardedAdAvailable()`函数测试一个付费广告是否可以显示。
 
-Show a rewarded ad by calling `DDNASmartAds.Instance.ShowRewardedAd()`.
+通过调用`DDNASmartAds.Instance.ShowRewardedAd()`函数展示一个付费广告。
 
-#### Events
+#### 事件
 
-Callbacks can be added to the following events to be notified when an ad has opened or closed.
+回调可以被添加到下述事件，从而获知广告何时开启或关闭。
 
-* `OnDidRegisterForInterstitialAds` - Called when you have successfully enabled interstitial ads for your game.
-* `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads are unavailable for some reason.  A string parameter reports a possible error.
-* `OnInterstitialAdOpened` - Called when an interstitial ad is shown on screen.
-* `OnInterstitialAdFailedToOpen` - Called if an interstitial ad fails to show.
-* `OnInterstitialAdClosed` - Called when the user has closed an interstitial ad.
-* `OnDidRegisterForRewardedAds` - Called when you have successfully enabled rewarded ads for your game.
-* `OnDidFailToRegisterForRewardedAds` - Called if rewarded ads are unavailable for some reason.  A string parameter reports a possible error.
-* `OnRewardedAdOpened` - Called when a rewarded ad is shown on screen.
-* `OnRewardedAdFailedToOpen` - Called if a rewarded ad fails to show.
-* `OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.
+* `OnDidRegisterForInterstitialAds` - 当你成功将空隙广告嵌入到你的游戏时调用。
+* `OnDidFailToRegisterForInterstitialAds` - 当如果因某些原因一个空隙广告不能使用时调用。通过一个字符串参数报告可能的错误。
+* `OnInterstitialAdOpened` - 当一个空隙广告显示在屏幕时调用。
+* `OnInterstitialAdFailedToOpen` - 如果一个空隙广告显示失败时调用。
+* `OnInterstitialAdClosed` - 当用户关闭一个空隙广告时调用。
+* `OnDidRegisterForRewardedAds` - 当你成功将付费广告嵌入到你的游戏时调用。
+* `OnDidFailToRegisterForRewardedAds` - 当如果因某些原因一个付费广告不能使用时调用。通过一个字符串参数报告可能的错误。
+* `OnRewardedAdOpened` - 当一个付费广告显示在屏幕时调用。
+* `OnRewardedAdFailedToOpen` - 如果一个付费广告显示失败时调用。
+* `OnRewardedAdClosed` - 当用户关闭一个付费广告时调用。一个布尔参数被标识用户是否完整的看完将被付费的广告。
 
-#### Decision Points
+#### 决策点
 
-You can add control of which kinds players see ads by using *Decision Points*.  Show an ad with `ShowInterstitialAd("pointInGameToShowAnAd")` or `ShowRewardedAd("anotherPointInGameToShowAnAd")`, and register the decision point in Portal.  The SDK will ask if the segment this player is in should be shown the ad or not.  It's worth using decision points when you first integrate, if the decision point is not registered, it will be ignored and the ad always shown.
+你可以通过使用*决策点*来添加对哪一类玩家可以看到广告的控制。通过`ShowInterstitialAd("pointInGameToShowAnAd")`或者`ShowRewardedAd("anotherPointInGameToShowAnAd")`展示一个广告，在deltaDNA的后台中标记这个决策点。SDK将询问是否在玩家现在的场景中显示广告。当你第一次集成时必须使用决策点，如果决策点没有在deltaDNA的后台被标记，它将被忽略而且广告将一直显示。
 
-### iOS Integration
+### iOS集成
 
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  A minimal Podfile is included in DeltaDNAAds/Editor/iOS.  It will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  You must run `pod install` from the command line to install the Pods.  Finally open the *Unity-iPhone.xcworkspace* created by pod install.  A `pods.command` file is also included that runs the pod install and opens the XCode workspace for you.
+我们使用[CocoaPods](https://cocoapods.org/)来安装我们的智能广告库外加第三方广告网络库。一个最小化的Podfile被包含在DeltaDNAAds/Editor/iOS。它将添加我们的iOS智能广告Pod连同我们支持的所有广告网络到你的Xcode项目。一个后期处理构建Hook配备Unity生成的XCode项目以支持CocoaPods，并添加Podfile到iOS构建路径。你必须从命令行运行`pod install`以安装这些Pod。最终打开由pod install创建的*Unity-iPhone.xcworkspace*。一个`pods.command`文件也被包含，从而为你运行pod install和打开XCode工作空间。
 
-The included Podfile will install support for all the ad networks deltaDNA supports.  You can customise the Podfile to download only the ad networks you require by using [Subspecs](https://guides.cocoapods.org/syntax/podfile.html#pod).  The process is the same as for the native [iOS SmartAds SDK](https://github.com/deltaDNA/ios-smartads-sdk) and more details on customising the Podfile can be found there.
+所包含的Podfile将为所有deltaDNA支持的广告网络提供支持。你可以定制Podfile以通过使用[Subspecs](https://guides.cocoapods.org/syntax/podfile.html#pod)下载仅仅是你要求的广告网络。这个过程和本地的[iOS智能广告SDK](https://github.com/deltaDNA/ios-smartads-sdk)相同。更多的关于定制Podfile的细节可以从那里找到。
 
-### Android Integration
+### Android集成
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK.
+我们提供一个Python脚本来帮助管理第三方广告网络Dependencies。在`Assets\DeltaDNAAds\Editor\Android`编辑`config.json`以添加你想要集成的广告网络。然后从命令行运行`download.py`。这将下载和复制这些依赖的AARs及Jar文件到`Assets\DeltaDNAAds\Plugins\Android`文件夹。Unity将在你编译APK时加载他们。
 
-The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
+这个SDK已经在`Assets\DeltaDNA\Plugins\Android`为Google Play Services预封装一些Dependencies来推送通知（也就是智能广告）。如果你想使用你自己版本的Google Play Services，你需要删除这些Dependencies（即play-services-base-7.8.0.aar，play-services-gcm-7.8.0.aar等）以避免在编译阶段的重复类定义错误。请注意我们无法保证我们的SDK可以在除了7.8.0版本以外的Google Play Services正常使用。
 
-## License
+## 授权
 
-The sources are available under the Apache 2.0 license.
+该资源适用于Apache 2.0授权。
