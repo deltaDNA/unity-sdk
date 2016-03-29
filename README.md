@@ -6,8 +6,6 @@ The repository contains the sources for both the analytics and SmartAds SDKs.  T
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
-SmartAds is currently an Enterprise only feature.  SmartAds On Demand will be available soon, meanwhile once you've completed the integration steps below, contact <louise.cameron@deltadna.com> to enable the service.
-
 ## Analytics
 
 Our analytics SDK is written entirely in Unity with no native code requirements.  Out of the box it runs on any platform that Unity supports.  The easiest way to get started is to download the `deltadna-sdk-*.unitypackage` from this repository, and import into your Unity project.
