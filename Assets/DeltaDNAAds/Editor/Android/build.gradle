@@ -5,7 +5,7 @@ def smartads = hasProperty('smartads')
 def networks = hasProperty('networks') ? networks.split(',') : []
 def network = { network ->
     if (network in networks) {
-        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.0.0")
+        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.0.1")
     }
 }
 
@@ -48,7 +48,7 @@ dependencies {
         compile 'com.deltadna.android:deltadna-notifications:1.0.1'
     }
     if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads-core:1.0.0'
+        compile 'com.deltadna.android:deltadna-smartads-core:1.0.1'
     }
 
     network('adcolony')
