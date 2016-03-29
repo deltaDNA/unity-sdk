@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [4.0.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.0.1) (2016-03-29)
 ### Added
 - Limit max event size to 1MB.
 - Support event deduplication with eventUUID field.
