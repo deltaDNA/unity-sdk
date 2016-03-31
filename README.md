@@ -12,7 +12,7 @@ Our analytics SDK is written entirely in Unity with no native code requirements.
 
 ## Quick Start
 
-For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).  *Beware*, the API changes for starting the SDK and using event builders since beta 4 are outdated on the platform docs.
+For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).
 
 Checkout the example in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
 
