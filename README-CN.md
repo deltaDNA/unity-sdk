@@ -6,17 +6,15 @@
 
 分析SDK可以支持Unity 4和Unity 5，但是智能广告SDK只能支持Unity 5。
 
-智能广告SDK目前只能支持企业版（Enterprise）。“On-demand”版不久就会面市，当你完成了下述的集成步骤后，请联系louise.cameron@deltadna.com以咨询启用该服务。
-
 ## 分析
 
 我们的分析SDK已经完成了在Unity中的全部代码，不需要任何本地代码支持。在Unity支持的任何平台中都可以直接运行。入门的最简单方式是从资源库中下载`deltadna-sdk-*.unitypackage`，并导入到你的Unity项目中。
 
 ## 快速开始
 
-有关于如何使用分析SDK的全部信息，请参阅我们的文档[网站](http://docs.deltadna.com/advanced-integration/unity-sdk/)。*特别注意*，从测试版4起，启用分析SDK和使用事件创建者的API已经改变，对于网站上的文档已经过时。
+有关于如何使用分析SDK的全部信息，请参阅我们的文档[网站](http://docs.deltadna.com/advanced-integration/unity-sdk/)。
 
-查看在`Assets\DeltaDNA\Example`的这个例子以了解如何使用这个SDK.。你只需要设置客户端版本和通过一个定制方法`MonoBehaviour`启用这个SDK。
+查看在`Assets\DeltaDNA\Example`的这个例子以了解如何使用这个SDK。你只需要设置客户端版本和通过一个定制方法`MonoBehaviour`启用这个SDK。
 
 ```csharp
 DDNA.Instance.ClientVersion = "1.0.0";
@@ -27,9 +25,9 @@ DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
 
 第一次运行时，这将创建新用户的id并发送一个`newPlayer`事件。每次调用时，它将发送一个`gameStarted`和`clientDevice`事件。
 
-#### 定制事件
+#### 自定义事件
 
-你可以轻松的通过使用`GameEvent`类标记定制事件。使用你的事件项目名称创建一个`GameEvent`方法。调用`AddParam`函数来给这个事件添加定制事件属性。例如：
+你可以轻松的通过使用`GameEvent`类标记自定义事件。使用你的事件项目名称创建一个`GameEvent`方法。调用`AddParam`函数来给这个事件添加自定义事件属性。例如：
 
 ```csharp
 var gameEvent = new GameEvent("myEvent")
@@ -39,7 +37,7 @@ var gameEvent = new GameEvent("myEvent")
 DDNA.Instance.RecordEvent(gameEvent);
 ```
 
-#### 契约
+#### 吸引（Engage）
 
 通过一个`Engagement`方法改变游戏的行为。例如：
 
@@ -51,7 +49,7 @@ var engagement = new Engagement("gameLoaded")
 
 DDNA.Instance.RequestEngagement(engagement, (response) =>
 {
-    // 响应（Response）是一个从契约（Engage）返回的键值字典
+    // 响应（Response）是一个从吸引（Engage）返回的键值字典
 });
 ```
 
@@ -61,7 +59,7 @@ DDNA.Instance.RequestEngagement(engagement, (response) =>
 
 ### 用法
 
-学习如何使用智能广告的最快方法是查阅`Assets\DeltaDNAAds\Example`中的例子。`AdsDemo`类展示了如何使用空隙广告和付费广告。通过调用`RegisterForAds`函数可以激活对智能广告的支持。这必须在开启了分析SDK以后才能够被调用。`DDNASmartAds`类定义了一系列的事件，你可以通过标记回调来获知广告何时开启或关闭。
+学习如何使用智能广告的最快方法是查阅`Assets\DeltaDNAAds\Example`中的例子。`AdsDemo`类展示了如何使用空闲广告和奖励广告。通过调用`RegisterForAds`函数可以激活对智能广告的支持。这必须在开启了分析SDK以后才能够被调用。`DDNASmartAds`类定义了一系列的事件，你可以通过标记回调来获知广告何时开启或关闭。
 
 开启分析SDK。
 
@@ -78,28 +76,28 @@ DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
 DDNASmartAds.Instance.RegisterForAds();
 ```
 
-你可以使用`DDNASmartAds.Instance.IsInterstitialAdAvailable()`函数测试一个空隙广告是否可以显示。
+你可以使用`DDNASmartAds.Instance.IsInterstitialAdAvailable()`函数测试一个空闲广告是否可以显示。
 
-通过调用`DDNASmartAds.Instance.ShowInterstitialAd()`函数展示一个空隙广告。
+通过调用`DDNASmartAds.Instance.ShowInterstitialAd()`函数展示一个空闲广告。
 
-你可以使用`DDNASmartAds.Instance.IsRewardedAdAvailable()`函数测试一个付费广告是否可以显示。
+你可以使用`DDNASmartAds.Instance.IsRewardedAdAvailable()`函数测试一个奖励广告是否可以显示。
 
-通过调用`DDNASmartAds.Instance.ShowRewardedAd()`函数展示一个付费广告。
+通过调用`DDNASmartAds.Instance.ShowRewardedAd()`函数展示一个奖励广告。
 
 #### 事件
 
 回调可以被添加到下述事件，从而获知广告何时开启或关闭。
 
-* `OnDidRegisterForInterstitialAds` - 当你成功将空隙广告嵌入到你的游戏时调用。
-* `OnDidFailToRegisterForInterstitialAds` - 当如果因某些原因一个空隙广告不能使用时调用。通过一个字符串参数报告可能的错误。
-* `OnInterstitialAdOpened` - 当一个空隙广告显示在屏幕时调用。
-* `OnInterstitialAdFailedToOpen` - 如果一个空隙广告显示失败时调用。
-* `OnInterstitialAdClosed` - 当用户关闭一个空隙广告时调用。
-* `OnDidRegisterForRewardedAds` - 当你成功将付费广告嵌入到你的游戏时调用。
-* `OnDidFailToRegisterForRewardedAds` - 当如果因某些原因一个付费广告不能使用时调用。通过一个字符串参数报告可能的错误。
-* `OnRewardedAdOpened` - 当一个付费广告显示在屏幕时调用。
-* `OnRewardedAdFailedToOpen` - 如果一个付费广告显示失败时调用。
-* `OnRewardedAdClosed` - 当用户关闭一个付费广告时调用。一个布尔参数被标识用户是否完整的看完将被付费的广告。
+* `OnDidRegisterForInterstitialAds` - 当你成功将空闲广告嵌入到你的游戏时调用。
+* `OnDidFailToRegisterForInterstitialAds` - 当如果因某些原因一个空闲广告不能使用时调用。通过一个字符串参数报告可能的错误。
+* `OnInterstitialAdOpened` - 当一个空闲广告显示在屏幕时调用。
+* `OnInterstitialAdFailedToOpen` - 如果一个空闲广告显示失败时调用。
+* `OnInterstitialAdClosed` - 当用户关闭一个空闲广告时调用。
+* `OnDidRegisterForRewardedAds` - 当你成功将奖励广告嵌入到你的游戏时调用。
+* `OnDidFailToRegisterForRewardedAds` - 当如果因某些原因一个奖励广告不能使用时调用。通过一个字符串参数报告可能的错误。
+* `OnRewardedAdOpened` - 当一个奖励广告显示在屏幕时调用。
+* `OnRewardedAdFailedToOpen` - 如果一个奖励广告显示失败时调用。
+* `OnRewardedAdClosed` - 当用户关闭一个奖励广告时调用。一个布尔参数被标识用户是否完整的看完这个奖励广告。
 
 #### 决策点
 
