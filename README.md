@@ -111,9 +111,17 @@ The included Podfile will install support for all the ad networks deltaDNA suppo
 
 ### Android Integration
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK.
+## Push notifications
+
+In order to use push notifications on Android you will need to add an AndroidManifest.xml to your project under `Assets/Plugins/Android` in order to register broadcast receivers and services for your game. You can take a look [here](Assets/Plugins/Android/) for an example configuration which has been made to work with the example packaged in the SDK. Please take a look at the [integration section](https://github.com/deltaDNA/android-notifications-sdk#integration) for push notifications, which is also relevant to the Analytics Unity SDK on Android, containing integration steps with more details.
 
 The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
+
+If you do not wish to use push notifications on Android then you can remove the files from the `Assets\DeltaDNA\Plugins\Android` folder to decrease the APK size of your game.
+
+## SmartAds
+
+We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `python download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK. You should run this script every time you update the SmartAds SDK in your project.
 
 ## License
 
