@@ -247,6 +247,7 @@ namespace DeltaDNA
         /// <summary>
         /// Makes an Engage request.  The result of the engagement will be passed as a dictionary object to your callback method. The dictionary
         /// will be empty if engage couldn't be reached on a campaign is not running.
+        /// A cache is maintained that will return the last valid response if available.
         /// </summary>
         /// <param name="engagement">The engagement the request is for.</param>
         /// <param name="callback">Method called with the response from Engage.</param>
@@ -289,13 +290,14 @@ namespace DeltaDNA
         }
 
         /// <summary>
-        /// Requests an Engagement with Engage.  The engagement is populated with the result of the request and 
+        /// Requests an Engagement with Engage.  The engagement is populated with the result of the request and
         /// returned in the onCompleted callback.  The engagement's json field can be queried for the returned json.
+        /// A cache is maintained that will return the last valid response if available.
         /// </summary>
         /// <param name="engagement">The engagement the request is for.</param>
         /// <param name="onCompleted">Method called with the Engagement populated by Engage.</param>
         /// <exception cref="System.Exception">Thrown if the SDK has not been started, and if the Engage URL has not been set.</exception>
-        public void RequestEngagement(Engagement engagement, Action<Engagement> onCompleted, Action<Exception> onError) 
+        public void RequestEngagement(Engagement engagement, Action<Engagement> onCompleted, Action<Exception> onError)
         {
             if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method.");
