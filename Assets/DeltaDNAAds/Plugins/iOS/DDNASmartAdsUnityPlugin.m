@@ -225,9 +225,9 @@ UIViewController *UnityGetGLViewController();
     UnitySendMessage(SmartAdsObject, "DidOpenInterstitialAd", "");
 }
 
-- (void)didFailToOpenInterstitialAd
+- (void)didFailToOpenInterstitialAdWithReason:(NSString *)reason
 {
-    UnitySendMessage(SmartAdsObject, "DidFailToOpenInterstitialAd", "");
+    UnitySendMessage(SmartAdsObject, "DidFailToOpenInterstitialAd", [reason UTF8String]);
 }
 
 - (void)didCloseInterstitialAd
@@ -250,9 +250,9 @@ UIViewController *UnityGetGLViewController();
     UnitySendMessage(SmartAdsObject, "DidOpenRewardedAd", "");
 }
 
-- (void)didFailToOpenRewardedAd
+- (void)didFailToOpenRewardedAdWithReason:(NSString *)reason
 {
-    UnitySendMessage(SmartAdsObject, "DidFailToOpenRewardedAd", "");
+    UnitySendMessage(SmartAdsObject, "DidFailToOpenRewardedAd", [reason UTF8String]);
 }
 
 - (void)didCloseRewardedAdWithReward:(BOOL)reward

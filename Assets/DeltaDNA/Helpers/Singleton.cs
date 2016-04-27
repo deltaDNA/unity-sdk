@@ -42,7 +42,7 @@ namespace DeltaDNA
                         _instance = (T) FindObjectOfType(typeof(T));
 
                         if (FindObjectsOfType(typeof(T)).Length > 1) {
-                            Logger.LogError("[Singleton] Something went really wrong " +
+                            Logger.LogWarning("[Singleton] Something went really wrong " +
                                            " - there should never be more than 1 singleton!" +
                                            " Reopening the scene might fix it.");
                             return _instance;

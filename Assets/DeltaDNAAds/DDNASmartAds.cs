@@ -26,6 +26,10 @@ namespace DeltaDNAAds
     using JSONObject = System.Collections.Generic.Dictionary<string, object>;
     using DeltaDNA.MiniJSON;
 
+    /// <summary>
+    /// The DDNASmartAds provides a service for fetching and showing ads.  It supports showing
+    /// interstitial and rewarded ad types.
+    /// </summary>
     public class DDNASmartAds : Singleton<DDNASmartAds> {
 
         public const string SMARTADS_DECISION_POINT = "advertising";
@@ -37,14 +41,15 @@ namespace DeltaDNAAds
 
         public event Action OnDidRegisterForInterstitialAds;
         public event Action<string> OnDidFailToRegisterForInterstitialAds;
-        public event Action OnInterstitialAdOpened;
-        public event Action OnInterstitialAdFailedToOpen;
-        public event Action OnInterstitialAdClosed;
-
         public event Action OnDidRegisterForRewardedAds;
         public event Action<string> OnDidFailToRegisterForRewardedAds;
+
+        public event Action OnInterstitialAdOpened;
+        public event Action<string> OnInterstitialAdFailedToOpen;
+        public event Action OnInterstitialAdClosed;
+
         public event Action OnRewardedAdOpened;
-        public event Action OnRewardedAdFailedToOpen;
+        public event Action<string> OnRewardedAdFailedToOpen;
         public event Action<bool> OnRewardedAdClosed;
 
         public void RegisterForAds()
@@ -85,21 +90,13 @@ namespace DeltaDNAAds
 
         public void ShowInterstitialAd()
         {
-            ShowInterstitialAd(null);
+            ShowInterstitialAdImpl(null);
         }
 
+        [Obsolete("Prefer 'InterstitialAd' with an 'Engagement' instead.")]
         public void ShowInterstitialAd(string decisionPoint)
         {
-            if (manager == null) {
-                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
-                this.DidFailToOpenInterstitialAd();
-            } else if (String.IsNullOrEmpty(decisionPoint)) {
-                Logger.LogInfo("Showing interstitial ad");
-                manager.ShowInterstitialAd();
-            } else {
-                Logger.LogInfo("Showing interstitial ad for "+decisionPoint);
-                manager.ShowInterstitialAd(decisionPoint);
-            }
+            ShowInterstitialAdImpl(decisionPoint);
         }
 
         public bool IsRewardedAdAvailable()
@@ -109,21 +106,13 @@ namespace DeltaDNAAds
 
         public void ShowRewardedAd()
         {
-            ShowRewardedAd(null);
+            ShowRewardedAdImpl(null);
         }
 
+        [Obsolete("Prefer 'RewardedAd' with an 'Engagement' instead.")]
         public void ShowRewardedAd(string decisionPoint)
         {
-            if (manager == null) {
-                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
-                this.DidFailToOpenRewardedAd();
-            } else if (String.IsNullOrEmpty(decisionPoint)) {
-                Logger.LogInfo("Showing rewarded ad");
-                manager.ShowRewardedAd();
-            } else {
-                Logger.LogInfo("Showing rewarded ad for "+decisionPoint);
-                manager.ShowRewardedAd(decisionPoint);
-            }
+            ShowRewardedAdImpl(decisionPoint);
         }
 
         #endregion
@@ -173,13 +162,13 @@ namespace DeltaDNAAds
             actions.Enqueue(action);
         }
 
-        internal void DidFailToOpenInterstitialAd()
+        internal void DidFailToOpenInterstitialAd(string reason)
         {
             Action action = delegate() {
-                Logger.LogDebug("Failed to open an insterstital ad");
+                Logger.LogDebug("Failed to open an insterstital ad: "+reason);
 
                 if (OnInterstitialAdFailedToOpen != null) {
-                    OnInterstitialAdFailedToOpen();
+                    OnInterstitialAdFailedToOpen(reason);
                 }
             };
 
@@ -238,13 +227,13 @@ namespace DeltaDNAAds
             actions.Enqueue(action);
         }
 
-        internal void DidFailToOpenRewardedAd()
+        internal void DidFailToOpenRewardedAd(string reason)
         {
             Action action = delegate() {
-                Logger.LogDebug("Failed to open a rewarded ad");
+                Logger.LogDebug("Failed to open a rewarded ad: "+reason);
 
                 if (OnRewardedAdFailedToOpen != null) {
-                    OnRewardedAdFailedToOpen();
+                    OnRewardedAdFailedToOpen(reason);
                 }
             };
 
@@ -346,6 +335,34 @@ namespace DeltaDNAAds
                     Logger.LogDebug("Resuming SmartAds");
                     manager.OnResume();
                 }
+            }
+        }
+
+        void ShowInterstitialAdImpl(string decisionPoint)
+        {
+            if (manager == null) {
+                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
+                this.DidFailToOpenInterstitialAd("Not registered");
+            } else if (String.IsNullOrEmpty(decisionPoint)) {
+                Logger.LogInfo("Showing interstitial ad");
+                manager.ShowInterstitialAd();
+            } else {
+                Logger.LogInfo("Showing interstitial ad for "+decisionPoint);
+                manager.ShowInterstitialAd(decisionPoint);
+            }
+        }
+
+        void ShowRewardedAdImpl(string decisionPoint)
+        {
+            if (manager == null) {
+                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
+                this.DidFailToOpenRewardedAd("Not registered");
+            } else if (String.IsNullOrEmpty(decisionPoint)) {
+                Logger.LogInfo("Showing rewarded ad");
+                manager.ShowRewardedAd();
+            } else {
+                Logger.LogInfo("Showing rewarded ad for "+decisionPoint);
+                manager.ShowRewardedAd(decisionPoint);
             }
         }
 

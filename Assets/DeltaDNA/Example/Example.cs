@@ -124,7 +124,7 @@ public class Example : MonoBehaviour {
                 .AddParam("experience", 1000)
                 .AddParam("missionName", "Disco Volante");
 
-            DDNA.Instance.RequestEngagement(engagement, (response) =>
+            DDNA.Instance.RequestEngagement(engagement, (Dictionary<string,object> response) =>
             {
                 popupContent = DeltaDNA.MiniJSON.Json.Serialize(response);
             });
@@ -132,31 +132,48 @@ public class Example : MonoBehaviour {
             popupTitle = "Engage returned";
         }
 
-        if (GUI.Button(new Rect(x, y += space, width, height), "Popup Image")) {
+        if (GUI.Button(new Rect(x, y += space, width, height), "Image Message")) {
 
-            // Create Popup Object
-            IPopup imagePopup = new Popup();
-            // Setup Events
-            imagePopup.AfterPrepare += (sender, e) => {
-                Debug.Log("Popup loaded resource");
-                // Just show it, although you could do this later
-                imagePopup.Show();
-            };
+            var engagement = new Engagement("imageMessage")
+                .AddParam("userLevel", 4)
+                .AddParam("experience", 1000)
+                .AddParam("missionName", "Disco Volante");
 
-            imagePopup.Dismiss += (sender, e) => {
-                Debug.Log("Popup dismissed by "+e.ID);
-            };
+            DDNA.Instance.RequestEngagement(engagement, (response) => {
 
-            imagePopup.Action += (sender, e) => {
-                Debug.Log("Popup actioned by "+e.ID+" with command "+e.ActionValue);
-            };
+                ImageMessage imageMessage = ImageMessage.Create(response);
 
-            // Start Request
-            var engagement = new Engagement("pickUp")
-                .AddParam("userScore", 42)
-                .AddParam("secondsPlayed", 20);
+                // Check we got an engagement with a valid image message.
+                if (imageMessage != null) {   
+                    Debug.Log("Engage returned a valid image message.");  
 
-            DDNA.Instance.RequestImageMessage(engagement, imagePopup);
+                    // This example will show the image as soon as the background 
+                    // and button images have been downloaded.
+                    imageMessage.OnDidReceiveResources += () => {
+                        Debug.Log("Image Message loaded resources.");
+                        imageMessage.Show();
+                    };
+
+                    // Add a handler for the 'dismiss' action.
+                    imageMessage.OnDismiss += (ImageMessage.EventArgs obj) => {
+                        Debug.Log("Image Message dismissed by "+obj.ID);
+                    };
+
+                    // Add a handler for the 'action' action.
+                    imageMessage.OnAction += (ImageMessage.EventArgs obj) => {
+                        Debug.Log("Image Message actioned by "+obj.ID+" with command "+obj.ActionValue);
+                    };
+
+                    // Download the image message resources.
+                    imageMessage.FetchResources();
+                }
+                else {
+                    Debug.Log("Engage didn't return an image message.");
+                }
+
+            }, (exception) => {
+                Debug.Log("Engage reported an error: "+exception.Message);
+            });
         }
 
         if (GUI.Button(new Rect(x, y += space, width, height), "Notification Opened")) {

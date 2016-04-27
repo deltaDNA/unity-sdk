@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,28 @@
 // limitations under the License.
 //
 
-namespace DeltaDNAAds.Android
-{
-    public class Utils {
+using UnityEngine;
+using UnityEditor;
+using NUnit.Framework;
 
-        // our classes
+namespace DeltaDNA {
 
-        public const string AdServiceWrapperClassName = "com.deltadna.android.sdk.ads.core.AdServiceWrapper";
-        public const string AdServiceListenerClassName = "com.deltadna.android.sdk.ads.core.AdServiceListener";
+    [SetUpFixture]
+    public class SetupTest {
 
-        // platform classes
+        [SetUp]
+        public void Setup()
+        {
+            Debug.Log("Starting Tests.");
+            Logger.SetLogLevel(Logger.Level.ERROR);
+        }
 
-        public const string UnityActivityClassName = "com.unity3d.player.UnityPlayer";
-        public const string JSONObjectClassName = "org.json.JSONObject";
-        public const string ThrowableClassName = "java.lang.Throwable";
+        [TearDown]
+        public void TearDown()
+        {
+            Debug.Log("Completed Tests.");
+
+        }
     }
+
 }

@@ -16,6 +16,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DeltaDNAAds.Android
 {
@@ -30,9 +31,9 @@ namespace DeltaDNAAds.Android
             engageListeners = new Dictionary<string, AndroidJavaObject>();
 
             try {
-                AndroidJavaClass playerClass = new AndroidJavaClass(Utils.UnityActivityClassName);
-                activity = playerClass.GetStatic<AndroidJavaObject>("currentActivity");
-                adService = new AndroidJavaObject(Utils.AdServiceClassName, activity, new AdServiceListener(ads, engageListeners));
+                activity = new AndroidJavaClass(Utils.UnityActivityClassName).GetStatic<AndroidJavaObject>("currentActivity");
+                adService = new AndroidJavaObject(Utils.AdServiceWrapperClassName).CallStatic<AndroidJavaObject>(
+                    "create", activity, new AdServiceListener(ads, engageListeners));
             } catch (AndroidJavaException exception) {
                 DeltaDNA.Logger.LogDebug("Exception creating Android AdService: "+exception.Message);
                 throw new System.Exception("Native Android SmartAds AAR not found.");
@@ -44,33 +45,27 @@ namespace DeltaDNAAds.Android
             adService.Call("init", decisionPoint);
         }
 
-        public bool IsInterstitialAdAvailable()
-        {
+        public bool IsInterstitialAdAvailable() {
             return adService.Call<bool>("isInterstitialAdAvailable");
         }
 
-        public void ShowInterstitialAd()
-        {
-            adService.Call("showAd");
+        public void ShowInterstitialAd() {
+            ShowInterstitialAd(null);
         }
 
-        public void ShowInterstitialAd(string decisionPoint)
-        {
-            adService.Call("showAd", decisionPoint);
+        public void ShowInterstitialAd(string decisionPoint) {
+            adService.Call("showInterstitialAd", decisionPoint);
         }
 
-        public bool IsRewardedAdAvailable()
-        {
+        public bool IsRewardedAdAvailable() {
             return adService.Call<bool>("isRewardedAdAvailable");
         }
 
-        public void ShowRewardedAd()
-        {
-            adService.Call("showRewardedAd");
+        public void ShowRewardedAd() {
+            ShowRewardedAd(null);
         }
 
-        public void ShowRewardedAd(string decisionPoint)
-        {
+        public void ShowRewardedAd(string decisionPoint) {
             adService.Call("showRewardedAd", decisionPoint);
         }
 

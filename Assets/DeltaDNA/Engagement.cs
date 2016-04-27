@@ -15,14 +15,20 @@
 //
 
 using System;
-using System.Collections.Generic;
 
 namespace DeltaDNA {
+
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     public class Engagement<T> where T : Engagement<T> {
 
         private readonly Params parameters;
+        private string response = null;
 
+        /// <summary>
+        /// Creates a new Engagement with a decision point.
+        /// </summary>
+        /// <param name="decisionPoint">The Decision Point.</param>
         public Engagement(string decisionPoint)
         {
             if (String.IsNullOrEmpty(decisionPoint)) {
@@ -34,8 +40,16 @@ namespace DeltaDNA {
             this.parameters = new Params();
         }
 
+        /// <summary>
+        /// Gets the decision point.
+        /// </summary>
+        /// <value>The decision point for this Engagement.</value>
         public string DecisionPoint { get; private set; }
 
+        /// <summary>
+        /// Gets the flavour.
+        /// </summary>
+        /// <value>The flavour of this Engagement.</value>
         public string Flavour { get; private set; }
 
         /// <summary>
@@ -47,13 +61,62 @@ namespace DeltaDNA {
             return (T) this;
         }
 
-        public Dictionary<string, object> AsDictionary()
+        /// <summary>
+        /// The Engagement as a JSON dictionary.
+        /// </summary>
+        /// <returns>The dictionary.</returns>
+        public JSONObject AsDictionary()
         {
-            return new Dictionary<string, object>() {
+            return new JSONObject() {
                 { "decisionPoint", DecisionPoint },
                 { "flavour", Flavour },
-                { "parameters", new Dictionary<string, object>(parameters.AsDictionary()) }
+                { "parameters", new JSONObject(parameters.AsDictionary()) }
             };
+        }
+
+        /// <summary>
+        /// The Raw response from the Engage service.  A successful engagement will be a json string, else the error that occurred.
+        /// </summary>
+        /// <value>The raw response from Engage.</value>
+        public string Raw { 
+            get { return this.response; } 
+            set {
+                JSONObject json = null;
+                if (!String.IsNullOrEmpty(value)) {
+                    try {
+                        json = DeltaDNA.MiniJSON.Json.Deserialize(value) as JSONObject;
+                    } catch (Exception) {
+                        // not valid json
+                    }
+                }
+                this.response = value;
+                this.JSON = json ?? new JSONObject();
+            } 
+        }
+
+        /// <summary>
+        /// The HTTP status code from the engage service.
+        /// </summary>
+        /// <value>The status code.</value>
+        public int StatusCode { get; set; }
+
+        /// <summary>
+        /// Records any error that may have occurred.
+        /// </summary>
+        /// <value>The error.</value>
+        public string Error { get; set; }
+
+        /// <summary>
+        /// The JSON response for the Engagement.  Will be empty if the engagement was unsuccessful, 
+        /// or marked with 'isCachedResponse=true' key if the cache was used.  
+        /// </summary>
+        /// <value>The response from Engage as JSON.</value>
+        public JSONObject JSON { get; private set; }
+
+        public override string ToString ()
+        {
+            return string.Format ("[Engagement: DecisionPoint={0}, Flavour={1}, Raw={2}, StatusCode={3}, Error={4}, JSON={5}]", 
+                DecisionPoint, Flavour, Raw, StatusCode, Error, JSON);
         }
     }
 

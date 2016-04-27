@@ -28,7 +28,7 @@ namespace DeltaDNA {
     internal class EngageRequest {
 
         public EngageRequest(string decisionPoint)
-        { 
+        {
             this.DecisionPoint = decisionPoint;
             this.Flavour = "engagement";
             this.Parameters = new JSONObject();
@@ -97,7 +97,6 @@ namespace DeltaDNA {
 
                 string engagementKey = "DDSDK_ENGAGEMENT_" + request.DecisionPoint + "_" + request.Flavour;
                 if (statusCode < 400 && error == null) {
-                    Logger.LogDebug("Engagement succeeded with "+statusCode+" "+data);
                     try {
                         PlayerPrefs.SetString(engagementKey, data);
                     } catch (Exception exception) {
@@ -107,7 +106,7 @@ namespace DeltaDNA {
                     Logger.LogDebug("Engagement failed with "+statusCode+" "+error);
                     if (PlayerPrefs.HasKey(engagementKey)) {
                         Logger.LogDebug("Using cached response");
-                        data = PlayerPrefs.GetString(engagementKey);
+                        data = "{\"isCachedResponse\":true," + PlayerPrefs.GetString(engagementKey).Substring(1);
                     }
                 }
 

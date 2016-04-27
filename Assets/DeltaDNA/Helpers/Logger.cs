@@ -34,7 +34,7 @@ namespace DeltaDNA
 
         static Level sLogLevel = Level.WARNING;
 
-        internal static void SetLogLevel(Level logLevel)
+        public static void SetLogLevel(Level logLevel)
         {
             sLogLevel = logLevel;
         }
