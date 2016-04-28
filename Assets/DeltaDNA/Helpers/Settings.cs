@@ -58,6 +58,8 @@ namespace DeltaDNA
             #else
             UseEventStore = true;
             #endif
+
+            SessionTimeoutSeconds = 5 * 60;
         }
 
         /// <summary>
@@ -132,5 +134,13 @@ namespace DeltaDNA
         /// is for TRUE unless UNITY_WEBPLAYER or UNITY_WEBGL is defined.
         /// </summary>
         public bool UseEventStore { get; set; }
+
+        /// <summary>
+        /// Controls the amount of time the game can be backgrounded before we 
+        /// consider a new session to have started.  A value of 0 disables
+        /// automatically generating new sessions.
+        /// </summary>
+        /// <value>The session timeout seconds.</value>
+        public int SessionTimeoutSeconds { get; set; }
     }
 }

@@ -41,6 +41,7 @@ namespace DeltaDNA
         private GameEvent launchNotificationEvent = null;
         private string pushNotificationToken = null;
         private string androidRegistrationId = null;
+        private DateTime lastActive = DateTime.MinValue;
 
         private static Func<DateTime?> TimestampFunc = new Func<DateTime?>(DefaultTimestampFunc);
 
@@ -672,6 +673,20 @@ namespace DeltaDNA
             if (this.eventStore != null) this.eventStore.Dispose();
             PlayerPrefs.Save();
             base.OnDestroy();
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus) {
+                this.lastActive = DateTime.UtcNow;
+
+            } else {
+                var backgroundSeconds = (DateTime.UtcNow - this.lastActive).TotalSeconds;
+                if (backgroundSeconds > this.Settings.SessionTimeoutSeconds) {
+                    this.lastActive = DateTime.MinValue;
+                    this.NewSession();
+                }
+            }
         }
 
         private string GenerateSessionID()
