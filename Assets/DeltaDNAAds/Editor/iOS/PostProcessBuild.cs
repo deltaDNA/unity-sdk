@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 using System.IO;
+using System.Diagnostics;
 
 /**
  *  Add support for CocoaPods to the Unity generated XCode project.  Run pods.command from the
@@ -28,7 +28,7 @@ public class PostProcessBuild {
 
     [PostProcessBuild]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string path) {
-        Debug.Log("OnPostprocessBuild "+buildTarget+" "+path);
+        UnityEngine.Debug.Log("OnPostprocessBuild "+buildTarget+" "+path);
 
         if (buildTarget == BuildTarget.iOS) {
 
@@ -37,10 +37,10 @@ public class PostProcessBuild {
             PBXProject project = new PBXProject();
             project.ReadFromFile(projectPath);
 
-            Debug.Log(PBXProject.GetUnityTargetName());
+            UnityEngine.Debug.Log(PBXProject.GetUnityTargetName());
             string target = project.TargetGuidByName(PBXProject.GetUnityTargetName());
 
-            Debug.Log(target);
+            UnityEngine.Debug.Log(target);
 
             // Add build settings for CocoaPods
             project.AddBuildProperty(target, "HEADER_SEARCH_PATHS", "$(inherited)");
@@ -53,7 +53,7 @@ public class PostProcessBuild {
 
             // Copy Podfile into project
             string unityProjectRootPath = Path.GetFullPath("./").Normalize();
-            Debug.Log(unityProjectRootPath);
+            UnityEngine.Debug.Log(unityProjectRootPath);
 
             // Default src location is the project root
             FileUtil.ReplaceFile("Assets/DeltaDNAAds/Editor/iOS/Podfile", path + "/Podfile");
@@ -61,10 +61,13 @@ public class PostProcessBuild {
             // Update the XCode project on disk
             project.WriteToFile(projectPath);
 
-            // Useful automation...
-
             // Run pod update
-            FileUtil.ReplaceFile("Assets/DeltaDNAAds/Editor/iOS/pods.command", path + "/pods.command");
+            Process proc = new Process();
+            proc.StartInfo.FileName = "/usr/local/bin/pod";
+            proc.StartInfo.Arguments = "install --project-directory="+path;
+            proc.StartInfo.UseShellExecute = false;
+            proc.Start();
+            proc.WaitForExit();
         }
 
     }

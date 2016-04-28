@@ -9,6 +9,7 @@
 - `OnAdFailedToOpen` now reports the reason for the failure.
 - Engage no longer returns null if the connection fails, it returns an empty dictionary.
 - The `Engagement` records the response, http status code and any errors.  This works with an additional `RequestEngagement` method.
+- For iOS OnPostprocessBuild calls pod install for you automatically.  You need to open the generated workspace yourself.
 ### Fixed
 - 'isCachedResponse' is now injected into the Engage response if the cache is used.
 
