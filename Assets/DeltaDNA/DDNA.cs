@@ -777,16 +777,13 @@ namespace DeltaDNA
             request.HTTPBody = bulkEvent;
             request.setHeader("Content-Type", "application/json");
 
-            while (attempts < Settings.HttpRequestMaxRetries) {
-
+            do {
                 yield return StartCoroutine(Network.SendRequest(request, completionHandler));
 
-                if (succeeded) break;
+                if (succeeded || ++attempts < Settings.HttpRequestMaxRetries) break;
 
                 yield return new WaitForSeconds(Settings.HttpRequestRetryDelaySeconds);
-
-                attempts += 1;
-            }
+            } while (attempts < Settings.HttpRequestMaxRetries);
 
             resultCallback(succeeded, status);
         }

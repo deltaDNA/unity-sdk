@@ -10,6 +10,7 @@
 - Engage no longer returns null if the connection fails, it returns an empty dictionary.
 - The `Engagement` records the response, http status code and any errors.  This works with an additional `RequestEngagement` method.
 - For iOS OnPostprocessBuild calls pod install for you automatically.  You need to open the generated workspace yourself.
+- The automated event uploading no longer retries by default on a network connection error, instead it relies on the background timer to try again later. The default timeout has also been increased.
 ### Fixed
 - 'isCachedResponse' is now injected into the Engage response if the cache is used.
 
