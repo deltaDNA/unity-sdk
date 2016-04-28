@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.0.1";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.1.0";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -136,7 +136,7 @@ namespace DeltaDNA
         public bool UseEventStore { get; set; }
 
         /// <summary>
-        /// Controls the amount of time the game can be backgrounded before we 
+        /// Controls the amount of time the game can be backgrounded before we
         /// consider a new session to have started.  A value of 0 disables
         /// automatically generating new sessions.
         /// </summary>
