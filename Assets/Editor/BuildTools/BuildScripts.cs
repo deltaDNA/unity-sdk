@@ -89,12 +89,19 @@ namespace DeltaDNA {
 
         static void ExportSmartAdsPackage()
         {
-            string[] assets = {
-                "Assets/DeltaDNAAds"
-            };
+            List<string> assets = new List<string>(AssetDatabase.GetSubFolders("Assets/DeltaDNAAds"));
+
+            string match = assets.Find(it => it.EndsWith("Plugins"));
+            if (match != null) assets.Remove(match);
+
+            assets.Add("Assets/DeltaDNAAds/Plugins/iOS");
+
+            assets.Add("Assets/DeltaDNAAds/DDNASmartAds.cs");
+            assets.Add("Assets/DeltaDNAAds/InterstitialAd.cs");
+            assets.Add("Assets/DeltaDNAAds/RewardedAd.cs");
 
             string filename = OutputFilename("deltadna-smartads", SdkVersion());
-            AssetDatabase.ExportPackage(assets, filename, ExportPackageOptions.Recurse);
+            AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
         }
 
         static void ExportPackages()
