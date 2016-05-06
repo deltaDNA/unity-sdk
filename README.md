@@ -68,6 +68,10 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
 
     // Check we got an engagement with a valid image message.
     if (imageMessage != null) {   
+        imageMessage.OnDidReceiveResources += () => {
+            // Can show once we've got the resources.
+            imageMessage.Show();
+        };
         // Download the image message resources.
         imageMessage.FetchResources();
     }
