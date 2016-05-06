@@ -44,7 +44,7 @@ configurations.all {
 
 dependencies {
     if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.0'
+        compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.1'
     }
     if (smartads) {
         compile 'com.deltadna.android:deltadna-smartads-core:1.1.2'
