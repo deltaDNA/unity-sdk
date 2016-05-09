@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.1.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.1) (YYYY-MM-DD)
+### Fixed
+- Crash on Android when requesting ads without a network connection.
+
 ## [4.1.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.0) (2016-05-06)
 ### Added
 - Added `InterstitialAd` and `RewardedAd` classes, which replace showing ads with the `DDNASmartAds`.  This idea is to split out the call to Engage and make it explicit.  This gives the game more flexibility in how it works with Engage to control if ads are to be shown to the player.
