@@ -1,8 +1,17 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 rm -f deltadna-*.unitypackage
 
-/Applications/Unity/Unity.app/Contents/MacOS/Unity \
+UNITY=""
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    UNITY=/Applications/Unity/Unity.app/Contents/MacOS/Unity
+elif [[ "$OSTYPE" == "msys" ]]; then
+    UNITY=/c/Program\ Files/Unity/Editor/Unity.exe
+else
+    exit 1
+fi
+
+"$UNITY" \
     -batchMode \
     -quit \
     -nographics \
