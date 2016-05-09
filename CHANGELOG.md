@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.1.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.1) (YYYY-MM-DD)
+## [4.1.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.1) (2016-05-09)
 ### Fixed
 - Crash on Android when requesting ads without a network connection.
 
