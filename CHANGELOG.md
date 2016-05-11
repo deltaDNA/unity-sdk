@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.1.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.2) (YYYY-MM-DD)
+### Fixed
+- AdColony on Android reporting potentially wrong ad shown state.
+- Minimum interval between ads not being respected on Android.
+
 ## [4.1.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.1) (2016-05-09)
 ### Fixed
 - Crash on Android when requesting ads without a network connection.
