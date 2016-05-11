@@ -155,9 +155,7 @@ A rewarded ad is a short video, typically 30 seconds in length that the player m
 
 ```csharp
 var rewardedAd = RewardedAd.Create();
-if (rewardedAd != null) {
-    rewardedAd.Show();
-}
+rewardedAd.Show();
 ```
 
 The following events can be added to a `RewardedAd`:
@@ -242,7 +240,7 @@ If you do not wish to use push notifications on Android then you can remove the 
 
 We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.
 
-Make sure you have set the `sdk.dir` property in your `local.properties` file in this directory ponting to where you installed the Android SDK, for example
+Make sure you have set the `sdk.dir` property in your `local.properties` file in this directory pointing to where you installed the Android SDK, for example
 ```
 sdk.dir=C\:\\Users\\USERNAME\\AppData\\Local\\Android\\sdk
 ```
