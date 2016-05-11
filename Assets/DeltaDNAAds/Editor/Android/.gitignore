@@ -1,4 +1,5 @@
-.gradle/
+.gradle
+build/
 local.properties
 local.properties.meta
 

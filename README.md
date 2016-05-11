@@ -6,6 +6,25 @@ The repository contains the sources for both the analytics and SmartAds SDKs.  T
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
+## Contents
+
+* [Analytics](#analytics)
+* [Quick Start](#quick-start)
+ * [Custom Events](#custom-events)
+ * [Engage](#engage)
+* [SmartAds](#smartads)
+ * [Usage](#usage)
+ * [Create an Interstitial Ad](#create-an-interstitial-ad)
+ * [Create a Rewarded Ad](#create-a-rewarded-ad)
+ * [Working with Engage](#working-with-engage)
+ * [Legacy Interface](#legacy-interface)
+ * [Events](#events)
+* [iOS Integration](#ios-integration)
+* [Android Integration](#android-integration)
+ * [Push Notifications](#push-notifications)
+ * [SmartAds on Android](#smartads-on-android)
+* [License](#license)
+
 ## Analytics
 
 Our analytics SDK is written entirely in Unity with no native code requirements.  Out of the box it runs on any platform that Unity supports.  The easiest way to get started is to download the `deltadna-sdk-*.unitypackage` from this repository, and import into your Unity project.
@@ -25,7 +44,7 @@ DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
 
 On the first run this will create new user id and send a `newPlayer` event. On every call it will send a `gameStarted` and `clientDevice` event.
 
-#### Custom Events
+### Custom Events
 
 You can easily record custom events by using the `GameEvent` class.  Create a `GameEvent` with the name of your event schema.  Call `AddParam` to add custom event parameters to the event.  For example:
 
@@ -37,7 +56,7 @@ var gameEvent = new GameEvent("myEvent")
 DDNA.Instance.RecordEvent(gameEvent);
 ```
 
-#### Engage
+### Engage
 
 Change the behaviour of the game with an `Engagement`.  For example:
 
@@ -113,7 +132,7 @@ If everything went well the SmartAds service will start fetching ads in the back
 * `OnDidRegisterForRewardedAds` - Called when rewarded ads have successfully been configured.
 * `OnDidFailToRegisterForRewardedAds` - Called when rewarded ads can't be configured for some reason.
 
-#### Create an Interstitial Ad
+### Create an Interstitial Ad
 
 An interstitial ad is a fullscreen popup that the player can dismiss from a close button.  In order to show an interstitial ad, create an `InterstitialAd` and attempt to show it.
 
@@ -130,7 +149,7 @@ The following events can be added to an `InterstitialAd`:
 * `OnInterstitialAdFailedToOpen` - Called if the ad fails to open for some reason.
 * `OnInterstitialAdClosed` - Called when the ad has been closed.
 
-#### Create a Rewarded Ad
+### Create a Rewarded Ad
 
 A rewarded ad is a short video, typically 30 seconds in length that the player must watch before being able to dismiss.  To show a rewarded ad, create a `RewardedAd` and attempt to show it.
 
@@ -147,7 +166,7 @@ The following events can be added to a `RewardedAd`:
 * `OnRewardedAdFailedToOpen` - Called if the ad fails to open for some reason.
 * `OnRewardedAdClosed` - Called when the ad is finished.  A boolean reward flag indicates if the ad was watched enough that you can reward the player.
 
-#### Working with Engage
+### Working with Engage
 
 To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage id it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You can try to build an ad from an `Engagement` object, it will only succeed if the Engage response allows it.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.  
 
@@ -178,7 +197,7 @@ DDNA.Instance.RequestEngagement(engagement, response => {
 
 Checkout the included example project for more details.
 
-#### Legacy Interface
+### Legacy Interface
 
 Prior to the inclusion of the `InterstitialAd` and `RewardedAd` classes you could show ads directly from the `DDNASmartAds` object.  This still works since this is what the ad classes use, but it's preferred to use the separate classes.
 
@@ -188,7 +207,7 @@ You can test if a rewarded ad is ready to be displayed with `DDNASmartAds.Instan
 
 The additional show methods that use Decision Points are now deprecated, since they hide what Engage is returning which prevents you from controlling if and when to show the ad in your game.
 
-#### Events
+### Events
 
 Callbacks can be added to the following events to be notified when an ad has opened or closed.
 
@@ -203,25 +222,33 @@ Callbacks can be added to the following events to be notified when an ad has ope
 * ~~`OnRewardedAdFailedToOpen` - Called if a rewarded ad fails to show.~~ Prefer `RewardedAd.OnRewardedAdFailedToOpen`.
 * ~~`OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.~~ See `RewardedAd.OnRewardedAdClosed`.
 
-### iOS Integration
+## iOS Integration
 
 We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  A minimal Podfile is included in DeltaDNAAds/Editor/iOS.  It will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
 
 The included Podfile will install support for all the ad networks deltaDNA supports.  You can customise the Podfile to download only the ad networks you require by using [Subspecs](https://guides.cocoapods.org/syntax/podfile.html#pod).  The process is the same as for the native [iOS SmartAds SDK](https://github.com/deltaDNA/ios-smartads-sdk) and more details on customising the Podfile can be found there.
 
-### Android Integration
+## Android Integration
 
-#### Push notifications
+### Push Notifications
 
 In order to use push notifications on Android you will need to add an AndroidManifest.xml to your project under `Assets/Plugins/Android` in order to register broadcast receivers and services for your game. You can take a look [here](Assets/Plugins/Android/) for an example configuration which has been made to work with the example packaged in the SDK. Please take a look at the [integration section](https://github.com/deltaDNA/android-notifications-sdk#integration) for push notifications, which is also relevant to the Analytics Unity SDK on Android, containing integration steps with more details.
 
 The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
 
-If you do not wish to use push notifications on Android then you can remove the files from the `Assets\DeltaDNA\Plugins\Android` folder to decrease the APK size of your game.
+If you do not wish to use push notifications on Android then you can remove the files from the `Assets\DeltaDNA\Plugins\Android` folder and the customised `AndroidManifest.xml` to decrease the APK size of your game.
 
-#### SmartAds
+### SmartAds on Android
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.  Then from the command line run `python download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK. You should run this script every time you update the SmartAds SDK in your project.
+We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.
+
+Make sure you have set the `sdk.dir` property in your `local.properties` file in this directory ponting to where you installed the Android SDK, for example
+```
+sdk.dir=C\:\\Users\\USERNAME\\AppData\\Local\\Android\\sdk
+```
+Please note that you should not commit this file to your VCS as the directory can vary between systems depending on where the Android SDK has been installed.
+
+Then from the command line run `python download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK. You should run this script every time you update the SmartAds SDK in your project, or when you make changes to `config.json`.
 
 ## License
 

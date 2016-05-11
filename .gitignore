@@ -4,7 +4,6 @@ Temp/
 Build/
 obj/
 bin/
-.gradle/
 
 # Project/User Preference Files
 *.pidb
