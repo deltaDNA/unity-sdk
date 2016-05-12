@@ -75,16 +75,28 @@ namespace DeltaDNA {
 
         static void ExportSdkPackage()
         {
-            string[] assets = {
-                "Assets/DeltaDNA",
+            List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNA"));
+            // remove unit tests
+            string match = assets.Find(it => it.EndsWith("Editor"));
+            if (match != null) assets.Remove(match);
+
+            assets.AddRange(Directory.GetFiles("Assets/DeltaDNA", "*.cs"));
+
+            string[] globalAssets = {
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.h",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.m",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.h",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.m"
             };
 
+            assets.AddRange(globalAssets);
+
+            foreach (string f in assets) {
+                System.Console.WriteLine(f);
+            }
+
             string filename = OutputFilename("deltadna-sdk", SdkVersion());
-            AssetDatabase.ExportPackage(assets, filename, ExportPackageOptions.Recurse);
+            AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
         }
 
         static void ExportSmartAdsPackage()
