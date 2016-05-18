@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.1.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.3) (YYYY-MM-DD)
+### Added
+- Missing callbacks for push notification events on Android.
+
 ## [4.1.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.2) (2016-05-12)
 ### Fixed
 - AdColony on Android reporting potentially wrong ad shown state.

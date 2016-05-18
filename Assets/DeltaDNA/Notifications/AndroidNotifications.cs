@@ -15,22 +15,35 @@
 //
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DeltaDNA
 {
     
     /// <summary>
-    /// Android Notifications enables a game to register with Google's GCM service.  Is uses
-    /// our native android plugin to retreive the registration id required to send a push
-    /// notification to an Android game.  This id is sent to our platform with each gameStarted event.
+    /// Android Notifications enables a game to register with Google's GCM service.
+    /// Is uses our native Android plugin to retreive the registration id required
+    /// to send a push notification to a game. This id is sent to our platform as
+    /// appropriate.
     /// </summary>
     public class AndroidNotifications : MonoBehaviour
     {
         #if UNITY_ANDROID
         private Android.DDNANotifications ddnaNotifications;
         #endif
-        
+
+        /// <summary>
+        /// Called with the JSON string of the notification payload when the
+        /// user opens the app from the background through an interaction on
+        /// the push notification.
+        /// </summary>
+        public event Action<string> OnDidLaunchWithPushNotification;
+        /// <summary>
+        /// Called with the JSON string of the notification payload when the
+        /// push notification is received while the app is in the foreground.
+        /// </summary>
+        public event Action<string> OnDidReceivePushNotification;
         // Called with the registrationId.
         public event Action<string> OnDidRegisterForPushNotifications;
         // Called with the error string.
@@ -59,8 +72,7 @@ namespace DeltaDNA
         }
         
         /// <summary>
-        /// Unregisters for push notifications.  Google recommends not calling this,
-        /// better to not send messages.
+        /// Unregisters for push notifications.
         /// </summary>
         public void UnregisterForPushNotifications()
         {
@@ -70,8 +82,32 @@ namespace DeltaDNA
                 #endif
             }
         }
-        
+
         #region Native Bridge
+
+        public void DidLaunchWithPushNotification(string notification)
+        {
+            Logger.LogDebug("Did launch with Android push notification");
+
+            var payload = MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
+            DDNA.Instance.RecordPushNotification(payload);
+
+            if (OnDidLaunchWithPushNotification != null) {
+                OnDidLaunchWithPushNotification(notification);
+            }
+        }
+
+        public void DidReceivePushNotification(string notification)
+        {
+            Logger.LogDebug("Did receive Android push notification");
+
+            var payload = MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
+            DDNA.Instance.RecordPushNotification(payload);
+
+            if (OnDidReceivePushNotification != null) {
+                OnDidReceivePushNotification(notification);
+            }
+        }
         
         public void DidRegisterForPushNotifications(string registrationId)
         {
@@ -86,7 +122,7 @@ namespace DeltaDNA
         
         public void DidFailToRegisterForPushNotifications(string error)
         {
-            Logger.LogDebug("Did fail to register for push notifications: "+error);
+            Logger.LogDebug("Did fail to register for Android push notifications: "+error);
             
             if (OnDidFailToRegisterForPushNotifications != null) {
                 OnDidFailToRegisterForPushNotifications(error);
