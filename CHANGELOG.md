@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.1.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.3) (YYYY-MM-DD)
+## [4.1.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.3) (2016-05-18)
 ### Added
 - Missing callbacks for push notification events on Android.
 
