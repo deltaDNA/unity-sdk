@@ -175,7 +175,7 @@ namespace DeltaDNAAds
         internal void DidFailToOpenInterstitialAd(string reason)
         {
             Action action = delegate() {
-                Logger.LogDebug("Failed to open an insterstital ad: "+reason);
+                Logger.LogDebug("Failed to open an interstitial ad: "+reason);
 
                 if (OnInterstitialAdFailedToOpen != null) {
                     OnInterstitialAdFailedToOpen(reason);

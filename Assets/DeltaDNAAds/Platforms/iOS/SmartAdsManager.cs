@@ -74,9 +74,8 @@ namespace DeltaDNAAds.iOS {
                 try {
                     engageParams = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
                 } catch (System.Exception) {}
-                return _isInterstitialAdAllowed(decisionPoint, engageParams);
             }
-            return false;
+            return _isInterstitialAdAllowed(decisionPoint, engageParams);
         }
 
         public bool IsInterstitialAdAvailable()
@@ -103,9 +102,8 @@ namespace DeltaDNAAds.iOS {
                 try {
                     engageParams = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
                 } catch (System.Exception) {}
-                return _isRewardedAdAllowed(decisionPoint, engageParams);
             }
-            return false;
+            return _isRewardedAdAllowed(decisionPoint, engageParams);
         }
 
         public bool IsRewardedAdAvailable()
