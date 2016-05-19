@@ -27,10 +27,16 @@ namespace DeltaDNAAds.iOS {
         private static extern void _registerForAds(string decisionPoint);
 
         [DllImport("__Internal")]
+        private static extern bool _isInterstitialAdAllowed(string decisionPoint, string engageParams);
+
+        [DllImport("__Internal")]
         private static extern bool _isInterstitialAdAvailable();
 
         [DllImport("__Internal")]
         private static extern void _showInterstitialAd(string decisionPoint);
+
+        [DllImport("__Internal")]
+        private static extern bool _isRewardedAdAllowed(string decisionPoint, string engageParams);
 
         [DllImport("__Internal")]
         private static extern bool _isRewardedAdAvailable();
@@ -59,6 +65,20 @@ namespace DeltaDNAAds.iOS {
             _registerForAds(decisionPoint);
         }
 
+        public bool IsInterstitialAdAllowed(Engagement engagement)
+        {
+            string decisionPoint = null;
+            string engageParams = null;
+
+            if (engagement != null && engagement.JSON != null) {
+                try {
+                    engageParams = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
+                } catch (System.Exception) {}
+                return _isInterstitialAdAllowed(decisionPoint, engageParams);
+            }
+            return false;
+        }
+
         public bool IsInterstitialAdAvailable()
         {
             return _isInterstitialAdAvailable();
@@ -72,6 +92,20 @@ namespace DeltaDNAAds.iOS {
         public void ShowInterstitialAd(string decisionPoint)
         {
             _showInterstitialAd(decisionPoint);
+        }
+
+        public bool IsRewardedAdAllowed(Engagement engagement)
+        {
+            string decisionPoint = null;
+            string engageParams = null;
+
+            if (engagement != null && engagement.JSON != null) {
+                try {
+                    engageParams = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
+                } catch (System.Exception) {}
+                return _isRewardedAdAllowed(decisionPoint, engageParams);
+            }
+            return false;
         }
 
         public bool IsRewardedAdAvailable()

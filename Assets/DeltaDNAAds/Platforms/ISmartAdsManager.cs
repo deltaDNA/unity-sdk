@@ -16,15 +16,18 @@
 
 using UnityEngine;
 using System.Collections;
+using DeltaDNA;
 
 namespace DeltaDNAAds {
 
     internal interface ISmartAdsManager {
 
         void RegisterForAds(string decisionPoint);
+        bool IsInterstitialAdAllowed(Engagement engagement);
         bool IsInterstitialAdAvailable();
         void ShowInterstitialAd();
         void ShowInterstitialAd(string decisionPoint);
+        bool IsRewardedAdAllowed(Engagement engagement);
         bool IsRewardedAdAvailable();
         void ShowRewardedAd();
         void ShowRewardedAd(string decisionPoint);

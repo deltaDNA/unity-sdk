@@ -30,6 +30,11 @@ void _registerForAds(const char * decisionPoint)
     [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint)];
 }
 
+BOOL _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams)
+{
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAllowed:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
+}
+
 BOOL _isInterstitialAdAvailable()
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAvailable];
@@ -38,6 +43,11 @@ BOOL _isInterstitialAdAvailable()
 void _showInterstitialAd(const char * decisionPoint)
 {
     [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAdWithDecisionPoint:GetStringParam(decisionPoint)];
+}
+
+BOOL _isRewardedAdAllowed(const char * decsionPoint, const char * engageParams)
+{
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAllowed:GetStringParam(decsionPoint) engageParams:GetStringParam(engageParams)];
 }
 
 BOOL _isRewardedAdAvailable()
@@ -95,6 +105,30 @@ UIViewController *UnityGetGLViewController();
 
 @end
 
+@implementation NSDictionary (DeltaDNA)
+
++ (NSDictionary *) dictionaryWithJSONString: (NSString *) jsonString
+{
+    if (jsonString == nil || jsonString.length == 0)
+    {
+        return [NSDictionary dictionary];
+    }
+    
+    NSData * data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError * error = nil;
+    NSDictionary * result = [NSJSONSerialization JSONObjectWithData:data
+                                                            options:kNilOptions
+                                                              error:&error];
+    if (error != 0)
+    {
+        return [NSDictionary dictionary];
+    }
+    
+    return result;
+}
+
+@end
+
 @interface DDNASmartAdsUnityPlugin () <DDNASmartAdServiceDelegate>
 {
 
@@ -140,6 +174,18 @@ UIViewController *UnityGetGLViewController();
     }
 }
 
+- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams
+{
+    @synchronized (self) {
+        if (self.adService) {
+            NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
+            return [self.adService isInterstitialAdAllowedForDecisionPoint:decisionPoint engagementParameters:engageParamsDict];
+        } else {
+            return NO;
+        }
+    }
+}
+
 - (BOOL)isInterstitialAdAvailable
 {
     @synchronized(self) {
@@ -155,6 +201,18 @@ UIViewController *UnityGetGLViewController();
 {
     @synchronized(self) {
         [self.adService showInterstitialAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint];
+    }
+}
+
+- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams
+{
+    @synchronized (self) {
+        if (self.adService) {
+            NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
+            return [self.adService isRewardedAdAllowedForDecisionPoint:decisionPoint engagementParameters:engageParamsDict];
+        } else {
+            return NO;
+        }
     }
 }
 

@@ -29,6 +29,8 @@ namespace DeltaDNAAds {
 
         public static InterstitialAd Create()
         {
+            if (!DDNASmartAds.Instance.IsInterstitialAdAllowed(null)) return null;
+
             var instance = new InterstitialAd();
             instance.Parameters = new JSONObject();
             return instance;
@@ -36,13 +38,13 @@ namespace DeltaDNAAds {
 
         public static InterstitialAd Create(Engagement engagement)
         {
+            if (!DDNASmartAds.Instance.IsInterstitialAdAllowed(engagement)) return null;
+
             JSONObject parameters = null;
 
             if (engagement != null && engagement.JSON != null) {
                 if (engagement.JSON.ContainsKey("parameters")) {
                     parameters = engagement.JSON["parameters"] as JSONObject;
-                    if (parameters.ContainsKey("adShowPoint") && !(bool)parameters["adShowPoint"])
-                        return null;
                 }
             }
 

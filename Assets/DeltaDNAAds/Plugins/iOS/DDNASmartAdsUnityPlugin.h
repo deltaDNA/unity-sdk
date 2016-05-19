@@ -18,8 +18,10 @@
 
 // Unity Binding
 void _registerForAds(const char * decisionPoint);
+BOOL _inInterstitialAdAllowed(const char * decisionPoint, const char * engageParams);
 BOOL _isInterstitialAdAvailable();
 void _showInterstitialAd(const char * decisionPoint);
+BOOL _isRewardedAdAllowed(const char * decisionPoint, const char * engageParams);
 BOOL _isRewardedAdAvailable();
 void _showRewardedAd(const char * decisionPoint);
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
@@ -33,8 +35,10 @@ void _destroy();
 + (instancetype)sharedPlugin;
 
 - (void)registerForAds:(NSString *)decisionPoint;
+- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
 - (BOOL)isInterstitialAdAvailable;
 - (void)showInterstitialAdWithDecisionPoint:(NSString *)decisionPoint;
+- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
 - (BOOL)isRewardedAdAvailable;
 - (void)showRewardedAdWithDecisionPoint:(NSString *)decisionPoint;
 - (void)engageResponseForId:(NSString *)engagementId

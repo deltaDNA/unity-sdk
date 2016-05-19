@@ -83,6 +83,11 @@ namespace DeltaDNAAds
             }
         }
 
+        public bool IsInterstitialAdAllowed(Engagement engagement)
+        {
+            return manager != null && manager.IsInterstitialAdAllowed(engagement);
+        }
+
         public bool IsInterstitialAdAvailable()
         {
             return manager != null && manager.IsInterstitialAdAvailable();
@@ -97,6 +102,11 @@ namespace DeltaDNAAds
         public void ShowInterstitialAd(string decisionPoint)
         {
             ShowInterstitialAdImpl(decisionPoint);
+        }
+
+        public bool IsRewardedAdAllowed(Engagement engagement)
+        {
+            return manager != null && manager.IsRewardedAdAllowed(engagement);
         }
 
         public bool IsRewardedAdAvailable()
