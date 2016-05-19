@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]() ()
+### Added
+- `DDNASmartAds.IsInterstitialAdAllowed` and `DDNASmartAds.IsRewardedAdAllowed` which report if an ad is allowed to show.
+
+### Changed
+- `InterstitialAd` and `RewardedAd` will only be created if the time and session limits have not been reached, an ad has loaded, and if an Engagement is used, that it doesn't disable the ad.
+
 ## [4.1.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.3) (2016-05-18)
 ### Added
 - Missing callbacks for push notification events on Android.
