@@ -5,7 +5,7 @@ def smartads = hasProperty('smartads')
 def networks = hasProperty('networks') ? networks.split(',') : []
 def network = { network ->
     if (network in networks) {
-        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.1.4")
+        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.2.0-SNAPSHOT")
     }
 }
 
@@ -22,6 +22,7 @@ buildscript {
 repositories {
     mavenCentral()
     maven { url 'http://jcenter.bintray.com' }
+    maven { url 'http://edinlin01:8082/artifactory/libs-snapshot-local' }
     maven { url "http://deltadna.bintray.com/android" }
 }
 
@@ -47,7 +48,7 @@ dependencies {
         compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.2'
     }
     if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads-core:1.1.4'
+        compile 'com.deltadna.android:deltadna-smartads-core:1.2.0-SNAPSHOT'
     }
 
     network('adcolony')

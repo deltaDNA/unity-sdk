@@ -16,7 +16,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System.Threading;
+using DeltaDNA;
 
 namespace DeltaDNAAds.Android
 {
@@ -45,6 +45,17 @@ namespace DeltaDNAAds.Android
             adService.Call("init", decisionPoint);
         }
 
+        public bool IsInterstitialAdAllowed(Engagement engagement) {
+            return adService.Call<bool>(
+                "isInterstitialAdAllowed",
+                (engagement != null) ? engagement.DecisionPoint : null,
+                (engagement == null || engagement.JSON == null)
+                    ? null
+                    : new AndroidJavaObject(
+                        Utils.JSONObjectClassName,
+                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON)));
+        }
+
         public bool IsInterstitialAdAvailable() {
             return adService.Call<bool>("isInterstitialAdAvailable");
         }
@@ -55,6 +66,17 @@ namespace DeltaDNAAds.Android
 
         public void ShowInterstitialAd(string decisionPoint) {
             adService.Call("showInterstitialAd", decisionPoint);
+        }
+
+        public bool IsRewardedAdAllowed(Engagement engagement) {
+            return adService.Call<bool>(
+                "isRewardedAdAllowed",
+                (engagement != null) ? engagement.DecisionPoint : null,
+                (engagement == null || engagement.JSON == null)
+                    ? null
+                    : new AndroidJavaObject(
+                        Utils.JSONObjectClassName,
+                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON))); ;
         }
 
         public bool IsRewardedAdAvailable() {
