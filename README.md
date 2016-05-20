@@ -134,7 +134,7 @@ If everything went well the SmartAds service will start fetching ads in the back
 
 ### Create an Interstitial Ad
 
-An interstitial ad is a fullscreen popup that the player can dismiss from a close button.  In order to show an interstitial ad, create an `InterstitialAd` and attempt to show it.
+An interstitial ad is a fullscreen popup that the player can dismiss from a close button.  In order to show an interstitial ad, try to create an `InterstitialAd` and then show it.
 
 ```csharp
 var interstitialAd = InterstitialAd.Create();
@@ -142,6 +142,8 @@ if (interstitialAd != null) {
     interstitialAd.Show();
 }
 ```
+
+`Create` checks that the game has permission to show an ad at this point.  It checks that an ad has loaded, that the number of ads for this session hasn't been exceeded and that it's not too soon since the last ad was shown.  If a non null object is returned you are allowed to show an ad.  This allows you to easily control the number and frequency of ads shown to your players from our platform.
 
 The following events can be added to an `InterstitialAd`:
 
@@ -151,12 +153,16 @@ The following events can be added to an `InterstitialAd`:
 
 ### Create a Rewarded Ad
 
-A rewarded ad is a short video, typically 30 seconds in length that the player must watch before being able to dismiss.  To show a rewarded ad, create a `RewardedAd` and attempt to show it.
+A rewarded ad is a short video, typically 30 seconds in length that the player must watch before being able to dismiss.  To show a rewarded ad, try to create a `RewardedAd` and then show it.
 
 ```csharp
 var rewardedAd = RewardedAd.Create();
-rewardedAd.Show();
+if (rewardedAd != null) {
+    rewardedAd.Show();
+}
 ```
+
+As with `InterstitialAd` the `Create` method will only return an object if you're allowed to show a rewarded ad and there is one available to show at this point.  So, for example if you get a non null object you can present a UI to the player that offers them a rewarded ad to watch.
 
 The following events can be added to a `RewardedAd`:
 
@@ -166,7 +172,7 @@ The following events can be added to a `RewardedAd`:
 
 ### Working with Engage
 
-To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage id it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You can try to build an ad from an `Engagement` object, it will only succeed if the Engage response allows it.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.  
+To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage if it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You try to create an ad from an `Engagement` object, it will only succeed if the Engage response allows it and the session, time and loaded constraints are satisfied.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.  
 
 ```csharp
 var engagement = new Engagement("showRewarded");
@@ -199,9 +205,7 @@ Checkout the included example project for more details.
 
 Prior to the inclusion of the `InterstitialAd` and `RewardedAd` classes you could show ads directly from the `DDNASmartAds` object.  This still works since this is what the ad classes use, but it's preferred to use the separate classes.
 
-You can test if an interstitial ad is ready to be displayed with `DDNASmartAds.Instance.IsInterstitialAdAvailable()`.  Show an interstitial ad by calling `DDNASmartAds.Instance.ShowInterstitialAd()`.
-
-You can test if a rewarded ad is ready to be displayed with `DDNASmartAds.Instance.IsRewardedAdAvailable()`.  Show a rewarded ad by calling `DDNASmartAds.Instance.ShowRewardedAd()`.
+You can test if an interstitial ad has loaded with `DDNASmartAds.Instance.IsInterstitialAdAvailable()`.  Show an interstitial ad by calling `DDNASmartAds.Instance.ShowInterstitialAd()`.  You can test if a rewarded ad has loaded with `DDNASmartAds.Instance.IsRewardedAdAvailable()`.  Show a rewarded ad by calling `DDNASmartAds.Instance.ShowRewardedAd()`.  These calls don't tell you in advance if showing the ad will fail because of session and time limits, another reason why we recommend using the `InterstitialAd` and `RewardedAd` classes.
 
 The additional show methods that use Decision Points are now deprecated, since they hide what Engage is returning which prevents you from controlling if and when to show the ad in your game.
 
