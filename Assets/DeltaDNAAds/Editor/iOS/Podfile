@@ -4,7 +4,7 @@ source 'https://github.com/deltaDNA/CocoaPods.git'
 platform :ios, '7.0'
 
 target 'Unity-iPhone' do
-    pod 'DeltaDNAAds', '~> 1.1'
+    pod 'DeltaDNAAds', '~> 1.2'
 end
 
 # Enable extra logging
