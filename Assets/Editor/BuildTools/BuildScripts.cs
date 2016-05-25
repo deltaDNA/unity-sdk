@@ -106,7 +106,7 @@ namespace DeltaDNA {
             assets.RemoveAll(it => it.EndsWith("Plugins") || it.EndsWith("Editor"));
             assets.AddRange(Directory.GetDirectories("Assets/DeltaDNAAds/Editor/Android"));
             assets.AddRange(Directory.GetFiles("Assets/DeltaDNAAds/Editor/Android"));
-            assets.RemoveAll(it => it.EndsWith(".gradle") || it.EndsWith("local.properties") || it.EndsWith(".meta"));
+            assets.RemoveAll(it => it.EndsWith("Android/.gradle") || it.EndsWith("local.properties") || it.EndsWith(".meta"));
 
             assets.Add("Assets/DeltaDNAAds/Editor/iOS");
             assets.Add("Assets/DeltaDNAAds/Plugins/iOS");
