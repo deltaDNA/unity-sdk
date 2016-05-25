@@ -61,6 +61,9 @@ namespace DeltaDNAAds
                 return;
             }
 
+            DDNA.Instance.OnNewSession -= this.RegisterForAds;
+            DDNA.Instance.OnNewSession += this.RegisterForAds;
+
             try {
                 if (Application.platform == RuntimePlatform.IPhonePlayer) {
                     #if UNITY_IOS
@@ -339,10 +342,8 @@ namespace DeltaDNAAds
         {
             if (manager != null) {
                 if (pauseStatus) {
-                    Logger.LogDebug("Pausing SmartAds");
                     manager.OnPause();
                 } else {
-                    Logger.LogDebug("Resuming SmartAds");
                     manager.OnResume();
                 }
             }
@@ -380,6 +381,7 @@ namespace DeltaDNAAds
         {
             if (manager != null) {
                 Logger.LogDebug("Destroying StartAds");
+                DDNA.Instance.OnNewSession -= this.RegisterForAds;
                 manager.OnDestroy();
             }
             base.OnDestroy();

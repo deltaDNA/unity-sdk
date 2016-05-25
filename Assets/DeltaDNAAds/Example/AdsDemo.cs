@@ -186,6 +186,10 @@ namespace DeltaDNAAds
                 });
 
             }
+
+            if (GUI.Button(new Rect(10, 820, 200, 80), "New Session")) {
+                DDNA.Instance.NewSession();
+            }
         }
     }
 }

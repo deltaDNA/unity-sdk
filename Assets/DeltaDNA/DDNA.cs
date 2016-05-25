@@ -47,6 +47,8 @@ namespace DeltaDNA
 
         private static object _lock = new object();
 
+        public event Action OnNewSession;
+
         protected DDNA()
         {
             this.Settings = new Settings(); // default configuration
@@ -148,6 +150,9 @@ namespace DeltaDNA
             string sessionID = GenerateSessionID();
             Logger.LogDebug("Starting new session "+sessionID);
             this.SessionID = sessionID;
+            if (this.OnNewSession != null) {
+                this.OnNewSession();
+            }
         }
 
         /// <summary>

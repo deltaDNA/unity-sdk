@@ -3,6 +3,7 @@
 ## [4.2.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) ()
 ### Added
 - `DDNASmartAds.IsInterstitialAdAllowed` and `DDNASmartAds.IsRewardedAdAllowed` which report if an ad is allowed to show.
+- Calls `RegisterForAds` again on a new session.
 
 ### Changed
 - `InterstitialAd` and `RewardedAd` will only be created if the time and session limits have not been reached, an ad has loaded, and if an Engagement is used, that it doesn't disable the ad.
