@@ -15,16 +15,7 @@ namespace DeltaDNAAds {
 
         private InterstitialAd()
         {
-            DDNASmartAds.Instance.OnInterstitialAdOpened += this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen += this.OnInterstitialAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnInterstitialAdClosed += this.OnInterstitialAdClosedHandler;
-        }
 
-        ~InterstitialAd()
-        {
-            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
         }
 
         public static InterstitialAd Create()
@@ -61,6 +52,13 @@ namespace DeltaDNAAds {
 
         public void Show()
         {
+            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            DDNASmartAds.Instance.OnInterstitialAdOpened += this.OnInterstitialAdOpenedHandler;
+            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen += this.OnInterstitialAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+            DDNASmartAds.Instance.OnInterstitialAdClosed += this.OnInterstitialAdClosedHandler;
+
             DDNASmartAds.Instance.ShowInterstitialAd();
         }
 
@@ -68,6 +66,9 @@ namespace DeltaDNAAds {
 
         private void OnInterstitialAdOpenedHandler()
         {
+            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+
             if (this.OnInterstitialAdOpened != null) {
                 this.OnInterstitialAdOpened();
             }
@@ -75,6 +76,10 @@ namespace DeltaDNAAds {
 
         private void OnInterstitialAdFailedToOpenHandler(string reason)
         {
+            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+
             if (this.OnInterstitialAdFailedToOpen != null) {
                 this.OnInterstitialAdFailedToOpen(reason);
             }
@@ -82,6 +87,8 @@ namespace DeltaDNAAds {
 
         private void OnInterstitialAdClosedHandler()
         {
+            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+
             if (this.OnInterstitialAdClosed != null) {
                 this.OnInterstitialAdClosed();
             }

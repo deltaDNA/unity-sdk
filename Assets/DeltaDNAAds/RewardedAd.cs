@@ -15,16 +15,7 @@ namespace DeltaDNAAds {
 
         private RewardedAd()
         {
-            DDNASmartAds.Instance.OnRewardedAdOpened += this.OnRewaredAdOpenedHandler;
-            DDNASmartAds.Instance.OnRewardedAdFailedToOpen += this.OnRewardedAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnRewardedAdClosed += this.OnRewardedAdClosedHandler;
-        }
 
-        ~RewardedAd()
-        {
-            DDNASmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
-            DDNASmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
         }
 
         public static RewardedAd Create()
@@ -61,6 +52,13 @@ namespace DeltaDNAAds {
 
         public void Show()
         {
+            DDNASmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
+            DDNASmartAds.Instance.OnRewardedAdOpened += this.OnRewaredAdOpenedHandler;
+            DDNASmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnRewardedAdFailedToOpen += this.OnRewardedAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
+            DDNASmartAds.Instance.OnRewardedAdClosed += this.OnRewardedAdClosedHandler;
+
             DDNASmartAds.Instance.ShowRewardedAd();
         }
 
@@ -68,6 +66,9 @@ namespace DeltaDNAAds {
 
         private void OnRewaredAdOpenedHandler() 
         {
+            DDNASmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
+            DDNASmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
+
             if (this.OnRewardedAdOpened != null) {
                 this.OnRewardedAdOpened();
             }
@@ -75,6 +76,10 @@ namespace DeltaDNAAds {
 
         private void OnRewardedAdFailedToOpenHandler(string reason)
         {
+            DDNASmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
+            DDNASmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
+            DDNASmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
+
             if (this.OnRewardedAdFailedToOpen != null) {
                 this.OnRewardedAdFailedToOpen(reason);
             }
@@ -82,6 +87,8 @@ namespace DeltaDNAAds {
 
         private void OnRewardedAdClosedHandler(bool reward)
         {
+            DDNASmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
+
             if (this.OnRewardedAdClosed != null) {
                 this.OnRewardedAdClosed(reward);
             }
