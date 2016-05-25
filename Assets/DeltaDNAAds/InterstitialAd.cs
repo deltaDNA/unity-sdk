@@ -22,7 +22,7 @@ namespace DeltaDNAAds {
 
         ~InterstitialAd()
         {
-            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler; 
+            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
             DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
             DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
         }
@@ -66,7 +66,7 @@ namespace DeltaDNAAds {
 
         public JSONObject Parameters { get; private set; }
 
-        private void OnInterstitialAdOpenedHandler() 
+        private void OnInterstitialAdOpenedHandler()
         {
             if (this.OnInterstitialAdOpened != null) {
                 this.OnInterstitialAdOpened();

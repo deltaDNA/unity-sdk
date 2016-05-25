@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]() ()
+## [4.2.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) ()
 ### Added
 - `DDNASmartAds.IsInterstitialAdAllowed` and `DDNASmartAds.IsRewardedAdAllowed` which report if an ad is allowed to show.
 
