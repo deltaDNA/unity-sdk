@@ -5,6 +5,10 @@
 - `DDNASmartAds.IsInterstitialAdAllowed` and `DDNASmartAds.IsRewardedAdAllowed` which report if an ad is allowed to show.
 - Calls `RegisterForAds` again on a new session.
 
+### Fixed
+- Ad network cycling on Android.
+- Ad configuration not being read correctly on Android.
+
 ### Changed
 - `InterstitialAd` and `RewardedAd` will only be created if the time and session limits have not been reached, an ad has loaded, and if an Engagement is used, that it doesn't disable the ad.
 
