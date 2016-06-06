@@ -49,11 +49,11 @@ namespace DeltaDNAAds.Android
             return adService.Call<bool>(
                 "isInterstitialAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
-                (engagement == null || engagement.JSON == null)
+                (engagement == null || engagement.JSON == null || !engagement.JSON.ContainsKey("parameters"))
                     ? null
                     : new AndroidJavaObject(
                         Utils.JSONObjectClassName,
-                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON)));
+                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON["parameters"])));
         }
 
         public bool IsInterstitialAdAvailable() {
@@ -72,11 +72,11 @@ namespace DeltaDNAAds.Android
             return adService.Call<bool>(
                 "isRewardedAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
-                (engagement == null || engagement.JSON == null)
+                (engagement == null || engagement.JSON == null || !engagement.JSON.ContainsKey("parameters"))
                     ? null
                     : new AndroidJavaObject(
                         Utils.JSONObjectClassName,
-                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON))); ;
+                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON["parameters"]))); ;
         }
 
         public bool IsRewardedAdAvailable() {

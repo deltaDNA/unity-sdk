@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.1.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.5) (YYYY-MM-DD)
+### Fixed
+- Ad show set to false not being respected on Android.
+
 ## [4.1.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.4) (2016-05-27)
 ### Added
 - `DDNASmartAds.IsInterstitialAdAllowed` and `DDNASmartAds.IsRewardedAdAllowed` which report if an ad is allowed to show.
