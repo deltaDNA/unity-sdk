@@ -46,14 +46,19 @@ namespace DeltaDNAAds.Android
         }
 
         public bool IsInterstitialAdAllowed(Engagement engagement) {
+            string parameters = null;
+            if (engagement != null && engagement.JSON != null && engagement.JSON.ContainsKey("parameters")) {
+                try {
+                    parameters = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON["parameters"]);
+                } catch (System.Exception e) {
+                    DeltaDNA.Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
+                }
+            }
+
             return adService.Call<bool>(
                 "isInterstitialAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
-                (engagement == null || engagement.JSON == null)
-                    ? null
-                    : new AndroidJavaObject(
-                        Utils.JSONObjectClassName,
-                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON)));
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
         }
 
         public bool IsInterstitialAdAvailable() {
@@ -69,14 +74,19 @@ namespace DeltaDNAAds.Android
         }
 
         public bool IsRewardedAdAllowed(Engagement engagement) {
+            string parameters = null;
+            if (engagement != null && engagement.JSON != null && engagement.JSON.ContainsKey("parameters")) {
+                try {
+                    parameters = DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON["parameters"]);
+                } catch (System.Exception e) {
+                    DeltaDNA.Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
+                }
+            }
+
             return adService.Call<bool>(
                 "isRewardedAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
-                (engagement == null || engagement.JSON == null)
-                    ? null
-                    : new AndroidJavaObject(
-                        Utils.JSONObjectClassName,
-                        DeltaDNA.MiniJSON.Json.Serialize(engagement.JSON))); ;
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
         }
 
         public bool IsRewardedAdAvailable() {

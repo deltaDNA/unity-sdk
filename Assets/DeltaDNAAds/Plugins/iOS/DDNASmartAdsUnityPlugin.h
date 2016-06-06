@@ -18,11 +18,11 @@
 
 // Unity Binding
 void _registerForAds(const char * decisionPoint);
-BOOL _inInterstitialAdAllowed(const char * decisionPoint, const char * engageParams);
-BOOL _isInterstitialAdAvailable();
+int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams);
+int _isInterstitialAdAvailable();
 void _showInterstitialAd(const char * decisionPoint);
-BOOL _isRewardedAdAllowed(const char * decisionPoint, const char * engageParams);
-BOOL _isRewardedAdAvailable();
+int _isRewardedAdAllowed(const char * decisionPoint, const char * engageParams);
+int _isRewardedAdAvailable();
 void _showRewardedAd(const char * decisionPoint);
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
 void _pause();

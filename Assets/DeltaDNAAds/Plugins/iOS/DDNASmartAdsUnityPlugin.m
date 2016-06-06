@@ -30,12 +30,12 @@ void _registerForAds(const char * decisionPoint)
     [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint)];
 }
 
-BOOL _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams)
+int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams)
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAllowed:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
 }
 
-BOOL _isInterstitialAdAvailable()
+int _isInterstitialAdAvailable()
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAvailable];
 }
@@ -45,12 +45,12 @@ void _showInterstitialAd(const char * decisionPoint)
     [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAdWithDecisionPoint:GetStringParam(decisionPoint)];
 }
 
-BOOL _isRewardedAdAllowed(const char * decsionPoint, const char * engageParams)
+int _isRewardedAdAllowed(const char * decsionPoint, const char * engageParams)
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAllowed:GetStringParam(decsionPoint) engageParams:GetStringParam(engageParams)];
 }
 
-BOOL _isRewardedAdAvailable()
+int _isRewardedAdAvailable()
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAvailable];
 }
@@ -113,7 +113,7 @@ UIViewController *UnityGetGLViewController();
     {
         return [NSDictionary dictionary];
     }
-    
+
     NSData * data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     NSError * error = nil;
     NSDictionary * result = [NSJSONSerialization JSONObjectWithData:data
@@ -123,7 +123,7 @@ UIViewController *UnityGetGLViewController();
     {
         return [NSDictionary dictionary];
     }
-    
+
     return result;
 }
 
