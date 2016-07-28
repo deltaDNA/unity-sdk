@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [4.1.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.6) (2016-07-28)
 ### Fixed
 - Crash when showing a MoPub ad on Android.
 
