@@ -428,14 +428,38 @@ namespace DeltaDNA
             var notificationEvent = new GameEvent("notificationOpened");
             try {
                 if (payload.ContainsKey("_ddId")) {
-                    notificationEvent.AddParam("notificationId", Convert.ToInt32(payload["_ddId"]));
+                    notificationEvent.AddParam("notificationId", Convert.ToInt64(payload["_ddId"]));
                 }
                 if (payload.ContainsKey("_ddName")) {
                     notificationEvent.AddParam("notificationName", payload["_ddName"]);
                 }
+
+                bool insertCommunicationAttrs = false;
+                if (payload.ContainsKey("_ddCampaign")) {
+                    notificationEvent.AddParam("campaignId", Convert.ToInt64(payload["_ddCampaign"]));
+                    insertCommunicationAttrs = true;
+                }
+                if (payload.ContainsKey("_ddCohort")) {
+                    notificationEvent.AddParam("cohortId", Convert.ToInt64(payload["_ddCohort"]));
+                    insertCommunicationAttrs = true;
+                }
+                if (insertCommunicationAttrs && payload.ContainsKey("_ddCommunicationSender")) {
+                    // _ddCommunicationSender inserted by respective native notification SDK
+                    notificationEvent.AddParam("communicationSender", payload["_ddCommunicationSender"]);
+                    notificationEvent.AddParam("communicationState", "OPEN");
+                }
+
                 if (payload.ContainsKey("_ddLaunch")) {
+                    // _ddLaunch inserted by respective native notification SDK
                     notificationEvent.AddParam("notificationLaunch", Convert.ToBoolean(payload["_ddLaunch"]));
                 }
+                if (payload.ContainsKey("_ddCampaign")) {
+                    notificationEvent.AddParam("campaignId", Convert.ToInt64(payload["_ddCampaign"]));
+                }
+                if (payload.ContainsKey("_ddCohort")) {
+                    notificationEvent.AddParam("cohortId", Convert.ToInt64(payload["_ddCohort"]));
+                }
+                notificationEvent.AddParam("communicationState", "OPEN");
             } catch (Exception ex) {
                 Logger.LogError("Error parsing push notification payload. "+ex.Message);
             }

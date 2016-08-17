@@ -80,7 +80,7 @@ dependencies {
     network('vungle')
     
     if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.7'
+        compile 'com.deltadna.android:deltadna-sdk-notifications:4.2.0-SNAPSHOT'
     }
     if (smartads) {
         compile "com.deltadna.android:deltadna-smartads-core:$version"
