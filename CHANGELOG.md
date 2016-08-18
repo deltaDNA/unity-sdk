@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.1.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.7) (2016-08-18)
+### Fixed
+- Empty notification title on Android.
+- Crash when no networks are added from the configuration on Android.
+
 ## [4.1.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.6) (2016-07-28)
 ### Fixed
 - Crash when showing a MoPub ad on Android.
