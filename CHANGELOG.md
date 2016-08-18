@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.1.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.7) (YYYY-MM-DD)
+## [4.1.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.7) (2016-08-18)
 ### Fixed
 - Empty notification title on Android.
 - Crash when no networks are added from the configuration on Android.
