@@ -1,5 +1,13 @@
 # Change Log
 
+## [4.2.0]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) (YYYY-MM-DD)
+### Added
+- Menu for setting up SmartAds networks into the Unity Editor.
+- Menu for downloading Android SmartAds library dependencies.
+
+### Removed
+- Python dependency and download script for Android.
+
 ## [4.1.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.7) (2016-08-18)
 ### Fixed
 - Empty notification title on Android.

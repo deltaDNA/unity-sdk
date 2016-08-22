@@ -1,12 +1,35 @@
+// DO NOT EDIT FILE MANUALLY
+
 apply plugin: 'com.android.application'
 
+// we're not actually building anything so we can be relaxed in what
+// tools we use and thus can pick anything that may already be installed
+def findBuildToolsVersion = {
+    def files = file("${android.getSdkDirectory().getAbsolutePath()}/build-tools/")
+            ?.list()
+    
+    if (files) {
+        files.last()
+    } else {
+        throw new GradleException('Failed to find Android SDK build tools')
+    }
+}
+def findCompileSdkVersion = {
+    def files = file("${android.getSdkDirectory().getAbsolutePath()}/platforms/")
+            ?.list({ dir, name -> name ==~ /android-\d+/ })
+    
+    if (files) {
+        files.last().replace('android-', '').toInteger()
+    } else {
+        throw new GradleException('Failed to find Android SDK platform')
+    }
+}
+
+def version = '1.2.1'
 def notifications = hasProperty('notifications')
 def smartads = hasProperty('smartads')
-def networks = hasProperty('networks') ? networks.split(',') : []
 def network = { network ->
-    if (network in networks) {
-        dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:1.2.1")
-    }
+    dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:$version")
 }
 
 buildscript {
@@ -15,7 +38,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
+        classpath 'com.android.tools.build:gradle:2.1.2'
     }
 }
 
@@ -27,8 +50,8 @@ repositories {
 }
 
 android {
-    buildToolsVersion '23.0.3'
-    compileSdkVersion 23
+    buildToolsVersion findBuildToolsVersion()
+    compileSdkVersion findCompileSdkVersion()
 }
 
 configurations.all {
@@ -44,13 +67,6 @@ configurations.all {
 }
 
 dependencies {
-    if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.7'
-    }
-    if (smartads) {
-        compile 'com.deltadna.android:deltadna-smartads-core:1.2.1'
-    }
-
     network('adcolony')
     network('admob')
     network('amazon')
@@ -62,10 +78,17 @@ dependencies {
     network('supersonic')
     network('unity')
     network('vungle')
+    
+    if (notifications) {
+        compile 'com.deltadna.android:deltadna-sdk-notifications:4.1.7'
+    }
+    if (smartads) {
+        compile "com.deltadna.android:deltadna-smartads-core:$version"
+    }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.12'
+    gradleVersion = '2.14.1'
 }
 
 task clean(type: Delete) {
