@@ -149,5 +149,26 @@ namespace DeltaDNA {
                 product.SetRealCurrency("", 15);
             });
         }
+
+        [Test]
+        public void ConvertCurrency() {
+            Assert.AreEqual(123, Product.ConvertCurrency("EUR", 1.23m));
+            Assert.AreEqual(123, Product.ConvertCurrency("JPY", 123m));
+        }
+
+        [Test]
+        public void ConvertCurrencyFloors() {
+            Assert.AreEqual(123, Product.ConvertCurrency("EUR", 1.235m));
+        }
+
+        [Test]
+        public void ConvertCurrencyZero() {
+            Assert.AreEqual(0, Product.ConvertCurrency("EUR", 0m));
+        }
+
+        [Test]
+        public void ConvertCurrencyInvalidCode() {
+            Assert.AreEqual(0, Product.ConvertCurrency("ZZZ", 1.23m));
+        }
     }
 }

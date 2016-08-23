@@ -4,6 +4,7 @@
 ### Added
 - Menu for setting up SmartAds networks into the Unity Editor.
 - Menu for downloading Android SmartAds library dependencies.
+- Utility method in Product for converting currencies from a floating point representation.
 - Method to Transaction for setting the receipt signature.
 - Warning when clearning persistent data while SDK is started.
 ### Fixed

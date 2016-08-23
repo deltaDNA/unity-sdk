@@ -93,7 +93,7 @@ public class Example : MonoBehaviour {
                 .AddParam("reward", new Params()
                     .AddParam("rewardName", "Medal")
                     .AddParam("rewardProducts", new Product()
-                        .SetRealCurrency("USD", 5000)
+                        .SetRealCurrency("USD", Product.ConvertCurrency("USD", 12.34m)) // $12.34
                         .AddVirtualCurrency("VIP Points", "GRIND", 20)
                         .AddItem("Sunday Showdown Medal", "Victory Badge", 1)
                     )
