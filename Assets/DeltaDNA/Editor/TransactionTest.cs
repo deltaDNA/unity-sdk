@@ -14,15 +14,13 @@
 // limitations under the License.
 //
 
-using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace DeltaDNA {
 
-    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
+    using JSONObject = Dictionary<string, object>;
 
     public class TransactionTest {
 
@@ -56,6 +54,7 @@ namespace DeltaDNA {
             transaction.SetTransactionId("12345");
             transaction.SetServer("local");
             transaction.SetReceipt("123223----***5433");
+            transaction.SetReceiptSignature("receiptSignature");
             transaction.SetTransactorId("abcde");
             transaction.SetProductId("5678-4332");
 
@@ -69,6 +68,7 @@ namespace DeltaDNA {
                         { "transactionID", "12345" },
                         { "transactionServer", "local" },
                         { "transactionReceipt", "123223----***5433" },
+                        { "transactionReceiptSignature", "receiptSignature" },
                         { "transactorID", "abcde" },
                         { "productID", "5678-4332" }
                     }
@@ -104,6 +104,16 @@ namespace DeltaDNA {
 
             Assert.Throws<ArgumentException>(() => {
                 new Transaction("shop", "weapon", productsReceived, null);
+            });
+        }
+
+        [Test]
+        public void WillThrowIfNullOrEmptyOptionalValues() {
+            Assert.Throws<ArgumentException>(() => {
+                new Transaction("name", "type", new Product(), new Product()).SetReceiptSignature(null);
+            });
+            Assert.Throws<ArgumentException>(() => {
+                new Transaction("name", "type", new Product(), new Product()).SetReceiptSignature("");
             });
         }
     }
