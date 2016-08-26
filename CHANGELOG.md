@@ -1,10 +1,11 @@
 # Change Log
 
-## [4.2.0]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) (YYYY-MM-DD)
+## [4.2.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) (YYYY-MM-DD)
 ### Added
 - Menu for setting up SmartAds networks into the Unity Editor.
 - Menu for downloading Android SmartAds library dependencies.
-
+### Fixed
+- Compilation errors in SmartAds when missing iOS build support.
 ### Removed
 - Python dependency and download script for Android.
 
