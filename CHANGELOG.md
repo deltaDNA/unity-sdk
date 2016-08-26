@@ -5,6 +5,7 @@
 - Menu for setting up SmartAds networks into the Unity Editor.
 - Menu for downloading Android SmartAds library dependencies.
 - Method to Transaction for setting the receipt signature.
+- Warning when clearning persistent data while SDK is started.
 ### Fixed
 - Compilation errors in SmartAds when missing iOS build support.
 ### Removed
