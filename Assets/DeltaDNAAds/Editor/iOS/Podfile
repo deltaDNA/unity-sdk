@@ -1,10 +1,22 @@
+# DO NOT EDIT FILE MANUALLY
+
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/deltaDNA/CocoaPods.git'
 
 platform :ios, '7.0'
+version = '~> 1.2'
 
 target 'Unity-iPhone' do
-    pod 'DeltaDNAAds', '~> 1.2'
+    pod 'DeltaDNAAds/AdColony', version
+    pod 'DeltaDNAAds/AdMob', version
+    pod 'DeltaDNAAds/Amazon', version
+    pod 'DeltaDNAAds/Chartboost', version
+    pod 'DeltaDNAAds/Flurry', version
+    pod 'DeltaDNAAds/InMobi', version
+    pod 'DeltaDNAAds/MobFox', version
+    pod 'DeltaDNAAds/MoPub', version
+    pod 'DeltaDNAAds/UnityAds', version
+    pod 'DeltaDNAAds/Vungle', version
 end
 
 # Enable extra logging

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "AdColony",
+    "android": "adcolony",
+    "ios": "AdColony"
+  },
+  {
+    "name": "AdMob",
+    "android": "admob",
+    "ios": "AdMob"
+  },
+  {
+    "name": "Amazon",
+    "android": "amazon",
+    "ios": "Amazon"
+  },
+  {
+    "name": "AppLovin",
+    "android": "applovin",
+    "ios": null
+  },
+  {
+    "name": "Chartboost",
+    "android": "chartboost",
+    "ios": "Chartboost"
+  },
+  {
+    "name": "Flurry",
+    "android": "flurry",
+    "ios": "Flurry"
+  },
+  {
+    "name": "InMobi",
+    "android": "inmobi",
+    "ios": "InMobi"
+  },
+  {
+    "name": "MobFox",
+    "android": null,
+    "ios": "MobFox"
+  },
+  {
+    "name": "MoPub",
+    "android": "mopub",
+    "ios": "MoPub"
+  },
+  {
+    "name": "Supersonic",
+    "android": "supersonic",
+    "ios": null
+  },
+  {
+    "name": "Unity",
+    "android": "unity",
+    "ios": "UnityAds"
+  },
+  {
+    "name": "Vungle",
+    "android": "vungle",
+    "ios": "Vungle"
+  }
+]
