@@ -253,6 +253,8 @@ The Android libraries can also be downloaded from the *DeltaDNA -> SmartAds -> A
 
 If you make changes to the enabled networks the changes to the build.gradle file should be committed to version control.
 
+In order for the menu items to work you will need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of build-tools and an SDK platform installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
+
 ## Migrations
 
 ### Version 4.2
