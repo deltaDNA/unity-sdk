@@ -9,6 +9,7 @@
 - Warning when clearning persistent data while SDK is started.
 ### Fixed
 - Compilation errors in SmartAds when missing iOS build support.
+- iOS notifications not working with Unity 5.4 and newer.
 ### Removed
 - Python dependency and download script for Android.
 

@@ -28,7 +28,7 @@ using System.Diagnostics;
  */
 public class PostProcessBuild {
 
-    [PostProcessBuild]
+    [PostProcessBuild(0)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string path) {
         UnityEngine.Debug.Log("OnPostprocessBuild "+buildTarget+" "+path);
 
