@@ -42,7 +42,7 @@ namespace DeltaDNAAds.Editor {
             networks = Json.Deserialize(File.ReadAllText(DEFINITIONS)) as IList<object>;
             
             foreach (var handler in handlers) {
-                enabled[handler] = new SortedDictionary<string, bool> ();
+                enabled[handler] = new SortedDictionary<string, bool>();
                 
                 var persisted = handler.GetPersisted();
                 foreach (IDictionary<string, object> network in networks) {

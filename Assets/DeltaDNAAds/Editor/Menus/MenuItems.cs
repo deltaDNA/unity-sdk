@@ -25,12 +25,29 @@ namespace DeltaDNAAds.Editor {
         
         [MenuItem(MENU_PATH + "Select Networks", priority = 10)]
         public static void SelectNetworks() {
-            EditorWindow.GetWindow<NetworksWindow> (
-                "Ad Networks",
-                true,
-                typeof(UnityEditor.Editor).Assembly.GetType(
-                    "UnityEditor.InspectorWindow"))
-                .Show();
+            System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType(
+                "UnityEditor.InspectorWindow");
+
+            var foundInspector = false;
+            foreach (var window in Resources.FindObjectsOfTypeAll<EditorWindow>()) {
+                if (window.GetType() == inspectorType) {
+                    foundInspector = true;
+                    break;
+                }
+            }
+
+            if (foundInspector) {
+                EditorWindow.GetWindow<NetworksWindow>(
+                    "Ad Networks",
+                    true,
+                    inspectorType)
+                    .Show();
+            } else {
+                EditorWindow.GetWindow<NetworksWindow>(
+                    "Ad Networks",
+                    true)
+                    .Show();
+            }
         }
     }
 }
