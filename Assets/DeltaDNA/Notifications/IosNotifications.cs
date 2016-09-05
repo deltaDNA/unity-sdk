@@ -94,6 +94,7 @@ public class IosNotifications : MonoBehaviour
         Logger.LogDebug("Did launch with iOS push notification");
 
         var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
+        payload["_ddCommunicationSender"] = "APPLE_NOTIFICATION";
         DDNA.Instance.RecordPushNotification(payload);
 
         if (OnDidLaunchWithPushNotification != null) {
@@ -106,6 +107,7 @@ public class IosNotifications : MonoBehaviour
         Logger.LogDebug("Did receive iOS push notification");
 
         var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
+        payload["_ddCommunicationSender"] = "APPLE_NOTIFICATION";
         DDNA.Instance.RecordPushNotification(payload);
 
         if (OnDidReceivePushNotification != null) {

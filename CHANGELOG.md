@@ -1,5 +1,18 @@
 # Change Log
 
+## [4.2.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) (2016-09-05)
+### Added
+- Menu for setting up SmartAds networks into the Unity Editor.
+- Menu for downloading Android SmartAds library dependencies.
+- Utility method in Product for converting currencies from a floating point representation.
+- Method added to Transaction for setting the receipt signature.
+- Warning when clearning persistent data while SDK is started.
+### Fixed
+- Compilation errors in SmartAds when missing iOS build support.
+- iOS notifications not working with Unity 5.4 and newer.
+### Changed
+- Removed Python dependency and download script for Android.
+
 ## [4.1.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.1.7) (2016-08-18)
 ### Fixed
 - Empty notification title on Android.

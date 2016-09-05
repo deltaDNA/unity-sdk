@@ -14,8 +14,10 @@
 // limitations under the License.
 //
 
+using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace DeltaDNA {
 
@@ -96,6 +98,49 @@ namespace DeltaDNA {
             this.items.Add(item);
 
             return (T) this;
+        }
+
+        /// <summary>
+        /// Converts a currency in a decimal format, such as '1.23' EUR, into an
+        /// integer representation which can be used with the SetRealCurrency method.
+        /// This method will also work for currencies which don't use a minor currency
+        /// unit, for example such as the Japanese Yen (JPY).
+        /// </summary>
+        /// <param name="code">The ISO 4217 currency code</param>
+        /// <param name="value">The currency value to convert</param>
+        /// <returns>The converted integer value</returns>
+        /// <seealso cref="SetRealCurrency(string, int)"/>
+        public static int ConvertCurrency(string code, decimal value) {
+            if (ISO4217.ContainsKey(code)) {
+                return decimal.ToInt32(value * (decimal) Math.Pow(10, ISO4217[code]));
+            } else {
+                Debug.LogWarning("Failed to find currency for: " + code);
+                return 0;
+            }
+        }
+
+        private static readonly IDictionary<string, int> ISO4217;
+        static Product() {
+            ISO4217 = new Dictionary<string, int>();
+
+            var res = Resources.Load("iso_4217", typeof(TextAsset)) as TextAsset;
+            var xml = new XmlDocument();
+            xml.LoadXml(res.text);
+
+            foreach (XmlNode node in xml.SelectNodes("/ISO_4217/CcyTbl/CcyNtry")) {
+                var ccy = node.SelectSingleNode("Ccy");
+                if (ccy == null) continue;
+
+                var key = ccy.InnerText;
+                int value;
+                try {
+                    value = int.Parse(node.SelectSingleNode("CcyMnrUnts").InnerText);
+                } catch (FormatException) {
+                    value = 0;
+                }
+
+                ISO4217[key] = value;
+            }
         }
     }
 

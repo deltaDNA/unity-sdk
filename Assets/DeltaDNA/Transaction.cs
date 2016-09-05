@@ -66,6 +66,15 @@ namespace DeltaDNA {
             return (T) this;
         }
 
+        public T SetReceiptSignature(string receiptSignature) {
+            if (string.IsNullOrEmpty(receiptSignature)) {
+                throw new ArgumentException("receipt signature cannot be null or empty");
+            }
+
+            AddParam("transactionReceiptSignature", receiptSignature);
+            return (T) this;
+        }
+
         public T SetServer(string server)
         {
             if (String.IsNullOrEmpty(server)) {

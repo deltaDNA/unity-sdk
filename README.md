@@ -23,6 +23,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [Android Integration](#android-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
+* [Migrations](#migrations)
 * [License](#license)
 
 ## Analytics
@@ -228,9 +229,11 @@ Callbacks can be added to the following events to be notified when an ad has ope
 
 ## iOS Integration
 
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  A minimal Podfile is included in DeltaDNAAds/Editor/iOS.  It will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
+We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
 
-The included Podfile will install support for all the ad networks deltaDNA supports.  You can customise the Podfile to download only the ad networks you require by using [Subspecs](https://guides.cocoapods.org/syntax/podfile.html#pod).  The process is the same as for the native [iOS SmartAds SDK](https://github.com/deltaDNA/ios-smartads-sdk) and more details on customising the Podfile can be found there.
+To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
+
+If you make changes to the enabled networks the changes to the Podfile should be committed to version control.
 
 ## Android Integration
 
@@ -244,15 +247,20 @@ If you do not wish to use push notifications on Android then you can remove the 
 
 ### SmartAds on Android
 
-We provide a Python script to help manage the 3rd party ad network dependencies.  In `Assets\DeltaDNAAds\Editor\Android`, edit `config.json` to include the networks you wish to integrate.
+As with SmartAds on iOS the same settings from *DeltaDNA -> SmartAds -> Select Networks* can be used to select which networks should be used. After applying the changes the SDK will automatically download the ad network libraries from a Maven repository.
 
-Make sure you have set the `sdk.dir` property in your `local.properties` file in this directory pointing to where you installed the Android SDK, for example
-```
-sdk.dir=C\:\\Users\\USERNAME\\AppData\\Local\\Android\\sdk
-```
-Please note that you should not commit this file to your VCS as the directory can vary between systems depending on where the Android SDK has been installed.
+The Android libraries can also be downloaded from the *DeltaDNA -> SmartAds -> Android -> Download Libraries* menu item. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will automatically try to detect when the downloaded libraries may be stale and will show a warning in the Editor console.
 
-Then from the command line run `python download.py`.  This will download and copy the dependent AARs and Jar files into the `Assets\DeltaDNAAds\Plugins\Android` folder.  Unity will pick these up when you build the APK. You should run this script every time you update the SmartAds SDK in your project, or when you make changes to `config.json`.
+If you make changes to the enabled networks the changes to the build.gradle file should be committed to version control.
+
+In order for the menu items to work you will need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of build-tools and an SDK platform installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
+
+## Migrations
+
+### Version 4.2
+Configuring which networks should be used for SmartAds has been changed by adding menu items to the Unity Editor, which removes some of the error-prone manual steps. For Android there's no longer the need to have Python installed or set the Android SDK directory in order to download the library dependencies, as the menu item for this task will take care of the steps. If you make changes to the selected networks you will need to commit the changes made to the build.gradle and/or Podfile to your version control, in order for the rest of your team to use the changes.
+
+Since we've had to change how the SmartAds networks are defined you may need to look over the selected networks in case you had previously removed any of them for your project.
 
 ## License
 
