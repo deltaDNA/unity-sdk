@@ -6,10 +6,12 @@
 - Menu for downloading Android SmartAds library dependencies.
 - Utility method in Product for converting currencies from a floating point representation.
 - Method added to Transaction for setting the receipt signature.
-- Warning when clearning persistent data while SDK is started.
+- Warning when clearing persistent data while SDK is started.
+
 ### Fixed
 - Compilation errors in SmartAds when missing iOS build support.
 - iOS notifications not working with Unity 5.4 and newer.
+
 ### Changed
 - Removed Python dependency and download script for Android.
 
