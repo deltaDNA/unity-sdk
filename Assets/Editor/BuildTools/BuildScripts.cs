@@ -80,6 +80,9 @@ namespace DeltaDNA {
             string match = assets.Find(it => it.EndsWith("Editor"));
             if (match != null) assets.Remove(match);
 
+            assets.Add("Assets/DeltaDNA/Editor/Android");
+            assets.Add("Assets/DeltaDNA/Editor/iOS");
+
             assets.AddRange(Directory.GetFiles("Assets/DeltaDNA", "*.cs"));
 
             string[] globalAssets = {
@@ -110,6 +113,9 @@ namespace DeltaDNA {
 
             assets.Add("Assets/DeltaDNAAds/Editor/iOS");
             assets.Add("Assets/DeltaDNAAds/Plugins/iOS");
+
+            assets.Add("Assets/DeltaDNAAds/Editor/Menus");
+            assets.Add("Assets/DeltaDNAAds/Editor/networks.json");
 
             assets.Add("Assets/DeltaDNAAds/DDNASmartAds.cs");
             assets.Add("Assets/DeltaDNAAds/InterstitialAd.cs");
