@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.1) (YYYY-MM-DD)
+### Fixed
+- Handling of push notifications from other senders on Android.
+
 ## [4.2.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.0) (2016-09-05)
 ### Added
 - Menu for setting up SmartAds networks into the Unity Editor.
