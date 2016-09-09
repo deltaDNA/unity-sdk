@@ -243,6 +243,8 @@ In order to use push notifications on Android you will need to add an AndroidMan
 
 The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
 
+In case of using other services for push notifications together with DeltaDNA you should make sure that each service uses its own sender ID. This will ensure that the notification handlers will only handle push notifications coming from their own service.
+
 If you do not wish to use push notifications on Android then you can remove the files from the `Assets\DeltaDNA\Plugins\Android` folder and the customised `AndroidManifest.xml` to decrease the APK size of your game.
 
 ### SmartAds on Android
