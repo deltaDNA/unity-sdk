@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (YYYY-MM-DD)
+### Changed
+- Updated Android SmartAds ad network dependencies.
+
 ## [4.2.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.2) (2016-09-13)
 ### Fixed
 - Crash when receiving notifications on Android.
