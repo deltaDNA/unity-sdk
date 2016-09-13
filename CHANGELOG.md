@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.2.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.2) (YYYY-MM-DD)
+## [4.2.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.2) (2016-09-13)
 ### Fixed
 - Crash when receiving notifications on Android.
 
