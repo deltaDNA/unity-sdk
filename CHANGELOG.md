@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.2) (YYYY-MM-DD)
+### Fixed
+- Crash when receiving notifications on Android.
+
 ## [4.2.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.1) (2016-09-09)
 ### Fixed
 - Handling of push notifications from other senders on Android.
