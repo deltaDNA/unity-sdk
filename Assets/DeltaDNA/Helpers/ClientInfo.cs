@@ -216,18 +216,25 @@ namespace DeltaDNA
                 case "iPhone6,2": return @"iPhone 5S";
                 case "iPhone7,2": return @"iPhone 6";
                 case "iPhone7,1": return @"iPhone 6 Plus";
+                case "iPhone8,1": return @"iPhone 6s";
+                case "iPhone8,2": return @"iPhone 6s Plus";
+                case "iPhone8,4": return @"iPhone SE";
 
                 case "iPod1,1": return @"iPod Touch 1G";
                 case "iPod2,1": return @"iPod Touch 2G";
                 case "iPod3,1": return @"iPod Touch 3G";
                 case "iPod4,1": return @"iPod Touch 4G";
                 case "iPod5,1": return @"iPod Touch 5G";
+                case "iPod7,1": return @"iPod Touch 6G";
 
                 case "iPad1,1": return @"iPad 1G";
                 case "iPad2,1": return @"iPad 2";
                 case "iPad2,2": return @"iPad 2";
                 case "iPad2,3": return @"iPad 2";
                 case "iPad2,4": return @"iPad 2";
+                case "iPad2,5": return @"iPad Mini 1G";
+                case "iPad2,6": return @"iPad Mini 1G";
+                case "iPad2,7": return @"iPad Mini 1G";
                 case "iPad3,1": return @"iPad 3G";
                 case "iPad3,2": return @"iPad 3G";
                 case "iPad3,3": return @"iPad 3G";
@@ -237,18 +244,18 @@ namespace DeltaDNA
                 case "iPad4,1": return @"iPad Air";
                 case "iPad4,2": return @"iPad Air";
                 case "iPad4,3": return @"iPad Air";
-                case "iPad5,3": return @"iPad Air 2";
-                case "iPad5,4": return @"iPad Air 2";
-
-                case "iPad2,5": return @"iPad Mini 1G";
-                case "iPad2,6": return @"iPad Mini 1G";
-                case "iPad2,7": return @"iPad Mini 1G";
                 case "iPad4,4": return @"iPad Mini 2G";
                 case "iPad4,5": return @"iPad Mini 2G";
                 case "iPad4,6": return @"iPad Mini 2G";
                 case "iPad4,7": return @"iPad Mini 3";
                 case "iPad4,8": return @"iPad Mini 3";
                 case "iPad4,9": return @"iPad Mini 3";
+                case "iPad5,1": return @"iPad Mini 4";
+                case "iPad5,2": return @"iPad Mini 4";
+                case "iPad5,3": return @"iPad Air 2";
+                case "iPad5,4": return @"iPad Air 2";
+                case "iPad6,7": return @"iPad Pro";
+                case "iPad6,8": return @"iPad Pro";
 
                 // Amazon
 
