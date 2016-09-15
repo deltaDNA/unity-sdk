@@ -28,13 +28,15 @@ namespace DeltaDNA.Android
         public DDNANotifications() {
             ddnaNotifications = new AndroidJavaClass(Utils.DdnaNotificationsClassName);
         }
+
+        public void MarkUnityLoaded() {
+            ddnaNotifications.CallStatic("markUnityLoaded");
+        }
         
         public void Register(AndroidJavaObject context) {
             ddnaNotifications.CallStatic("register", context);
         }
-
     }
-
 }
 
 #endif

@@ -53,6 +53,11 @@ namespace DeltaDNA
         {
             gameObject.name = this.GetType().ToString();
             DontDestroyOnLoad(this);
+
+            #if UNITY_ANDROID
+            ddnaNotifications = new Android.DDNANotifications();
+            ddnaNotifications.MarkUnityLoaded();
+            #endif
         }
         
         /// <summary>
@@ -63,7 +68,6 @@ namespace DeltaDNA
             if (Application.platform == RuntimePlatform.Android)
             {
                 #if UNITY_ANDROID
-                ddnaNotifications = new Android.DDNANotifications();
                 ddnaNotifications.Register(
                     new AndroidJavaClass("com.unity3d.player.UnityPlayer")
                     .GetStatic<AndroidJavaObject>("currentActivity"));
