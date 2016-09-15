@@ -29,7 +29,7 @@ namespace DeltaDNA
     /// </summary>
     public class AndroidNotifications : MonoBehaviour
     {
-        #if UNITY_ANDROID
+        #if UNITY_ANDROID && !UNITY_EDITOR
         private Android.DDNANotifications ddnaNotifications;
         #endif
 
@@ -54,7 +54,7 @@ namespace DeltaDNA
             gameObject.name = this.GetType().ToString();
             DontDestroyOnLoad(this);
 
-            #if UNITY_ANDROID
+            #if UNITY_ANDROID && !UNITY_EDITOR
             ddnaNotifications = new Android.DDNANotifications();
             ddnaNotifications.MarkUnityLoaded();
             #endif
@@ -67,7 +67,7 @@ namespace DeltaDNA
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                #if UNITY_ANDROID
+                #if UNITY_ANDROID && !UNITY_EDITOR
                 ddnaNotifications.Register(
                     new AndroidJavaClass("com.unity3d.player.UnityPlayer")
                     .GetStatic<AndroidJavaObject>("currentActivity"));
@@ -81,7 +81,7 @@ namespace DeltaDNA
         public void UnregisterForPushNotifications()
         {
             if (Application.platform == RuntimePlatform.Android) {
-                #if UNITY_ANDROID
+                #if UNITY_ANDROID && !UNITY_EDITOR
                 DDNA.Instance.AndroidRegistrationID = null;
                 #endif
             }

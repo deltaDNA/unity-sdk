@@ -54,9 +54,9 @@ public class IosNotifications : MonoBehaviour
     public void RegisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
-        
-            #if UNITY_IPHONE    
-            #if UNITY_4_5 || UNITY_4_6      
+
+            #if UNITY_IPHONE && !UNITY_EDITOR
+            #if UNITY_4_5 || UNITY_4_6
             NotificationServices.RegisterForRemoteNotificationTypes(
                 RemoteNotificationType.Alert |
                 RemoteNotificationType.Badge |
@@ -68,8 +68,8 @@ public class IosNotifications : MonoBehaviour
                 UnityEngine.iOS.NotificationType.Sound);        
             #endif
             #endif
+            }
         }
-    }
 
     /// <summary>
     /// Unregisters for push notifications.
@@ -77,15 +77,15 @@ public class IosNotifications : MonoBehaviour
     public void UnregisterForPushNotifications()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer) {
-            #if UNITY_IPHONE
-            #if UNITY_4_5 || UNITY_4_6 
+            #if UNITY_IPHONE && !UNITY_EDITOR
+            #if UNITY_4_5 || UNITY_4_6
             NotificationServices.UnregisterForRemoteNotifications();
             #else
             UnityEngine.iOS.NotificationServices.UnregisterForRemoteNotifications();
             #endif
             #endif
+            }
         }
-    }
 
     #region Native Bridge
 

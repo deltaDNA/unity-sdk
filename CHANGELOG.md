@@ -3,6 +3,7 @@
 ## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (YYYY-MM-DD)
 ### Fixed
 - Unrealiable Android push notification callbacks.
+- Exceptions when running analytics in the Editor Player.
 
 ### Changed
 - Updated Android SmartAds ad network dependencies.

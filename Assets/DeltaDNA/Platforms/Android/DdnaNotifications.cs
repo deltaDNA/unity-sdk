@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
 
 using UnityEngine;
 
