@@ -16,7 +16,7 @@
 
 using UnityEditor;
 using UnityEditor.Callbacks;
-#if UNITY_IOS
+#if UNITY_IOS && UNITY_5_4_OR_NEWER
 using UnityEditor.iOS.Xcode;
 #endif
 using System.Collections;

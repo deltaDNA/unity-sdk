@@ -4,6 +4,7 @@
 ### Fixed
 - Unrealiable Android push notification callbacks.
 - Exceptions when running analytics in the Editor Player.
+- Better support for Unity 4.7
 
 ### Changed
 - Updated Android SmartAds ad network dependencies.

@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+#if !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
 using UnityEditor;
 using System;
 using System.IO;
@@ -135,3 +136,4 @@ namespace DeltaDNA {
     }
 
 }
+#endif

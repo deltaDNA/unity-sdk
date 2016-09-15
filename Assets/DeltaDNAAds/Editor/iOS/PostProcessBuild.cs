@@ -14,13 +14,12 @@
 // limitations under the License.
 //
 
+#if UNITY_IOS && !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
 using UnityEditor;
 using UnityEditor.Callbacks;
-#if UNITY_IOS
 using UnityEditor.iOS.Xcode;
 using System.IO;
 using System.Diagnostics;
-#endif
 
 /**
  *  Add support for CocoaPods to the Unity generated XCode project.  Run pods.command from the
@@ -32,7 +31,6 @@ public class PostProcessBuild {
     public static void OnPostprocessBuild(BuildTarget buildTarget, string path) {
         UnityEngine.Debug.Log("OnPostprocessBuild "+buildTarget+" "+path);
 
-        #if UNITY_IOS
         if (buildTarget == BuildTarget.iOS) {
 
             string projectPath = PBXProject.GetPBXProjectPath(path);
@@ -72,6 +70,6 @@ public class PostProcessBuild {
             proc.Start();
             proc.WaitForExit();
         }
-        #endif
     }
 }
+#endif
