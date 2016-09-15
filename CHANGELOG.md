@@ -1,6 +1,9 @@
 # Change Log
 
 ## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (YYYY-MM-DD)
+### Fixed
+- Unrealiable Android push notification callbacks.
+
 ### Changed
 - Updated Android SmartAds ad network dependencies.
 
