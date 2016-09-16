@@ -1,10 +1,10 @@
 # Change Log
 
-## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (YYYY-MM-DD)
+## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (2016-09-16)
 ### Fixed
 - Unrealiable Android push notification callbacks.
 - Exceptions when running analytics in the Editor Player.
-- Better support for Unity 4.7
+- Better support for Unity 4.7.
 
 ### Changed
 - Updated Android SmartAds ad network dependencies.
