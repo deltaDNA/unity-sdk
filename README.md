@@ -20,6 +20,8 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Legacy Interface](#legacy-interface)
  * [Events](#events)
 * [iOS Integration](#ios-integration)
+ * [Push Notifications](#push-notifications)
+ * [SmartAds on iOS](#smartads-on-ios)
 * [Android Integration](#android-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
@@ -228,6 +230,14 @@ Callbacks can be added to the following events to be notified when an ad has ope
 * ~~`OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.~~ See `RewardedAd.OnRewardedAdClosed`.
 
 ## iOS Integration
+
+### Push Notifications
+
+To support iOS push notifications you need to call `IosNotifications.RegisterForPushNotifications()`.  This uses Unity's `NotificationServices` to request a push token and then reports it back to us in a `notificationServices` event.  You will also need to enter the game's associated APNs certificate into our platform.
+
+We record if your game was started by the player clicking on a push notification.  However to make this work properly the `DDNA` game object has to be loaded early on in the scene which the game launches with.  This can be achieved by adding a delegate to `OnDidLaunchWithPushNotification` in the `Awake` method of a game object that manages the SDK.
+
+### SmartAds on iOS
 
 We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
 
