@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.4) (YYYY-MM-DD)
+### Fixed
+- Currency conversion on Windows.
+
 ## [4.2.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.3) (2016-09-16)
 ### Fixed
 - Unrealiable Android push notification callbacks.
