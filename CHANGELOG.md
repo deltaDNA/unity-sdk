@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.2.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.4) (YYYY-MM-DD)
+## [4.2.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.4) (2016-09-29)
 ### Fixed
 - Currency conversion on Windows.
 
