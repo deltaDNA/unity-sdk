@@ -27,7 +27,8 @@ using System.Diagnostics;
  */
 public class PostProcessBuild {
 
-    [PostProcessBuild(0)]
+    // Big number to avoid conflicting with Unity's internal ads PostProcess
+    [PostProcessBuild(100000)]
     public static void OnPostprocessBuild(BuildTarget buildTarget, string path) {
         UnityEngine.Debug.Log("OnPostprocessBuild "+buildTarget+" "+path);
 

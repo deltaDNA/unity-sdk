@@ -245,6 +245,10 @@ To select which ad networks should be included in the game select *DeltaDNA* fro
 
 If you make changes to the enabled networks the changes to the Podfile should be committed to version control.
 
+#### UnityAds
+
+The latest versions of Unity cause conflict with Unity's internal UnityAds plugin.  An error can occur when the PostBuildProcess methods are run.  I've resolved this by having the `pod install` process run last.  You may need to change the order of the PostBuildProcess if your game includes multiple libraries using PostProcessBuild calls.
+
 ## Android Integration
 
 ### Push Notifications
