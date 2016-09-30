@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.5) (2016-09-29)
+### Fixed
+- SmartAds iOS PostProcessBuild conflicting with Unity's internal UnityAds post process.
+
 ## [4.2.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.4) (2016-09-29)
 ### Fixed
 - Currency conversion on Windows.
