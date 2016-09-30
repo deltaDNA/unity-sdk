@@ -25,6 +25,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [Android Integration](#android-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
+ * [Permissions](#permissions)
 * [Migrations](#migrations)
 * [License](#license)
 
@@ -266,6 +267,15 @@ The Android libraries can also be downloaded from the *DeltaDNA -> SmartAds -> A
 If you make changes to the enabled networks the changes to the build.gradle file should be committed to version control.
 
 In order for the menu items to work you will need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of build-tools and an SDK platform installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
+
+### Permissions
+
+The permissions which the Android libraries request can be overriden through the use of the [Android manifest merger](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). For example, if you would like to remove the `maxSdkVersion` attribute for the `WRITE_EXTERNAL_STORAGE` permission then you can specify the following in your manifest file:
+```xml
+<uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    tools:remove="android:maxSdkVersion"/>
+```
 
 ## Migrations
 
