@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.6) (2016-10-03)
+### Fixed
+- SmartAds iOS pauses Unity whilst showing an ad, which now matches the Android behaviour.
+
 ## [4.2.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.5) (2016-09-29)
 ### Fixed
 - SmartAds iOS PostProcessBuild conflicting with Unity's internal UnityAds post process.

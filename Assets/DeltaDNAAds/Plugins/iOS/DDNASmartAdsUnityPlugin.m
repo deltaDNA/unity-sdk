@@ -21,6 +21,12 @@
 // Unity callback support
 void UnitySendMessage(const char *gameObjectName, const char *methodName, const char *message);
 
+#if UNITY_VERSION < 500
+void UnityPause( bool pause );
+#else
+void UnityPause( int pause );
+#endif
+
 // Converts C style string to NSString
 #define GetStringParam( _x_ ) ( _x_ != NULL ) ? [NSString stringWithUTF8String:_x_] : [NSString stringWithUTF8String:""]
 
@@ -281,6 +287,7 @@ UIViewController *UnityGetGLViewController();
 - (void)didOpenInterstitialAd
 {
     UnitySendMessage(SmartAdsObject, "DidOpenInterstitialAd", "");
+    UnityPause(YES);
 }
 
 - (void)didFailToOpenInterstitialAdWithReason:(NSString *)reason
@@ -290,6 +297,7 @@ UIViewController *UnityGetGLViewController();
 
 - (void)didCloseInterstitialAd
 {
+    UnityPause(NO);
     UnitySendMessage(SmartAdsObject, "DidCloseInterstitialAd", "");
 }
 
@@ -306,6 +314,7 @@ UIViewController *UnityGetGLViewController();
 - (void)didOpenRewardedAd
 {
     UnitySendMessage(SmartAdsObject, "DidOpenRewardedAd", "");
+    UnityPause(YES);
 }
 
 - (void)didFailToOpenRewardedAdWithReason:(NSString *)reason
@@ -315,6 +324,7 @@ UIViewController *UnityGetGLViewController();
 
 - (void)didCloseRewardedAdWithReward:(BOOL)reward
 {
+    UnityPause(NO);
     UnitySendMessage(SmartAdsObject, "DidCloseRewardedAd", [[NSString stringWithContentsOfDictionary:@{@"reward":[NSNumber numberWithBool:reward]}] UTF8String]);
 }
 
