@@ -57,6 +57,20 @@ namespace DeltaDNA
             #endif
         }
 
+        public static bool IsDirectoryWritable(string path) {
+            try {
+            if (!DirectoryExists(path)) {
+                    CreateDirectory(path);
+                }
+                string file = Path.Combine(path, Path.GetRandomFileName());
+                using (FileStream fs = File.Create(file, 1)) {}
+                File.Delete(file);
+                return true;
+            } catch (Exception) {
+                return false;
+            }
+        }
+
         public static bool FileExists(string path)
         {
             if (DDNA.Instance.Settings.UseEventStore) {

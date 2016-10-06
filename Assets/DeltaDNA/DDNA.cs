@@ -60,6 +60,10 @@ namespace DeltaDNA
                 string eventStorePath = null;
                 if (this.Settings.UseEventStore) {
                     eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+                    if (!Utils.IsDirectoryWritable(eventStorePath)) {
+                        Logger.LogWarning("Event store path unwritable, event caching disabled.");
+                        this.Settings.UseEventStore = false;
+                    }
                 }
                 this.eventStore = new EventStore(eventStorePath);
             }
