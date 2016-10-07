@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.7) (2016-10-07)
+### Fixed
+- Application.persistentDataPath can return empty or read only path.
+
 ## [4.2.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.6) (2016-10-03)
 ### Fixed
 - SmartAds iOS pauses Unity whilst showing an ad, which now matches the Android behaviour.
