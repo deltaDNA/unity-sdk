@@ -17,8 +17,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+using System.IO;
+using System.Xml;
 
 namespace DeltaDNA {
 
@@ -122,25 +122,64 @@ namespace DeltaDNA {
 
         private static readonly IDictionary<string, int> ISO4217;
         static Product() {
-            var res = Resources.Load("iso_4217", typeof(TextAsset)) as TextAsset;
-            var xml = XDocument.Parse(res.text);
+            long before = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+            ISO4217 = new Dictionary<string, int>();
 
-            ISO4217 = xml
-                .Descendants("CcyNtry")
-                .Where(e => e.Element("Ccy") != null)
-                .Aggregate(new Dictionary<string, int>(), (result, e) => {
-                    var key = e.Element("Ccy").Value;
-                    int value;
-                    try {
-                        value = int.Parse(e.Element("CcyMnrUnts").Value);
-                    } catch (FormatException) {
-                        value = 0;
+            using (XmlReader reader = XmlReader.Create(new StringReader((Resources.Load(
+                    "iso_4217",
+                    typeof(TextAsset)) as TextAsset).text))) {
+                bool expectingCode = false;
+                bool expectingValue = false;
+                string pulledCode = null;
+                string pulledValue = null;
+
+                while (reader.Read()) {
+                    switch (reader.NodeType) {
+                        case XmlNodeType.Element:
+                            if (reader.Name.Equals("Ccy")) {
+                                expectingCode = true;
+                            } else if (reader.Name.Equals("CcyMnrUnts")) {
+                                expectingValue = true;
+                            }
+                            break;
+
+                        case XmlNodeType.Text:
+                            if (expectingCode) {
+                                pulledCode = reader.Value;
+                            } else if (expectingValue) {
+                                pulledValue = reader.Value;
+                            }
+                            break;
+
+                        case XmlNodeType.EndElement:
+                            if (reader.Name.Equals("Ccy")) {
+                                expectingCode = false;
+                            } else if (reader.Name.Equals("CcyMnrUnts")) {
+                                expectingValue = false;
+                            } else if (reader.Name.Equals("CcyNtry")) {
+                                if (!string.IsNullOrEmpty(pulledCode)
+                                    && !string.IsNullOrEmpty(pulledValue)) {
+                                    int value;
+                                    try {
+                                        value = int.Parse(pulledValue);
+                                    } catch (FormatException) {
+                                        value = 0;
+                                    }
+
+                                    ISO4217[pulledCode] = value;
+                                }
+
+                                expectingCode = false;
+                                expectingValue = false;
+                                pulledCode = null;
+                                pulledValue = null;
+                            }
+                            break;
                     }
+                }
+            }
 
-                    result[key] = value;
-
-                    return result;
-                });
+            Debug.LogWarning((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - before);
         }
     }
 
