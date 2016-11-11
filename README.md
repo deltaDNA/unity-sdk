@@ -110,8 +110,6 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
 
 Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  To add the Unity extensions download and import the `deltadna-smartads-*.unitypackage`.  We support iOS and Android platforms.
 
-**Unity iOS builds have a [bug](https://issuetracker.unity3d.com/issues/ios-itunes-connect-rejects-all-unity-apps-that-are-referencing-watchconnectivity-dot-framework) with apps that use the WatchConnectivity framework.  Flurry has a dependency on that framework, so for now you should exclude the Flurry SDK from your stack.  See [iOS Integration](#ios-integration) for how to customise your Podfile.**
-
 ### Usage
 
 The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNAAds\Example`.  The `AdsDemo` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
