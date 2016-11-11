@@ -290,14 +290,14 @@ namespace DeltaDNA.MiniJSON {
             object ParseNumber() {
                 string number = NextWord;
 
-                if (number.IndexOf('.') == -1) {
+                if (number.IndexOf('.') == -1 && number.IndexOf('E') == -1 && number.IndexOf('e') == -1) {
                     long parsedInt;
-                    Int64.TryParse(number, out parsedInt);
+                    Int64.TryParse(number, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedInt);
                     return parsedInt;
                 }
 
                 double parsedDouble;
-                Double.TryParse(number, out parsedDouble);
+                Double.TryParse(number, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsedDouble);
                 return parsedDouble;
             }
 
@@ -465,7 +465,8 @@ namespace DeltaDNA.MiniJSON {
 
                 bool first = true;
 
-                foreach (object obj in anArray) {
+                for (int i=0; i<anArray.Count; i++) {
+                    object obj = anArray[i];
                     if (!first) {
                         builder.Append(',');
                     }
@@ -482,7 +483,8 @@ namespace DeltaDNA.MiniJSON {
                 builder.Append('\"');
 
                 char[] charArray = str.ToCharArray();
-                foreach (var c in charArray) {
+                for (int i=0; i<charArray.Length; i++) {
+                    char c = charArray[i];
                     switch (c) {
                     case '"':
                         builder.Append("\\\"");
@@ -525,7 +527,7 @@ namespace DeltaDNA.MiniJSON {
                 // They always have, I'm just letting you know.
                 // Previously floats and doubles lost precision too.
                 if (value is float) {
-                    builder.Append(((float) value).ToString("R"));
+                    builder.Append(((float) value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 } else if (value is int
                     || value is uint
                     || value is long
@@ -537,7 +539,7 @@ namespace DeltaDNA.MiniJSON {
                     builder.Append(value);
                 } else if (value is double
                     || value is decimal) {
-                    builder.Append(Convert.ToDouble(value).ToString("R"));
+                    builder.Append(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
                 } else {
                     SerializeString(value.ToString());
                 }
