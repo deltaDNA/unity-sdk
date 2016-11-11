@@ -122,7 +122,6 @@ namespace DeltaDNA {
 
         private static readonly IDictionary<string, int> ISO4217;
         static Product() {
-            long before = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
             ISO4217 = new Dictionary<string, int>();
 
             using (XmlReader reader = XmlReader.Create(new StringReader((Resources.Load(
@@ -178,8 +177,6 @@ namespace DeltaDNA {
                     }
                 }
             }
-
-            Debug.LogWarning((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - before);
         }
     }
 
