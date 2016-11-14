@@ -1,9 +1,10 @@
 # Change Log
 
-## [4.2.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.8) (YYYY-MM-DD)
+## [4.2.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.8) (2016-11-14)
 ### Fixed
 - Serialisation of decimal point values.
 - Performance when first creating a Product instance.
+- Pass iOS supported version to CocoaPods build.
 
 ## [4.2.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.7) (2016-10-07)
 ### Fixed
