@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (YYYY-MM-DD)
+### Changed
+- Updated Android SmartAds ad network dependencies.
+
 ## [4.2.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.8) (2016-11-14)
 ### Fixed
 - Serialisation of decimal point values.
