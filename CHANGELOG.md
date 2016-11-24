@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (YYYY-MM-DD)
+## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
 ### Fixed
 - MobFox crash on Android.
 - Amazon ad events on Android.
