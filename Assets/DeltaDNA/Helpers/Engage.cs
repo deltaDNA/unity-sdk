@@ -96,7 +96,7 @@ namespace DeltaDNA {
             System.Action<int, string, string> httpHandler = (statusCode, data, error) => {
 
                 string engagementKey = "DDSDK_ENGAGEMENT_" + request.DecisionPoint + "_" + request.Flavour;
-                if (statusCode < 400 && error == null) {
+                if (error == null && statusCode >= 200 && statusCode < 300) {
                     try {
                         PlayerPrefs.SetString(engagementKey, data);
                     } catch (Exception exception) {
@@ -107,6 +107,8 @@ namespace DeltaDNA {
                     if (PlayerPrefs.HasKey(engagementKey)) {
                         Logger.LogDebug("Using cached response");
                         data = "{\"isCachedResponse\":true," + PlayerPrefs.GetString(engagementKey).Substring(1);
+                    } else {
+                        data = "{}";
                     }
                 }
 
