@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.10) (YYYY-MM-DD)
+### Fixed
+- SmartAds not using cached responses on Android.
+
 ## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
 ### Fixed
 - MobFox crash on Android.
