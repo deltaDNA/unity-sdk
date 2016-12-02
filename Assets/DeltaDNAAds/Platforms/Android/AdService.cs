@@ -106,7 +106,7 @@ namespace DeltaDNAAds.Android
             activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
                 AndroidJavaObject listener;
                 if (engageListeners.TryGetValue(id, out listener)) {
-                    if (statusCode >= 200 && statusCode < 300) {
+                    if (!string.IsNullOrEmpty(response)) {
                         listener.Call("onSuccess", new AndroidJavaObject(Utils.JSONObjectClassName, response));
                     } else {
                         listener.Call("onFailure", new AndroidJavaObject(Utils.ThrowableClassName, error));
