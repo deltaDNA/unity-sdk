@@ -1,5 +1,13 @@
 # Change Log
 
+## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
+### Fixed
+- MobFox crash on Android.
+- Amazon ad events on Android.
+- Vungle misreporting ad watched status on Android.
+### Changed
+- Updated Android SmartAds ad network dependencies.
+
 ## [4.2.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.8) (2016-11-14)
 ### Fixed
 - Serialisation of decimal point values.
