@@ -20,6 +20,8 @@ using DeltaDNA;
 
 namespace DeltaDNAAds.Android
 {
+    using JSONObject = Dictionary<string, object>;
+
     #if UNITY_ANDROID
     internal class AdService : ISmartAdsManager
     {
@@ -106,10 +108,20 @@ namespace DeltaDNAAds.Android
             activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
                 AndroidJavaObject listener;
                 if (engageListeners.TryGetValue(id, out listener)) {
+                    JSONObject json = null;
                     if (!string.IsNullOrEmpty(response)) {
-                        listener.Call("onSuccess", new AndroidJavaObject(Utils.JSONObjectClassName, response));
-                    } else {
+                        try {
+                            json = DeltaDNA.MiniJSON.Json.Deserialize(response) as JSONObject;
+                        } catch (System.Exception) { /* invalid json */ }
+                    }
+
+                    if (json == null
+                        || (statusCode < 200
+                            || statusCode >= 300
+                            && !json.ContainsKey("isCachedResponse"))) {
                         listener.Call("onFailure", new AndroidJavaObject(Utils.ThrowableClassName, error));
+                    } else {
+                        listener.Call("onSuccess", new AndroidJavaObject(Utils.JSONObjectClassName, response));
                     }
 
                     engageListeners.Remove(id);
