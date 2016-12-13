@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.2.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.10) (YYYY-MM-DD)
+## [4.2.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.10) (2016-12-13)
 ### Fixed
 - SmartAds not using cached responses on Android.
 - SmartAds configuration retries on Android.
@@ -8,6 +8,7 @@
 ### Changed
 - Allow Platform field to be set by clients.
 - Default urls without protocol to HTTPS.
+- Minor changes to support Unity 5.5.
 
 ## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
 ### Fixed
