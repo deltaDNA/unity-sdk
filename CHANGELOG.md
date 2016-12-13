@@ -4,13 +4,17 @@
 ### Fixed
 - SmartAds not using cached responses on Android.
 - SmartAds configuration retries on Android.
+
+### Changed
 - Allow Platform field to be set by clients.
+- Default urls without protocol to HTTPS.
 
 ## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
 ### Fixed
 - MobFox crash on Android.
 - Amazon ad events on Android.
 - Vungle misreporting ad watched status on Android.
+
 ### Changed
 - Updated Android SmartAds ad network dependencies.
 

@@ -871,7 +871,7 @@ namespace DeltaDNA
 
         private static string ValidateURL(string url) {
             if (!url.ToLower().StartsWith("http://") && !url.ToLower().StartsWith("https://")) {
-                url = "http://" + url;
+                url = "https://" + url;
             }
             return url;
         }
