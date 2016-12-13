@@ -139,9 +139,11 @@ namespace DeltaDNA {
                 MatchCollection matches = Regex.Matches(www.error, ErrorRegex);
                 if (matches.Count > 0 && matches[0].Groups.Count > 0) {
                     statusCode = Convert.ToInt32(matches[0].Groups[1].Value);
+                #if !UNITY_5_5_OR_NEWER
                 } else if (Application.platform == RuntimePlatform.WindowsWebPlayer) {
                     Logger.LogDebug("IE11 Webplayer workaround, assuming request succeeded");
                     statusCode = 204; // Bug in IE11, can't handle 204 which Collect returns.
+                #endif
                 } else {
                     statusCode = 1002; // Assume service is unavailable, likely no network connection.
                 }

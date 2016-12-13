@@ -63,8 +63,15 @@ public class PostProcessBuild {
             FileUtil.ReplaceFile("Assets/DeltaDNAAds/Editor/iOS/Podfile", path + "/Podfile");
 
             // Set Podfile platform version to match Unity
+            #if UNITY_5_5_OR_NEWER
+            var targetOSVersion = PlayerSettings.iOS.targetOSVersionString;
+            string iosPlatform = targetOSVersion.ToString();
+            UnityEngine.Debug.Log(iosPlatform);
+            #else
             var targetOSVersion = PlayerSettings.iOS.targetOSVersion;
             string iosPlatform = targetOSVersion.ToString().Substring(4).Replace('_', '.');
+            #endif
+            
             var podfile = new List<string>(File.ReadAllLines(path + "/Podfile"));
             podfile = new List<string>(podfile.Select(e => e.StartsWith("platform") ? string.Format("platform :ios, '{0}'", iosPlatform) : e).AsEnumerable());
             File.WriteAllLines(path + "/Podfile", podfile.ToArray());
