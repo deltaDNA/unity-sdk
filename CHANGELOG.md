@@ -4,6 +4,7 @@
 ### Fixed
 - SmartAds not using cached responses on Android.
 - SmartAds configuration retries on Android.
+- Allow Platform field to be set by clients.
 
 ## [4.2.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.9) (2016-11-24)
 ### Fixed

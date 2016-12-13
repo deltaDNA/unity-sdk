@@ -126,7 +126,9 @@ namespace DeltaDNA
                 this.EnvironmentKey = envKey;
                 this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
                 this.EngageURL = engageURL;
-                this.Platform = ClientInfo.Platform;
+                if (String.IsNullOrEmpty(this.Platform)) {
+                    this.Platform = ClientInfo.Platform;
+                }
                 this.NewSession();
 
                 this.started = true;
@@ -599,11 +601,6 @@ namespace DeltaDNA
         public string SessionID { get; private set; }
 
         /// <summary>
-        /// Gets the platform.
-        /// </summary>
-        public string Platform { get; private set; }
-
-        /// <summary>
         /// Gets the user ID.
         /// </summary>
         public string UserID
@@ -645,19 +642,25 @@ namespace DeltaDNA
         /// To enable hashing of your event and engage data, set this value to your
         /// unique hash secret.  You must also enable hashing for the environment.
         /// To disable hashing set it to null, which is the default.  This must be
-        /// set before calling <see cref="Init"/>.
+        /// set before calling <see cref="Start"/>.
         /// </summary>
         public string HashSecret { get; set; }
 
         /// <summary>
         /// A version string for your game that will be reported to us.  This must
-        /// be set before calling <see cref="Init"/>.
+        /// be set before calling <see cref="Start"/>.
         /// </summary>
         public string ClientVersion { get; set; }
 
         /// <summary>
+        /// By default we detect the platform field for your events.  You can override 
+        /// this value, make sure to set it before calling <see cref="Start"/>.
+        /// </summary>
+        public string Platform { get; set; }
+
+        /// <summary>
         /// The push notification token from Apple that is associated with this device if
-        /// it's running on the iOS platform.  This must be set before calling <see cref="Init"/>.
+        /// it's running on the iOS platform.  This must be set before calling <see cref="Start"/>.
         /// </summary>
         public string PushNotificationToken
         {
@@ -682,7 +685,7 @@ namespace DeltaDNA
 
         /// <summary>
         /// The Android registration ID that is associated with this device if it's running
-        /// on the Android platform.  This must be set before calling <see cref="Init"/>.
+        /// on the Android platform.  This must be set before calling <see cref="Start"/>.
         /// </summary>
         public string AndroidRegistrationID
         {
