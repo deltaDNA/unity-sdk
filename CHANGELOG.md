@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.2.11](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.11) (YYYY-MM-DD)
+### Changed
+- Updated Chartboost network dependency on Android.
+
 ## [4.2.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.10) (2016-12-13)
 ### Fixed
 - SmartAds not using cached responses on Android.
