@@ -1,7 +1,7 @@
 # DO NOT EDIT FILE MANUALLY
 
-source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/deltaDNA/CocoaPods.git'
+source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '7.0'
 version = '~> 1.2'
