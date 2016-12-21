@@ -1,8 +1,9 @@
 # Change Log
 
-## [4.2.11](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.11) (YYYY-MM-DD)
+## [4.2.11](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.11) (2016-12-21)
 ### Changed
 - Updated Chartboost network dependency on Android.
+- Prefer deltaDNA's CocoaPods repository for conflict resolution.
 
 ## [4.2.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.10) (2016-12-13)
 ### Fixed
