@@ -43,6 +43,7 @@ buildscript {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'http://jcenter.bintray.com' }
     maven { url "http://deltadna.bintray.com/android" }
@@ -61,8 +62,11 @@ configurations.all {
     if (!notifications) {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.google.android.gms', module: 'play-services-gcm'
-        exclude group: 'com.google.android.gms', module: 'play-services-base'
+        exclude group: 'com.google.firebase', module: 'firebase-common'
+        exclude group: 'com.google.firebase', module: 'firebase-iid'
+        exclude group: 'com.google.firebase', module: 'firebase-messaging'
+        exclude group: 'com.google.android.gms', module: 'play-services-basement'
+        exclude group: 'com.google.android.gms', module: 'play-services-tasks'
     }
 }
 
@@ -80,7 +84,7 @@ dependencies {
     network('vungle')
 
     if (notifications) {
-        compile 'com.deltadna.android:deltadna-sdk-notifications:4.2.0-SNAPSHOT'
+        compile 'com.deltadna.android:deltadna-sdk-notifications:4.3.0-SNAPSHOT'
     }
     if (smartads) {
         compile "com.deltadna.android:deltadna-smartads-core:$version"
