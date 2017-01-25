@@ -281,6 +281,13 @@ The permissions which the Android libraries request can be overriden through the
     tools:remove="android:maxSdkVersion"/>
 ```
 
+In case the above still causes conflicts during manifest merging then the following can be used in the manifest file instead:
+```xml
+<uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    tools:merge="override"/>
+```
+
 ## Migrations
 
 ### Version 4.2
