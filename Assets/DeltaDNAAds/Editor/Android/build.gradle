@@ -62,11 +62,17 @@ configurations.all {
     if (!notifications) {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.google.android.gms', module: 'play-services-basement'
+        exclude group: 'com.google.android.gms', module: 'play-services-tasks'
         exclude group: 'com.google.firebase', module: 'firebase-common'
         exclude group: 'com.google.firebase', module: 'firebase-iid'
         exclude group: 'com.google.firebase', module: 'firebase-messaging'
-        exclude group: 'com.google.android.gms', module: 'play-services-basement'
-        exclude group: 'com.google.android.gms', module: 'play-services-tasks'
+        // as part of smartads dependencies (Google Play Services 7.8)
+        exclude group: 'com.google.android.gms', module: 'play-services-ads'
+        exclude group: 'com.google.android.gms', module: 'play-services-analytics'
+        exclude group: 'com.google.android.gms', module: 'play-services-appindexing'
+        exclude group: 'com.google.android.gms', module: 'play-services-base'
+        exclude group: 'com.google.firebase', module: 'firebase-analytics'
     }
 }
 

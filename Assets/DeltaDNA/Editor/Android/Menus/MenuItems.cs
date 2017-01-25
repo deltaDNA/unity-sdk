@@ -19,11 +19,39 @@ using UnityEngine;
 
 namespace DeltaDNA.Editor {
     public sealed class MenuItems : MonoBehaviour {
-        
+
+        internal const string MENU_PATH = "DeltaDNA/Notifications/Android/";
         internal const string EDITOR_PATH = "Assets/DeltaDNA/Editor/";
         
         internal static string AndroidSdkLocation {
             get { return EditorPrefs.GetString("AndroidSdkRoot"); }
+        }
+
+        [MenuItem(MENU_PATH + "Configure", priority = 10)]
+        public static void Configure() {
+            System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType(
+                "UnityEditor.InspectorWindow");
+
+            var foundInspector = false;
+            foreach (var window in Resources.FindObjectsOfTypeAll<EditorWindow>()) {
+                if (window.GetType() == inspectorType) {
+                    foundInspector = true;
+                    break;
+                }
+            }
+
+            if (foundInspector) {
+                EditorWindow.GetWindow<NotificationsWindow>(
+                    "Notifications",
+                    true,
+                    inspectorType)
+                    .Show();
+            } else {
+                EditorWindow.GetWindow<NotificationsWindow>(
+                    "Notifications",
+                    true)
+                    .Show();
+            }
         }
     }
 }
