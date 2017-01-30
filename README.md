@@ -2,7 +2,7 @@
 
 ## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  They are packaged into separate unitypackages for easy installation.  The analytics can be installed independently, but the SmartAds depends on the analytics.  The unitypackages can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.  
+The repository contains the sources for both the analytics and SmartAds SDKs.  They are packaged into separate unitypackages for easy installation.  The analytics can be installed independently, but the SmartAds depends on the analytics.  The unitypackages can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
@@ -72,7 +72,7 @@ var engagement = new Engagement("gameLoaded")
 
 DDNA.Instance.RequestEngagement(engagement, (response) =>
 {
-    // Response is a Dictionary<string, object> of key-values returned from Engage.  
+    // Response is a Dictionary<string, object> of key-values returned from Engage.
     // It will be empty if no matching campaign was found or an error occurred.
 });
 ```
@@ -90,7 +90,7 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
     ImageMessage imageMessage = ImageMessage.Create(response);
 
     // Check we got an engagement with a valid image message.
-    if (imageMessage != null) {   
+    if (imageMessage != null) {
         imageMessage.OnDidReceiveResources += () => {
             // Can show once we've got the resources.
             imageMessage.Show();
@@ -176,7 +176,7 @@ The following events can be added to a `RewardedAd`:
 
 ### Working with Engage
 
-To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage if it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You try to create an ad from an `Engagement` object, it will only succeed if the Engage response allows it and the session, time and loaded constraints are satisfied.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.  
+To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage if it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You try to create an ad from an `Engagement` object, it will only succeed if the Engage response allows it and the session, time and loaded constraints are satisfied.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.
 
 ```csharp
 var engagement = new Engagement("showRewarded");
@@ -239,6 +239,8 @@ We record if your game was started by the player clicking on a push notification
 ### SmartAds on iOS
 
 We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
+
+__The ad networks require a minimum target version of 7, and ideally 8 to get the latest sdks.  If the default 6 is used cocoapods will fail and no xcworkspace file will be generated.__
 
 To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
 
