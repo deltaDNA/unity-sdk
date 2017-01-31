@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.2.12](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.12) (YYYY-MM-DD)
+### Fixed
+- Adapters will respect their waterfall index on Android.
+- Ad requests will not be made after reaching the session limit on Android.
+
 ## [4.2.11](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.11) (2016-12-21)
 ### Changed
 - Updated Chartboost network dependency on Android.

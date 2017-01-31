@@ -15,11 +15,6 @@
     "ios": "Amazon"
   },
   {
-    "name": "AppLovin",
-    "android": "applovin",
-    "ios": null
-  },
-  {
     "name": "Chartboost",
     "android": "chartboost",
     "ios": "Chartboost"
@@ -43,11 +38,6 @@
     "name": "MoPub",
     "android": "mopub",
     "ios": "MoPub"
-  },
-  {
-    "name": "Supersonic",
-    "android": "supersonic",
-    "ios": null
   },
   {
     "name": "Unity",
