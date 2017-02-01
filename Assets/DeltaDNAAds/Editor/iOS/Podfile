@@ -13,7 +13,6 @@ target 'Unity-iPhone' do
     pod 'DeltaDNAAds/Chartboost', version
     pod 'DeltaDNAAds/Flurry', version
     pod 'DeltaDNAAds/InMobi', version
-    pod 'DeltaDNAAds/MobFox', version
     pod 'DeltaDNAAds/MoPub', version
     pod 'DeltaDNAAds/UnityAds', version
     pod 'DeltaDNAAds/Vungle', version

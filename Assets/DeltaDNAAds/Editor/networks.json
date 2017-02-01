@@ -30,11 +30,6 @@
     "ios": "InMobi"
   },
   {
-    "name": "MobFox",
-    "android": null,
-    "ios": "MobFox"
-  },
-  {
     "name": "MoPub",
     "android": "mopub",
     "ios": "MoPub"
