@@ -15,12 +15,15 @@
 //
 
 using DeltaDNA;
+#if UNITY_IOS
 using System.Runtime.InteropServices;
+#endif
 
 namespace DeltaDNAAds.iOS {
 
     internal class SmartAdsManager : ISmartAdsManager {
 
+        #if UNITY_IOS
         #region Interface to native implementation
 
         [DllImport("__Internal")]
@@ -57,16 +60,20 @@ namespace DeltaDNAAds.iOS {
         private static extern void _destroy();
 
         #endregion
+        #endif
 
         #region Public interface
 
         public void RegisterForAds(string decisionPoint)
         {
+            #if UNITY_IOS
             _registerForAds(decisionPoint);
+            #endif
         }
 
         public bool IsInterstitialAdAllowed(Engagement engagement)
         {
+            #if UNITY_IOS
             string decisionPoint = null;
             string engageParams = null;
 
@@ -77,25 +84,37 @@ namespace DeltaDNAAds.iOS {
                 } catch (System.Exception) {}
             }
             return _isInterstitialAdAllowed(decisionPoint, engageParams) > 0;
+            #else
+            return false;
+            #endif
         }
 
         public bool IsInterstitialAdAvailable()
         {
+            #if UNITY_IOS
             return _isInterstitialAdAvailable() > 0;
+            #else
+            return false;
+            #endif
         }
 
         public void ShowInterstitialAd()
         {
+            #if UNITY_IOS
             _showInterstitialAd(null);
+            #endif
         }
 
         public void ShowInterstitialAd(string decisionPoint)
         {
+            #if UNITY_IOS
             _showInterstitialAd(decisionPoint);
+            #endif
         }
 
         public bool IsRewardedAdAllowed(Engagement engagement)
         {
+            #if UNITY_IOS
             string decisionPoint = null;
             string engageParams = null;
 
@@ -106,45 +125,62 @@ namespace DeltaDNAAds.iOS {
                 } catch (System.Exception) {}
             }
             return _isRewardedAdAllowed(decisionPoint, engageParams) > 0;
+            #else
+            return false;
+            #endif
         }
 
         public bool IsRewardedAdAvailable()
         {
+            #if UNITY_IOS
             return _isRewardedAdAvailable() > 0;
+            #else
+            return false;
+            #endif
         }
 
         public void ShowRewardedAd()
         {
+            #if UNITY_IOS
             _showRewardedAd(null);
+            #endif
         }
 
         public void ShowRewardedAd(string decisionPoint)
         {
+            #if UNITY_IOS
             _showRewardedAd(decisionPoint);
+            #endif
         }
 
         public void EngageResponse(string id, string response, int statusCode, string error)
         {
+            #if UNITY_IOS
             _engageResponse(id, response, statusCode, error);
+            #endif
         }
 
         public void OnPause()
         {
+            #if UNITY_IOS
             _pause();
+            #endif
         }
 
         public void OnResume()
         {
+            #if UNITY_IOS
             _resume();
+            #endif
         }
 
         public void OnDestroy()
         {
+            #if UNITY_IOS
             _destroy();
+            #endif
         }
 
         #endregion
-
     }
-
 }
