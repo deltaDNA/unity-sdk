@@ -15,6 +15,11 @@
     "ios": "Amazon"
   },
   {
+      "name": "AppLovin",
+      "android": "applovin",
+      "ios": "AppLovin"
+  },
+  {
     "name": "Chartboost",
     "android": "chartboost",
     "ios": "Chartboost"
@@ -33,6 +38,11 @@
     "name": "MoPub",
     "android": "mopub",
     "ios": "MoPub"
+  },
+  {
+      "name": "ThirdPresence",
+      "android": "thirdpresence",
+      "ios": "ThirdPresence"
   },
   {
     "name": "Unity",
