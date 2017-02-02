@@ -35,9 +35,6 @@ def network = { network ->
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'http://jcenter.bintray.com' }
-        maven { url 'http://edinlin01:8082/artifactory/libs-snapshot-local' }
-        maven { url "http://deltadna.bintray.com/android" }
     }
 
     dependencies {
@@ -49,6 +46,7 @@ repositories {
     mavenCentral()
     maven { url 'http://jcenter.bintray.com' }
     maven { url "http://deltadna.bintray.com/android" }
+    maven { url 'http://edinlin01:8082/artifactory/libs-snapshot-local' }
 }
 
 android {
