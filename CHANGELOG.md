@@ -1,6 +1,10 @@
 # Change Log
 
-## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
+## [Unreleased](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3) (YYYY-MM-DD)
+### Added
+- Support for AppLovin SDK.
+- Support for ThirdPresence SDK.
+
 ### Fixed
 - IL2CPP support for Android.
 
