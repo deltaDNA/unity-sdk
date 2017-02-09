@@ -33,6 +33,7 @@ namespace DeltaDNA.Editor {
 
         private string appId = "";
         private string senderId = "";
+        private string listenerService = "com.deltadna.android.sdk.notifications.NotificationListenerService";
 
         public NotificationsWindow() : base() {
             if (File.Exists(XML_PATH)) {
@@ -63,7 +64,14 @@ namespace DeltaDNA.Editor {
             style.wordWrap = true;
             style.margin = new RectOffset(5, 5, 5, 5);
             GUILayout.Label(
-                "TODO",
+                "Configure notifications for Android here, filling in the Application " +
+                "and Sender ID from the Google or Firebase Console for your application.\n" +
+                "\n" +
+                "If you have your own implementation of the NotificationListenerService you " +
+                "should set the field to use your own class. Hitting 'Apply' will persist the " +
+                "changes to the resource and manifest files.\n" +
+                "\n" +
+                "You may leave the fields empty if you do not wish to use notifications.",
                 style);
 
             GUILayout.Space(HEIGHT_SEPARATOR);
@@ -72,14 +80,21 @@ namespace DeltaDNA.Editor {
             GUILayout.Label(
                 "Application ID",
                 GUILayout.Width(WIDTH_LABEL));
-            appId = GUILayout.TextField(appId);
+            appId = EditorGUILayout.TextField(appId);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(
                 "Sender ID",
                 GUILayout.Width(WIDTH_LABEL));
-            senderId = GUILayout.TextField(senderId);
+            senderId = EditorGUILayout.TextField(senderId);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(
+                "Listener Service",
+                GUILayout.Width(WIDTH_LABEL));
+            listenerService = EditorGUILayout.TextField(listenerService);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(HEIGHT_SEPARATOR);
@@ -94,31 +109,52 @@ namespace DeltaDNA.Editor {
                 Directory.CreateDirectory(XML_PATH.Substring(0, XML_PATH.LastIndexOf('/')));
             }
 
-            var xml = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+            var notifications = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+            var notificationsResources = new XElement("resources");
+            notifications.Add(notificationsResources);
 
-            var resources = new XElement("resources");
-            xml.Add(resources);
-
+            var appIdPresent = false;
             if (!string.IsNullOrEmpty(appId)) {
-                resources.Add(new XElement(
+                appIdPresent = true;
+                notificationsResources.Add(new XElement(
                     "string",
                     new object[] {
                         new XAttribute("name", ATTR_APP_ID),
                         appId
                     }));
+            } else {
+                notificationsResources
+                    .Elements()
+                    .Where(e => e.Attribute("name").Value == ATTR_APP_ID)
+                    .Remove();
             }
+
+            var senderIdPresent = false;
             if (!string.IsNullOrEmpty(senderId)) {
-                resources.Add(new XElement(
+                senderIdPresent = true;
+                notificationsResources.Add(new XElement(
                     "string",
                     new object[] {
                         new XAttribute("name", ATTR_SENDER_ID),
                         senderId
                     }));
+            } else {
+                notificationsResources
+                    .Elements()
+                    .Where(e => e.Attribute("name").Value == ATTR_SENDER_ID)
+                    .Remove();
             }
 
-            xml.Save(XML_PATH);
+            notifications.Save(XML_PATH);
 
-            UnityEngine.Debug.Log("Saved options to " + XML_PATH);
+            if (!string.IsNullOrEmpty(listenerService)
+                && appIdPresent && senderIdPresent) {
+                // TODO SDK-18
+            } else {
+                // TODO SDK-18
+            }
+
+            Debug.Log("Saved options to " + XML_PATH);
         }
     }
 }
