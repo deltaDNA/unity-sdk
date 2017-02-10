@@ -28,7 +28,7 @@ namespace DeltaDNA.Editor {
             get { return EditorPrefs.GetString("AndroidSdkRoot"); }
         }
 
-        [MenuItem(MENU_PATH + "Configure", priority = 10)]
+        [MenuItem(MENU_PATH + "Configure", priority = 3)]
         public static void Configure() {
             System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType(
                 "UnityEditor.InspectorWindow");
