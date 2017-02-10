@@ -3,12 +3,18 @@
 ## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (YYYY-MM-DD)
 ### Added
 - Push notifications configuration UI for Android.
-- Unity Play Resolver for downloading Android/Google dependencies.
+- Unity Play Resolver for downloading Android and Google dependencies.
+
+### Fixed
+- Notifications from campaigns overwriting other notifications on Android.
+- Application icon not being picked up for notifications on Android.
+
 ### Changed
-- Android notifications use newer Firebase libraries.
+- Notifications use newer Firebase libraries on Android.
+
 ### Removed
-- Manifest file for Android push notifications.
-- Android and Google libraries for Android push notifications.
+- Manifest file for push notifications on Android.
+- Android and Google libraries for push notifications on Android.
 
 ## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
 ### Fixed

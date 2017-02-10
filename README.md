@@ -256,11 +256,13 @@ The latest versions of Unity cause conflict with Unity's internal UnityAds plugi
 
 ### Android and Google Libraries
 
-Any components dependant on Android and/or Google libraries will download these through the [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver). The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to condering using the Resolver to get their dependencies as well, in order to avoid conflicts between the various libraries.
+Any components dependant on Android and/or Google libraries will download these through the [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver). The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to consider using the Resolver to get their dependencies as well, in order to avoid conflicts between the various libraries.
 
 ### Push Notifications
 
-In order to use push notifications on Android you will need to set the *Application* and *Sender IDs* from the configuration screen, which can be accessed from the Unity Editor menu under *DeltaDNA/Notifications/Android/Configure*. The IDs can be found in the Firebase Console for your application (you can migrate your application from the Google Cloud Console as per instructions [here](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#import_your_gcm_project_as_a_firebase_project)). Pressing 'Apply' will persist the changes to resource files in your project, which should be committed to source control.
+In order to use push notifications on Android you will need to set the *Application* and *Sender IDs* from the configuration screen, which can be accessed from the Unity Editor menu under *DeltaDNA -> Notifications -> Android -> Configure*. The IDs can be found in the Firebase Console for your application ([1](Docs/firebase_console_1.png), [2](Docs/firebase_console_2.png), and [3](Docs/firebase_console_3.png)). Pressing *Apply* will persist the changes to resource files in your project, which should be committed to source control.
+
+If your application is setup using the Google Cloud Console you can find instructions [here](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#import_your_gcm_project_as_a_firebase_project) on how to migrate the project to Firebase. Firebase projects are backwards compatible with applications using Google Cloud Messaging.
 
 The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
@@ -268,13 +270,11 @@ If you do not wish to use push notifications on Android then you can remove the 
 
 ### SmartAds on Android
 
-As with SmartAds on iOS the same settings from *DeltaDNA -> SmartAds -> Select Networks* can be used to select which networks should be used. After applying the changes the SDK will automatically download the ad network libraries from a Maven repository.
+As with SmartAds on iOS the same settings from *DeltaDNA -> SmartAds -> Select Networks* can be used to select which networks should be used. After applying the changes the SDK will automatically download the ad network libraries from a Maven repository. If you make changes to the enabled networks the changes to the *build.gradle* file should be committed to version control.
 
 The Android libraries can also be downloaded from the *DeltaDNA -> SmartAds -> Android -> Download Libraries* menu item. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will automatically try to detect when the downloaded libraries may be stale and will show a warning in the Editor console.
 
-If you make changes to the enabled networks the changes to the build.gradle file should be committed to version control.
-
-In order for the menu items to work you will need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of build-tools and an SDK platform installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
+In order for the menu items to work you will need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of *build-tools* and an *SDK Platform* installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
 
 ### Permissions
 
@@ -303,10 +303,10 @@ Since we've had to change how the SmartAds networks are defined you may need to 
 #### Android Dependencies
 We have changed the SDK to use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) project for downloading Android and Google dependencies. This should cause less conflicts with other Unity plugins, as their dependencies on Android and Google libraries can be specified through the Unity Jar Resolver.
 
-After improting the new DeltaDNA SDK package into your project make sure to remove the *play-services* and *support* AAR and JAR libraries from *Assets/DeltaDNA/Plugins/Android* as they will cause conflicts with the libraries downloaded by the Resolver.
+After importing the new DeltaDNA SDK package into your project make sure to remove the *play-services* and *support* AAR and JAR libraries from *Assets/DeltaDNA/Plugins/Android* as they will cause conflicts with the libraries downloaded by the Resolver.
 
 #### Android Notifications
-We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA/Notifications/Android/Configure*. You will need to fill in the Application and Sender IDs from the Google/Firebase Console for your application if you'd like to use notifications or are using them with a previous version of our SDK.
+We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Notifications -> Android -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.
 
 We highly recommend removing any entries related to DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the new files. If you haven't added anything else to the manifest file then you may remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest).
 
