@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+// Copyright (c) 2017 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,20 +24,24 @@ namespace DeltaDNA.Editor {
     public sealed class NotificationsWindow : EditorWindow {
         
         private const int WIDTH_LABEL = 100;
-        private const int WIDTH_TOGGLE = 60;
+        private const int WIDTH_BUTTON = 80;
         private const int HEIGHT_SEPARATOR = 20;
 
-        private const string XML_PATH = "Assets/Plugins/Android/res/values/deltadna-notifications.xml";
+        private const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
+        private const string MANIFEST_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/AndroidManifest.xml";
+        private XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
+
         private const string ATTR_APP_ID = "google_app_id";
         private const string ATTR_SENDER_ID = "gcm_defaultSenderId";
+        private const string DEFAULT_LISTENER_SERVICE = "com.deltadna.android.sdk.notifications.NotificationListenerService";
 
         private string appId = "";
         private string senderId = "";
-        private string listenerService = "com.deltadna.android.sdk.notifications.NotificationListenerService";
+        private string listenerService = "";
 
         public NotificationsWindow() : base() {
-            if (File.Exists(XML_PATH)) {
-                XDocument.Parse(File.ReadAllText(XML_PATH))
+            if (File.Exists(NOTIFICATIONS_XML_PATH)) {
+                XDocument.Parse(File.ReadAllText(NOTIFICATIONS_XML_PATH))
                     .Descendants("string")
                     .ToList()
                     .ForEach(e => {
@@ -55,22 +59,42 @@ namespace DeltaDNA.Editor {
                 appId = "";
                 senderId = "";
             }
+
+            if (File.Exists(MANIFEST_XML_PATH)) {
+                listenerService = XDocument
+                    .Parse(File.ReadAllText(MANIFEST_XML_PATH))
+                    .Descendants("service")
+                    .First()
+                    .Attribute(NAMESPACE_ANDROID + "name")
+                    .Value;
+            } else {
+                listenerService = "";
+            }
         }
         
         void OnGUI() {
-            GUILayout.BeginVertical();
-            
             var style = new GUIStyle();
             style.wordWrap = true;
             style.margin = new RectOffset(5, 5, 5, 5);
+
+            if (!MenuItems.AreAndroidNotificationsInProject()) {
+                GUILayout.Label(
+                    "Configuration not available due to notification dependencies not present " +
+                    "in project.",
+                    style);
+                return;
+            }
+
+            GUILayout.BeginVertical();
+            
             GUILayout.Label(
                 "Configure notifications for Android here, filling in the Application " +
                 "and Sender ID from the Google or Firebase Console for your application.\n" +
                 "\n" +
                 "If you have your own implementation of the NotificationListenerService you " +
-                "should set the field to use your own class. Hitting 'Apply' will persist the " +
-                "changes to the resource and manifest files.\n" +
+                "should set the field to use your own class.\n" +
                 "\n" +
+                "Hitting 'Apply' will persist the changes to the resource and manifest files. " +
                 "You may leave the fields empty if you do not wish to use notifications.",
                 style);
 
@@ -99,14 +123,19 @@ namespace DeltaDNA.Editor {
 
             GUILayout.Space(HEIGHT_SEPARATOR);
 
-            if (GUILayout.Button("Apply")) Apply();
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Apply", GUILayout.Width(WIDTH_BUTTON))) Apply();
+            GUILayout.EndHorizontal();
             
             GUILayout.EndVertical();
         }
         
         private void Apply() {
-            if (!File.Exists(XML_PATH)) {
-                Directory.CreateDirectory(XML_PATH.Substring(0, XML_PATH.LastIndexOf('/')));
+            if (!File.Exists(NOTIFICATIONS_XML_PATH)) {
+                Directory.CreateDirectory(NOTIFICATIONS_XML_PATH.Substring(
+                    0,
+                    NOTIFICATIONS_XML_PATH.LastIndexOf('/')));
             }
 
             var notifications = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
@@ -145,16 +174,26 @@ namespace DeltaDNA.Editor {
                     .Remove();
             }
 
-            notifications.Save(XML_PATH);
+            notifications.Save(NOTIFICATIONS_XML_PATH);
 
+            var manifest = XDocument.Parse(File.ReadAllText(MANIFEST_XML_PATH));
             if (!string.IsNullOrEmpty(listenerService)
                 && appIdPresent && senderIdPresent) {
-                // TODO SDK-18
+                var service = manifest.Descendants("service").First();
+                service.Attribute(NAMESPACE_ANDROID + "name").Value = listenerService;
+                service.Attribute(NAMESPACE_ANDROID + "enabled").Value = "true";
             } else {
-                // TODO SDK-18
+                manifest
+                    .Descendants("service")
+                    .First()
+                    .Attribute(NAMESPACE_ANDROID + "enabled")
+                    .Value = "false";
             }
+            manifest.Save(MANIFEST_XML_PATH);
 
-            Debug.Log("Saved options to " + XML_PATH);
+            Debug.Log(
+                "Saved options to " + NOTIFICATIONS_XML_PATH +
+                " and " + MANIFEST_XML_PATH);
         }
     }
 }

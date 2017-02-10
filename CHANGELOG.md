@@ -1,5 +1,15 @@
 # Change Log
 
+## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (YYYY-MM-DD)
+### Added
+- Push notifications configuration UI for Android.
+- Unity Play Resolver for downloading Android/Google dependencies.
+### Changed
+- Android notifications use newer Firebase libraries.
+### Removed
+- Manifest file for Android push notifications.
+- Android and Google libraries for Android push notifications.
+
 ## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
 ### Fixed
 - IL2CPP support for Android.

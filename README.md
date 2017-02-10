@@ -27,6 +27,8 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [SmartAds on Android](#smartads-on-android)
  * [Permissions](#permissions)
 * [Migrations](#migrations)
+ * [4.2](#version-4.2)
+ * [4.3](#version-4.3)
 * [License](#license)
 
 ## Analytics
@@ -252,17 +254,17 @@ The latest versions of Unity cause conflict with Unity's internal UnityAds plugi
 
 ## Android Integration
 
+### Android and Google Libraries
+
+Any components dependant on Android and/or Google libraries will download these through the [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver). The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to condering using the Resolver to get their dependencies as well, in order to avoid conflicts between the various libraries.
+
 ### Push Notifications
 
-In order to use push notifications on Android you will need to add an `AndroidManifest.xml` to your project under `Assets/Plugins/Android` in order to register broadcast receivers and services for your game. You can take a look [here](Assets/Plugins/Android/) for an example configuration which has been made to work with the example packaged in the SDK. Please take a look at the [integration section](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#integration) for push notifications, which is also relevant to the Analytics Unity SDK on Android, containing integration steps with more details.
+In order to use push notifications on Android you will need to set the *Application* and *Sender IDs* from the configuration screen, which can be accessed from the Unity Editor menu under *DeltaDNA/Notifications/Android/Configure*. The IDs can be found in the Firebase Console for your application (you can migrate your application from the Google Cloud Console as per instructions [here](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#import_your_gcm_project_as_a_firebase_project)). Pressing 'Apply' will persist the changes to resource files in your project, which should be committed to source control.
 
-The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity).
+The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
-The SDK already pre-packages some dependencies for Google Play Services under `Assets\DeltaDNA\Plugins\Android` for push notifications (as well as SmartAds). If you would like to use your own version of Play Services, then you should remove the dependencies (ie play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar, etc) in order to avoid duplicate class definition errors during the build stage. Please note that we cannot guarantee other versions of Google Play Services than 7.8.0 to work correctly with our SDK.
-
-In case of using other services for push notifications together with DeltaDNA you should make sure that each service uses its own sender ID. This will ensure that the notification handlers will only handle push notifications coming from their own service.
-
-If you do not wish to use push notifications on Android then you can remove the files from the `Assets\DeltaDNA\Plugins\Android` folder and the customised `AndroidManifest.xml` to decrease the APK size of your game.
+If you do not wish to use push notifications on Android then you can remove the *Assets/DeltaDNA/Plugins/Android* and *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folders from the project to decrease the number of methods and the APK size of your game.
 
 ### SmartAds on Android
 
@@ -296,6 +298,19 @@ In case the above still causes conflicts during manifest merging then the follow
 Configuring which networks should be used for SmartAds has been changed by adding menu items to the Unity Editor, which removes some of the error-prone manual steps. For Android there's no longer the need to have Python installed or set the Android SDK directory in order to download the library dependencies, as the menu item for this task will take care of the steps. If you make changes to the selected networks you will need to commit the changes made to the build.gradle and/or Podfile to your version control, in order for the rest of your team to use the changes.
 
 Since we've had to change how the SmartAds networks are defined you may need to look over the selected networks in case you had previously removed any of them for your project.
+
+### Version 4.3
+#### Android Dependencies
+We have changed the SDK to use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) project for downloading Android and Google dependencies. This should cause less conflicts with other Unity plugins, as their dependencies on Android and Google libraries can be specified through the Unity Jar Resolver.
+
+After improting the new DeltaDNA SDK package into your project make sure to remove the *play-services* and *support* AAR and JAR libraries from *Assets/DeltaDNA/Plugins/Android* as they will cause conflicts with the libraries downloaded by the Resolver.
+
+#### Android Notifications
+We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA/Notifications/Android/Configure*. You will need to fill in the Application and Sender IDs from the Google/Firebase Console for your application if you'd like to use notifications or are using them with a previous version of our SDK.
+
+We highly recommend removing any entries related to DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the new files. If you haven't added anything else to the manifest file then you may remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest).
+
+If you do not wish to use notifications then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* and *Assets/DeltaDNA/Plugins/Android* folders from your project. This will decrease the method count of your application, as well as the APK size.
 
 ## License
 

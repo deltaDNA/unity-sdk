@@ -26,6 +26,9 @@ namespace DeltaDNAAds.Editor {
         
         private const int WIDTH_LABEL = 100;
         private const int WIDTH_TOGGLE = 60;
+        private const int WIDTH_BUTTON = 80;
+        private const int HEIGHT_SEPARATOR = 20;
+
         private const string DEFINITIONS = MenuItems.EDITOR_PATH + "networks.json";
         private const string NAME = "name";
         
@@ -71,7 +74,8 @@ namespace DeltaDNAAds.Editor {
                 "however for iOS the project will need to be built from Unity in order " +
                 "for CocoaPods to download the dependencies and export it as an Xcode project.",
                 style);
-            GUILayout.Space(20);
+
+            GUILayout.Space(HEIGHT_SEPARATOR);
             
             GUILayout.BeginHorizontal();
             GUILayout.Label("Network", GUILayout.Width(WIDTH_LABEL));
@@ -108,10 +112,14 @@ namespace DeltaDNAAds.Editor {
                 
                 GUILayout.EndHorizontal();
             }
-            
-            GUILayout.Space(20);
-            if (GUILayout.Button("Apply")) Apply();
-            
+
+            GUILayout.Space(HEIGHT_SEPARATOR);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            if (GUILayout.Button("Apply", GUILayout.Width(WIDTH_BUTTON))) Apply();
+            GUILayout.EndHorizontal();
+
             GUILayout.EndVertical();
         }
         
