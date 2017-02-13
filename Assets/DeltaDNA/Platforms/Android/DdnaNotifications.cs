@@ -18,8 +18,7 @@
 
 using UnityEngine;
 
-namespace DeltaDNA.Android
-{
+namespace DeltaDNA.Android {
 
     internal class DDNANotifications {
     
@@ -33,8 +32,8 @@ namespace DeltaDNA.Android
             ddnaNotifications.CallStatic("markUnityLoaded");
         }
         
-        public void Register(AndroidJavaObject context) {
-            ddnaNotifications.CallStatic("register", context);
+        public string GetRegistrationToken() {
+            return ddnaNotifications.CallStatic<string>("getRegistrationToken");
         }
     }
 }
