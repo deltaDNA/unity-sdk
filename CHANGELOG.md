@@ -3,6 +3,7 @@
 ## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
 ### Fixed
 - IL2CPP support for Android.
+- Additional event store corruption checks.
 
 ## [4.2.12](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.12) (2017-02-01)
 ### Fixed
