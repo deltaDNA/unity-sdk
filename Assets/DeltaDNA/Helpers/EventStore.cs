@@ -64,6 +64,8 @@ namespace DeltaDNA
             }
         }
 
+        public bool IsInitialised { get { return _initialised; } }
+
         /// <summary>
         /// Add a new event to the in buffer.
         /// </summary>
@@ -89,20 +91,17 @@ namespace DeltaDNA
             lock (_lock)
             {
                 // Only swap if the out buffer is empty
-                // -- So what really happens if the out buffer is full on start up??
                 if (_initialised && _outfs.Length == 0)
                 {
                     SwapStreams(ref _infs, ref _outfs);
 
-                    // Swap the filenames
+                    // Swap the filenames, not that bad if PlayerPrefs is missing will pick up the files
+                    // on game restart.
                     string inFile = PlayerPrefs.GetString(PF_KEY_IN_FILE);
                     string outFile = PlayerPrefs.GetString(PF_KEY_OUT_FILE);
 
-                    if (String.IsNullOrEmpty(inFile)) {
-                        Logger.LogError("Event Store corruption, PlayerPrefs in file key is missing");
-                    }
-                    else if (String.IsNullOrEmpty(outFile)) {
-                        Logger.LogError("Event Store corruption, PlayerPrefs out file key is missing");
+                    if (String.IsNullOrEmpty(inFile) || String.IsNullOrEmpty(outFile)) {
+                        Logger.LogWarning("File path from PlayerPrefs is missing, did you DeleteAll?");
                     }
                     else {
                         PlayerPrefs.SetString(PF_KEY_IN_FILE, outFile);
@@ -281,8 +280,22 @@ namespace DeltaDNA
             while (stream.Read(lengthField, 0, lengthField.Length) > 0)
             {
                 Int32 eventLength = BitConverter.ToInt32(lengthField, 0);
+                if (eventLength <= 0 || eventLength > (MAX_FILE_SIZE_BYTES - 4)) {        // sanity check eventLength
+                    // file format corrupted!
+                    Logger.LogError("Event Store file corruption while reading event length.");
+                    ClearStream(stream);
+                    break;
+                }
+
                 byte[] recordField = new byte[eventLength];
-                stream.Read(recordField, 0, recordField.Length);
+                int bytesRead = stream.Read(recordField, 0, recordField.Length);
+                if (bytesRead != recordField.Length) {
+                    // file format corrupted!
+                    Logger.LogError("Event Store file corruption while reading event.");
+                    ClearStream(stream);
+                    break;
+                }
+
                 string record = Encoding.UTF8.GetString(recordField, 0, recordField.Length);
                 events.Add(record);
             }
@@ -306,8 +319,10 @@ namespace DeltaDNA
 
         public static void ClearStream(Stream stream)
         {
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.SetLength(0);
+            if (stream != null && stream.CanSeek) {
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.SetLength(0);
+            }
         }
 
     }
