@@ -66,6 +66,11 @@ namespace DeltaDNA
                     }
                 }
                 this.eventStore = new EventStore(eventStorePath);
+                if (this.Settings.UseEventStore && !this.eventStore.IsInitialised) {   // failed to access files for some reason
+                    Logger.LogWarning("Failed to access event store path, event caching disabled.");
+                    this.Settings.UseEventStore = false;
+                    this.eventStore = new EventStore(eventStorePath);
+                }
             }
 
             // Attach additional behaviours as children of this gameObject
@@ -525,7 +530,7 @@ namespace DeltaDNA
         /// <summary>
         /// Clears the persistent data, such as user id. The SDK should be stopped
         /// before this method is called.
-        /// 
+        ///
         /// Useful for testing purposes.
         /// </summary>
         public void ClearPersistentData()
@@ -653,7 +658,7 @@ namespace DeltaDNA
         public string ClientVersion { get; set; }
 
         /// <summary>
-        /// By default we detect the platform field for your events.  You can override 
+        /// By default we detect the platform field for your events.  You can override
         /// this value, make sure to set it before calling <see cref="Start"/>.
         /// </summary>
         public string Platform { get; set; }
