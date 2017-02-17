@@ -11,6 +11,7 @@
 
 ### Changed
 - Notifications use newer Firebase libraries on Android.
+- Updated SmartAds library dependencies on Android.
 
 ### Removed
 - Manifest file for push notifications on Android.

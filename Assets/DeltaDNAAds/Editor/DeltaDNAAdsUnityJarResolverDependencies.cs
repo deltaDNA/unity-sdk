@@ -10,6 +10,9 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
     #if UNITY_ANDROID
     /// <summary>Instance of the PlayServicesSupport resolver</summary>
     public static object svcSupport;
+
+    private const string VERSION_SUPPORT = "25.1.1";
+    private const string VERSION_PLAYSERVICES = "10.2.0";
     #endif
 
     static DeltaDNAAdsUnityJarResolverDependencies() {
@@ -44,28 +47,39 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
                 "DeltaDNAAds",
                 EditorPrefs.GetString("AndroidSdkRoot"),
                 "ProjectSettings"});
-
+        
         Google.VersionHandler.InvokeInstanceMethod(
             svcSupport,
             "DependOn",
             new object[] {
-                "com.google.firebase",
-                "firebase-analytics",
-                "10.0.1"},
+                "com.android.support",
+                "support-annotations",
+                VERSION_SUPPORT},
             namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-google-m2repository" }}});
+                { "packageIds", new string[] { "extra-android-m2repository" }}});
 
         var networks = new DeltaDNAAds.Editor.AndroidNetworks(true, false).GetPersisted();
+        if (networks.Count > 0) {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.google.android.gms",
+                    "play-services-basement",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+        }
         if (networks.Contains("adcolony")) {
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport,
                 "DependOn",
                 new object[] {
-                    "com.android.support",
-                    "support-annotations",
-                    "25.1.0"},
+                    "com.google.android.gms",
+                    "play-services-base",
+                    VERSION_PLAYSERVICES},
                 namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+                    { "packageIds", new string[] { "extra-google-m2repository" }}});
         }
         if (networks.Contains("admob")) {
             // instead of com.google.firebase:firebase-ads which is empty and breaks Unity
@@ -75,20 +89,42 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
                 new object[] {
                     "com.google.android.gms",
                     "play-services-ads",
-                    "10.0.1"},
+                    VERSION_PLAYSERVICES},
                 namedArgs: new Dictionary<string, object>() {
                     { "packageIds", new string[] { "extra-google-m2repository" }}});
         }
-        if (networks.Contains("thirdpresence") || networks.Contains("vungle")) {
+        if (networks.Contains("inmobi")) {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.google.android.gms",
+                    "play-services-base",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+        }
+        if (networks.Contains("thirdpresence")) {
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport,
                 "DependOn",
                 new object[] {
                     "com.android.support",
                     "support-v4",
-                    "25.1.0"},
+                    VERSION_SUPPORT},
                 namedArgs: new Dictionary<string, object>() {
                     { "packageIds", new string[] { "extra-android-m2repository" }}});
+        }
+        if (networks.Contains("vungle")) {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.google.android.gms",
+                    "play-services-base",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-google-m2repository" }}});
         }
     }
     #endif

@@ -26,6 +26,9 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
     #if UNITY_ANDROID
     /// <summary>Instance of the PlayServicesSupport resolver</summary>
     public static object svcSupport;
+
+    private static string VERSION_SUPPORT = "25.1.1";
+    private static string VERSION_PLAYSERVICES = "10.2.0";
     #endif
 
     static DeltaDNAUnityJarResolverDependencies() {
@@ -71,19 +74,18 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
             new object[] {
                 "com.android.support",
                 "support-annotations",
-                "25.1.0"},
+                VERSION_SUPPORT},
             namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-google-m2repository" }}});
-
+                { "packageIds", new string[] { "extra-android-m2repository" }}});
         Google.VersionHandler.InvokeInstanceMethod(
             svcSupport,
             "DependOn",
             new object[] {
                 "com.google.firebase",
                 "firebase-messaging",
-                "10.0.1"},
+                VERSION_PLAYSERVICES},
             namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-android-m2repository" }}});
+                { "packageIds", new string[] { "extra-google-m2repository" }}});
     }
     #endif
 
