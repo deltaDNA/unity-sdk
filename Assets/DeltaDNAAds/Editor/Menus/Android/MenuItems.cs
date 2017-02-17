@@ -22,7 +22,7 @@ namespace DeltaDNAAds.Editor.Android {
         
         private const string MENU_PATH = Editor.MenuItems.MENU_PATH + "Android/";
         
-        [MenuItem(MENU_PATH + "Download Libraries", priority = 12)]
+        [MenuItem(MENU_PATH + "Download Libraries", priority = 2)]
         public static void DownloadLibraries() {
             AndroidNetworks.DownloadLibraries(false);
         }

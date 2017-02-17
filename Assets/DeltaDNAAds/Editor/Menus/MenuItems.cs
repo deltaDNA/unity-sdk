@@ -23,7 +23,7 @@ namespace DeltaDNAAds.Editor {
         internal const string MENU_PATH = "DeltaDNA/SmartAds/";
         internal const string EDITOR_PATH = "Assets/DeltaDNAAds/Editor/";
         
-        [MenuItem(MENU_PATH + "Select Networks", priority = 10)]
+        [MenuItem(MENU_PATH + "Select Networks", priority = 1)]
         public static void SelectNetworks() {
             System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType(
                 "UnityEditor.InspectorWindow");

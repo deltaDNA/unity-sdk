@@ -41,14 +41,17 @@ public class Example : MonoBehaviour {
         DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an iOS push token: "+n);};
         DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("Got an iOS push notification! "+n);};
         DDNA.Instance.IosNotifications.RegisterForPushNotifications();
-
+        
+        // No need to register explicitly on Android
         DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an Android registration token: " + n);
         };
-        DDNA.Instance.AndroidNotifications.OnDidFailToRegisterForPushNotifications += (string n) => {
-            Debug.Log("Failed getting an Android registration token: " + n);
+        DDNA.Instance.AndroidNotifications.OnDidReceivePushNotification += (string n) => {
+            Debug.Log("Got an Android push notification: " + n);
         };
-        DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
+        DDNA.Instance.AndroidNotifications.OnDidLaunchWithPushNotification += (string n) => {
+            Debug.Log("Launched with an Android push notification: " + n);
+        };
 
         // Start collecting data
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);

@@ -1,9 +1,23 @@
 # Change Log
 
-## [Unreleased](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3) (YYYY-MM-DD)
+## [Unreleased](https://github.com/deltaDNA/unity-sdk/releases/tag/) (YYYY-MM-DD)
 ### Added
 - Support for AppLovin SDK.
 - Support for ThirdPresence SDK.
+- Push notifications configuration UI for Android.
+- Unity Play Resolver for downloading Android and Google dependencies.
+
+### Fixed
+- Notifications from campaigns overwriting other notifications on Android.
+- Application icon not being picked up for notifications on Android.
+
+### Changed
+- Notifications use newer Firebase libraries on Android.
+- Updated SmartAds library dependencies on Android.
+
+### Removed
+- Manifest file for push notifications on Android.
+- Android and Google libraries for push notifications on Android.
 
 ## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
 ### Fixed

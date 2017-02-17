@@ -46,8 +46,6 @@ namespace DeltaDNA
         public event Action<string> OnDidReceivePushNotification;
         // Called with the registrationId.
         public event Action<string> OnDidRegisterForPushNotifications;
-        // Called with the error string.
-        public event Action<string> OnDidFailToRegisterForPushNotifications;
         
         void Awake()
         {
@@ -63,14 +61,14 @@ namespace DeltaDNA
         /// <summary>
         /// Registers for push notifications.
         /// </summary>
-        public void RegisterForPushNotifications()
-        {
-            if (Application.platform == RuntimePlatform.Android)
-            {
+        public void RegisterForPushNotifications() {
+            if (Application.platform == RuntimePlatform.Android) {
                 #if UNITY_ANDROID && !UNITY_EDITOR
-                ddnaNotifications.Register(
-                    new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-                    .GetStatic<AndroidJavaObject>("currentActivity"));
+                var token = ddnaNotifications.GetRegistrationToken();
+                if (!string.IsNullOrEmpty(token)) {
+                    DDNA.Instance.AndroidRegistrationID = token;
+                    DidRegisterForPushNotifications(token);
+                }
                 #endif
             }
         }
@@ -121,15 +119,6 @@ namespace DeltaDNA
             
             if (OnDidRegisterForPushNotifications != null) {
                 OnDidRegisterForPushNotifications(registrationId);
-            }
-        }
-        
-        public void DidFailToRegisterForPushNotifications(string error)
-        {
-            Logger.LogDebug("Did fail to register for Android push notifications: "+error);
-            
-            if (OnDidFailToRegisterForPushNotifications != null) {
-                OnDidFailToRegisterForPushNotifications(error);
             }
         }
         
