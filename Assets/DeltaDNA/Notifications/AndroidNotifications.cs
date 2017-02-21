@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace DeltaDNA
 {
-    
+
     /// <summary>
     /// Android Notifications enables a game to register with Google's GCM service.
     /// Is uses our native Android plugin to retreive the registration id required
@@ -46,7 +46,10 @@ namespace DeltaDNA
         public event Action<string> OnDidReceivePushNotification;
         // Called with the registrationId.
         public event Action<string> OnDidRegisterForPushNotifications;
-        
+        // Called with the error string.
+        [Obsolete("No longer called as registering can not fail.")]
+        public event Action<string> OnDidFailToRegisterForPushNotifications;
+
         void Awake()
         {
             gameObject.name = this.GetType().ToString();
@@ -57,7 +60,7 @@ namespace DeltaDNA
             ddnaNotifications.MarkUnityLoaded();
             #endif
         }
-        
+
         /// <summary>
         /// Registers for push notifications.
         /// </summary>
@@ -72,7 +75,7 @@ namespace DeltaDNA
                 #endif
             }
         }
-        
+
         /// <summary>
         /// Unregisters for push notifications.
         /// </summary>
@@ -110,20 +113,30 @@ namespace DeltaDNA
                 OnDidReceivePushNotification(notification);
             }
         }
-        
+
         public void DidRegisterForPushNotifications(string registrationId)
         {
             Logger.LogDebug("Did register for Android push notifications: "+registrationId);
-            
+
             DDNA.Instance.AndroidRegistrationID = registrationId;
-            
+
             if (OnDidRegisterForPushNotifications != null) {
                 OnDidRegisterForPushNotifications(registrationId);
             }
         }
-        
+
+        [Obsolete("No longer called as registering can not fail.")]
+        public void DidFailToRegisterForPushNotifications(string error)
+        {
+            Logger.LogDebug("Did fail to register for Android push notifications: "+error);
+
+            if (OnDidFailToRegisterForPushNotifications != null) {
+                OnDidFailToRegisterForPushNotifications(error);
+            }
+        }
+
         #endregion
-        
+
     }
 
 } // namespace DeltaDNA

@@ -90,7 +90,8 @@ namespace DeltaDNA {
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.h",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.m",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.h",
-                "Assets/Plugins/iOS/NSString+DDNAHelpers.m"
+                "Assets/Plugins/iOS/NSString+DDNAHelpers.m",
+                "Assets/Plugins/Android/deltadna-sdk-unity-notifications"
             };
 
             assets.AddRange(globalAssets);
