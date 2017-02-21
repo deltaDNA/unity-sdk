@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.3-beta.1";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.3-beta.2";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -46,7 +46,7 @@ namespace DeltaDNA
 
             HttpRequestRetryDelaySeconds = 2;
             HttpRequestMaxRetries = 0;              // Rely on BackgroundEventUploadRepeatRateSeconds to retry
-            HttpRequestCollectTimeoutSeconds = 30;  // 30 seconds is max Unity allow's
+            HttpRequestCollectTimeoutSeconds = 30;  // 30 seconds is max Unity allows
             HttpRequestEngageTimeoutSeconds = 5;
 
             BackgroundEventUpload = true;   // send events automatically by default
