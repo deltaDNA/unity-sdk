@@ -21,6 +21,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace DeltaDNA {
 
@@ -76,6 +78,29 @@ namespace DeltaDNA {
 
         static void ExportSdkPackage()
         {
+            // wipe the notification properties for Android
+            string notificationsAppId = "";
+            string notificationsSenderId = "";
+            var notificationsPath = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
+            var notifications = XDocument.Parse(File.ReadAllText(notificationsPath));
+            notifications
+                .Descendants("string")
+                .ToList()
+                .ForEach(e => {
+                    switch (e.Attribute("name").Value) {
+                        case "google_app_id":
+                            notificationsAppId = e.Value;
+                            e.Value = "";
+                            break;
+
+                        case "gcm_defaultSenderId":
+                            notificationsSenderId = e.Value;
+                            e.Value = "";
+                            break;
+                    }
+                });
+            notifications.Save(notificationsPath);
+
             List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNA"));
             // remove unit tests
             string match = assets.Find(it => it.EndsWith("Editor"));
@@ -102,6 +127,23 @@ namespace DeltaDNA {
 
             string filename = OutputFilename("deltadna-sdk", SdkVersion());
             AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
+
+            // restore the notification properties for Android
+            notifications
+                .Descendants("string")
+                .ToList()
+                .ForEach(e => {
+                    switch (e.Attribute("name").Value) {
+                        case "google_app_id":
+                            e.Value = notificationsAppId;
+                            break;
+
+                        case "gcm_defaultSenderId":
+                            e.Value = notificationsSenderId;
+                            break;
+                    }
+                });
+            notifications.Save(notificationsPath);
         }
 
         static void ExportSmartAdsPackage()
