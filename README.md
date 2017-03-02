@@ -303,12 +303,14 @@ Since we've had to change how the SmartAds networks are defined you may need to 
 #### Android Dependencies
 We have changed the SDK to use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) project for downloading Android and Google dependencies. This should cause fewer conflicts with other Unity plugins, as their dependencies on Android and Google libraries can be specified through the Unity Jar Resolver.
 
-After importing the new DeltaDNA SDK package into your project make sure to remove the *play-services* and *support* AAR and JAR libraries from *Assets/DeltaDNA/Plugins/Android* as they will cause conflicts with the libraries downloaded by the Resolver.
+After importing the new DeltaDNA SDK package into your project make sure to remove the *play-services* and *support* AAR and JAR libraries from *Assets/DeltaDNA/Plugins/Android* as they will cause conflicts with the libraries downloaded by the Resolver. You will also need to remove the old *deltadna-sdk-notifications* AAR file.
+
+As with any SDK update you should update the Android SmartAds libraries from *DeltaDNA -> SmartAds -> Android -> Download Libraries*.
 
 #### Android Notifications
 We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Notifications -> Android -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.
 
-We highly recommend removing any entries related to DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the new files. If you haven't added anything else to the manifest file then you may remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest).
+We highly recommend removing any entries related to DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the new files. If you haven't added anything else to the manifest file then you may remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest). In addition you will also be able to remove the *string* resource from *Assets/Plugins/Android/res/values* which contains your application's Sender ID.
 
 The `DeltaDNA.AndroidNotifications.OnDidRegisterForPushNotifications` has been deprecated, and is no longer called.  Firebase will keep trying in the background to fetch a registration token so it can't fail as such.
 
