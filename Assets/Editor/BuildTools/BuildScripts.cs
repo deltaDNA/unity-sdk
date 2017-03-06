@@ -106,20 +106,20 @@ namespace DeltaDNA {
             string match = assets.Find(it => it.EndsWith("Editor"));
             if (match != null) assets.Remove(match);
 
+            assets.Add("Assets/DeltaDNA/Editor/WindowHelper.cs");
             assets.Add("Assets/DeltaDNA/Editor/Android");
             assets.Add("Assets/DeltaDNA/Editor/iOS");
 
             assets.AddRange(Directory.GetFiles("Assets/DeltaDNA", "*.cs"));
 
-            string[] globalAssets = {
+            assets.AddRange(new string[] {
+                "Assets/PlayServicesResolver",
+                "Assets/Plugins/Android/deltadna-sdk-unity-notifications",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.h",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.m",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.h",
-                "Assets/Plugins/iOS/NSString+DDNAHelpers.m",
-                "Assets/Plugins/Android/deltadna-sdk-unity-notifications"
-            };
-
-            assets.AddRange(globalAssets);
+                "Assets/Plugins/iOS/NSString+DDNAHelpers.m"
+            });
 
             foreach (string f in assets) {
                 System.Console.WriteLine(f);
@@ -164,6 +164,8 @@ namespace DeltaDNA {
             assets.Add("Assets/DeltaDNAAds/DDNASmartAds.cs");
             assets.Add("Assets/DeltaDNAAds/InterstitialAd.cs");
             assets.Add("Assets/DeltaDNAAds/RewardedAd.cs");
+
+            assets.Add("Assets/PlayServicesResolver");
 
             foreach (string f in assets) { Console.WriteLine(f); }
 
