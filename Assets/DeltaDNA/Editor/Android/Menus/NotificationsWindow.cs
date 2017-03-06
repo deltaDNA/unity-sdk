@@ -33,11 +33,15 @@ namespace DeltaDNA.Editor {
 
         private const string ATTR_APP_ID = "google_app_id";
         private const string ATTR_SENDER_ID = "gcm_defaultSenderId";
+        private const string ATTR_ICON = "ddna_notification_icon";
+        private const string ATTR_TITLE = "ddna_notification_title";
         private const string DEFAULT_LISTENER_SERVICE = "com.deltadna.android.sdk.notifications.NotificationListenerService";
 
         private string appId = "";
         private string senderId = "";
         private string listenerService = "";
+        private string notificationIcon = "";
+        private string notificationTitle = "";
 
         public NotificationsWindow() : base() {
             if (File.Exists(NOTIFICATIONS_XML_PATH)) {
@@ -61,14 +65,34 @@ namespace DeltaDNA.Editor {
             }
 
             if (File.Exists(MANIFEST_XML_PATH)) {
-                listenerService = XDocument
-                    .Parse(File.ReadAllText(MANIFEST_XML_PATH))
+                var doc = XDocument.Parse(File.ReadAllText(MANIFEST_XML_PATH));
+                listenerService = doc
                     .Descendants("service")
                     .First()
                     .Attribute(NAMESPACE_ANDROID + "name")
                     .Value;
+                doc .Descendants("meta-data")
+                    .ToList()
+                    .ForEach(e => {
+                        switch (e.Attribute(NAMESPACE_ANDROID + "name").Value) {
+                            case ATTR_ICON:
+                                notificationIcon = e.Attribute(NAMESPACE_ANDROID + "value").Value;
+                                break;
+
+                            case ATTR_TITLE:
+                                var attr = e.Attribute(NAMESPACE_ANDROID + "resource");
+                                if (attr != null) {
+                                    notificationTitle = attr.Value;
+                                } else {
+                                    notificationTitle = e.Attribute(NAMESPACE_ANDROID + "value").Value;
+                                }
+                                break;
+                        }
+                    });
             } else {
                 listenerService = "";
+                notificationIcon = "";
+                notificationTitle = "";
             }
         }
         
@@ -93,6 +117,13 @@ namespace DeltaDNA.Editor {
                 "\n" +
                 "If you have your own implementation of the NotificationListenerService you " +
                 "should set the field to use your own class.\n" +
+                "\n" +
+                "The icon for the notification should be the name of the drawable resource, " +
+                "for example 'icon_notification' if you have 'icon_notification.png' in the " +
+                "'res/drawable' folders.\n" +
+                "The title should be the string literal that you would like to appear in the " +
+                "notification, or a localisable string resource from the 'res/values' folder " +
+                "such as '@string/resource_name'.\n" +
                 "\n" +
                 "Hitting 'Apply' will persist the changes to the resource and manifest files. " +
                 "You may leave the fields empty if you do not wish to use notifications.",
@@ -119,6 +150,20 @@ namespace DeltaDNA.Editor {
                 "Listener Service",
                 GUILayout.Width(WIDTH_LABEL));
             listenerService = EditorGUILayout.TextField(listenerService);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(
+                "Notification Icon",
+                GUILayout.Width(WIDTH_LABEL));
+            notificationIcon = EditorGUILayout.TextField(notificationIcon);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(
+                "Notification Title",
+                GUILayout.Width(WIDTH_LABEL));
+            notificationTitle = EditorGUILayout.TextField(notificationTitle);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(HEIGHT_SEPARATOR);
@@ -177,6 +222,7 @@ namespace DeltaDNA.Editor {
             notifications.Save(NOTIFICATIONS_XML_PATH);
 
             var manifest = XDocument.Parse(File.ReadAllText(MANIFEST_XML_PATH));
+
             if (!string.IsNullOrEmpty(listenerService)
                 && appIdPresent && senderIdPresent) {
                 var service = manifest.Descendants("service").First();
@@ -188,6 +234,65 @@ namespace DeltaDNA.Editor {
                     .First()
                     .Attribute(NAMESPACE_ANDROID + "enabled")
                     .Value = "false";
+            }
+
+            if (!string.IsNullOrEmpty(notificationIcon)) {
+                var element = manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_ICON)
+                    .FirstOrDefault();
+                if (element != null) {
+                    element.Attribute(NAMESPACE_ANDROID + "value").Value = notificationIcon;
+                } else {
+                    manifest
+                        .Descendants("application")
+                        .First()
+                        .Add(new XElement(
+                            "meta-data",
+                            new object[] {
+                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_ICON),
+                                new XAttribute(NAMESPACE_ANDROID + "value", notificationIcon)}));
+                }
+            } else {
+                manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_ICON)
+                    .Remove();
+            }
+            if (!string.IsNullOrEmpty(notificationTitle)) {
+                var resource = notificationTitle.StartsWith("@string/");
+                var element = manifest
+                    .Descendants("meta-data")
+                    .Where(e => e
+                        .Attribute(NAMESPACE_ANDROID + "name")
+                        .Value == ATTR_TITLE)
+                    .FirstOrDefault();
+
+                if (element != null) {
+                    element.RemoveAttributes();
+                    element.SetAttributeValue(
+                        NAMESPACE_ANDROID + "name",
+                        ATTR_TITLE);
+                    element.SetAttributeValue(
+                        NAMESPACE_ANDROID + (resource ? "resource" : "value"),
+                        notificationTitle);
+                } else {
+                    manifest
+                        .Descendants("application")
+                        .First()
+                        .Add(new XElement(
+                            "meta-data",
+                            new object[] {
+                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_TITLE),
+                                new XAttribute(
+                                    NAMESPACE_ANDROID + (resource ? "resource" : "value"),
+                                    notificationTitle)}));
+                }
+            } else {
+                manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_TITLE)
+                    .Remove();
             }
             manifest.Save(MANIFEST_XML_PATH);
 
