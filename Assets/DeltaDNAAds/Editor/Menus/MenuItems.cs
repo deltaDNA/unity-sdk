@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+using DeltaDNA.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,31 +24,9 @@ namespace DeltaDNAAds.Editor {
         internal const string MENU_PATH = "DeltaDNA/SmartAds/";
         internal const string EDITOR_PATH = "Assets/DeltaDNAAds/Editor/";
         
-        [MenuItem(MENU_PATH + "Select Networks", priority = 1)]
+        [MenuItem(MENU_PATH + "Select Networks", priority = 3)]
         public static void SelectNetworks() {
-            System.Type inspectorType = typeof(UnityEditor.Editor).Assembly.GetType(
-                "UnityEditor.InspectorWindow");
-
-            var foundInspector = false;
-            foreach (var window in Resources.FindObjectsOfTypeAll<EditorWindow>()) {
-                if (window.GetType() == inspectorType) {
-                    foundInspector = true;
-                    break;
-                }
-            }
-
-            if (foundInspector) {
-                EditorWindow.GetWindow<NetworksWindow>(
-                    "Ad Networks",
-                    true,
-                    inspectorType)
-                    .Show();
-            } else {
-                EditorWindow.GetWindow<NetworksWindow>(
-                    "Ad Networks",
-                    true)
-                    .Show();
-            }
+            WindowHelper.Show<NetworksWindow>("Ad Networks");
         }
     }
 }
