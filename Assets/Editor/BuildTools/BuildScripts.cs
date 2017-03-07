@@ -106,6 +106,8 @@ namespace DeltaDNA {
             string match = assets.Find(it => it.EndsWith("Editor"));
             if (match != null) assets.Remove(match);
 
+            assets.Add("Assets/DeltaDNA/Editor/DeltaDNASdkChecker.cs");
+            assets.Add("Assets/DeltaDNA/Editor/SdkChecker.cs");
             assets.Add("Assets/DeltaDNA/Editor/WindowHelper.cs");
             assets.Add("Assets/DeltaDNA/Editor/Android");
             assets.Add("Assets/DeltaDNA/Editor/iOS");
@@ -158,6 +160,7 @@ namespace DeltaDNA {
             assets.Add("Assets/DeltaDNAAds/Editor/iOS");
             assets.Add("Assets/DeltaDNAAds/Plugins/iOS");
 
+            assets.Add("Assets/DeltaDNAAds/Editor/DeltaDNAAdsSdkChecker.cs");
             assets.Add("Assets/DeltaDNAAds/Editor/Menus");
             assets.Add("Assets/DeltaDNAAds/Editor/networks.json");
 

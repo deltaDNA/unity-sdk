@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 
-using UnityEditor;
-using UnityEngine;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace DeltaDNA.Editor {
     public sealed class NotificationsWindow : EditorWindow {
@@ -27,14 +27,14 @@ namespace DeltaDNA.Editor {
         private const int WIDTH_BUTTON = 80;
         private const int HEIGHT_SEPARATOR = 20;
 
-        private const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
-        private const string MANIFEST_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/AndroidManifest.xml";
-        private XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
+        internal const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
+        internal const string MANIFEST_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/AndroidManifest.xml";
+        internal static XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 
-        private const string ATTR_APP_ID = "google_app_id";
-        private const string ATTR_SENDER_ID = "gcm_defaultSenderId";
-        private const string ATTR_ICON = "ddna_notification_icon";
-        private const string ATTR_TITLE = "ddna_notification_title";
+        internal const string ATTR_APP_ID = "google_app_id";
+        internal const string ATTR_SENDER_ID = "gcm_defaultSenderId";
+        internal const string ATTR_ICON = "ddna_notification_icon";
+        internal const string ATTR_TITLE = "ddna_notification_title";
         private const string DEFAULT_LISTENER_SERVICE = "com.deltadna.android.sdk.notifications.NotificationListenerService";
 
         private string appId = "";

@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+// Copyright (c) 2017 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,25 @@
 // limitations under the License.
 //
 
+using DeltaDNA.Editor;
+using System.Collections.Generic;
 using UnityEditor;
 
 namespace DeltaDNAAds.Editor {
-    
+
     [InitializeOnLoad]
-    public class NetworksStartup {
-        
-        static NetworksStartup() {
-            if (new AndroidNetworks(false, false).AreDownloadsStale())
-                UnityEngine.Debug.LogWarning(
-                    "Android libraries for SmartAds are stale, please re-download them");
+    sealed class DeltaDNAAdsSdkChecker : SdkChecker {
+
+        static DeltaDNAAdsSdkChecker() {
+            new DeltaDNAAdsSdkChecker().Register();
+        }
+
+        protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
+            if (new AndroidNetworks(true, false).AreDownloadsStale()) {
+                problems.Add(Tuple.New(
+                    "SmartAds libraries for Android are stale. Please update the libraries from the Editor menu.",
+                    Severity.WARNING));
+            }
         }
     }
 }

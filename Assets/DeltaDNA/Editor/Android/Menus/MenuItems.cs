@@ -22,10 +22,15 @@ namespace DeltaDNA.Editor {
     public sealed class MenuItems : MonoBehaviour {
 
         internal const string MENU_PATH = "DeltaDNA";
-        internal const string EDITOR_PATH = "Assets/DeltaDNA/Editor/";
+        internal const string ASSETS_PATH = "Assets/DeltaDNA/";
         
         internal static string AndroidSdkLocation {
             get { return EditorPrefs.GetString("AndroidSdkRoot"); }
+        }
+
+        [MenuItem(MENU_PATH + "/Check SDK", priority = 1)]
+        public static void CheckSdk() {
+            SdkChecker.Run();
         }
 
         [MenuItem(MENU_PATH + "/Notifications/Android/Configure", priority = 2)]

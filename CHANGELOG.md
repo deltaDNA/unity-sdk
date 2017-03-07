@@ -6,6 +6,7 @@
 - Support for ThirdPresence SDK.
 - Push notifications configuration UI for Android.
 - Unity Play Resolver for downloading Android and Google dependencies.
+- Editor menu item for checking SDK configuration errors.
 
 ### Fixed
 - Notifications from campaigns overwriting other notifications on Android.
