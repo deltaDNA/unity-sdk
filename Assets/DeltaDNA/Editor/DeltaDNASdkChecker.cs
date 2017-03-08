@@ -30,7 +30,7 @@ namespace DeltaDNA.Editor {
         }
 
         protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
-            var androidLibs = MenuItems.ASSETS_PATH + "/Android";
+            var androidLibs = MenuItems.ASSETS_PATH + "/Plugins/Android";
             if (Directory.Exists(androidLibs)) {
                 var files = Directory.GetFiles(androidLibs, "*.aar");
                 if (files.Length > 1) {
@@ -40,7 +40,7 @@ namespace DeltaDNA.Editor {
                 }
             }
 
-            var androidManifest = "Assets/AndroidManifest.xml";
+            var androidManifest = "Assets/Plugins/Android/AndroidManifest.xml";
             if (File.Exists(androidManifest)) {
                 var manifest = XDocument.Parse(File.ReadAllText(androidManifest));
 
