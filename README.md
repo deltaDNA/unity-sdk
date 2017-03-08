@@ -300,6 +300,9 @@ Configuring which networks should be used for SmartAds has been changed by addin
 Since we've had to change how the SmartAds networks are defined you may need to look over the selected networks in case you had previously removed any of them for your project.
 
 ### Version 4.3
+#### SDK Checker
+We have added a utility for checking your project which can pick up some mistakes related to the deltaDNA SDK, such as configuration errors and duplicate libraries. It can be accessed from the *DeltaDNA -> Check SDK* Editor menu item. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.
+
 #### Android Dependencies
 We have changed the SDK to use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) project for downloading Android and Google dependencies. This should cause fewer conflicts with other Unity plugins, as their dependencies on Android and Google libraries can be specified through the Unity Jar Resolver.
 
