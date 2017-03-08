@@ -28,7 +28,7 @@ namespace DeltaDNA.Editor {
             get { return EditorPrefs.GetString("AndroidSdkRoot"); }
         }
 
-        [MenuItem(MENU_PATH + "/Check SDK", priority = 1)]
+        [MenuItem(MENU_PATH + "/Health Check SDK", priority = 1)]
         public static void CheckSdk() {
             SdkChecker.Run();
         }

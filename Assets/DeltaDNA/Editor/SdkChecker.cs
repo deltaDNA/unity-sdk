@@ -34,7 +34,7 @@ namespace DeltaDNA.Editor {
             timer.Elapsed += (source, args) => {
                 if (GetProblems().Count > 0) {
                     Debug.LogWarning(
-                        "Detected possible issues with the DeltaDNA SDK configuration. Please run 'DeltaDNA -> Check SDK' for more details.");
+                        "Detected possible issues with the DeltaDNA SDK configuration. Please run 'DeltaDNA -> Health Check SDK' for more details.");
                 }
             };
             timer.AutoReset = false;
@@ -59,12 +59,12 @@ namespace DeltaDNA.Editor {
                     .Aggregate(
                         "",
                         (acc, e) => string.IsNullOrEmpty(acc) ? e : acc + "\n\n" + e);
-                message += "\n\nYou may also consult the README for more details on setup and migration between different versions of the SDK.";
+                message += "\n\nPlease consult the migration guide in our README for more details on updating from older versions of the SDK.";
                 result = true;
             }
 
             EditorUtility.DisplayDialog(
-                "SDK Check Report",
+                "SDK Health Check Report",
                 message,
                 "OK");
 
