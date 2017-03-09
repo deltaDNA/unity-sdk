@@ -6,5 +6,7 @@
         <action android:name="com.google.firebase.MESSAGING_EVENT" />
       </intent-filter>
     </service>
+    <meta-data android:name="ddna_application_id" android:resource="@string/ddna_application_id" />
+    <meta-data android:name="ddna_sender_id" android:resource="@string/ddna_sender_id" />
   </application>
 </manifest>

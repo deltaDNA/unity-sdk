@@ -47,7 +47,6 @@ namespace DeltaDNA
         // Called with the registrationId.
         public event Action<string> OnDidRegisterForPushNotifications;
         // Called with the error string.
-        [Obsolete("No longer called as registering can not fail.")]
         public event Action<string> OnDidFailToRegisterForPushNotifications;
 
         void Awake()
@@ -63,15 +62,23 @@ namespace DeltaDNA
 
         /// <summary>
         /// Registers for push notifications.
+        /// 
+        /// If you have multiple Firebase Cloud Messaging senders in your project
+        /// then you can use the deltaDNA sender either as a main one or as a
+        /// secondary one by setting the secondary parameter. If you set secondary
+        /// to true then the default FCM sender will need to have been initialised
+        /// beforehand.
         /// </summary>
-        public void RegisterForPushNotifications() {
+        /// <param name="secondary">Whether the Firebase instance used for the
+        /// deltaDNA notifications should be registered as a secondary (non-main)
+        /// instance.</param>
+        public void RegisterForPushNotifications(bool secondary = false) {
             if (Application.platform == RuntimePlatform.Android) {
                 #if UNITY_ANDROID && !UNITY_EDITOR
-                var token = ddnaNotifications.GetRegistrationToken();
-                if (!string.IsNullOrEmpty(token)) {
-                    DDNA.Instance.AndroidRegistrationID = token;
-                    DidRegisterForPushNotifications(token);
-                }
+                ddnaNotifications.Register(
+                    new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+                        .GetStatic<AndroidJavaObject>("currentActivity"),
+                    secondary);
                 #endif
             }
         }
@@ -125,7 +132,6 @@ namespace DeltaDNA
             }
         }
 
-        [Obsolete("No longer called as registering can not fail.")]
         public void DidFailToRegisterForPushNotifications(string error)
         {
             Logger.LogDebug("Did fail to register for Android push notifications: "+error);
@@ -136,7 +142,6 @@ namespace DeltaDNA
         }
 
         #endregion
-
     }
 
 } // namespace DeltaDNA

@@ -32,8 +32,8 @@ namespace DeltaDNA.Android {
             ddnaNotifications.CallStatic("markUnityLoaded");
         }
         
-        public string GetRegistrationToken() {
-            return ddnaNotifications.CallStatic<string>("getRegistrationToken");
+        public void Register(AndroidJavaObject context, bool secondary) {
+            ddnaNotifications.CallStatic("register", context, secondary);
         }
     }
 }

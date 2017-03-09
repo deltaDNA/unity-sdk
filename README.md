@@ -315,8 +315,6 @@ We have added a UI for configuring push notifications on Android, which can be a
 
 We highly recommend removing any entries previously added for DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the Firebase implementation. If you never added anything else to the manifest file then you can probably remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest). In addition you will also be able to remove the *string* resource from *Assets/Plugins/Android/res/values* which contains your application's Sender ID.
 
-The `DeltaDNA.AndroidNotifications.OnDidRegisterForPushNotifications` has been deprecated, and is no longer called.  Firebase will keep trying in the background to fetch a registration token so it can't fail as such.
-
 If you no longer wish to use notifications then remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* and *Assets/DeltaDNA/Plugins/Android* folders from your project.
 
 ## License
