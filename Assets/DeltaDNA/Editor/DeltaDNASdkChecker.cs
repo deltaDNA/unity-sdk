@@ -49,7 +49,7 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
-                        "[Notifications] Found invalid C2D_MESSAGE 'permission' entry in 'Assets/AndroidManifest.xml'. This entry should be removed for Firebase notifications.",
+                        "[Notifications] Found invalid C2D_MESSAGE 'permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
                 if (manifest
@@ -57,7 +57,7 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
-                        "[Notifications] Found invalid C2D_MESSAGE 'uses-permission' entry in 'Assets/AndroidManifest.xml'. This entry should be removed for Firebase notifications.",
+                        "[Notifications] Found invalid C2D_MESSAGE 'uses-permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
                 if (manifest
@@ -65,7 +65,7 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value == "com.google.android.gms.gcm.GcmReceiver")
                     .Count() > 0) {
                     problems.Add(Tuple.New(
-                        "[Notifications] Found invalid GcmReceiver 'receiver' entry in 'Assets/AndroidManifest.xml'. This entry should be removed for Firebase notifications.",
+                        "[Notifications] Found invalid GcmReceiver 'receiver' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
                 if (manifest
@@ -73,7 +73,7 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.StartsWith("com.deltadna.android.sdk.notifications"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
-                        "[Notifications] Found invalid deltaDNA notification 'service' entry in 'Assets/AndroidManifest.xml'. This entry should be removed for Firebase notifications.",
+                        "[Notifications] Found invalid deltaDNA notification 'service' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
 
@@ -84,25 +84,25 @@ namespace DeltaDNA.Editor {
                         switch (e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value) {
                             case NotificationsWindow.ATTR_ICON:
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_ICON + "' in 'Assets/AndroidManifest.xml'. This entry should be removed and configured through the Editor menu instead.",
+                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_ICON + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
                             case NotificationsWindow.ATTR_TITLE:
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_TITLE + "' in 'Assets/AndroidManifest.xml'. This entry should be removed and configured through the Editor menu instead.",
+                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_TITLE + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
                             case "ddna_sender_id":
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found deprecated 'meta-data' entry for 'ddna_sender_id' in in 'Assets/AndroidManifest.xml'. This entry should be removed and configured through the Editor menu instead.",
+                                    "[Notifications] Found deprecated 'meta-data' entry for 'ddna_sender_id' in in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.WARNING));
                                 break;
 
                             case "ddna_start_launch_intent":
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found deprecated 'meta-data' entry for 'ddna_start_launch_intent' in in 'Assets/AndroidManifest.xml'. This entry should be removed.",
+                                    "[Notifications] Found deprecated 'meta-data' entry for 'ddna_start_launch_intent' in in '" + androidManifest + "'. This entry should be removed.",
                                     Severity.WARNING));
                                 break;
                         }
