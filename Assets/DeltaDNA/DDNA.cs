@@ -245,23 +245,6 @@ namespace DeltaDNA
         }
 
         /// <summary>
-        /// Makes an Engage request.  The result of the engagement will be passed as a dictionary object to your callback method. The response
-        /// will be null is no response is available.
-        /// </summary>
-        /// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
-        /// <param name="engageParams">Additional parameters for the engagement.</param>
-        /// <param name="callback">Method called with the response from our server.</param>
-        [Obsolete("Prefer 'RequestEngagement' with an 'Engagement' instead.")]
-        public void RequestEngagement(string decisionPoint, Dictionary<string, object> engageParams, Action<Dictionary<string, object>> callback)
-        {
-            var engagement = new Engagement(decisionPoint);
-            foreach (var key in engageParams.Keys) {
-                engagement.AddParam(key, engageParams[key]);
-            }
-            RequestEngagement(engagement, callback);
-        }
-
-        /// <summary>
         /// Makes an Engage request.  The result of the engagement will be passed as a dictionary object to your callback method. The dictionary
         /// will be empty if engage couldn't be reached on a campaign is not running.
         /// A cache is maintained that will return the last valid response if available.
@@ -344,87 +327,6 @@ namespace DeltaDNA
             } catch (Exception ex) {
                 Logger.LogWarning("Engagement request failed: "+ex.Message);
             }
-        }
-
-        /// <summary>
-        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
-        /// that loads the image resource automatically from the original engage request.  Register a function with the
-        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
-        /// </summary>
-        /// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
-        /// <param name="engageParams">Additional parameters for the engagement.</param>
-        /// <param name="popup">A Popup object to display the image.</param>
-        /// <exception cref="System.Exception">Thrown if the SDK has not been started, and if the Engage URL has not been set.</exception>
-        [Obsolete("Prefer 'RequestImageMessage' with an 'Engagement' instead.")]
-        public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, IPopup popup)
-        {
-            var engagement = new Engagement(decisionPoint);
-            foreach (var key in engageParams.Keys) {
-                engagement.AddParam(key, engageParams[key]);
-            }
-            RequestImageMessage(engagement, popup, null);
-        }
-
-        /// <summary>
-        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
-        /// that loads the image resource automatically from the original engage request.  Register a function with the
-        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
-        /// </summary>
-        /// <param name="decisionPoint">The decision point the request is for, must match the string in Portal.</param>
-        /// <param name="engageParams">Additional parameters for the engagement.</param>
-        /// <param name="popup">A Popup object to display the image.</param>
-        /// <param name="callback">A callback with the engage response as the parameter.</param>
-        /// <exception cref="System.Exception">Thrown if the SDK has not been started, and if the Engage URL has not been set.</exception>
-        [Obsolete("Prefer 'RequestImageMessage' with an 'Engagement' instead.")]
-        public void RequestImageMessage(string decisionPoint, Dictionary<string, object> engageParams, IPopup popup, Action<Dictionary<string, object>> callback)
-        {
-            var engagement = new Engagement(decisionPoint);
-            foreach (var key in engageParams.Keys) {
-                engagement.AddParam(key, engageParams[key]);
-            }
-            RequestImageMessage(engagement, popup, callback);
-        }
-
-        /// <summary>
-        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
-        /// that loads the image resource automatically from the original engage request.  Register a function with the
-        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
-        /// </summary>
-        /// <param name="engagement">The engagement the request is for.</param>
-        /// <param name="popup">A Popup object to display the image.</param>
-        /// <exception cref="System.Exception">Thrown if the SDK has not been started, and if the Engage URL has not been set.</exception>
-        [Obsolete("Prefer 'RequestEngagement' and using an 'ImageMessage'.")]
-        public void RequestImageMessage(Engagement engagement, IPopup popup)
-        {
-            RequestImageMessage(engagement, popup, null);
-        }
-
-        /// <summary>
-        /// Requests an image based Engagement for popping up on screen.  This is a convience around RequestEngagement
-        /// that loads the image resource automatically from the original engage request.  Register a function with the
-        /// Popup's AfterLoad event to be notified when the image has be been downloaded from our server.
-        /// </summary>
-        /// <param name="engagement">The engagement the request is for.</param>
-        /// <param name="popup">A Popup object to display the image.</param>
-        /// <param name="callback">Method called with the response from Engage.</param>
-        /// <exception cref="System.Exception">Thrown if the SDK has not been started, and if the Engage URL has not been set.</exception>
-        [Obsolete("Prefer 'RequestEngagement' and using an 'ImageMessage'.")]
-        public void RequestImageMessage(Engagement engagement, IPopup popup, Action<Dictionary<string, object>> callback)
-        {
-            Action<Dictionary<string, object>> imageCallback = (response) =>
-            {
-                if (response != null)
-                {
-                    if (response.ContainsKey("image"))
-                    {
-                        var image = response["image"] as Dictionary<string, object>;
-                        popup.Prepare(image);
-                    }
-                    if (callback != null) callback(response);
-                }
-            };
-
-            RequestEngagement(engagement, imageCallback);
         }
 
         /// <summary>
