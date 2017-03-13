@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased](https://github.com/deltaDNA/unity-sdk/releases/tag/) (YYYY-MM-DD)
+## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (2017-03-13)
 ### Added
 - Support for AppLovin SDK.
 - Support for ThirdPresence SDK.
@@ -15,12 +15,11 @@
 ### Changed
 - Notifications use newer Firebase libraries on Android.
 - Updated SmartAds library dependencies on Android.
+- Removed manifest file for push notifications on Android.
+- Remove Android and Google libraries for push notifications on Android.
+- Removed deprecated engage and image message methods.
 
-### Removed
-- Manifest file for push notifications on Android.
-- Android and Google libraries for push notifications on Android.
-
-## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (YYYY-MM-DD)
+## [4.2.13](https://github.com/deltaDNA/unity-sdk/releases/tag/4.2.13) (2017-02-16)
 ### Fixed
 - IL2CPP support for Android.
 - Additional event store corruption checks.
