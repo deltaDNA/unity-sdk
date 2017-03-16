@@ -244,6 +244,8 @@ We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus 
 
 __The ad networks require a minimum target version of 7, and ideally 8 to get the latest sdks.  If the default 6 is used cocoapods will fail and no xcworkspace file will be generated.__
 
+__If updating from a previous SDK version, run `pod repo update` to update your local cache and ensure you build with the latest dependencies.  Since CocoaPods v1.0 this no longer happens by default on `pod install`.__
+
 To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
 
 If you make changes to the enabled networks the changes to the Podfile should be committed to version control.
