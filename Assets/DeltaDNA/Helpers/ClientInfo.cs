@@ -277,13 +277,16 @@ namespace DeltaDNA
                 case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
                 case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
 
-                default : return name;
+                default: {
+                    return name == null ? null : name.Substring(0, Math.Min(name.Length, 72));
+                }
             }
         }
-
         private static string GetDeviceModel()
         {
-            return SystemInfo.deviceModel;
+            return SystemInfo.deviceModel == null
+                ? null
+                : SystemInfo.deviceModel.Substring(0, Math.Min(SystemInfo.deviceModel.Length, 72));
         }
 
         /// <summary>
