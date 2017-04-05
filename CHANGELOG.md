@@ -1,5 +1,12 @@
 # Change Log
 
+## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (YYYY-MM-DD)
+### Added
+- IronSource ad network.
+
+### Changed
+- Updated Android dependencies.
+
 ## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (2017-03-13)
 ### Added
 - Support for AppLovin SDK.

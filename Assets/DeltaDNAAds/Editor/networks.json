@@ -35,6 +35,11 @@
     "ios": "InMobi"
   },
   {
+    "name": "IronSource",
+    "android": "ironsource",
+    "ios": null
+  },
+  {
     "name": "MoPub",
     "android": "mopub",
     "ios": "MoPub"
