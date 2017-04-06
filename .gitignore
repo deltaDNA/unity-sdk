@@ -18,8 +18,11 @@ ProjectSettings/*
 !ProjectSettings/ProjectSettings.asset
 
 # Native dependencies (add exclusions below)
+Assets/Plugins/Android/animated-vector-drawable-*
+Assets/Plugins/Android/appcompat-v7-*
 Assets/Plugins/Android/firebase-*
 Assets/Plugins/Android/play-services-*
+Assets/Plugins/Android/recyclerview-v7-*
 Assets/Plugins/Android/support-*
 Assets/DeltaDNAAds/Plugins/Android.meta
 Assets/DeltaDNAAds/Plugins/Android/*
