@@ -24,6 +24,11 @@
     "android": "chartboost",
     "ios": "Chartboost"
   },
+ {
+    "name": "Facebook",
+    "android": "facebook",
+    "ios": null
+  },
   {
     "name": "Flurry",
     "android": "flurry",

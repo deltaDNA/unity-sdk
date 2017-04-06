@@ -78,6 +78,7 @@ dependencies {
     network('amazon')
     network('applovin')
     network('chartboost')
+    network('facebook')
     network('flurry')
     network('inmobi')
     network('ironsource')

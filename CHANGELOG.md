@@ -2,6 +2,7 @@
 
 ## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (YYYY-MM-DD)
 ### Added
+- Facebook ad network.
 - IronSource ad network.
 
 ### Changed
