@@ -277,13 +277,16 @@ namespace DeltaDNA
                 case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
                 case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
 
-                default : return name;
+                default: {
+                    return name == null ? null : name.Substring(0, Math.Min(name.Length, 72));
+                }
             }
         }
-
         private static string GetDeviceModel()
         {
-            return SystemInfo.deviceModel;
+            return SystemInfo.deviceModel == null
+                ? null
+                : SystemInfo.deviceModel.Substring(0, Math.Min(SystemInfo.deviceModel.Length, 72));
         }
 
         /// <summary>
@@ -351,24 +354,35 @@ namespace DeltaDNA
             return null;
         }
 
-        private static string GetCurrentTimezoneOffset()
-        {
-            try
-            {
-                // WP8 doesn't support the 'old' way of getting the time zone.
-                #if UNITY_WP8 || UNITY_METRO
-                TimeSpan currentOffset = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now);
-                #else
-                TimeZone localZone = TimeZone.CurrentTimeZone;
-                DateTime currentDate = DateTime.Now;
-                TimeSpan currentOffset = localZone.GetUtcOffset(currentDate);
-                #endif
-                return String.Format("{0}{1:D2}", currentOffset.Hours >= 0 ? "+" : "", currentOffset.Hours);
+        private static string GetCurrentTimezoneOffset() {
+            var currentDate = DateTime.Now;
+            var currentOffset = TimeSpan.Zero;
+
+            var retrieved = false;
+            try {
+                if (TimeZoneInfo.Local != null) {
+                    currentOffset = TimeZoneInfo.Local.GetUtcOffset(currentDate);
+                    retrieved = true;
+                }
+            } catch (TimeZoneNotFoundException) {}
+
+            if (!retrieved) {
+                try {
+                    if (TimeZone.CurrentTimeZone != null) {
+                        currentOffset = TimeZone.CurrentTimeZone.GetUtcOffset(currentDate);
+                        retrieved = true;
+                    }
+                } catch (TimeZoneNotFoundException) {}
             }
-            catch (Exception)
-            {
-                return null;
+
+            if (!retrieved) {
+                Debug.LogWarning("Failed to retrieve timezone offset");
             }
+
+            return string.Format(
+                "{0}{1:D2}",
+                currentOffset.Hours >= 0 ? "+" : "",
+                currentOffset.Hours);
         }
 
         private static string GetCountryCode()

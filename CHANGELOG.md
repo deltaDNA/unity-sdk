@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.3.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.1) (YYYY-MM-DD)
+### Fixed
+- Rejected events due to missing timezone offset on Windows.
+- Rejected events due to long device details on Windows.
+
 ## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (2017-03-13)
 ### Added
 - Support for AppLovin SDK.
