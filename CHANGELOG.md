@@ -5,6 +5,10 @@
 - Facebook ad network.
 - IronSource ad network.
 
+### Fixed
+- Rejected events due to missing timezone offset on Windows.
+- Rejected events due to long device details on Windows.
+
 ### Changed
 - Updated Android dependencies.
 
