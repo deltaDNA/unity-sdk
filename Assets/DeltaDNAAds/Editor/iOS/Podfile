@@ -4,7 +4,7 @@ source 'https://github.com/deltaDNA/CocoaPods.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
-version = '~> 1.3.0'
+version = '~> 1.4-beta.1'
 
 target 'Unity-iPhone' do
     pod 'DeltaDNAAds/AdColony', version
@@ -12,8 +12,10 @@ target 'Unity-iPhone' do
     pod 'DeltaDNAAds/Amazon', version
     pod 'DeltaDNAAds/AppLovin', version
     pod 'DeltaDNAAds/Chartboost', version
+    pod 'DeltaDNAAds/Facebook', version
     pod 'DeltaDNAAds/Flurry', version
     pod 'DeltaDNAAds/InMobi', version
+    pod 'DeltaDNAAds/IronSource', version
     pod 'DeltaDNAAds/MoPub', version
     pod 'DeltaDNAAds/ThirdPresence', version
     pod 'DeltaDNAAds/UnityAds', version

@@ -27,7 +27,7 @@
  {
     "name": "Facebook",
     "android": "facebook",
-    "ios": null
+    "ios": "Facebook"
   },
   {
     "name": "Flurry",
@@ -42,7 +42,7 @@
   {
     "name": "IronSource",
     "android": "ironsource",
-    "ios": null
+    "ios": "IronSource"
   },
   {
     "name": "MoPub",

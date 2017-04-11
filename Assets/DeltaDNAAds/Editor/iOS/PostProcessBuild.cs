@@ -82,7 +82,7 @@ public class PostProcessBuild {
             // Run pod update
             Process proc = new Process();
             proc.StartInfo.FileName = "/usr/local/bin/pod";
-            proc.StartInfo.Arguments = "install --project-directory=\""+path+"\"";
+            proc.StartInfo.Arguments = "update --project-directory=\""+path+"\"";
             proc.StartInfo.UseShellExecute = false;
             proc.Start();
             proc.WaitForExit();
