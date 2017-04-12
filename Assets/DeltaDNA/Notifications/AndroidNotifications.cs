@@ -44,9 +44,15 @@ namespace DeltaDNA
         /// push notification is received while the app is in the foreground.
         /// </summary>
         public event Action<string> OnDidReceivePushNotification;
-        // Called with the registrationId.
+        /// <summary>
+        /// Called with the registration id when the app registers for push
+        /// notifications, or when the registration id is refreshed.
+        /// </summary>
         public event Action<string> OnDidRegisterForPushNotifications;
-        // Called with the error string.
+        /// <summary>
+        /// Called with the error string when registering for push notifications
+        /// fails.
+        /// </summary>
         public event Action<string> OnDidFailToRegisterForPushNotifications;
 
         void Awake()
@@ -68,6 +74,10 @@ namespace DeltaDNA
         /// secondary one by setting the secondary parameter. If you set secondary
         /// to true then the default FCM sender will need to have been initialised
         /// beforehand.
+        /// 
+        /// In the case when the app is already registered for push notifications
+        /// and the registration id is up to date then the callbacks will not be
+        /// invoked.
         /// </summary>
         /// <param name="secondary">Whether the Firebase instance used for the
         /// deltaDNA notifications should be registered as a secondary (non-main)
