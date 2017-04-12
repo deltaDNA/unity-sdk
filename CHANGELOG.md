@@ -23,6 +23,7 @@
 ### Fixed
 - Notifications from campaigns overwriting other notifications on Android.
 - Application icon not being picked up for notifications on Android.
+- Fixed Android notifications project not merging on Unity 5.4.
 
 ### Changed
 - Notifications use newer Firebase libraries on Android.
