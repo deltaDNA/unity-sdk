@@ -45,6 +45,11 @@
     "ios": "IronSource"
   },
   {
+    "name": "MobFox",
+    "android": "mobfox",
+    "ios": "MobFox"
+  },
+  {
     "name": "MoPub",
     "android": "mopub",
     "ios": "MoPub"
