@@ -8,9 +8,11 @@
 ### Fixed
 - Rejected events due to missing timezone offset on Windows.
 - Rejected events due to long device details on Windows.
+- Android Play Services and Support not cleared out after ad network changes.
 
 ### Changed
 - Updated Android dependencies.
+- Updated Jar Resolver.
 
 ## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (2017-03-13)
 ### Added
