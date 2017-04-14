@@ -18,8 +18,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
+#if UNITY_EDITOR_OSX
 using UnityEditor;
+#endif
 
 namespace DeltaDNAAds.Editor {
     internal sealed class AndroidNetworks : Networks {
@@ -141,6 +144,12 @@ namespace DeltaDNAAds.Editor {
                     "Failed to download Android libraries due to: {0}",
                     process.StandardError.ReadToEnd()));
             } else {
+                #if UNITY_ANDROID
+                // refresh dependencies handled by the Jar Resolver
+                DeltaDNAAdsUnityJarResolverDependencies.RegisterAndroidDependencies();
+                DeltaDNAAdsUnityJarResolverDependencies.Resolve();
+                #endif
+
                 UnityEngine.Debug.Log("Successfully downloaded Android libraries");
                 
                 if (Application.unityVersion.StartsWith("4.")) {

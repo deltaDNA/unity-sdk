@@ -45,10 +45,14 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
     }
 
     #if UNITY_ANDROID
+    internal static void Resolve() {
+        GooglePlayServices.PlayServicesResolver.MenuResolve();
+    }
+
     /// <summary>
     /// Registers the android dependencies.
     /// </summary>
-    public static void RegisterAndroidDependencies() {
+    internal static void RegisterAndroidDependencies() {
         Type playServicesSupport = Google.VersionHandler.FindClass(
             "Google.JarResolver",
             "Google.JarResolver.PlayServicesSupport");
@@ -63,7 +67,13 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
                 "DeltaDNAAds",
                 EditorPrefs.GetString("AndroidSdkRoot"),
                 "ProjectSettings"});
-        
+
+        // clear the dependencies as we add them depending on which networks are set
+        Google.VersionHandler.InvokeInstanceMethod(
+            svcSupport,
+            "ClearDependencies",
+            new object[] { });
+
         Google.VersionHandler.InvokeInstanceMethod(
             svcSupport,
             "DependOn",
