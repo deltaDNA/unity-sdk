@@ -144,9 +144,11 @@ namespace DeltaDNAAds.Editor {
                     "Failed to download Android libraries due to: {0}",
                     process.StandardError.ReadToEnd()));
             } else {
+                #if UNITY_ANDROID
                 // refresh dependencies handled by the Jar Resolver
                 DeltaDNAAdsUnityJarResolverDependencies.RegisterAndroidDependencies();
                 DeltaDNAAdsUnityJarResolverDependencies.Resolve();
+                #endif
 
                 UnityEngine.Debug.Log("Successfully downloaded Android libraries");
                 
