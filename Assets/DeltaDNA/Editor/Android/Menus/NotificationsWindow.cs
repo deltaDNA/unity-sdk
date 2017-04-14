@@ -14,9 +14,6 @@
 // limitations under the License.
 //
 
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,74 +24,8 @@ namespace DeltaDNA.Editor {
         private const int WIDTH_BUTTON = 80;
         private const int HEIGHT_SEPARATOR = 20;
 
-        internal const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
-        internal const string MANIFEST_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/AndroidManifest.xml";
-        internal static XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
-
-        internal const string ATTR_APP_ID = "ddna_application_id";
-        internal const string ATTR_SENDER_ID = "ddna_sender_id";
-        internal const string ATTR_ICON = "ddna_notification_icon";
-        internal const string ATTR_TITLE = "ddna_notification_title";
-        private const string DEFAULT_LISTENER_SERVICE = "com.deltadna.android.sdk.notifications.NotificationListenerService";
-
-        internal string appId = "";
-        internal string senderId = "";
-        private string listenerService = "";
-        private string notificationIcon = "";
-        private string notificationTitle = "";
-
-        public NotificationsWindow() : base() {
-            if (File.Exists(NOTIFICATIONS_XML_PATH)) {
-                XDocument.Parse(File.ReadAllText(NOTIFICATIONS_XML_PATH))
-                    .Descendants("string")
-                    .ToList()
-                    .ForEach(e => {
-                        switch (e.Attribute("name").Value) {
-                            case ATTR_APP_ID:
-                                appId = e.Value;
-                                break;
-
-                            case ATTR_SENDER_ID:
-                                senderId = e.Value;
-                                break;
-                        }
-                    });
-            } else {
-                appId = "";
-                senderId = "";
-            }
-
-            if (File.Exists(MANIFEST_XML_PATH)) {
-                var doc = XDocument.Parse(File.ReadAllText(MANIFEST_XML_PATH));
-                listenerService = doc
-                    .Descendants("service")
-                    .First()
-                    .Attribute(NAMESPACE_ANDROID + "name")
-                    .Value;
-                doc .Descendants("meta-data")
-                    .ToList()
-                    .ForEach(e => {
-                        switch (e.Attribute(NAMESPACE_ANDROID + "name").Value) {
-                            case ATTR_ICON:
-                                notificationIcon = e.Attribute(NAMESPACE_ANDROID + "value").Value;
-                                break;
-
-                            case ATTR_TITLE:
-                                var attr = e.Attribute(NAMESPACE_ANDROID + "resource");
-                                if (attr != null) {
-                                    notificationTitle = attr.Value;
-                                } else {
-                                    notificationTitle = e.Attribute(NAMESPACE_ANDROID + "value").Value;
-                                }
-                                break;
-                        }
-                    });
-            } else {
-                listenerService = "";
-                notificationIcon = "";
-                notificationTitle = "";
-            }
-        }
+        private readonly NotificationsConfigurator configurator =
+            new NotificationsConfigurator();
         
         void OnGUI() {
             var style = new GUIStyle();
@@ -135,222 +66,45 @@ namespace DeltaDNA.Editor {
             GUILayout.Label(
                 "Application ID",
                 GUILayout.Width(WIDTH_LABEL));
-            appId = EditorGUILayout.TextField(appId);
+            configurator.appId = EditorGUILayout.TextField(configurator.appId);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(
                 "Sender ID",
                 GUILayout.Width(WIDTH_LABEL));
-            senderId = EditorGUILayout.TextField(senderId);
+            configurator.senderId = EditorGUILayout.TextField(configurator.senderId);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(
                 "Listener Service",
                 GUILayout.Width(WIDTH_LABEL));
-            listenerService = EditorGUILayout.TextField(listenerService);
+            configurator.listenerService = EditorGUILayout.TextField(configurator.listenerService);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(
                 "Notification Icon",
                 GUILayout.Width(WIDTH_LABEL));
-            notificationIcon = EditorGUILayout.TextField(notificationIcon);
+            configurator.notificationIcon = EditorGUILayout.TextField(configurator.notificationIcon);
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
             GUILayout.Label(
                 "Notification Title",
                 GUILayout.Width(WIDTH_LABEL));
-            notificationTitle = EditorGUILayout.TextField(notificationTitle);
+            configurator.notificationTitle = EditorGUILayout.TextField(configurator.notificationTitle);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(HEIGHT_SEPARATOR);
 
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Apply", GUILayout.Width(WIDTH_BUTTON))) Apply();
+            if (GUILayout.Button("Apply", GUILayout.Width(WIDTH_BUTTON))) configurator.Apply();
             GUILayout.EndHorizontal();
             
             GUILayout.EndVertical();
-        }
-        
-        internal void Apply(bool quiet = false) {
-            if (!File.Exists(NOTIFICATIONS_XML_PATH)) {
-                Directory.CreateDirectory(NOTIFICATIONS_XML_PATH.Substring(
-                    0,
-                    NOTIFICATIONS_XML_PATH.LastIndexOf('/')));
-            }
-
-            var notifications = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
-            var notificationsResources = new XElement("resources");
-            notifications.Add(notificationsResources);
-
-            var manifest = XDocument.Parse(File.ReadAllText(MANIFEST_XML_PATH));
-
-            var appIdPresent = false;
-            if (!string.IsNullOrEmpty(appId)) {
-                appIdPresent = true;
-
-                notificationsResources.Add(new XElement(
-                    "string",
-                    new object[] {
-                        new XAttribute("name", ATTR_APP_ID),
-                        appId
-                    }));
-
-                var element = manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_APP_ID)
-                    .FirstOrDefault();
-                if (element != null) {
-                    element.Attribute(NAMESPACE_ANDROID + "resource").Value = "@string/" + ATTR_APP_ID;
-                } else {
-                    manifest
-                        .Descendants("application")
-                        .First()
-                        .Add(new XElement(
-                            "meta-data",
-                            new object[] {
-                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_APP_ID),
-                                new XAttribute(NAMESPACE_ANDROID + "resource", "@string/" + ATTR_APP_ID)}));
-                }
-            } else {
-                notificationsResources
-                    .Elements()
-                    .Where(e => e.Attribute("name").Value == ATTR_APP_ID)
-                    .Remove();
-                manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_APP_ID)
-                    .Remove();
-            }
-
-            var senderIdPresent = false;
-            if (!string.IsNullOrEmpty(senderId)) {
-                senderIdPresent = true;
-
-                notificationsResources.Add(new XElement(
-                    "string",
-                    new object[] {
-                        new XAttribute("name", ATTR_SENDER_ID),
-                        senderId
-                    }));
-
-                var element = manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_SENDER_ID)
-                    .FirstOrDefault();
-                if (element != null) {
-                    element.Attribute(NAMESPACE_ANDROID + "resource").Value = "@string/" + ATTR_SENDER_ID;
-                } else {
-                    manifest
-                        .Descendants("application")
-                        .First()
-                        .Add(new XElement(
-                            "meta-data",
-                            new object[] {
-                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_SENDER_ID),
-                                new XAttribute(NAMESPACE_ANDROID + "resource", "@string/" + ATTR_SENDER_ID)}));
-                }
-            } else {
-                notificationsResources
-                    .Elements()
-                    .Where(e => e.Attribute("name").Value == ATTR_SENDER_ID)
-                    .Remove();
-                manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_SENDER_ID)
-                    .Remove();
-            }
-
-            notifications.Save(NOTIFICATIONS_XML_PATH);
-
-            if (!string.IsNullOrEmpty(listenerService)
-                && appIdPresent && senderIdPresent) {
-                var service = manifest.Descendants("service").First();
-                service.Attribute(NAMESPACE_ANDROID + "name").Value = listenerService;
-                service.Attribute(NAMESPACE_ANDROID + "enabled").Value = "true";
-            } else {
-                manifest
-                    .Descendants("service")
-                    .First()
-                    .Attribute(NAMESPACE_ANDROID + "enabled")
-                    .Value = "false";
-            }
-
-            if (!string.IsNullOrEmpty(notificationIcon)) {
-                var element = manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_ICON)
-                    .FirstOrDefault();
-                if (element != null) {
-                    element.Attribute(NAMESPACE_ANDROID + "value").Value = notificationIcon;
-                } else {
-                    manifest
-                        .Descendants("application")
-                        .First()
-                        .Add(new XElement(
-                            "meta-data",
-                            new object[] {
-                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_ICON),
-                                new XAttribute(NAMESPACE_ANDROID + "value", notificationIcon)}));
-                }
-            } else {
-                manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_ICON)
-                    .Remove();
-            }
-            if (!string.IsNullOrEmpty(notificationTitle)) {
-                var resource = notificationTitle.StartsWith("@string/");
-                var element = manifest
-                    .Descendants("meta-data")
-                    .Where(e => e
-                        .Attribute(NAMESPACE_ANDROID + "name")
-                        .Value == ATTR_TITLE)
-                    .FirstOrDefault();
-
-                if (element != null) {
-                    element.RemoveAttributes();
-                    element.SetAttributeValue(
-                        NAMESPACE_ANDROID + "name",
-                        ATTR_TITLE);
-                    element.SetAttributeValue(
-                        NAMESPACE_ANDROID + (resource ? "resource" : "value"),
-                        notificationTitle);
-                } else {
-                    manifest
-                        .Descendants("application")
-                        .First()
-                        .Add(new XElement(
-                            "meta-data",
-                            new object[] {
-                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_TITLE),
-                                new XAttribute(
-                                    NAMESPACE_ANDROID + (resource ? "resource" : "value"),
-                                    notificationTitle)}));
-                }
-            } else {
-                manifest
-                    .Descendants("meta-data")
-                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_TITLE)
-                    .Remove();
-            }
-            manifest.Save(MANIFEST_XML_PATH);
-
-            if (!quiet) {
-                Debug.Log(
-                    "Saved options to " + NOTIFICATIONS_XML_PATH +
-                    " and " + MANIFEST_XML_PATH);
-            }
-        }
-
-        internal void ClearForExport() {
-            appId = "";
-            senderId = "";
-            Apply(true);
         }
     }
 }

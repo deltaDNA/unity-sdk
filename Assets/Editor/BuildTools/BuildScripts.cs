@@ -15,7 +15,6 @@
 //
 
 #if !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
-using DeltaDNA.Editor;
 using UnityEditor;
 using System;
 using System.IO;
@@ -23,7 +22,6 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace DeltaDNA {
 
@@ -79,12 +77,6 @@ namespace DeltaDNA {
 
         static void ExportSdkPackage()
         {
-            // wipe the notification properties for Android
-            var notifications = new NotificationsWindow();
-            string notificationsAppId = notifications.appId;
-            string notificationsSenderId = notifications.senderId;
-            notifications.ClearForExport();
-
             List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNA"));
             // remove unit tests
             string match = assets.Find(it => it.EndsWith("Editor"));
@@ -100,24 +92,23 @@ namespace DeltaDNA {
 
             assets.AddRange(new string[] {
                 "Assets/PlayServicesResolver",
-                "Assets/Plugins/Android/deltadna-sdk-unity-notifications",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.h",
                 "Assets/Plugins/iOS/DDNAUnityNotificationsPlugin.m",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.h",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.m"
             });
 
-            foreach (string f in assets) {
-                System.Console.WriteLine(f);
-            }
+            // add Android notifications excluding the resources with the configuration
+            assets.AddRange(Directory
+                .GetDirectories("Assets/Plugins/Android/deltadna-sdk-unity-notifications")
+                .Where(e => !e.EndsWith("res")));
+            assets.AddRange(Directory
+                .GetFiles("Assets/Plugins/Android/deltadna-sdk-unity-notifications"));
+
+            foreach (string f in assets) { Console.WriteLine(f); }
 
             string filename = OutputFilename("deltadna-sdk", SdkVersion());
             AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
-
-            // restore the notification properties for Android
-            notifications.appId = notificationsAppId;
-            notifications.senderId = notificationsSenderId;
-            notifications.Apply();
         }
 
         static void ExportSmartAdsPackage()

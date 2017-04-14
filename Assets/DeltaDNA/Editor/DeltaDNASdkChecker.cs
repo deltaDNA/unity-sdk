@@ -46,7 +46,7 @@ namespace DeltaDNA.Editor {
 
                 if (manifest
                     .Descendants("permissions")
-                    .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
+                    .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
                         "[Notifications] Found invalid C2D_MESSAGE 'permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
@@ -54,7 +54,7 @@ namespace DeltaDNA.Editor {
                 }
                 if (manifest
                     .Descendants("uses-permission")
-                    .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
+                    .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
                         "[Notifications] Found invalid C2D_MESSAGE 'uses-permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
@@ -62,7 +62,7 @@ namespace DeltaDNA.Editor {
                 }
                 if (manifest
                     .Descendants("receiver")
-                    .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value == "com.google.android.gms.gcm.GcmReceiver")
+                    .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value == "com.google.android.gms.gcm.GcmReceiver")
                     .Count() > 0) {
                     problems.Add(Tuple.New(
                         "[Notifications] Found invalid GcmReceiver 'receiver' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
@@ -70,7 +70,7 @@ namespace DeltaDNA.Editor {
                 }
                 if (manifest
                     .Descendants("service")
-                    .Where(e => e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value.StartsWith("com.deltadna.android.sdk.notifications"))
+                    .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.StartsWith("com.deltadna.android.sdk.notifications"))
                     .Count() > 0) {
                     problems.Add(Tuple.New(
                         "[Notifications] Found invalid deltaDNA notification 'service' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
@@ -81,16 +81,16 @@ namespace DeltaDNA.Editor {
                     .Descendants("meta-data")
                     .ToList()
                     .ForEach(e => {
-                        switch (e.Attribute(NotificationsWindow.NAMESPACE_ANDROID + "name").Value) {
-                            case NotificationsWindow.ATTR_ICON:
+                        switch (e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value) {
+                            case NotificationsConfigurator.ATTR_ICON:
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_ICON + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
+                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsConfigurator.ATTR_ICON + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
-                            case NotificationsWindow.ATTR_TITLE:
+                            case NotificationsConfigurator.ATTR_TITLE:
                                 problems.Add(Tuple.New(
-                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsWindow.ATTR_TITLE + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
+                                    "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsConfigurator.ATTR_TITLE + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
@@ -109,13 +109,13 @@ namespace DeltaDNA.Editor {
                 });
             }
 
-            if (File.Exists(NotificationsWindow.MANIFEST_XML_PATH)) {
-                var manifest = XDocument.Parse(File.ReadAllText(NotificationsWindow.MANIFEST_XML_PATH));
+            if (File.Exists(NotificationsConfigurator.MANIFEST_XML_PATH)) {
+                var manifest = XDocument.Parse(File.ReadAllText(NotificationsConfigurator.MANIFEST_XML_PATH));
 
                 if (manifest
                     .Descendants("service")
                     .First()
-                    .Attribute(NotificationsWindow.NAMESPACE_ANDROID + "enabled")
+                    .Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "enabled")
                     .Value == "false") {
                     problems.Add(Tuple.New(
                         "Android push notifications not enabled due to disabled service. This can be configured through the Editor menu.",
@@ -123,24 +123,24 @@ namespace DeltaDNA.Editor {
                 }
             }
 
-            if (File.Exists(NotificationsWindow.NOTIFICATIONS_XML_PATH)) {
+            if (File.Exists(NotificationsConfigurator.NOTIFICATIONS_XML_PATH)) {
                 new List<string> {
-                    NotificationsWindow.ATTR_APP_ID,
-                    NotificationsWindow.ATTR_SENDER_ID}
+                    NotificationsConfigurator.ATTR_APP_ID,
+                    NotificationsConfigurator.ATTR_SENDER_ID}
                     .Except(XDocument
-                        .Parse(File.ReadAllText(NotificationsWindow.NOTIFICATIONS_XML_PATH))
+                        .Parse(File.ReadAllText(NotificationsConfigurator.NOTIFICATIONS_XML_PATH))
                         .Descendants("string")
                         .Select(e => e.Attribute("name").Value))
                     .ToList()
                     .ForEach(e => {
                         switch (e) {
-                            case NotificationsWindow.ATTR_APP_ID:
+                            case NotificationsConfigurator.ATTR_APP_ID:
                                 problems.Add(Tuple.New(
                                     "Application ID not set for Android push notifications. This can be configured through the Editor menu.",
                                     Severity.WARNING));
                                 break;
 
-                            case NotificationsWindow.ATTR_SENDER_ID:
+                            case NotificationsConfigurator.ATTR_SENDER_ID:
                                 problems.Add(Tuple.New(
                                     "Sender ID not set for Android push notifications. This can be configured through the Editor menu.",
                                     Severity.WARNING));

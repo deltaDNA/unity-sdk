@@ -9,6 +9,7 @@
 - Rejected events due to missing timezone offset on Windows.
 - Rejected events due to long device details on Windows.
 - Android Play Services and Support not cleared out after ad network changes.
+- Overwriting of notifications configuration on Android after updating SDK.
 
 ### Changed
 - Updated Android dependencies.
