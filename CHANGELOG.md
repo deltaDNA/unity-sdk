@@ -10,6 +10,7 @@
 - Rejected events due to long device details on Windows.
 - Android Play Services and Support not cleared out after ad network changes.
 - Overwriting of notifications configuration on Android after updating SDK.
+- Package name conflict on Android when exporting as a Grandle project.
 
 ### Changed
 - Updated Android dependencies.
