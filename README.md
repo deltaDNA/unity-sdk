@@ -278,6 +278,11 @@ The libraries can be downloaded anytime from the *DeltaDNA -> SmartAds -> Androi
 
 In order for the library download function to properly work you need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of *build-tools* and an *SDK Platform* installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
 
+### MultiDex; Working Around Android's 65k Method Limit
+1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.
+2. Open the exported project in Android Studio and select to use the Gradle wrapper if asked to.
+3. Open the top-level *build.gradle* file for your project and apply the MultiDex workaround as described [here](https://developer.android.com/studio/build/multidex.html#mdex-gradle).
+
 ### Permissions
 
 The permissions which the Android libraries request can be overriden through the use of the [Android manifest merger](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). For example, if you would like to remove the `maxSdkVersion` attribute for the `WRITE_EXTERNAL_STORAGE` permission then you can specify the following in your manifest file:
