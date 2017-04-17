@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (YYYY-MM-DD)
+## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (2017-04-17)
 ### Added
 - Facebook ad network.
 - IronSource ad network.
@@ -15,6 +15,7 @@
 ### Changed
 - Updated Android dependencies.
 - Updated Jar Resolver.
+- Uses 'pod update' instead of 'pod install' to ensure latest iOS dependencies.
 
 ## [4.3.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.3.0) (2017-03-13)
 ### Added
