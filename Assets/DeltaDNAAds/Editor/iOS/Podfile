@@ -4,7 +4,7 @@ source 'https://github.com/deltaDNA/CocoaPods.git'
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
-version = '~> 1.4-beta.2'
+version = '~> 1.4.0'
 
 target 'Unity-iPhone' do
     pod 'DeltaDNAAds/AdColony', version
