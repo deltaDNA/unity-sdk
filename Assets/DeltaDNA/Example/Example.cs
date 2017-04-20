@@ -14,8 +14,9 @@
 // limitations under the License.
 //
 
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace DeltaDNA {
 
@@ -26,14 +27,17 @@ public class Example : MonoBehaviour {
     public const string ENGAGE_URL = "http://engage2470ntysd.deltadna.net";
     public const string ENGAGE_TEST_URL = "http://www.deltadna.net/qa/engage";
 
-    private string popupContent = "";
-    private string popupTitle = "DeltaDNA Example";
-    
+    [SerializeField]
+    private Transform cubeObj;
+    [SerializeField]
+    private GameObject popUpObj;
+    [SerializeField]
+    private Text popUpContent, popUpTitle;
+
     // Use this for initialization
     void Start () {
-    
         // Configure the SDK
-        DDNA.Instance.SetLoggingLevel(DeltaDNA.Logger.Level.DEBUG);
+        DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
         DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
         DDNA.Instance.ClientVersion = "1.0.0";
 
@@ -60,164 +64,127 @@ public class Example : MonoBehaviour {
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
     }
 
-    // Update is called once per frame
-    void Update () {
-
-    }
-
     void FixedUpdate() {
         // Make our cube rotate
-        transform.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+        cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
     }
-
-    void OnGUI() {
-
-        int x = 10;
-        int y = 10;
-        int width = 180;
-        int height = 70;
-        int space = height + 5;
-
-        GUI.skin.textField.wordWrap = true;
-        GUI.skin.button.fontSize = 18;
-
-        if (GUI.Button(new Rect(x, y, width, height), "Simple Event")) {
-
-            GameEvent gameEvent = new GameEvent("options")
+    
+    public void OnSimpleEventBtn_Clicked() {
+        var gameEvent = new GameEvent("options")
                 .AddParam("option", "sword")
                 .AddParam("action", "sell");
-
-            DDNA.Instance.RecordEvent(gameEvent);
-
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Achievement Event")) {
-
-            GameEvent gameEvent = new GameEvent("achievement")
-                .AddParam("achievementName", "Sunday Showdown Tournament Win")
-                .AddParam("achievementID", "SS-2014-03-02-01")
-                .AddParam("reward", new Params()
-                    .AddParam("rewardName", "Medal")
-                    .AddParam("rewardProducts", new Product()
-                        .AddVirtualCurrency("VIP Points", "GRIND", 20)
-                        .AddItem("Sunday Showdown Medal", "Victory Badge", 1)
-                    )
-                );
-
-            DDNA.Instance.RecordEvent(gameEvent);
-                                    
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Transaction Event")) {
-
-                Transaction transaction = new Transaction(
-                    "Weapon type 11 manual repair",
-                    "PURCHASE",
-                    new Product()
-                        .AddItem("WeaponsMaxConditionRepair:11", "WeaponMaxConditionRepair", 5)
-                        .AddVirtualCurrency("Credit", "PREMIUM", 710),
-                    new Product().SetRealCurrency("USD", Product.ConvertCurrency("USD", 12.34m))) // $12.34
-                .SetTransactorId("2.212.91.84:15116")
-                .SetProductId("4019")
-                .AddParam("paymentCountry", "GB");
-
-            DDNA.Instance.RecordEvent(transaction);
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Engagement")) {
-
-            var engagement = new Engagement("gameLoaded")
-                .AddParam("userLevel", 4)
-                .AddParam("experience", 1000)
-                .AddParam("missionName", "Disco Volante");
-
-            DDNA.Instance.RequestEngagement(engagement, (Dictionary<string,object> response) =>
-            {
-                popupContent = DeltaDNA.MiniJSON.Json.Serialize(response);
-            });
-
-            popupTitle = "Engage returned";
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Image Message")) {
-
-            var engagement = new Engagement("imageMessage")
-                .AddParam("userLevel", 4)
-                .AddParam("experience", 1000)
-                .AddParam("missionName", "Disco Volante");
-
-            DDNA.Instance.RequestEngagement(engagement, (response) => {
-
-                ImageMessage imageMessage = ImageMessage.Create(response);
-
-                // Check we got an engagement with a valid image message.
-                if (imageMessage != null) {   
-                    Debug.Log("Engage returned a valid image message.");  
-
-                    // This example will show the image as soon as the background 
-                    // and button images have been downloaded.
-                    imageMessage.OnDidReceiveResources += () => {
-                        Debug.Log("Image Message loaded resources.");
-                        imageMessage.Show();
-                    };
-
-                    // Add a handler for the 'dismiss' action.
-                    imageMessage.OnDismiss += (ImageMessage.EventArgs obj) => {
-                        Debug.Log("Image Message dismissed by "+obj.ID);
-                    };
-
-                    // Add a handler for the 'action' action.
-                    imageMessage.OnAction += (ImageMessage.EventArgs obj) => {
-                        Debug.Log("Image Message actioned by "+obj.ID+" with command "+obj.ActionValue);
-                    };
-
-                    // Download the image message resources.
-                    imageMessage.FetchResources();
-                }
-                else {
-                    Debug.Log("Engage didn't return an image message.");
-                }
-
-            }, (exception) => {
-                Debug.Log("Engage reported an error: "+exception.Message);
-            });
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Notification Opened")) {
-            var payload = new Dictionary<string, object>();
-            payload.Add("_ddId", 1);
-            payload.Add("_ddName", "Example Notification");
-            payload.Add("_ddLaunch", true);
-            DDNA.Instance.RecordPushNotification(payload);
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Upload Events")) {
-            DDNA.Instance.Upload();
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Start SDK")) {
-            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "Stop SDK")) {
-            DDNA.Instance.StopSDK();
-        }
-
-        if (GUI.Button(new Rect(x, y += space, width, height), "New Session")) {
-            DDNA.Instance.NewSession();
-        }
-
-        if (popupContent != "") {
-            GUI.ModalWindow(0, new Rect(Screen.width/2-150, Screen.height/2-100, 300, 200), RenderPopupContent, popupTitle);
-        }
+        
+        DDNA.Instance.RecordEvent(gameEvent);
     }
+    
+    public void OnAchievementEventBtn_Clicked() {
+        var gameEvent = new GameEvent("achievement")
+            .AddParam("achievementName", "Sunday Showdown Tournament Win")
+            .AddParam("achievementID", "SS-2014-03-02-01")
+            .AddParam("reward", new Params()
+                .AddParam("rewardName", "Medal")
+                .AddParam("rewardProducts", new Product()
+                    .AddVirtualCurrency("VIP Points", "GRIND", 20)
+                    .AddItem("Sunday Showdown Medal", "Victory Badge", 1)
+                )
+            );
+        
+        DDNA.Instance.RecordEvent(gameEvent);
+    }
+    
+    public void OnTransactionEventBtn_Clicked() {
+        var transaction = new Transaction(
+                "Weapon type 11 manual repair",
+                "PURCHASE",
+                new Product()
+                    .AddItem("WeaponsMaxConditionRepair:11", "WeaponMaxConditionRepair", 5)
+                    .AddVirtualCurrency("Credit", "PREMIUM", 710),
+                new Product()
+                    .SetRealCurrency("USD", Product.ConvertCurrency("USD", 12.34m))) // $12.34
+            .SetTransactorId("2.212.91.84:15116")
+            .SetProductId("4019")
+            .AddParam("paymentCountry", "GB");
+        
+        DDNA.Instance.RecordEvent(transaction);
+    }
+    
+    public void OnEngagementBtn_Clicked() {
+        var engagement = new Engagement("gameLoaded")
+            .AddParam("userLevel", 4)
+            .AddParam("experience", 1000)
+            .AddParam("missionName", "Disco Volante");
+        
+        DDNA.Instance.RequestEngagement(engagement, (Dictionary<string, object> response) => {
+            popUpContent.text = MiniJSON.Json.Serialize(response);
+        });
+        
+        popUpTitle.text = "Engage returned";
+        popUpObj.SetActive(true);
+    }
+    
+    public void OnImageMessageBtn_Clicked() {
+        var engagement = new Engagement("imageMessage")
+            .AddParam("userLevel", 4)
+            .AddParam("experience", 1000)
+            .AddParam("missionName", "Disco Volante");
 
-    void RenderPopupContent(int windowID) {
-        if (GUI.Button(new Rect(248, 3, 50, 20), "Close")) {
-            popupContent = "";
-        }
-        GUI.TextField(new Rect(0, 25, 300, 175), popupContent);
+        DDNA.Instance.RequestEngagement(engagement, (response) => {
+            ImageMessage imageMessage = ImageMessage.Create(response);
+
+            // Check we got an engagement with a valid image message.
+            if (imageMessage != null) {
+                Debug.Log("Engage returned a valid image message.");
+
+                // This example will show the image as soon as the background 
+                // and button images have been downloaded.
+                imageMessage.OnDidReceiveResources += () => {
+                    Debug.Log("Image Message loaded resources.");
+                    imageMessage.Show();
+                };
+
+                // Add a handler for the 'dismiss' action.
+                imageMessage.OnDismiss += (ImageMessage.EventArgs obj) => {
+                    Debug.Log("Image Message dismissed by " + obj.ID);
+                };
+
+                // Add a handler for the 'action' action.
+                imageMessage.OnAction += (ImageMessage.EventArgs obj) => {
+                    Debug.Log("Image Message actioned by " + obj.ID + " with command " + obj.ActionValue);
+                };
+
+                // Download the image message resources.
+                imageMessage.FetchResources();
+            } else {
+                Debug.Log("Engage didn't return an image message.");
+            }
+        }, (exception) => {
+            Debug.Log("Engage reported an error: " + exception.Message);
+        });
+    }
+    
+    public void OnNotificationOpenedBtn_Clicked() {
+        var payload = new Dictionary<string, object>();
+        payload.Add("_ddId", 1);
+        payload.Add("_ddName", "Example Notification");
+        payload.Add("_ddLaunch", true);
+        
+        DDNA.Instance.RecordPushNotification(payload);
+    }
+    
+    public void OnUploadEventsBtn_Clicked() {
+        DDNA.Instance.Upload();
+    }
+    
+    public void OnStartSDKBtn_Clicked() {
+        DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
+    }
+    
+    public void OnStopSDKBtn_Clicked() {
+        DDNA.Instance.StopSDK();
+    }
+    
+    public void OnNewSessionBtn_Clicked() {
+        DDNA.Instance.NewSession();
     }
 }
-
 } // namespace DeltaDNA
