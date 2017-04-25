@@ -2,6 +2,7 @@
 
 ## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (YYYY-MM-DD)
 ### Changed
+- Image Message uses new UI.
 - Using new Unity UI for examples.
 
 ## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (2017-04-17)
