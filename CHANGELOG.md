@@ -4,6 +4,11 @@
 ### Changed
 - Using new Unity UI for examples.
 
+## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (YYYY-MM-DD)
+### Fixed
+- Fixed Chartboost, Unity, and Vungle callbacks on Android.
+- Fixed misreporting of ad show events on Android.
+
 ## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (2017-04-17)
 ### Added
 - Facebook ad network.
