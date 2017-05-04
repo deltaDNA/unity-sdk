@@ -1,5 +1,9 @@
 # Change Log
 
+## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+### Fixed
+- Stuck download of SmartAds libraries on Android in some cases.
+
 ## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (2017-05-04)
 ### Fixed
 - Fixed Chartboost, Unity, and Vungle callbacks on Android.
