@@ -258,8 +258,13 @@ namespace DeltaDNA
                 case "iPad5,2": return @"iPad Mini 4";
                 case "iPad5,3": return @"iPad Air 2";
                 case "iPad5,4": return @"iPad Air 2";
-                case "iPad6,7": return @"iPad Pro";
-                case "iPad6,8": return @"iPad Pro";
+                case "iPad6,7": return @"iPad Pro 12.9";
+                case "iPad6,8": return @"iPad Pro 12.9";
+                case "iPad6,3": return @"iPad Pro 9.7";
+                case "iPad6,4": return @"iPad Pro 9.7"; 
+                case "iPad6,11": return @"iPad 5G";
+                case "iPad6,12": return @"iPad 5G";
+
 
                 // Amazon
 

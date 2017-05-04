@@ -5,10 +5,11 @@
 - Image Message uses new UI.
 - Using new Unity UI for examples.
 
-## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (YYYY-MM-DD)
+## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (2017-05-04)
 ### Fixed
 - Fixed Chartboost, Unity, and Vungle callbacks on Android.
 - Fixed misreporting of ad show events on Android.
+- Updated iOS device definitions
 
 ## [4.4.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.0) (2017-04-17)
 ### Added
