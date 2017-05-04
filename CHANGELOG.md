@@ -1,6 +1,9 @@
 # Change Log
 
-## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (YYYY-MM-DD)
+## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+### Fixed
+- Stuck download of SmartAds libraries on Android in some cases.
+
 ### Changed
 - Image Message uses new UI.
 - Using new Unity UI for examples.
