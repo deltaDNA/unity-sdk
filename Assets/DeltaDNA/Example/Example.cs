@@ -123,7 +123,7 @@ public class Example : MonoBehaviour {
     }
     
     public void OnImageMessageBtn_Clicked() {
-        var engagement = new Engagement("imageMessage")
+        var engagement = new Engagement("testImageMessage")
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");

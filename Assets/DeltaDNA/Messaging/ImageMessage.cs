@@ -19,9 +19,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DeltaDNA {
-
+    
     using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     public class ImageMessage {
@@ -34,6 +35,7 @@ namespace DeltaDNA {
         private JSONObject configuration;
         private GameObject gameObject;
         private SpriteMap spriteMap;
+
         private int depth;
         private bool resourcesLoaded = false;
         private bool showing = false;
@@ -54,12 +56,11 @@ namespace DeltaDNA {
 
         private ImageMessage(JSONObject configuration, string name, int depth)
         {
-            GameObject gameObject = new GameObject(name);
+            gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(configuration);
 
             this.configuration = configuration;
-            this.gameObject = gameObject;
             this.spriteMap = spriteMap;
             this.depth = depth;
         }
@@ -73,7 +74,7 @@ namespace DeltaDNA {
         {
             if (engagement == null || engagement.JSON == null || !engagement.JSON.ContainsKey("image")) return null;
 
-            string name = "Image Message";
+            string name = "DeltaDNA Image Message";
             int depth = 0;
 
             if (options != null) {
@@ -147,11 +148,14 @@ namespace DeltaDNA {
         public void Show()
         {
             if (this.resourcesLoaded) {
-
                 try {
+                    gameObject.AddComponent<Canvas>();
+                    gameObject.AddComponent<GraphicRaycaster>();
+                    gameObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+
                     if (this.configuration.ContainsKey("shim")) {
-                        ShimLayer shimLayer = this.gameObject.AddComponent<ShimLayer>();
-                        shimLayer.Build(this, this.configuration["shim"] as JSONObject, this.depth);
+                        ShimLayer shimLayer = gameObject.AddComponent<ShimLayer>();
+                        shimLayer.Build(gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
                     JSONObject layout = this.configuration["layout"] as JSONObject;
@@ -160,14 +164,13 @@ namespace DeltaDNA {
                         throw new KeyNotFoundException("Layout missing orientation key.");
                     }
 
-                    BackgroundLayer backgroundLayer = this.gameObject.AddComponent<BackgroundLayer>();
-                    backgroundLayer.Build(this, orientation as JSONObject, this.spriteMap.Background, this.depth-1);
+                    BackgroundLayer backgroundLayer = gameObject.AddComponent<BackgroundLayer>();
+                    backgroundLayer.Build(gameObject, this, orientation as JSONObject, this.spriteMap.Background, this.depth-1);
 
-                    ButtonsLayer buttonLayer = this.gameObject.AddComponent<ButtonsLayer>();
-                    buttonLayer.Build(this, orientation as JSONObject, this.spriteMap.Buttons, backgroundLayer, this.depth-2);
+                    ButtonsLayer buttonLayer = gameObject.AddComponent<ButtonsLayer>();
+                    buttonLayer.Build(gameObject, this, orientation as JSONObject, this.spriteMap.Buttons, backgroundLayer, this.depth-2);
 
-                    this.showing = true;
-
+                    showing = true;
                 } catch (KeyNotFoundException exception) {
                     Logger.LogWarning("Failed to show image message, invalid format: "+exception.Message);
                 } catch (Exception exception) {
@@ -181,11 +184,9 @@ namespace DeltaDNA {
         }
 
         public void Close() {
-            if (this.showing) {
-                foreach (var layer in this.gameObject.GetComponents<Layer>()) {
-                    UnityEngine.Object.Destroy(layer);
-                }
-                this.showing = false;
+            if (showing) {
+                UnityEngine.Object.Destroy(gameObject);
+                showing = false;
             }
         }
 
@@ -297,8 +298,9 @@ namespace DeltaDNA {
 
         }
 
-        private class Layer : MonoBehaviour
-        {
+        private class Layer : MonoBehaviour {
+
+            protected GameObject parent; 
             protected ImageMessage imageMessage;
             protected List<Action> actions = new List<Action>();
             protected int depth = 0;
@@ -357,6 +359,26 @@ namespace DeltaDNA {
                     }
                 }
             }
+
+            protected void PositionObject(GameObject obj, Rect position) {
+                obj.transform.SetParent(parent.transform);
+
+                var widthRatio = 1 / (float) Screen.width;
+                var heightRatio = 1 / (float) Screen.height;
+
+                var neededX = position.x * widthRatio;
+                var neededY = position.y * heightRatio;
+                var neededWidth = position.width * widthRatio;
+                var neededHeight = position.height * heightRatio;
+
+                obj.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0f, 0f, 0f);
+                obj.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, 0f);
+
+                // our coordinates go from top-left to bottom-right (render-like),
+                // as opposed to bottom-left to top-right (graph-like) in unity
+                obj.GetComponent<RectTransform>().anchorMin = new Vector2(neededX, 1 - neededY - neededHeight);
+                obj.GetComponent<RectTransform>().anchorMax = new Vector2(neededX + neededWidth, 1 - neededY);
+            }
         }
 
         private class ShimLayer : Layer
@@ -364,8 +386,9 @@ namespace DeltaDNA {
             private Texture2D texture;
             private readonly byte dimmedMaskAlpha = 128;
 
-            public void Build(ImageMessage imageMessage, JSONObject config, int depth)
+            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject config, int depth)
             {
+                this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;
 
@@ -404,29 +427,35 @@ namespace DeltaDNA {
                 }
             }
 
-            public void OnGUI()
-            {
-                GUI.depth = this.depth;
+            void Start() {
+                if (texture) {
+                    var obj = new GameObject("Shim", typeof(RectTransform));
+                    PositionObject(obj, new Rect(0, 0, Screen.width, Screen.height));
 
-                if (this.texture)
-                {
-                    Rect position = new Rect(0, 0, Screen.width, Screen.height);
-                    GUI.DrawTexture(position, this.texture);
-                    if (GUI.Button(position, "", GUIStyle.none)) {
-                        if (this.actions.Count > 0) this.actions[0].Invoke();
-                    }
+                    obj.AddComponent<Button>();
+                    obj.AddComponent<Image>();
+
+                    obj.GetComponent<Button>().onClick.AddListener(() => {
+                        if (actions.Count > 0) actions[0].Invoke();
+                    });
+                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                        texture as Texture2D,
+                        new Rect(0, 0, texture.width, texture.height),
+                        new Vector2(0.5f, 0.5f));
                 }
             }
         }
 
         private class BackgroundLayer : Layer
         {
+
             private Texture texture;
             private Rect position;
             private float scale;
 
-            public void Build(ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
+            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
             {
+                this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.texture = texture;
                 this.depth = depth;
@@ -463,16 +492,21 @@ namespace DeltaDNA {
 
             public float Scale { get { return this.scale; }}
 
-            public void OnGUI()
-            {
-                GUI.depth = this.depth;
+            void Start() {
+                if (texture) {
+                    var obj = new GameObject("Background", typeof(RectTransform));
+                    PositionObject(obj, position);
 
-                if (this.texture)
-                {
-                    GUI.DrawTexture(this.position, this.texture);
-                    if (GUI.Button(this.position, "", GUIStyle.none)) {
-                        if (this.actions.Count > 0) this.actions[0].Invoke();
-                    }
+                    obj.AddComponent<Button>();
+                    obj.AddComponent<Image>();
+
+                    obj.GetComponent<Button>().onClick.AddListener(() => {
+                        if (actions.Count > 0) actions[0].Invoke();
+                    });
+                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                        texture as Texture2D,
+                        new Rect(0, 0, texture.width, texture.height),
+                        new Vector2(0.5f, 0.5f));
                 }
             }
 
@@ -605,8 +639,9 @@ namespace DeltaDNA {
             private List<Texture> textures = new List<Texture>();
             private List<Rect> positions = new List<Rect>();
 
-            public void Build(ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
+            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
             {
+                this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;
 
@@ -637,19 +672,24 @@ namespace DeltaDNA {
                 }
             }
 
-            public void OnGUI()
-            {
-                GUI.depth = this.depth;
+            void Start() {
+                for (int i = 0; i < textures.Count; ++i) {
+                    var obj = new GameObject("Button", typeof(RectTransform));
+                    PositionObject(obj, positions[i]);
 
-                for (int i = 0; i < this.textures.Count; ++i)
-                {
-                    GUI.DrawTexture(this.positions[i], this.textures[i]);
-                    if (GUI.Button(this.positions[i], "", GUIStyle.none)) {
-                        this.actions[i].Invoke();
-                    }
+                    obj.AddComponent<Button>();
+                    obj.AddComponent<Image>();
+
+                    var action = actions[i];
+                    obj.GetComponent<Button>().onClick.AddListener(() => {
+                        action.Invoke();
+                    });
+                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                        textures[i] as Texture2D,
+                        new Rect(0, 0, textures[i].width, textures[i].height),
+                        new Vector2(0.5f, 0.5f));
                 }
             }
         }
-
     }
 }
