@@ -11,12 +11,12 @@
 * [分析](#分析)
 * [快速入门](#快速入门)
  * [自定义事件](#自定义事件)
- * [吸引](#吸引)
+ * [吸引（Engage）](#吸引（Engage）)
 * [智能广告](#智能广告)
  * [用法](#用法)
  * [创建空闲广告](#创建空闲广告)
  * [创建奖励广告](#创建奖励广告)
- * [使用吸引](#使用吸引)
+ * [使用吸引（Engage）](#使用吸引（Engage）)
  * [遗留接口](#遗留接口)
  * [事件](#事件)
 * [iOS整合](#iOS整合)
@@ -27,6 +27,8 @@
  * [Android版智能广告](#Android版智能广告)
  * [权限](#权限)
 * [迁移](#迁移)
+ * [4.2](#版本4.2)
+ * [4.3](#版本4.3)
 * [授权](#授权)
 
 ## 分析
@@ -60,7 +62,7 @@ var gameEvent = new GameEvent("myEvent")
 DDNA.Instance.RecordEvent(gameEvent);
 ```
 
-### 吸引
+### 吸引（Engage）
 
 通过一个`Engagement`方法改变游戏的行为。例如：
 
@@ -90,7 +92,7 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
     ImageMessage imageMessage = ImageMessage.Create(response);
 
     // 检查我们对一个有效的图片消息获取吸引（Engagement）
-    if (imageMessage != null) {   
+    if (imageMessage != null) {
         imageMessage.OnDidReceiveResources += () => {
             // 一旦我们获得这个资源就可以展示出来。
             imageMessage.Show();
@@ -240,43 +242,61 @@ DDNA.Instance.RequestEngagement(engagement, response => {
 
 我们使用[CocoaPods](https://cocoapods.org/)来安装我们的智能广告库以及第三方广告网络库。除了我们支持的所有广告网络，包含的Podfile将添加我们的iOS智能广告Pod到你的XCode项目。一个后期处理构建Hook配备Unity生成的XCode项目以支持CocoaPods，并添加Podfile到iOS构建路径。这时其运行`pod install`以下载依赖（Dependencies）和创建*Unity-iPhone.xcworkspace*。由于Unity不知道工作空间文件，你将需要打开它。点击*build and run*因此将不被支持。
 
+__广告网络要求最低对象版本是第7版，最好是第8版以获得最新的SDK。如果默认使用第6版，cocoapods将会失败，xcworkspace文件将不会生成。__
+
+__如果从一个之前的SDK版本升级，运行`pod repo update`以更新你的本地缓存并确保你使用最新的依赖进行构建。从CocoaPods v1.0起将不再会默认执行`pod install`。__
+
 要选择哪个广告网络应当被包含到游戏中，需从Unity菜单栏中选择*DeltaDNA*，导航到*智能广告（SmartAds）->选择网络（Select Networks）*，然后将打开一个用于设置的选项卡。这时广告网络可以被选中或取消选中，点击*应用（Apply）*将保存更改。
 
 如果你更改已经启用的网络，Podfile的更改应提交到版本控制。
 
 #### UnityAds
 
-最新版的Unity会与Unity内部的UnityAds插件产生冲突。当PostBuildProcess方法运行时可能会发生一个错误。我已经通过让`pod install`进程最后运行来解决了这个问题。如果你的游戏包含多个库，你可能需要使用PostProcessBuild调用来改变PostBuildProcess的顺序。
+最新版的Unity会与Unity内部的UnityAds插件产生冲突。当PostBuildProcess方法运行时可能会发生一个错误。我已经通过让pod install进程最后运行来解决了这个问题。如果你的游戏包含多个库，你可能需要使用PostProcessBuild调用来改变PostBuildProcess的顺序。
 
 ## Android整合
 
+### Android依赖Google Firebase/Play Services库
+
+任何库依赖，例如Google的Firebase（Google Play Services）都由Google的[Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver)插件控制。这些库将自动下载到*Assets/Plugins/Android*文件夹中。如果你在你的应用中有其他的不使用这个Resolver下载依赖的Unity插件，你可能想要考虑也使用这个Resolver来管理他们的依赖，否则你将不得不手动解决所有冲突。
+
 ### 推送通知
 
-为了在Android使用推送通知，你需要在`Assets/Plugins/Android`下为你的项目添加一个AndroidManifest.xml，以为你的游戏注册广播接收和服务。你可以在[这里](Assets/Plugins/Android/)查看一个案例配置，其已经在SDK的案例包中可以工作。请查看推送通知[整合章节](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#integration)，其也与Android上的Analytics Unity SDK相关，包括整合步骤的更多详细信息。
+我们的推送通知使用Firebase进行消息传递（这在4.3版本中已更改，如果你在升级请查看下面的迁移[指导](#version-4.3)）。为了配置通知，你将需要在配置页面设置*应用（Application）*和*发送者ID（Sender IDs）*，这可以从Unity编辑（Editor）菜单的*DeltaDNA->通知（Notifications）->Android->配置（Configure）*进入。ID可以从你的应用（[1](Docs/firebase_console_1.png)，[2](Docs/firebase_console_2.png)和[3](Docs/firebase_console_3.png)）的Firebase控制面板找到。点击*应用（Apply）*将保存对你的项目中资源文件的更改，这应当被提交到源码管理。
 
-这个SDK已经在`Assets\DeltaDNA\Plugins\Android`下为推送通知（以及智能广告）预先打包一些Google Play Services依赖（Dependencies）。如果你想要使用你自己的Play Services版本，那么你应当移除这些依赖（例如play-services-base-7.8.0.aar, play-services-gcm-7.8.0.aar等）以避免创建过程中重复类定义错误。请注意我们无法保证除了7.8.0的其他版本Google Play Services可以在我们的SDK中正常工作。
+如果你的应用使用Google Cloud Console设置，你可以从[这里](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#import_your_gcm_project_as_a_firebase_project)找到关于如何迁移项目到Firebase的操作指南。Firebase项目向下兼容使用Google Could Messaging的应用。
 
-如果要和deltaDNA一起为推送通知使用其他服务，你应当确保每个服务都使用其自己的发件人ID。这将确保通知处理程序只处理来自其自己服务的推送通知。
+推送通知的样式可以通过覆盖库行为改变。关于如何做到这一点的说明可以从[这里](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity)找到。一旦你添加了修改的库或者添加了新的类作为一个单独的库，你将需要在配置中将*Listener Service*字段更改为你的新类的完全限定名。
 
-如果你不想在Android使用推送通知，那么你可以将`Assets\DeltaDNA\Plugins\Android`文件夹中的文件以及自定义的`AndroidManifest.xml`删除，以减小你的游戏的APK大小。
+如果你不再想要在Android上使用推送通知，那么你可以从项目中删除*Assets/DeltaDNA/Plugins/Android*和*Assets/Plugins/Android/deltadna-sdk-unity-notifications*文件夹以减少方法的数量和你的游戏APK的大小。
 
 ### Android版智能广告
 
-与iOS版智能广告相同，*deltaDNA->智能广告（SmartAds）->选择网络（Select Networks）*的设置可以被用于选择哪个网络应当被使用。在应用改变后，SDK将从一个Maven库自动下载广告网络库。
+你想要构建到你的应用的广告网络可以从*DeltaDNA->智能广告（SmartAds）->选择网络（Select Networks）*中选择。在应用这个更改后，SDK将从Maven仓库中下载最新的库。如果你更改为启用网络，那么对*build.gradle*文件的更改应当提交到版本控制。
 
-Android库还可以从*deltaDNA->智能广告（SmartAds）->Android->下载库（Download Libraries）*菜单项下载。我们推荐在更新deltaDNA SDK后执行这个操作，或者在从版本控制提交更改后。SDK将自动尝试检测何时下载的库可能会失效，以及在编辑器（Editor）控制台显示警告。
+库可以随时从*DeltaDNA->智能广告（SmartAds）->Android->下载库（Download Libraries）*菜单项下载。我们建议在更新DletaDNA SDK或从版本控制中提取更改后执行此操作。SDK将尝试检测何时下载的库会过期，并在编辑器控制面板记录一个警告。
 
-如果你对已经启用的网络进行更改，那么对build.gradle文件的更改应当被提交到版本控制。
+为了使菜单项工作，你需要为你的Unity项目安装和设置Android SDK。在Android SDK中，你需要安装一个*build-tools*版本和一个*SDK平台*，以及最新版本的*Android Support Repository*和*Google Repository*。
 
-为了使菜单项工作，你需要为你的Unity项目安装和设置Android SDK。在Android SDK中，你需要安装一个build-tools版本和一个SDK平台，以及最新版本的*Android Support Repository*和*Google Repository*。
+### MultiDex；解决Android的65k方法限制
+1. 使用*Gradle*构建系统导出你的Unity项目。这些操作可以从*构建设置（Build Setting）*对话框中找到。
+2. 在Android Studio中打开导出的项目，如果被要求，并选择使用Gradle封装。
+3. 为你的项目打开顶层的*build.gradle*文件，并按照[此处](https://developer.android.com/studio/build/multidex.html#mdex-gradle)的描述应用MultiDex解决方法。
 
 ### 权限
 
-Android库要求的权限可以通过使用[Android manifest merger](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger)被覆盖。例如，如果你想要从`WRITE_EXTERNAL_STORAGE`权限删除`maxSdkVersion`属性，那么你可以在你的清单文件中做如下指定：
+Android库要求的权限可以通过使用[Android清单联合体](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger)被覆盖。例如，如果你想要从`WRITE_EXTERNAL_STORAGE`权限删除`maxSdkVersion`属性，那么你可以在你的清单文件中做如下指定：
 ```xml
 <uses-permission
     android:name="android.permission.WRITE_EXTERNAL_STORAGE"
     tools:remove="android:maxSdkVersion"/>
+```
+
+如果上述情况仍然在清单合并过程中导致冲突，那么可以在清单（manifest）文件中使用如下内容：
+```xml
+<uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    tools:merge="override"/>
 ```
 
 ## 迁移
@@ -285,6 +305,24 @@ Android库要求的权限可以通过使用[Android manifest merger](http://tool
 配置哪些网络应当被用于智能广告已经更改为添加菜单项到Unity编辑器的方式，这取消了一些容易出错的手动步骤。对于Android，不再需要通过安装Python或者设置Android SDK路径来下载库依赖，因为这一任务的菜单项将会处理这些步骤。如果你更改了选择的网络，你将需要把对build.gradle和/或Podfile的更改提交到你的版本控制，以便你的其他团队成员可以使用这些更改。
 
 由于我们没有更改如何定义智能广告网络，你可能需要查看选中的网络以防止你从你的项目中事先移除了其中的一些网络。
+
+### 版本4.3
+在版本4.2和版本4.3之间，我们更新了我们的推送通知以使用Firebase（play-services-*-10.2）。这需要改变推送通知整合工作的方式。要更好的管理Android依赖，我们现在使用Google的[Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver)。这允许其他插件也在Firebase/Paly-Services库中指定依赖，且Unity Jar Resolver将确定哪个库被使用，希望可以减少在构建时的重复库错误。
+
+#### SDK正常检查
+在你升级SDK后，你可以执行正常检查以识别与前一版本相关的错误，例如冲突的配置记录和重复的库。这可以从编辑（Editor）菜单的*DeltaDNA->正常检查SDK*进入。请注意你的项目仍然可能存在这个功能无法检测的问题。请始终参阅这个文档以了解更多详细信息。
+
+#### Android依赖
+在导入新的DeltaDNA SDK包到你的项目后，请确保已经从*Assets/DeltaDNA/Plugins/Android*删除了旧的*deltadna-sdk-notifications* AAR文件。你还需要删除在那个位置的所有*play-services*和*support* AAR和JAR库，因为其将导致与使用Unity Jar Resolver下载的库之间的冲突。
+
+与所有SDK更新一样，你应当从*DeltaDNA->智能广告（SmartAds）->Android->下载库（Download Libraries）*更新Android智能广告（SmartAds）库。
+
+#### Android通知
+我们已经添加了一个UI用于在Android配置推送通知，其可以从Unity编辑（Editor）菜单中的*DeltaDNA->通知（Notifications）->Android->配置（Configure）*进行访问。如果你想要使用通知或者已经在我们SDK之前版本中使用了它们，你将需要从Firebase控制面板为你等应用填写应用（Application）和发送者ID（Sender IDs）。
+
+我们强烈建议删除所有之前从*Assets/Plugins/Android*的*AndroidManifest.xml*文件为DeltaDNA通知添加的记录，因为其可能与Firebase的实施相冲突。如果你从未添加任何其他东西到清单文件，那么你或许可以将其全部删除。关于哪个XML应当被删除的更多详细信息请查看[这里](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest)。另外你还应能够从*Assets/Plugins/Android/res/values*删除包含你的应用的发送者ID（Sender ID）的*string*资源。
+
+如果你不再想要使用通知，那么请从你的项目删除*Assets/Plugins/Android/deltadna-sdk-unity-notifications*和*Assets/DeltaDNA/Plugins/Android*文件夹。
 
 ## 授权
 
