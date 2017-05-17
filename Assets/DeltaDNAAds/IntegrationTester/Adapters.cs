@@ -41,6 +41,24 @@ namespace DeltaDNAAds {
                     "Interstitial",
                     true
                 }));
+            adapters.Add(new AdapterWrapper(
+                "Chartboost (interstitial)",
+                "com.deltadna.android.sdk.ads.provider.chartboost.ChartBoostInterstitialAdapter",
+                null,
+                new object[] {
+                    "58f489a743150f4385b20df2",
+                    "39eb54cb811959e303cacd9ccc6e9360d8a7b424",
+                    "Default"
+                }));
+            adapters.Add(new AdapterWrapper(
+                "Chartboost (rewarded)",
+                "com.deltadna.android.sdk.ads.provider.chartboost.ChartBoostRewardedAdapter",
+                null,
+                new object[] {
+                    "58f489a743150f4385b20df2",
+                    "39eb54cb811959e303cacd9ccc6e9360d8a7b424",
+                    "Default"
+                }));
         }
 
         private interface Adapter {
@@ -86,12 +104,19 @@ namespace DeltaDNAAds {
             private readonly AndroidJavaObject native;
 
             public AndroidAdapter(string className, params object[] args) {
+                try {
                 native = new AndroidJavaObject(
                     className,
                     new object[] { 0, 0, 0 }.Concat(args).ToArray());
+                } catch (AndroidJavaException e) {
+                    Debug.LogException(e);
+                    native = null;
+                }
             }
 
             public void RequestAd(Listener listener) {
+                if (native == null) return;
+
                 native.Call("requestAd", new object[] {
                     new AndroidJavaClass("com.unity3d.player.UnityPlayer")
                         .GetStatic<AndroidJavaObject>("currentActivity"),
@@ -101,6 +126,8 @@ namespace DeltaDNAAds {
             }
 
             public void ShowAd() {
+                if (native == null) return;
+
                 native.Call("showAd");
             }
         }
