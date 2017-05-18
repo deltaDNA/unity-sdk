@@ -158,7 +158,7 @@ namespace DeltaDNAAds {
             }
 
             void onAdFailedToLoad(AndroidJavaObject adapter, AndroidJavaObject result, string reason) {
-                delegated.OnAdFailedToLoad(result.Call<string>("toString"), reason);
+                delegated.OnAdFailedToLoad(result.Call<string>("name"), reason);
             }
 
             void onAdShowing(AndroidJavaObject adapter) {
@@ -166,7 +166,7 @@ namespace DeltaDNAAds {
             }
 
             void onAdFailedToShow(AndroidJavaObject adapter, AndroidJavaObject result) {
-                delegated.OnAdFailedToShow(result.Call<string>("toString"));
+                delegated.OnAdFailedToShow(result.Call<string>("name"));
             }
 
             void onAdClicked(AndroidJavaObject adapter) {
