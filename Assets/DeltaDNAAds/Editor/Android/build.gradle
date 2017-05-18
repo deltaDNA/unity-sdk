@@ -25,7 +25,7 @@ def findCompileSdkVersion = {
     }
 }
 
-def version = '1.4.2'
+def version = '1.4.3-SNAPSHOT'
 def smartads = hasProperty('smartads')
 def network = { network ->
     dependencies.compile("com.deltadna.android:deltadna-smartads-provider-${network}:$version")
@@ -45,6 +45,7 @@ repositories {
     mavenCentral()
     maven { url 'http://jcenter.bintray.com' }
     maven { url "http://deltadna.bintray.com/android" }
+    maven { url 'http://edinlin01:8082/artifactory/libs-snapshot-local' }
 }
 
 android {
