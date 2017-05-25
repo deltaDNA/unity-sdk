@@ -59,6 +59,13 @@ namespace DeltaDNAAds {
                     "39eb54cb811959e303cacd9ccc6e9360d8a7b424",
                     "Default"
                 }));
+            adapters.Add(new AdapterWrapper(
+                "Vungle",
+                "com.deltadna.android.sdk.ads.provider.vungle.VungleAdapter",
+                null,
+                new object[] {
+                    "5832df18d614b1ab17000251"
+                }));
         }
 
         private interface Adapter {
@@ -102,6 +109,7 @@ namespace DeltaDNAAds {
         private class AndroidAdapter : Adapter {
 
             private readonly AndroidJavaObject native;
+            private readonly AndroidJavaObject activity;
 
             public AndroidAdapter(string className, params object[] args) {
                 try {
@@ -112,23 +120,29 @@ namespace DeltaDNAAds {
                     Debug.LogException(e);
                     native = null;
                 }
+
+                activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+                    .GetStatic<AndroidJavaObject>("currentActivity");
             }
 
             public void RequestAd(Listener listener) {
                 if (native == null) return;
 
-                native.Call("requestAd", new object[] {
-                    new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-                        .GetStatic<AndroidJavaObject>("currentActivity"),
-                    new AndroidListener(listener),
-                    new AndroidJavaObject("org.json.JSONObject")
-                });
+                activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+                    native.Call("requestAd", new object[] {
+                        activity,
+                        new AndroidListener(listener),
+                        new AndroidJavaObject("org.json.JSONObject")
+                    });
+                }));
             }
 
             public void ShowAd() {
                 if (native == null) return;
 
-                native.Call("showAd");
+                activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+                    native.Call("showAd");
+                }));
             }
         }
 
