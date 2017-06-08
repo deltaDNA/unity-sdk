@@ -1,6 +1,9 @@
 # Change Log
 
 ## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+### Added
+- Detection and removal of crashed ad networks on Android.
+
 ### Fixed
 - AppLovin reporting duplicate ad loads on Android.
 - Stuck download of SmartAds libraries on Android in some cases.
