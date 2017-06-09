@@ -15,7 +15,9 @@
 //
 
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Xml;
 using UnityEngine;
 
 namespace DeltaDNAAds {
@@ -24,48 +26,28 @@ namespace DeltaDNAAds {
         internal readonly IList<AdapterWrapper> adapters = new List<AdapterWrapper>();
 
         internal void Populate() {
-            adapters.Add(new AdapterWrapper(
-                "AdColony",
-                "com.deltadna.android.sdk.ads.provider.adcolony.AdColonyAdapter",
-                null,
-                new object[] {
-                    "appc804f742b8064114a9",
-                    "vzbb9fa7accb4e4185b7"
-                }));
-            adapters.Add(new AdapterWrapper(
-                "AppLovin",
-                "com.deltadna.android.sdk.ads.provider.applovin.AppLovinRewardedAdapter",
-                null,
-                new object[] {
-                    "ElG63iTpOQfZvG4kizCGhhXZQiWt37hIszOvfyi3MNdFdh-KeAbKt7vHrQ9uXrBNpZHTV-WtL87-r6IUGvp80h",
-                    "Interstitial",
-                    true
-                }));
-            adapters.Add(new AdapterWrapper(
-                "Chartboost (interstitial)",
-                "com.deltadna.android.sdk.ads.provider.chartboost.ChartBoostInterstitialAdapter",
-                null,
-                new object[] {
-                    "58f489a743150f4385b20df2",
-                    "39eb54cb811959e303cacd9ccc6e9360d8a7b424",
-                    "Default"
-                }));
-            adapters.Add(new AdapterWrapper(
-                "Chartboost (rewarded)",
-                "com.deltadna.android.sdk.ads.provider.chartboost.ChartBoostRewardedAdapter",
-                null,
-                new object[] {
-                    "58f489a743150f4385b20df2",
-                    "39eb54cb811959e303cacd9ccc6e9360d8a7b424",
-                    "Default"
-                }));
-            adapters.Add(new AdapterWrapper(
-                "Vungle",
-                "com.deltadna.android.sdk.ads.provider.vungle.VungleAdapter",
-                null,
-                new object[] {
-                    "5832df18d614b1ab17000251"
-                }));
+            var doc = new XmlDocument();
+            doc.LoadXml((Resources.Load("networks", typeof(TextAsset)) as TextAsset).text);
+
+            foreach (XmlNode node in doc.SelectNodes("adapters/adapter")) {
+                adapters.Add(new AdapterWrapper(
+                    node.Attributes.GetNamedItem("name").Value,
+                    node.Attributes.GetNamedItem("android").Value,
+                    node.Attributes.GetNamedItem("ios").Value,
+                    node.SelectNodes("arguments/argument")
+                        .Cast<XmlNode>()
+                        .Select(e => {
+                            switch (e.Attributes.GetNamedItem("type").Value) {
+                                case "string":
+                                    return e.InnerText;
+                                case "bool":
+                                    return bool.Parse(e.InnerText);
+                                default:
+                                    return e.InnerText as object;
+                            }
+                        })
+                        .ToArray()));
+            }
         }
 
         private interface Adapter {
@@ -87,7 +69,11 @@ namespace DeltaDNAAds {
                 adapterName = name;
 
                 #if UNITY_ANDROID
-                delegated = new AndroidAdapter(android, args);
+                if (!string.IsNullOrEmpty(android)) {
+                    delegated = new AndroidAdapter(android, args);
+                } else {
+                    delegated = null;
+                }
                 #elif UNITY_IOS
                 delegated = null;
                 #endif
