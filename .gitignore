@@ -26,7 +26,7 @@ Assets/Plugins/Android/recyclerview-v7-*
 Assets/Plugins/Android/support-*
 Assets/DeltaDNAAds/Plugins/Android.meta
 Assets/DeltaDNAAds/Plugins/Android/*
-Assets/DeltaDNAAds/Resources/networks.xml
+Assets/DeltaDNAAds/Resources*
 
 # Other
 *.pfx
