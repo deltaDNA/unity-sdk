@@ -28,7 +28,7 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
     public static object svcSupport;
 
     private const string VERSION_SUPPORT = "25.3.1";
-    private const string VERSION_PLAYSERVICES = "10.2.1";
+    private const string VERSION_PLAYSERVICES = "10.2.6";
     #endif
 
     static DeltaDNAAdsUnityJarResolverDependencies() {
