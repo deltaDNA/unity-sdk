@@ -8,6 +8,9 @@
 - AppLovin reporting duplicate ad loads on Android.
 - Stuck download of SmartAds libraries on Android in some cases.
 
+### Updated
+- Unity Jar Resolver.
+
 ## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (2017-05-04)
 ### Fixed
 - Fixed Chartboost, Unity, and Vungle callbacks on Android.
