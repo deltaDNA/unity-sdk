@@ -153,6 +153,25 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
                 svcSupport,
                 "DependOn",
                 new object[] {
+                    "com.android.support",
+                    "appcompat-v7",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.android.support",
+                    "recyclerview-v7",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
                     "com.google.android.gms",
                     "play-services-base",
                     VERSION_PLAYSERVICES},
