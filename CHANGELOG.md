@@ -1,6 +1,9 @@
 # Change Log
 
 ## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+### Added
+- Send imageMessageAction event when interacting with image messages.
+
 ### Fixed
 - Stuck download of SmartAds libraries on Android in some cases.
 

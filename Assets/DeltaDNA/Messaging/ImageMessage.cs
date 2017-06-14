@@ -39,6 +39,7 @@ namespace DeltaDNA {
         private int depth;
         private bool resourcesLoaded = false;
         private bool showing = false;
+        private Engagement engagement;
 
         public class EventArgs: System.EventArgs
         {
@@ -54,7 +55,7 @@ namespace DeltaDNA {
             public string ActionValue { get; set; }
         }
 
-        private ImageMessage(JSONObject configuration, string name, int depth)
+        private ImageMessage(JSONObject configuration, string name, int depth, Engagement engagement)
         {
             gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
@@ -63,6 +64,7 @@ namespace DeltaDNA {
             this.configuration = configuration;
             this.spriteMap = spriteMap;
             this.depth = depth;
+            this.engagement = engagement;
         }
 
         public static ImageMessage Create(Engagement engagement)
@@ -91,7 +93,7 @@ namespace DeltaDNA {
             try {
                 var configuration = engagement.JSON["image"] as JSONObject;
                 if (ValidConfiguration(configuration)) {
-                    imageMessage = new ImageMessage(configuration, name, depth);
+                    imageMessage = new ImageMessage(configuration, name, depth, engagement);
                     if (engagement.JSON.ContainsKey("parameters")) {
                         imageMessage.Parameters = engagement.JSON["parameters"] as JSONObject;
                     }
@@ -319,6 +321,15 @@ namespace DeltaDNA {
 
                     ImageMessage.EventArgs eventArgs = new ImageMessage.EventArgs(id, (string)typeObj, (string)valueObj);
 
+                    GameEvent actionEvent = new GameEvent("imageMessageAction");
+                    actionEvent.AddParam("responseDecisionpointName", imageMessage.engagement.DecisionPoint);
+                    actionEvent.AddParam("responseTransactionID", imageMessage.engagement.JSON["transactionID"]);
+                    actionEvent.AddParam("imActionName", id);
+                    actionEvent.AddParam("imActionType", (string)typeObj);
+                    if (!String.IsNullOrEmpty((string)valueObj) && (string)typeObj != "dismiss") {
+                        actionEvent.AddParam("imActionValue", (string)valueObj);
+                    }
+
                     switch ((string)typeObj) {
                         case "none": {
                             actions.Add(() => {});
@@ -331,6 +342,7 @@ namespace DeltaDNA {
                                         imageMessage.OnAction(eventArgs);
                                     }
                                 }
+                                DDNA.Instance.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
@@ -343,6 +355,7 @@ namespace DeltaDNA {
                                 if (valueObj != null) {
                                     Application.OpenURL((string)valueObj);
                                 }
+                                DDNA.Instance.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
@@ -352,6 +365,7 @@ namespace DeltaDNA {
                                 if (imageMessage.OnDismiss != null) {
                                     imageMessage.OnDismiss(eventArgs);
                                 }
+                                DDNA.Instance.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
