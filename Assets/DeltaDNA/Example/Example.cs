@@ -54,7 +54,11 @@ public class Example : MonoBehaviour {
         DDNA.Instance.AndroidNotifications.OnDidLaunchWithPushNotification += (string n) => {
             Debug.Log("Launched with an Android push notification: " + n);
         };
-        DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
+        try {
+            DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
+        } catch (AndroidJavaException e) {
+            Debug.LogWarning("Failed to register for push notifications. Notifications may not be configured correctly.");
+        }
 
         // Start collecting data
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
