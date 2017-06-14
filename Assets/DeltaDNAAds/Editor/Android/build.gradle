@@ -76,20 +76,7 @@ configurations.all {
 }
 
 dependencies {
-    network('adcolony')
     network('admob')
-    network('amazon')
-    network('applovin')
-    network('chartboost')
-    network('facebook')
-    network('flurry')
-    network('inmobi')
-    network('ironsource')
-    network('mobfox')
-    network('mopub')
-    network('thirdpresence')
-    network('unity')
-    network('vungle')
 
     if (smartads) {
         compile "com.deltadna.android:deltadna-smartads-core:$version"

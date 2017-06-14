@@ -1,6 +1,6 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+## [4.4.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.2) (2017-06-14)
 ### Added
 - Detection and removal of crashed ad networks on Android.
 

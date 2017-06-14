@@ -38,10 +38,20 @@ public class Example : MonoBehaviour {
         DDNA.Instance.ClientVersion = "1.0.0";
 
         // Enable push notifications
-        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an iOS push token: "+n);};
-        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("Got an iOS push notification! "+n);};
+        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { 
+            Debug.Log("Got an iOS push token: " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { 
+            Debug.Log("Got an iOS push notification! " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => {
+            Debug.Log("Got an iOS push notification: " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidLaunchWithPushNotification += (string n) => {
+            Debug.Log("Launched with an iOS push notification: " + n);
+        };
         DDNA.Instance.IosNotifications.RegisterForPushNotifications();
-        
+
         DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an Android registration token: " + n);
         };
@@ -54,11 +64,7 @@ public class Example : MonoBehaviour {
         DDNA.Instance.AndroidNotifications.OnDidLaunchWithPushNotification += (string n) => {
             Debug.Log("Launched with an Android push notification: " + n);
         };
-        try {
-            DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
-        } catch (AndroidJavaException e) {
-            Debug.LogWarning("Failed to register for push notifications. Notifications may not be configured correctly.");
-        }
+        DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
 
         // Start collecting data
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
