@@ -11,7 +11,6 @@
 - Stuck download of SmartAds libraries on Android in some cases.
 
 ### Updated
-- Unity Jar Resolver.
 - Google Play Services and Firebase dependencies for Android.
 
 ## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (2017-05-04)
