@@ -85,10 +85,14 @@ namespace DeltaDNA
         public void RegisterForPushNotifications(bool secondary = false) {
             if (Application.platform == RuntimePlatform.Android) {
                 #if UNITY_ANDROID && !UNITY_EDITOR
-                ddnaNotifications.Register(
-                    new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-                        .GetStatic<AndroidJavaObject>("currentActivity"),
-                    secondary);
+                try {
+                    ddnaNotifications.Register(
+                        new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+                            .GetStatic<AndroidJavaObject>("currentActivity"),
+                        secondary);
+                } catch (AndroidJavaException e) {
+                    Logger.LogWarning("Failed to register for push notifications. Notifications may not be configured correctly. " + e.Message);
+                }
                 #endif
             }
         }

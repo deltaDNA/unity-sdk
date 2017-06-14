@@ -28,7 +28,7 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
     public static object svcSupport;
 
     private const string VERSION_SUPPORT = "25.3.1";
-    private const string VERSION_PLAYSERVICES = "10.2.1";
+    private const string VERSION_PLAYSERVICES = "10.2.6";
     #endif
 
     static DeltaDNAAdsUnityJarResolverDependencies() {
@@ -149,6 +149,25 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
                     { "packageIds", new string[] { "extra-android-m2repository" }}});
         }
         if (networks.Contains("inmobi")) {
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.android.support",
+                    "appcompat-v7",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+            Google.VersionHandler.InvokeInstanceMethod(
+                svcSupport,
+                "DependOn",
+                new object[] {
+                    "com.android.support",
+                    "recyclerview-v7",
+                    VERSION_PLAYSERVICES},
+                namedArgs: new Dictionary<string, object>() {
+                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+
             Google.VersionHandler.InvokeInstanceMethod(
                 svcSupport,
                 "DependOn",

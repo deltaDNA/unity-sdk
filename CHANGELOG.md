@@ -1,5 +1,19 @@
 # Change Log
 
+## [4.4.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.2) (2017-06-14)
+### Added
+- Detection and removal of crashed ad networks on Android.
+
+### Fixed
+- AppLovin reporting duplicate ad loads on Android.
+- Chartboost misreporting show failures as load failures on Android.
+- Vungle, IronSource, and Unity callbacks not invoked after first ad show on Android.
+- Stuck download of SmartAds libraries on Android in some cases.
+
+### Updated
+- Unity Jar Resolver.
+- Google Play Services and Firebase dependencies for Android.
+
 ## [4.4.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.1) (2017-05-04)
 ### Fixed
 - Fixed Chartboost, Unity, and Vungle callbacks on Android.

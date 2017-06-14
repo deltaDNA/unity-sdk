@@ -120,6 +120,7 @@ namespace DeltaDNAAds.Editor {
                 "/c cd \"{0}\" && >local.properties echo sdk.dir={1}&& {2} clean download -Psmartads",
                 Application.dataPath + "/../" + GRADLEW_PATH,
                 DeltaDNA.Editor.MenuItems.AndroidSdkLocation
+                    .Replace('\\', '/') // workaround for path copied in from Windows Explorer
                     .Replace(":/", "\\:\\\\")
                     .Replace("/", "\\\\"),
                 GRADLEW + ".bat");
