@@ -91,7 +91,7 @@ namespace DeltaDNA
                             .GetStatic<AndroidJavaObject>("currentActivity"),
                         secondary);
                 } catch (AndroidJavaException e) {
-                    Logger.LogWarning("Failed to register for push notifications. Notifications may not be configured correctly.");
+                    Logger.LogWarning("Failed to register for push notifications. Notifications may not be configured correctly. " + e.Message);
                 }
                 #endif
             }
