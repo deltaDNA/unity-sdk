@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+    }
+}
+
+allprojects {
+   repositories {
+      flatDir {
+        dirs 'libs'
+      }
+   }
+}
+
+apply plugin: 'com.android.application'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+**DEPS**}
+
+android {
+    // Fix complaint that 3rd party libraries (ours!) have the same package name
+    enforceUniquePackageName false
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    defaultConfig {
+        targetSdkVersion **TARGETSDKVERSION**
+        applicationId '**APPLICATIONID**'
+        multiDexEnabled true
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+**SIGN**
+    buildTypes {
+        debug {
+            jniDebuggable true
+        }
+        release {
+            // Set minifyEnabled to true if you want to run ProGuard on your project
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'
+            **SIGNCONFIG**
+        }
+    }
+
+}

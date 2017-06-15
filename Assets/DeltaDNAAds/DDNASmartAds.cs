@@ -73,7 +73,9 @@ namespace DeltaDNAAds
                 }
                 else if (Application.platform == RuntimePlatform.Android) {
                     #if UNITY_ANDROID
-                    manager = new DeltaDNAAds.Android.AdService(this);
+                    manager = new DeltaDNAAds.Android.AdService(
+                        this,
+                        Settings.SDK_VERSION.Remove(0, Settings.SDK_VERSION.IndexOf(" v") + 2));
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
                     #endif
                 }

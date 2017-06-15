@@ -42,10 +42,20 @@ public class Example : MonoBehaviour {
         DDNA.Instance.ClientVersion = "1.0.0";
 
         // Enable push notifications
-        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { Debug.Log ("Got an iOS push token: "+n);};
-        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { Debug.Log ("Got an iOS push notification! "+n);};
+        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { 
+            Debug.Log("Got an iOS push token: " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { 
+            Debug.Log("Got an iOS push notification! " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => {
+            Debug.Log("Got an iOS push notification: " + n);
+        };
+        DDNA.Instance.IosNotifications.OnDidLaunchWithPushNotification += (string n) => {
+            Debug.Log("Launched with an iOS push notification: " + n);
+        };
         DDNA.Instance.IosNotifications.RegisterForPushNotifications();
-        
+
         DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an Android registration token: " + n);
         };

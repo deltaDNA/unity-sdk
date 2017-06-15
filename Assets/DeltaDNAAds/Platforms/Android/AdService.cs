@@ -29,13 +29,13 @@ namespace DeltaDNAAds.Android
         private readonly AndroidJavaObject activity;
         private AndroidJavaObject adService;
 
-        internal AdService(DDNASmartAds ads) {
+        internal AdService(DDNASmartAds ads, string sdkVersion) {
             engageListeners = new Dictionary<string, AndroidJavaObject>();
 
             try {
                 activity = new AndroidJavaClass(Utils.UnityActivityClassName).GetStatic<AndroidJavaObject>("currentActivity");
                 adService = new AndroidJavaObject(Utils.AdServiceWrapperClassName).CallStatic<AndroidJavaObject>(
-                    "create", activity, new AdServiceListener(ads, engageListeners));
+                    "create", activity, new AdServiceListener(ads, engageListeners), sdkVersion);
             } catch (AndroidJavaException exception) {
                 DeltaDNA.Logger.LogDebug("Exception creating Android AdService: "+exception.Message);
                 throw new System.Exception("Native Android SmartAds AAR not found.");
