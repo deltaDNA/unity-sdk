@@ -2,6 +2,7 @@
 
 ## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
 ### Added
+- Tapjoy ad network support.
 - Send imageMessageAction event when interacting with image messages.
 
 ### Changed
