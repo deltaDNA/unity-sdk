@@ -55,6 +55,11 @@
     "ios": "MoPub"
   },
   {
+      "name": "Tapjoy",
+      "android": "tapjoy",
+      "ios": null
+  },
+  {
       "name": "ThirdPresence",
       "android": "thirdpresence",
       "ios": "ThirdPresence"
