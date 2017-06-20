@@ -620,7 +620,10 @@ namespace DeltaDNA
 
         public override void OnDestroy()
         {
-            if (this.eventStore != null) this.eventStore.Dispose();
+            if (this.eventStore != null) {
+                this.eventStore.FlushBuffers();
+                this.eventStore.Dispose();
+            }
             PlayerPrefs.Save();
             base.OnDestroy();
         }
@@ -629,7 +632,8 @@ namespace DeltaDNA
         {
             if (pauseStatus) {
                 this.lastActive = DateTime.UtcNow;
-
+                this.eventStore.FlushBuffers();
+                PlayerPrefs.Save();
             } else {
                 var backgroundSeconds = (DateTime.UtcNow - this.lastActive).TotalSeconds;
                 if (backgroundSeconds > this.Settings.SessionTimeoutSeconds) {
