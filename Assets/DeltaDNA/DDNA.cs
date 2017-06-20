@@ -728,7 +728,7 @@ namespace DeltaDNA
             int status = 0;
 
             Action<int, string, string> completionHandler = (statusCode, data, error) => {
-                if (statusCode < 400) {
+                if (statusCode > 0 && statusCode < 400) {
                     succeeded = true;
                 }
                 else {

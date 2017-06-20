@@ -8,6 +8,7 @@
 ### Changed
 - Image Message uses new UI.
 - Using new Unity UI for examples.
+- Replaced WWW with UnityWebRequest for 5.6 and above.
 
 ## [4.4.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.2) (2017-06-14)
 ### Added

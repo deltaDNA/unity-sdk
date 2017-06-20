@@ -20,6 +20,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_5_6_OR_NEWER
+using UnityEngine.Networking;
+#endif
 
 namespace DeltaDNA {
     
@@ -218,7 +221,9 @@ namespace DeltaDNA {
 
             public void LoadResource(Action<string> callback)
             {
+                #if !UNITY_5_6_OR_NEWER
                 this.texture = new Texture2D(this.Width, this.Height);
+                #endif
                 StartCoroutine(LoadResourceCoroutine(this.URL, callback));
             }
 
@@ -285,6 +290,21 @@ namespace DeltaDNA {
 
             private IEnumerator LoadResourceCoroutine(string url, Action<string> callback)
             {
+                #if UNITY_5_6_OR_NEWER
+                using (var www = UnityWebRequest.GetTexture(url))
+                {
+                    yield return www.Send();
+
+                    if (www.isError) {
+                        Logger.LogWarning("Failed to load resource "+url+" "+www.error);
+                    } else {
+                        this.texture = DownloadHandlerTexture.GetContent(www);
+                    }
+
+                    callback(www.error);
+                }
+
+                #else
                 WWW www = new WWW(url);
 
                 yield return www;
@@ -294,8 +314,9 @@ namespace DeltaDNA {
                 } else {
                     Logger.LogWarning("Failed to load resource "+url+" "+www.error);
                 }
-
+                
                 callback(www.error);
+                #endif
             }
 
         }

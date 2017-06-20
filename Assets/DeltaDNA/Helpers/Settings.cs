@@ -46,7 +46,11 @@ namespace DeltaDNA
 
             HttpRequestRetryDelaySeconds = 2;
             HttpRequestMaxRetries = 0;              // Rely on BackgroundEventUploadRepeatRateSeconds to retry
-            HttpRequestCollectTimeoutSeconds = 30;  // 30 seconds is max Unity allows
+            #if UNITY_5_6_OR_NEWER
+            HttpRequestCollectTimeoutSeconds = 55;
+            #else
+            HttpRequestCollectTimeoutSeconds = 30;  // 30 seconds is max old Unity allows
+            #endif
             HttpRequestEngageTimeoutSeconds = 5;
 
             BackgroundEventUpload = true;   // send events automatically by default

@@ -15,6 +15,9 @@
 //
 
 using UnityEngine;
+#if UNITY_5_6_OR_NEWER
+using UnityEngine.Networking;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,6 +72,31 @@ namespace DeltaDNA {
 
         internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler) {
 
+            #if UNITY_5_6_OR_NEWER
+
+            UnityWebRequest www = new UnityWebRequest();
+            www.url = request.URL;
+            www.timeout = request.TimeoutSeconds;
+            www.downloadHandler = new DownloadHandlerBuffer();
+            if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST) {
+                www.method = UnityWebRequest.kHttpVerbPOST;
+                foreach (var entry in request.getHeaders()) {
+                    www.SetRequestHeader(entry.Key, entry.Value);
+                }
+                byte[] bytes = Encoding.UTF8.GetBytes(request.HTTPBody);
+                www.uploadHandler = new UploadHandlerRaw(bytes);
+            } else {
+                www.method = UnityWebRequest.kHttpVerbGET;
+            }
+
+            yield return www.Send();
+
+            if (completionHandler != null) {
+                completionHandler((int)www.responseCode, www.downloadHandler.text, www.error);
+            }
+
+            #else
+
             WWW www;
 
             if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST) {
@@ -118,6 +146,7 @@ namespace DeltaDNA {
             if (completionHandler != null) {
                 completionHandler(statusCode, data, error);
             }
+            #endif // UNITY_5_6_OR_NEWER
 
         }
 
