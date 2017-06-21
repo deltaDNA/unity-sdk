@@ -148,7 +148,7 @@ namespace DeltaDNA
 
         public void DidFailToRegisterForPushNotifications(string error)
         {
-            Logger.LogDebug("Did fail to register for Android push notifications: "+error);
+            Logger.LogWarning("Did fail to register for Android push notifications: "+error);
 
             if (OnDidFailToRegisterForPushNotifications != null) {
                 OnDidFailToRegisterForPushNotifications(error);

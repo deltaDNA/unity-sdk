@@ -87,6 +87,7 @@ namespace DeltaDNA {
             assets.Add("Assets/DeltaDNA/Editor/WindowHelper.cs");
             assets.Add("Assets/DeltaDNA/Editor/Android");
             assets.Add("Assets/DeltaDNA/Editor/iOS");
+            assets.Add("Assets/DeltaDNA/Plugins/iOS");
 
             assets.AddRange(Directory.GetFiles("Assets/DeltaDNA", "*.cs"));
 

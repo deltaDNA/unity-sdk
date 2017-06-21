@@ -54,6 +54,14 @@ namespace DeltaDNA
             this.Settings = new Settings(); // default configuration
         }
 
+        void OnEnable() {
+            Application.logMessageReceived += Logger.HandleLog;
+        }
+
+        void OnDisable() {
+            Application.logMessageReceived -= Logger.HandleLog;
+        }
+
         void Awake()
         {
             if (this.eventStore == null) {
@@ -159,7 +167,7 @@ namespace DeltaDNA
         public void NewSession()
         {
             string sessionID = GenerateSessionID();
-            Logger.LogDebug("Starting new session "+sessionID);
+            Logger.LogInfo("Starting new session "+sessionID);
             this.SessionID = sessionID;
             if (this.OnNewSession != null) {
                 this.OnNewSession();
@@ -393,7 +401,7 @@ namespace DeltaDNA
         {
             if (!this.started)
             {
-                Logger.LogDebug("You must first start the SDK via the StartSDK method.");
+                Logger.LogError("You must first start the SDK via the StartSDK method.");
                 return;
             }
 

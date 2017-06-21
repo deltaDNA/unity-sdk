@@ -116,7 +116,7 @@ public class IosNotifications : MonoBehaviour
 
     public void DidRegisterForPushNotifications(string deviceToken)
     {
-        Logger.LogDebug("Did register for iOS push notifications: "+deviceToken);
+        Logger.LogInfo("Did register for iOS push notifications: "+deviceToken);
 
         DDNA.Instance.PushNotificationToken = deviceToken;
 
@@ -127,7 +127,7 @@ public class IosNotifications : MonoBehaviour
 
     public void DidFailToRegisterForPushNotifications(string error)
     {
-        Logger.LogDebug("Did fail to register for iOS push notifications: "+error);
+        Logger.LogWarning("Did fail to register for iOS push notifications: "+error);
 
         if (OnDidFailToRegisterForPushNotifications != null) {
             OnDidFailToRegisterForPushNotifications(error);

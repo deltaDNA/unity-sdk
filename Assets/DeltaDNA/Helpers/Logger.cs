@@ -19,6 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+#if UNITY_IOS
+using System.Runtime.InteropServices;
+#endif
 
 namespace DeltaDNA
 {
@@ -32,7 +35,9 @@ namespace DeltaDNA
             ERROR = 3
         };
 
-        static Level sLogLevel = Level.WARNING;
+        public const string PREFIX = "[DDSDK] ";
+
+        static Level sLogLevel = Level.INFO;
 
         public static void SetLogLevel(Level logLevel)
         {
@@ -73,20 +78,37 @@ namespace DeltaDNA
 
         private static void Log(string msg, Level level)
         {
-            string prefix = "[DDSDK] ";
-
             switch (level)
             {
                 case Level.ERROR:
-                    Debug.LogError(prefix + msg);
+                    Debug.LogError(PREFIX + "[ERROR] " + msg);
                     break;
                 case Level.WARNING:
-                    Debug.LogWarning(prefix + msg);
+                    Debug.LogWarning(PREFIX + "[WARNING] " + msg);
+                    break;
+                case Level.INFO:
+                    Debug.Log(PREFIX + "[INFO] " + msg);
                     break;
                 default:
-                    Debug.Log(prefix + msg);
+                    Debug.Log(PREFIX + "[DEBUG] " + msg);
                     break;
             }
+        }
+
+        #if UNITY_IOS
+        [DllImport("__Internal")]
+        private static extern void _logToConsole(string message);
+        #endif
+
+        internal static void HandleLog(string logString, string stackTrace, LogType type) {
+            #if UNITY_IOS
+            if (Application.platform == RuntimePlatform.IPhonePlayer) {
+                // Pump Unity logging to iOS NSLog
+                if (logString.StartsWith(PREFIX)) {
+                    _logToConsole(logString);
+                }
+            }
+            #endif
         }
 
     }
