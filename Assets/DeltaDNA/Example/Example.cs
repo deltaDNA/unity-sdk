@@ -42,14 +42,11 @@ public class Example : MonoBehaviour {
         DDNA.Instance.ClientVersion = "1.0.0";
 
         // Enable push notifications
-        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => { 
+        DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an iOS push token: " + n);
         };
-        DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => { 
-            Debug.Log("Got an iOS push notification! " + n);
-        };
         DDNA.Instance.IosNotifications.OnDidReceivePushNotification += (string n) => {
-            Debug.Log("Got an iOS push notification: " + n);
+            Debug.Log("Got an iOS push notification! " + n);
         };
         DDNA.Instance.IosNotifications.OnDidLaunchWithPushNotification += (string n) => {
             Debug.Log("Launched with an iOS push notification: " + n);
@@ -78,15 +75,15 @@ public class Example : MonoBehaviour {
         // Make our cube rotate
         cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
     }
-    
+
     public void OnSimpleEventBtn_Clicked() {
         var gameEvent = new GameEvent("options")
                 .AddParam("option", "sword")
                 .AddParam("action", "sell");
-        
+
         DDNA.Instance.RecordEvent(gameEvent);
     }
-    
+
     public void OnAchievementEventBtn_Clicked() {
         var gameEvent = new GameEvent("achievement")
             .AddParam("achievementName", "Sunday Showdown Tournament Win")
@@ -98,10 +95,10 @@ public class Example : MonoBehaviour {
                     .AddItem("Sunday Showdown Medal", "Victory Badge", 1)
                 )
             );
-        
+
         DDNA.Instance.RecordEvent(gameEvent);
     }
-    
+
     public void OnTransactionEventBtn_Clicked() {
         var transaction = new Transaction(
                 "Weapon type 11 manual repair",
@@ -114,24 +111,24 @@ public class Example : MonoBehaviour {
             .SetTransactorId("2.212.91.84:15116")
             .SetProductId("4019")
             .AddParam("paymentCountry", "GB");
-        
+
         DDNA.Instance.RecordEvent(transaction);
     }
-    
+
     public void OnEngagementBtn_Clicked() {
         var engagement = new Engagement("gameLoaded")
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
-        
+
         DDNA.Instance.RequestEngagement(engagement, (Dictionary<string, object> response) => {
             popUpContent.text = MiniJSON.Json.Serialize(response);
         });
-        
+
         popUpTitle.text = "Engage returned";
         popUpObj.SetActive(true);
     }
-    
+
     public void OnImageMessageBtn_Clicked() {
         var engagement = new Engagement("testImageMessage")
             .AddParam("userLevel", 4)
@@ -145,7 +142,7 @@ public class Example : MonoBehaviour {
             if (imageMessage != null) {
                 Debug.Log("Engage returned a valid image message.");
 
-                // This example will show the image as soon as the background 
+                // This example will show the image as soon as the background
                 // and button images have been downloaded.
                 imageMessage.OnDidReceiveResources += () => {
                     Debug.Log("Image Message loaded resources.");
@@ -171,28 +168,28 @@ public class Example : MonoBehaviour {
             Debug.Log("Engage reported an error: " + exception.Message);
         });
     }
-    
+
     public void OnNotificationOpenedBtn_Clicked() {
         var payload = new Dictionary<string, object>();
         payload.Add("_ddId", 1);
         payload.Add("_ddName", "Example Notification");
         payload.Add("_ddLaunch", true);
-        
+
         DDNA.Instance.RecordPushNotification(payload);
     }
-    
+
     public void OnUploadEventsBtn_Clicked() {
         DDNA.Instance.Upload();
     }
-    
+
     public void OnStartSDKBtn_Clicked() {
         DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
     }
-    
+
     public void OnStopSDKBtn_Clicked() {
         DDNA.Instance.StopSDK();
     }
-    
+
     public void OnNewSessionBtn_Clicked() {
         DDNA.Instance.NewSession();
     }
