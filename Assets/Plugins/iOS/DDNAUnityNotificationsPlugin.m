@@ -119,27 +119,6 @@ static NSDictionary *_remoteNotification = nil;
         [errorMsg UTF8String]);
 }
 
-- (void)registerForPushNotifications
-{
-    NSLog(@"DDNA Registering for push notifications");
-
-    UIUserNotificationType types = UIUserNotificationTypeBadge |
-                 UIUserNotificationTypeSound | UIUserNotificationTypeAlert;
-
-    UIUserNotificationSettings *mySettings =
-                [UIUserNotificationSettings settingsForTypes:types categories:nil];
-
-    [[UIApplication sharedApplication] registerUserNotificationSettings:mySettings];
-
-}
-
-- (void)unregisterForPushNotifications
-{
-    NSLog(@"DDNA Unregistering for push notifications");
-
-    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
-}
-
 - (BOOL)applicationDidLaunchWithRemoteNotification
 {
     return _didLaunchWithNotification;
