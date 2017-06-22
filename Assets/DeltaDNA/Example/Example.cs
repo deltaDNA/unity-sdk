@@ -32,7 +32,9 @@ public class Example : MonoBehaviour {
     [SerializeField]
     private GameObject popUpObj;
     [SerializeField]
-    private Text popUpContent, popUpTitle;
+    private Text popUpContent;
+    [SerializeField]
+    private Text popUpTitle;
 
     // Use this for initialization
     void Start () {
