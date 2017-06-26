@@ -343,8 +343,17 @@ namespace DeltaDNA {
                     ImageMessage.EventArgs eventArgs = new ImageMessage.EventArgs(id, (string)typeObj, (string)valueObj);
 
                     GameEvent actionEvent = new GameEvent("imageMessageAction");
-                    actionEvent.AddParam("responseDecisionpointName", imageMessage.engagement.DecisionPoint);
-                    actionEvent.AddParam("responseTransactionID", imageMessage.engagement.JSON["transactionID"]);
+                    if (imageMessage.engagement.JSON.ContainsKey("eventParams")) {
+                        var eventParams = imageMessage.engagement.JSON["eventParams"] as Dictionary<string, object>;
+                        actionEvent.AddParam("responseDecisionpointName", eventParams["responseDecisionpointName"]);
+                        actionEvent.AddParam("responseEngagementID", eventParams["responseEngagementID"]);
+                        actionEvent.AddParam("responseEngagementName", eventParams["responseEngagementName"]);
+                        actionEvent.AddParam("responseEngagementType", eventParams["responseEngagementType"]);
+                        actionEvent.AddParam("responseMessageSequence", eventParams["responseMessageSequence"]);
+                        actionEvent.AddParam("responseVariantName", eventParams["responseVariantName"]);
+                        actionEvent.AddParam("responseTransactionID", eventParams["responseTransactionID"]);
+                    }
+
                     actionEvent.AddParam("imActionName", id);
                     actionEvent.AddParam("imActionType", (string)typeObj);
                     if (!String.IsNullOrEmpty((string)valueObj) && (string)typeObj != "dismiss") {
