@@ -240,7 +240,7 @@ We record if your game was started by the player clicking on a push notification
 
 ### SmartAds on iOS
 
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.
+We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  ~~You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *build and run* works fine.
 
 __The ad networks require a minimum target version of 7, and ideally 8 to get the latest sdks.  If the default 6 is used cocoapods will fail and no xcworkspace file will be generated.__
 

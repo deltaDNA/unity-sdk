@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (2017-06-27)
+## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (2017-06-27)
 ### Added
 - Send imageMessageAction event when interacting with image messages.
 
@@ -10,7 +10,8 @@
 ### Changed
 - Image Message uses new UI.
 - Using new Unity UI for examples.
-- Replaced WWW with UnityWebRequest for 5.6 and above.
+- Replaced WWW with UnityWebRequest for 5.6.2 and above.
+- Updated Unity Jar Resolver to v1.2.29.
 
 ### Removed
 - Register and unregister notification methods from iOS native bridge.
