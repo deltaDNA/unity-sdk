@@ -12,6 +12,9 @@
 - Using new Unity UI for examples.
 - Replaced WWW with UnityWebRequest for 5.6 and above.
 
+### Removed
+- Register and unregister notification methods from iOS native bridge.
+
 ## [4.4.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.4.2) (2017-06-14)
 ### Added
 - Detection and removal of crashed ad networks on Android.
