@@ -72,7 +72,8 @@ namespace DeltaDNA {
 
         internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler) {
 
-            #if UNITY_5_6_OR_NEWER
+            // timeout feature added in 5.6.2f1
+            #if UNITY_5_6_OR_NEWER && !UNITY_5_6_0 && !UNITY_5_6_1
 
             UnityWebRequest www = new UnityWebRequest();
             www.url = request.URL;
