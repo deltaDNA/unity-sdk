@@ -1,6 +1,6 @@
 # Change Log
 
-## [UNRELEASED](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (YYYY-MM-DD)
+## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/UNRELEASED) (2017-06-27)
 ### Added
 - Send imageMessageAction event when interacting with image messages.
 
