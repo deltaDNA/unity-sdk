@@ -5,6 +5,9 @@
 - Tapjoy ad network support.
 - Send imageMessageAction event when interacting with image messages.
 
+### Fixed
+- Fixed event sending on notification interactions in Android.
+
 ### Changed
 - Image Message uses new UI.
 - Using new Unity UI for examples.
