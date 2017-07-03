@@ -75,14 +75,15 @@ namespace DeltaDNAAds.Android
             ads.RecordEvent("{\"eventName\":\""+eventName+"\",\"parameters\":"+eventParamsJson+"}");
         }
 
-        void onRequestEngagement(string decisionPoint, string flavour, AndroidJavaObject listener) {
+        void onRequestEngagement(string decisionPoint, string flavour, string version, AndroidJavaObject listener) {
             string id = System.Guid.NewGuid().ToString();
             engageListeners.Add(id, listener);
 
             ads.RequestEngagement(string.Format(
-                "{{\"decisionPoint\":\"{0}\",\"flavour\":\"{1}\",\"parameters\":\"\",\"id\":\"{2}\"}}",
+                "{{\"decisionPoint\":\"{0}\",\"flavour\":\"{1}\",\"parameters\":{{\"adSdkVersion\":\"{2}\"}},\"id\":\"{3}\"}}",
                 decisionPoint,
                 flavour,
+                version,
                 id));
         }
 
