@@ -282,16 +282,13 @@ namespace DeltaDNA
                 case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
                 case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
 
-                default: {
-                    return name == null ? null : name.Substring(0, Math.Min(name.Length, 72));
-                }
+                default:
+                    return Trim(name, 72);
             }
         }
         private static string GetDeviceModel()
         {
-            return SystemInfo.deviceModel == null
-                ? null
-                : SystemInfo.deviceModel.Substring(0, Math.Min(SystemInfo.deviceModel.Length, 72));
+            return Trim(SystemInfo.deviceModel, 72);
         }
 
         /// <summary>
@@ -356,7 +353,13 @@ namespace DeltaDNA
 
         private static string GetManufacturer()
         {
+            #if UNITY_ANDROID
+            return Trim(
+                new AndroidJavaObject("android.os.Build").GetStatic<string>("MANUFACTURER"),
+                72);
+            #else
             return null;
+            #endif
         }
 
         private static string GetCurrentTimezoneOffset() {
@@ -454,6 +457,12 @@ namespace DeltaDNA
             {
                 return String.Format("{0}_ZZ", LanguageCode);
             }
+        }
+
+        private static string Trim(string value, int length) {
+            if (value == null) return null;
+
+            return value.Substring(0, Math.Min(value.Length, length));
         }
 
         #endregion
