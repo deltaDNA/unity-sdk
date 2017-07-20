@@ -114,7 +114,7 @@ namespace DeltaDNA {
 
         static void ExportSmartAdsPackage()
         {
-            List<string> assets = new List<string>(AssetDatabase.GetSubFolders("Assets/DeltaDNAAds"));
+            List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNAAds"));
 
             assets.RemoveAll(it => it.EndsWith("Plugins") || it.EndsWith("Editor"));
             assets.AddRange(Directory.GetDirectories("Assets/DeltaDNAAds/Editor/Android"));
