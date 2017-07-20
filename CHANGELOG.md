@@ -2,6 +2,7 @@
 
 ## [4.5.1]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.1) (YYYY-MM-DD)
 ### Fixed
+- Support for Unity 2017.1
 - Missing device manufacturer on Android.
 
 ## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (2017-06-27)
