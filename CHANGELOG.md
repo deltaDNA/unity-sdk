@@ -5,6 +5,9 @@
 - Support for Unity 2017.1
 - Missing device manufacturer on Android.
 
+### Changed
+- Updated Unity Jar Resolver to v1.2.31.
+
 ## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (2017-06-27)
 ### Added
 - Send imageMessageAction event when interacting with image messages.
