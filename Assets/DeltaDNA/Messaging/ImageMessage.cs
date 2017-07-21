@@ -25,7 +25,7 @@ using UnityEngine.Networking;
 #endif
 
 namespace DeltaDNA {
-    
+
     using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     public class ImageMessage {
@@ -180,7 +180,7 @@ namespace DeltaDNA {
                     Logger.LogWarning("Failed to show image message, invalid format: "+exception.Message);
                 } catch (Exception exception) {
                     Logger.LogWarning("Failed to show image message: "+exception.Message);
-                } 
+                }
             }
         }
 
@@ -221,7 +221,7 @@ namespace DeltaDNA {
 
             public void LoadResource(Action<string> callback)
             {
-                #if !UNITY_5_6_OR_NEWER
+                #if !UNITY_2017_1_OR_NEWER
                 this.texture = new Texture2D(this.Width, this.Height);
                 #endif
                 StartCoroutine(LoadResourceCoroutine(this.URL, callback));
@@ -290,12 +290,12 @@ namespace DeltaDNA {
 
             private IEnumerator LoadResourceCoroutine(string url, Action<string> callback)
             {
-                #if UNITY_5_6_OR_NEWER
-                using (var www = UnityWebRequest.GetTexture(url))
+                #if UNITY_2017_1_OR_NEWER
+                using (var www = UnityWebRequestTexture.GetTexture(url))
                 {
                     yield return www.Send();
 
-                    if (www.isError) {
+                    if (www.isNetworkError || www.isHttpError) {
                         Logger.LogWarning("Failed to load resource "+url+" "+www.error);
                     } else {
                         this.texture = DownloadHandlerTexture.GetContent(www);
@@ -314,7 +314,7 @@ namespace DeltaDNA {
                 } else {
                     Logger.LogWarning("Failed to load resource "+url+" "+www.error);
                 }
-                
+
                 callback(www.error);
                 #endif
             }
@@ -323,7 +323,7 @@ namespace DeltaDNA {
 
         private class Layer : MonoBehaviour {
 
-            protected GameObject parent; 
+            protected GameObject parent;
             protected ImageMessage imageMessage;
             protected List<Action> actions = new List<Action>();
             protected int depth = 0;
