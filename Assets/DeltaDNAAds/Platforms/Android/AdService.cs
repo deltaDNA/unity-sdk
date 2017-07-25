@@ -15,6 +15,9 @@
 //
 
 using UnityEngine;
+#if UNITY_2017_1_OR_NEWER
+using System;
+#endif
 using System.Collections.Generic;
 using DeltaDNA;
 
@@ -105,7 +108,11 @@ namespace DeltaDNAAds.Android
 
         public void EngageResponse(string id, string response, int statusCode, string error) {
             // android sdk expects request listener callbacks on the main thread
+            #if UNITY_2017_1_OR_NEWER
+            activity.Call("runOnUiThread", new Runnable(() => {
+            #else
             activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+            #endif
                 AndroidJavaObject listener;
                 if (engageListeners.TryGetValue(id, out listener)) {
                     JSONObject json = null;
@@ -143,6 +150,21 @@ namespace DeltaDNAAds.Android
         {
             adService.Call("onDestroy");
         }
+
+        #if UNITY_2017_1_OR_NEWER
+        private class Runnable : AndroidJavaProxy {
+
+            private readonly Action action;
+
+            internal Runnable(Action action) : base("java.lang.Runnable") {
+                this.action = action;
+            }
+
+            public void run() {
+                action();
+            }
+        }
+        #endif
     }
     #endif
 }
