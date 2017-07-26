@@ -372,7 +372,10 @@ namespace DeltaDNA
                     currentOffset = TimeZoneInfo.Local.GetUtcOffset(currentDate);
                     retrieved = true;
                 }
-            } catch (TimeZoneNotFoundException) {}
+            } catch (TimeZoneNotFoundException) {
+            } catch (NullReferenceException) {
+                // happens in non-GMT timezones in the macOS Player
+            }
 
             if (!retrieved) {
                 try {
