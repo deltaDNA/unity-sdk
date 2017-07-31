@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace DeltaDNAAds.Android
 {
     #if UNITY_ANDROID
-    internal class AdServiceListener : UnityEngine.AndroidJavaProxy {
+    internal class AdServiceListener : AndroidJavaProxy {
 
         private DDNASmartAds ads;
         private readonly IDictionary<string, AndroidJavaObject> engageListeners;
@@ -87,9 +87,11 @@ namespace DeltaDNAAds.Android
                 id));
         }
 
+        #if !UNITY_2017_1_OR_NEWER
         string toString() {
-            return "AdListener";
+            return "UnityAdServiceListener";
         }
+        #endif
     }
     #endif
 }
