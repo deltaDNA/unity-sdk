@@ -5,6 +5,7 @@
 - Support for Unity 2017.1
 - Missing device manufacturer on Android.
 - Crash on Mac when running in Editor on non-GMT timezones.
+- Notifications not registered on iOS before the SDK is initialised.
 
 ### Changed
 - Updated Unity Jar Resolver to v1.2.31.
