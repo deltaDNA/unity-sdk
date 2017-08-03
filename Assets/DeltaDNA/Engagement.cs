@@ -50,7 +50,7 @@ namespace DeltaDNA {
         /// Gets the flavour.
         /// </summary>
         /// <value>The flavour of this Engagement.</value>
-        public string Flavour { get; private set; }
+        public string Flavour { get; internal set; }
 
         /// <summary>
         /// Add a parameter to the engage request.

@@ -78,10 +78,15 @@ namespace DeltaDNAAds
                         Settings.SDK_VERSION.Remove(0, Settings.SDK_VERSION.IndexOf(" v") + 2));
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
                     #endif
-                }
-                else
+                } 
+                else 
                 {
-                    Logger.LogWarning("SmartAds is not currently supported on " + Application.platform);
+                    #if UNITY_EDITOR
+                    manager = new UnityPlayer.AdService();
+                    manager.RegisterForAds(SMARTADS_DECISION_POINT);
+                    #else
+                    Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
+                    #endif
                 }
             }
             catch (Exception exception)
@@ -138,9 +143,9 @@ namespace DeltaDNAAds
             ShowRewardedAdImpl(decisionPoint);
         }
 
-        #endregion
+#endregion
 
-        #region Native Bridge
+#region Native Bridge
 
         // Methods may be called from threads other than UnityMain, action queue ensures methods
         // execute on the UnityMain thread.  Actions created explicity to avoid variables not being
@@ -337,7 +342,7 @@ namespace DeltaDNAAds
             actions.Enqueue(action);
         }
 
-        #endregion
+#endregion
 
         void Update()
         {
