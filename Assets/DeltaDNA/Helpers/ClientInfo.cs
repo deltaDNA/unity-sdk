@@ -353,7 +353,7 @@ namespace DeltaDNA
 
         private static string GetManufacturer()
         {
-            #if UNITY_ANDROID
+            #if UNITY_ANDROID && !UNITY_EDITOR
             return Trim(
                 new AndroidJavaObject("android.os.Build").GetStatic<string>("MANUFACTURER"),
                 72);
