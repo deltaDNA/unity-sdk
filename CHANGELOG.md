@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.5.1]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.1) (YYYY-MM-DD)
+## [4.5.1]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.1) (2017-08-10)
 ### Fixed
 - Support for Unity 2017.1
 - Missing device manufacturer on Android.
