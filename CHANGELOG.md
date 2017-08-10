@@ -6,6 +6,7 @@
 - Missing device manufacturer on Android.
 - Crash on Mac when running in Editor on non-GMT timezones.
 - Crash when running examples in the Editor.
+- Notifications not registered on iOS before the SDK is initialised.
 
 ### Changed
 - Updated Unity Jar Resolver to v1.2.31.
