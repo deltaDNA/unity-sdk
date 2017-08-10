@@ -111,27 +111,27 @@ namespace DeltaDNA
 
         #region Native Bridge
 
-        public void DidLaunchWithPushNotification(string notification)
-        {
-            Logger.LogDebug("Did launch with Android push notification");
-
-            var payload = MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
-            DDNA.Instance.RecordPushNotification(payload);
-
-            if (OnDidLaunchWithPushNotification != null) {
-                OnDidLaunchWithPushNotification(notification);
-            }
-        }
-
         public void DidReceivePushNotification(string notification)
         {
-            Logger.LogDebug("Did receive Android push notification");
-
             var payload = MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
-            DDNA.Instance.RecordPushNotification(payload);
+            payload["_ddCommunicationSender"] = "GOOGLE_NOTIFICATION";
 
-            if (OnDidReceivePushNotification != null) {
-                OnDidReceivePushNotification(notification);
+            if (payload["_ddLaunch"] as bool? ?? false) {
+                Logger.LogDebug("Did launch with Android push notification");
+
+                DDNA.Instance.RecordPushNotification(payload);
+
+                if (OnDidLaunchWithPushNotification != null) {
+                    OnDidLaunchWithPushNotification(notification);
+                }
+            } else {
+                Logger.LogDebug("Did receive Android push notification");
+
+                DDNA.Instance.RecordPushNotification(payload);
+
+                if (OnDidReceivePushNotification != null) {
+                    OnDidReceivePushNotification(notification);
+                }
             }
         }
 

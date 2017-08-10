@@ -20,6 +20,7 @@
 
 + (instancetype)sharedPlugin;
 
+- (void)unityLoaded;
 - (BOOL)applicationDidLaunchWithRemoteNotification;
 - (NSDictionary *)getRemoteNotification;
 

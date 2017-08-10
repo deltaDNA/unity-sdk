@@ -17,7 +17,9 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+#if UNITY_IOS && !UNITY_EDITOR
 using System.Runtime.InteropServices;
+#endif
 
 namespace DeltaDNA
 {
@@ -30,6 +32,12 @@ namespace DeltaDNA
 /// </summary>
 public class IosNotifications : MonoBehaviour
 {
+
+    #if UNITY_IOS && !UNITY_EDITOR
+    [DllImport ("__Internal")]
+    private static extern void _markUnityLoaded();
+    #endif
+
     // Called with JSON string of the notification payload.
     public event Action<string> OnDidLaunchWithPushNotification;
 
@@ -46,6 +54,10 @@ public class IosNotifications : MonoBehaviour
     {
         gameObject.name = this.GetType().ToString();
         DontDestroyOnLoad(this);
+
+        #if UNITY_IOS && !UNITY_EDITOR
+        _markUnityLoaded();
+        #endif
     }
 
     /// <summary>
@@ -88,29 +100,27 @@ public class IosNotifications : MonoBehaviour
 
     #region Native Bridge
 
-    public void DidLaunchWithPushNotification(string notification)
-    {
-        Logger.LogDebug("Did launch with iOS push notification");
-
-        var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
-        payload["_ddCommunicationSender"] = "APPLE_NOTIFICATION";
-        DDNA.Instance.RecordPushNotification(payload);
-
-        if (OnDidLaunchWithPushNotification != null) {
-            OnDidLaunchWithPushNotification(notification);
-        }
-    }
-
     public void DidReceivePushNotification(string notification)
     {
-        Logger.LogDebug("Did receive iOS push notification");
-
         var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
         payload["_ddCommunicationSender"] = "APPLE_NOTIFICATION";
-        DDNA.Instance.RecordPushNotification(payload);
 
-        if (OnDidReceivePushNotification != null) {
-            OnDidReceivePushNotification(notification);
+        if (payload["_ddLaunch"] as bool? ?? false) {
+            Logger.LogDebug("Did launch with iOS push notification");
+
+            DDNA.Instance.RecordPushNotification(payload);
+
+            if (OnDidLaunchWithPushNotification != null) {
+                OnDidLaunchWithPushNotification(notification);
+            }
+        } else {
+            Logger.LogDebug("Did receive iOS push notification");
+
+            DDNA.Instance.RecordPushNotification(payload);
+
+            if (OnDidReceivePushNotification != null) {
+                OnDidReceivePushNotification(notification);
+            }
         }
     }
 
