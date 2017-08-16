@@ -39,8 +39,7 @@ namespace DeltaDNA.Editor {
         }
 
         internal static bool AreAndroidNotificationsInProject() {
-            return Directory.Exists("Assets/Plugins/Android/deltadna-sdk-unity-notifications")
-                && Directory.Exists("Assets/DeltaDNA/Plugins/Android");
+            return Directory.Exists("Assets/Plugins/Android/deltadna-sdk-unity-notifications");
         }
     }
 }

@@ -23,8 +23,8 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
     private static Google.JarResolver.Resolver.ResolverImpl resolver =
         Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNA");
 
-    internal const string VERSION_SUPPORT = "25.3.1";
-    internal const string VERSION_PLAYSERVICES = "10.2.6";
+    private const string REPO = "http://deltadna.bintray.com/android";
+    private const string VERSION = "4.5.3";
     #endif
 
     static DeltaDNAUnityJarResolverDependencies() {
@@ -46,20 +46,17 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
     /// </summary>
     public static void RegisterAndroidDependencies() {
         if (!DeltaDNA.Editor.MenuItems.AreAndroidNotificationsInProject()) {
-            return;
+            resolver.ClearDependencies();
+        } else {
+            resolver.DependOn(
+                "com.deltadna.android",
+                "deltadna-sdk-notifications",
+                VERSION,
+                repositories: new string[] { REPO });
         }
-
-        resolver.DependOn(
-            "com.android.support",
-            "support-annotations",
-            VERSION_SUPPORT);
-        resolver.DependOn(
-            "com.google.firebase",
-            "firebase-messaging",
-            VERSION_PLAYSERVICES);
     }
     #endif
-
+    
     // Handle delayed loading of the dependency resolvers.
     private static void OnPostprocessAllAssets(
         string[] importedAssets,

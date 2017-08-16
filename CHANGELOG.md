@@ -1,5 +1,13 @@
 # Change Log
 
+## [X.Y.Z](https://github.com/deltaDNA/unity-sdk/releases/tag/X.Y.Z) (YYYY-MM-DD)
+### Changed
+- Updated Unity Jar Resolver to v1.2.52.0.
+- Unity Jar Resolver downloads all Android dependencies from Maven.
+
+### Removed
+- Android libraries from packages.
+
 ## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (2017-08-22)
 ### Added
 - Tapjoy ad network.
