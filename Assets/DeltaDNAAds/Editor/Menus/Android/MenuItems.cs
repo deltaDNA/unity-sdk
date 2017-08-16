@@ -24,7 +24,7 @@ namespace DeltaDNAAds.Editor.Android {
         
         [MenuItem(MENU_PATH + "Download Libraries", priority = 4)]
         public static void DownloadLibraries() {
-            AndroidNetworks.DownloadLibraries(false);
+            AndroidNetworks.DownloadLibraries();
         }
     }
 }

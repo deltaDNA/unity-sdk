@@ -28,7 +28,7 @@ namespace DeltaDNAAds.Editor {
         }
 
         protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
-            if (new AndroidNetworks(true, false).AreDownloadsStale()) {
+            if (new AndroidNetworks(false).AreDownloadsStale()) {
                 problems.Add(Tuple.New(
                     "[SmartAds] Android libraries are stale, please update them from the Editor menu.",
                     Severity.WARNING));

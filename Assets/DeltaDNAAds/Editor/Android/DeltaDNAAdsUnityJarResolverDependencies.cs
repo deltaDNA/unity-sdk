@@ -21,18 +21,16 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
 
     #if UNITY_ANDROID
     private static Google.JarResolver.Resolver.ResolverImpl resolver =
-        Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNA");
-
-    private const string VERSION_SUPPORT =
-        DeltaDNAUnityJarResolverDependencies.VERSION_SUPPORT;
-    private const string VERSION_PLAYSERVICES =
-        DeltaDNAUnityJarResolverDependencies.VERSION_PLAYSERVICES;
+        Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNAAds");
+    
+    private const string REPO = "http://deltadna.bintray.com/android";
     #endif
-
+    internal const string VERSION = "1.5.3";
+    
     static DeltaDNAAdsUnityJarResolverDependencies() {
         RegisterDependencies();
     }
-
+    
     /// <summary>
     /// Registers the dependencies needed by this plugin.
     /// </summary>
@@ -41,91 +39,38 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
         RegisterAndroidDependencies();
         #endif
     }
-
+    
     #if UNITY_ANDROID
     internal static void Resolve() {
         GooglePlayServices.PlayServicesResolver.MenuResolve();
     }
-
+    
     /// <summary>
     /// Registers the android dependencies.
     /// </summary>
     internal static void RegisterAndroidDependencies() {
         // clear the dependencies as we add them depending on which networks are set
         resolver.ClearDependencies();
-
-        resolver.DependOn(
-            "com.android.support",
-            "support-annotations",
-            VERSION_SUPPORT);
-
-        var networks = new DeltaDNAAds.Editor.AndroidNetworks(true, false).GetPersisted();
+        
+        var networks = new DeltaDNAAds.Editor.AndroidNetworks(false).GetPersisted();
+        
         if (networks.Count > 0) {
             resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-basement",
-                VERSION_PLAYSERVICES);
+                "com.deltadna.android",
+                "deltadna-smartads-core",
+                VERSION,
+                repositories: new string[] { REPO });
         }
-        if (networks.Contains("adcolony")) {
+        foreach (var network in networks) {
             resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-base",
-                VERSION_PLAYSERVICES);
-        }
-        if (networks.Contains("admob")) {
-            // instead of com.google.firebase:firebase-ads which is empty and breaks Unity
-            resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-ads",
-                VERSION_PLAYSERVICES);
-        }
-        if (networks.Contains("facebook")) {
-            resolver.DependOn(
-                "com.android.support",
-                "appcompat-v7",
-                VERSION_SUPPORT);
-            resolver.DependOn(
-                "com.android.support",
-                "recyclerview-v7",
-                VERSION_SUPPORT);
-            resolver.DependOn(
-                "com.android.support",
-                "support-v4",
-                VERSION_SUPPORT);
-            resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-ads",
-                VERSION_PLAYSERVICES);
-        }
-        if (networks.Contains("inmobi")) {
-            resolver.DependOn(
-                "com.android.support",
-                "appcompat-v7",
-                VERSION_SUPPORT);
-            resolver.DependOn(
-                "com.android.support",
-                "recyclerview-v7",
-                VERSION_SUPPORT);
-            resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-base",
-                VERSION_PLAYSERVICES);
-        }
-        if (networks.Contains("thirdpresence")) {
-            resolver.DependOn(
-                "com.android.support",
-                "support-v4",
-                VERSION_SUPPORT);
-        }
-        if (networks.Contains("vungle")) {
-            resolver.DependOn(
-                "com.google.android.gms",
-                "play-services-base",
-                VERSION_PLAYSERVICES);
+                "com.deltadna.android",
+                "deltadna-smartads-provider-" + network,
+                VERSION,
+                repositories: new string[] { REPO });
         }
     }
     #endif
-
+    
     // Handle delayed loading of the dependency resolvers.
     private static void OnPostprocessAllAssets(
         string[] importedAssets,

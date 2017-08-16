@@ -35,7 +35,7 @@ namespace DeltaDNAAds.Editor {
         private readonly IList<object> networks;
         
         private readonly Networks[] handlers = new Networks[] {
-            new AndroidNetworks(false, true),
+            new AndroidNetworks(true),
             new IosNetworks()
         };
         private readonly IDictionary<Networks, SortedDictionary<string, bool>> enabled =
