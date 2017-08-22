@@ -44,7 +44,7 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
 
     #if UNITY_ANDROID
     internal static void Resolve() {
-        GooglePlayServices.PlayServicesResolver.Resolve();
+        GooglePlayServices.PlayServicesResolver.MenuResolve();
     }
 
     /// <summary>

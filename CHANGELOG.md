@@ -15,7 +15,7 @@
 - Notifications not registered on iOS before the SDK is initialised.
 
 ### Changed
-- Updated Unity Jar Resolver to v1.2.39.
+- Updated Unity Jar Resolver to v1.2.31.
 
 ## [4.5.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.0) (2017-06-27)
 ### Added
