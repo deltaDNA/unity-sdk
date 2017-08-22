@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (YYYY-MM-DD)
+## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (2017-08-22)
 ### Added
 - Tapjoy ad network.
 - LoopMe ad network.
