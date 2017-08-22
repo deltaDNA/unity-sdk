@@ -14,21 +14,17 @@
 // limitations under the License.
 //
 
-#if UNITY_ANDROID
-using System;
-using System.Collections.Generic;
-#endif
 using UnityEditor;
 
 [InitializeOnLoad]
 public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
 
     #if UNITY_ANDROID
-    /// <summary>Instance of the PlayServicesSupport resolver</summary>
-    public static object svcSupport;
+    private static Google.JarResolver.Resolver.ResolverImpl resolver =
+        Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNA");
 
-    private const string VERSION_SUPPORT = "25.3.1";
-    private const string VERSION_PLAYSERVICES = "10.2.6";
+    internal const string VERSION_SUPPORT = "25.3.1";
+    internal const string VERSION_PLAYSERVICES = "10.2.6";
     #endif
 
     static DeltaDNAUnityJarResolverDependencies() {
@@ -53,39 +49,14 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
             return;
         }
 
-        Type playServicesSupport = Google.VersionHandler.FindClass(
-            "Google.JarResolver",
-            "Google.JarResolver.PlayServicesSupport");
-        if (playServicesSupport == null) {
-            return;
-        }
-
-        svcSupport = svcSupport ?? Google.VersionHandler.InvokeStaticMethod(
-            playServicesSupport,
-            "CreateInstance",
-            new object[] {
-                "DeltaDNA",
-                EditorPrefs.GetString("AndroidSdkRoot"),
-                "ProjectSettings"});
-
-        Google.VersionHandler.InvokeInstanceMethod(
-            svcSupport,
-            "DependOn",
-            new object[] {
-                "com.android.support",
-                "support-annotations",
-                VERSION_SUPPORT},
-            namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-android-m2repository" }}});
-        Google.VersionHandler.InvokeInstanceMethod(
-            svcSupport,
-            "DependOn",
-            new object[] {
-                "com.google.firebase",
-                "firebase-messaging",
-                VERSION_PLAYSERVICES},
-            namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-google-m2repository" }}});
+        resolver.DependOn(
+            "com.android.support",
+            "support-annotations",
+            VERSION_SUPPORT);
+        resolver.DependOn(
+            "com.google.firebase",
+            "firebase-messaging",
+            VERSION_PLAYSERVICES);
     }
     #endif
 
