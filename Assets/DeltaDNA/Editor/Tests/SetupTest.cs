@@ -24,14 +24,14 @@ namespace DeltaDNA {
     [SetUpFixture]
     public class SetupTest {
 
-        [SetUp]
+        [OneTimeSetUp]
         public void Setup()
         {
             Debug.Log("Starting Tests.");
             Logger.SetLogLevel(Logger.Level.ERROR);
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void TearDown()
         {
             Debug.Log("Completed Tests.");
