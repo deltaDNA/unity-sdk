@@ -299,6 +299,14 @@ In case the above still causes conflicts during manifest merging then the follow
     tools:merge="override"/>
 ```
 
+Some ad networks will also try to request additional permissions, such as `android.permission.READ_PHONE_STATE`, `android.permission.GET_ACCOUNTS`, `android.permission.ACCESS_COARSE_LOCATION`, and `android.permission.ACCESS_FINE_LOCATION`. You may remove these from your application by adding the following lines to your manifest like in the previous case:
+```java
+<uses-permission
+    android:name="android.permission.READ_PHONE_STATE"
+    tools:node="remove"/>
+```
+You will need to do this for each permission that you would like to remove. Please note that with some of these permissions removed the performance of the ad networks could decrease.
+
 ## Migrations
 
 ### Version 4.2

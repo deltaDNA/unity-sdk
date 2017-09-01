@@ -15,7 +15,9 @@
 //
 
 using System.Collections.Generic;
-using System.IO;
+#if UNITY_2017_1_OR_NEWER
+using System;
+#endif
 using System.Linq;
 using System.Xml;
 using UnityEngine;
@@ -114,7 +116,11 @@ namespace DeltaDNAAds {
             public void RequestAd(Listener listener) {
                 if (native == null) return;
 
+                #if UNITY_2017_1_OR_NEWER
+                activity.Call("runOnUiThread", new Runnable(() => {
+                #else
                 activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+                #endif
                     native.Call("requestAd", new object[] {
                         activity,
                         new AndroidListener(listener),
@@ -126,7 +132,11 @@ namespace DeltaDNAAds {
             public void ShowAd() {
                 if (native == null) return;
 
+                #if UNITY_2017_1_OR_NEWER
+                activity.Call("runOnUiThread", new Runnable(() => {
+                #else
                 activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+                #endif
                     native.Call("showAd");
                 }));
             }
@@ -181,5 +191,20 @@ namespace DeltaDNAAds {
                 delegated.OnAdClosed(complete);
             }
         }
+
+        #if UNITY_2017_1_OR_NEWER
+        private class Runnable : AndroidJavaProxy {
+
+            private readonly Action action;
+
+            internal Runnable(Action action) : base("java.lang.Runnable") {
+                this.action = action;
+            }
+
+            public void run() {
+                action();
+            }
+        }
+        #endif
     }
 }

@@ -35,6 +35,11 @@
     "ios": "Flurry"
   },
   {
+    "name": "HyprMX",
+    "android": "hyprmx",
+    "ios": "HyprMX"
+  },
+  {
     "name": "InMobi",
     "android": "inmobi",
     "ios": "InMobi"
@@ -43,6 +48,11 @@
     "name": "IronSource",
     "android": "ironsource",
     "ios": "IronSource"
+  },
+  {
+    "name": "LoopMe",
+    "android": "loopme",
+    "ios": "LoopMe"
   },
   {
     "name": "MobFox",
@@ -55,14 +65,14 @@
     "ios": "MoPub"
   },
   {
-      "name": "Tapjoy",
-      "android": "tapjoy",
-      "ios": null
+    "name": "Tapjoy",
+    "android": "tapjoy",
+    "ios": "Tapjoy"
   },
   {
-      "name": "ThirdPresence",
-      "android": "thirdpresence",
-      "ios": "ThirdPresence"
+    "name": "ThirdPresence",
+    "android": "thirdpresence",
+    "ios": "ThirdPresence"
   },
   {
     "name": "Unity",

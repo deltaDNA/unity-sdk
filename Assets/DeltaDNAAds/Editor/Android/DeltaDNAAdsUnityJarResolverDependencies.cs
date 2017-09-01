@@ -14,21 +14,19 @@
 // limitations under the License.
 //
 
-#if UNITY_ANDROID
-using System;
-using System.Collections.Generic;
-#endif
 using UnityEditor;
 
 [InitializeOnLoad]
 public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
 
     #if UNITY_ANDROID
-    /// <summary>Instance of the PlayServicesSupport resolver</summary>
-    public static object svcSupport;
+    private static Google.JarResolver.Resolver.ResolverImpl resolver =
+        Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNA");
 
-    private const string VERSION_SUPPORT = "25.3.1";
-    private const string VERSION_PLAYSERVICES = "10.2.6";
+    private const string VERSION_SUPPORT =
+        DeltaDNAUnityJarResolverDependencies.VERSION_SUPPORT;
+    private const string VERSION_PLAYSERVICES =
+        DeltaDNAUnityJarResolverDependencies.VERSION_PLAYSERVICES;
     #endif
 
     static DeltaDNAAdsUnityJarResolverDependencies() {
@@ -53,152 +51,77 @@ public class DeltaDNAAdsUnityJarResolverDependencies : AssetPostprocessor {
     /// Registers the android dependencies.
     /// </summary>
     internal static void RegisterAndroidDependencies() {
-        Type playServicesSupport = Google.VersionHandler.FindClass(
-            "Google.JarResolver",
-            "Google.JarResolver.PlayServicesSupport");
-        if (playServicesSupport == null) {
-            return;
-        }
-
-        svcSupport = svcSupport ?? Google.VersionHandler.InvokeStaticMethod(
-            playServicesSupport,
-            "CreateInstance",
-            new object[] {
-                "DeltaDNAAds",
-                EditorPrefs.GetString("AndroidSdkRoot"),
-                "ProjectSettings"});
-
         // clear the dependencies as we add them depending on which networks are set
-        Google.VersionHandler.InvokeInstanceMethod(
-            svcSupport,
-            "ClearDependencies",
-            new object[] { });
+        resolver.ClearDependencies();
 
-        Google.VersionHandler.InvokeInstanceMethod(
-            svcSupport,
-            "DependOn",
-            new object[] {
-                "com.android.support",
-                "support-annotations",
-                VERSION_SUPPORT},
-            namedArgs: new Dictionary<string, object>() {
-                { "packageIds", new string[] { "extra-android-m2repository" }}});
+        resolver.DependOn(
+            "com.android.support",
+            "support-annotations",
+            VERSION_SUPPORT);
 
         var networks = new DeltaDNAAds.Editor.AndroidNetworks(true, false).GetPersisted();
         if (networks.Count > 0) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.google.android.gms",
-                    "play-services-basement",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-basement",
+                VERSION_PLAYSERVICES);
         }
         if (networks.Contains("adcolony")) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.google.android.gms",
-                    "play-services-base",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-base",
+                VERSION_PLAYSERVICES);
         }
         if (networks.Contains("admob")) {
             // instead of com.google.firebase:firebase-ads which is empty and breaks Unity
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.google.android.gms",
-                    "play-services-ads",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-ads",
+                VERSION_PLAYSERVICES);
         }
         if (networks.Contains("facebook")) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "appcompat-v7",
-                    VERSION_SUPPORT},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "recyclerview-v7",
-                    VERSION_SUPPORT},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "support-v4",
-                    VERSION_SUPPORT},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+            resolver.DependOn(
+                "com.android.support",
+                "appcompat-v7",
+                VERSION_SUPPORT);
+            resolver.DependOn(
+                "com.android.support",
+                "recyclerview-v7",
+                VERSION_SUPPORT);
+            resolver.DependOn(
+                "com.android.support",
+                "support-v4",
+                VERSION_SUPPORT);
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-ads",
+                VERSION_PLAYSERVICES);
         }
         if (networks.Contains("inmobi")) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "appcompat-v7",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "recyclerview-v7",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
-
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.google.android.gms",
-                    "play-services-base",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+            resolver.DependOn(
+                "com.android.support",
+                "appcompat-v7",
+                VERSION_SUPPORT);
+            resolver.DependOn(
+                "com.android.support",
+                "recyclerview-v7",
+                VERSION_SUPPORT);
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-base",
+                VERSION_PLAYSERVICES);
         }
         if (networks.Contains("thirdpresence")) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.android.support",
-                    "support-v4",
-                    VERSION_SUPPORT},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-android-m2repository" }}});
+            resolver.DependOn(
+                "com.android.support",
+                "support-v4",
+                VERSION_SUPPORT);
         }
         if (networks.Contains("vungle")) {
-            Google.VersionHandler.InvokeInstanceMethod(
-                svcSupport,
-                "DependOn",
-                new object[] {
-                    "com.google.android.gms",
-                    "play-services-base",
-                    VERSION_PLAYSERVICES},
-                namedArgs: new Dictionary<string, object>() {
-                    { "packageIds", new string[] { "extra-google-m2repository" }}});
+            resolver.DependOn(
+                "com.google.android.gms",
+                "play-services-base",
+                VERSION_PLAYSERVICES);
         }
     }
     #endif
