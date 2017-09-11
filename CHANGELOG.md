@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
+### Fixed
+- Fixed missing resources in Tapjoy on Android.
+
 ## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (2017-08-22)
 ### Added
 - Tapjoy ad network.
