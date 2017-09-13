@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.5.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.4) (????-??-??)
+### Fixed
+- Triggering a new session before marking the sdk as started.
+
 ## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
 ### Fixed
 - Fixed missing resources in Tapjoy on Android.

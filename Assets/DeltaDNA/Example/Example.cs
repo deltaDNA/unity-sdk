@@ -75,7 +75,10 @@ public class Example : MonoBehaviour {
 
     void FixedUpdate() {
         // Make our cube rotate
-        cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+        if (DDNA.Instance.HasStarted)
+        {
+            cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+        }
     }
 
     public void OnSimpleEventBtn_Clicked() {
