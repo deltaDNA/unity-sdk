@@ -4,6 +4,7 @@
 ### Fixed
 - Triggering a new session before marking the sdk as started.
 - Unable to send long values as virtual currency.
+- Tapjoy causing a hardware not supported error on 64-bit architectures.
 
 ## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
 ### Fixed
