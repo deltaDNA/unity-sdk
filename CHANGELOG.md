@@ -6,6 +6,9 @@
 - Unable to send long values as virtual currency.
 - Tapjoy causing a hardware not supported error on 64-bit architectures.
 
+### Changed
+- Updated AdColony ads on Android.
+
 ## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
 ### Fixed
 - Fixed missing resources in Tapjoy on Android.
