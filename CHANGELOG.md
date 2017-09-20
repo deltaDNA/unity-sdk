@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.5.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.4) (????-??-??)
+## [4.5.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.4) (2017-09-20)
 ### Fixed
 - Triggering a new session before marking the sdk as started.
 - Unable to send long values as virtual currency.
