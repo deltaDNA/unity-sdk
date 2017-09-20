@@ -8,6 +8,7 @@
 
 ### Changed
 - Updated AdColony ads on Android.
+- Updated iOS SmartAds to 1.5.2.
 
 ## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
 ### Fixed
