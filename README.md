@@ -23,6 +23,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Push Notifications](#push-notifications)
  * [SmartAds on iOS](#smartads-on-ios)
 * [Android Integration](#android-integration)
+ * [Amazon](#amazon)
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
  * [Permissions](#permissions)
@@ -255,6 +256,13 @@ If you make changes to the enabled networks the changes to the Podfile should be
 The latest versions of Unity cause conflict with Unity's internal UnityAds plugin.  An error can occur when the PostBuildProcess methods are run.  I've resolved this by having the `pod install` process run last.  You may need to change the order of the PostBuildProcess if your game includes multiple libraries using PostProcessBuild calls.
 
 ## Android Integration
+
+### Amazon
+When building an APK to be distributed on the Amazon Appstore then the platform needs to be changed to the `Platform.AMAZON` enum before `StartSDK` is called.
+```csharp
+DDNA.Instance.Platform = Platform.AMAZON;
+DDNA.Instance.StartSDK(...);
+```
 
 ### Android Dependencies Google Firebase/Play Services Libraries
 

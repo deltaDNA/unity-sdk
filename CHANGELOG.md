@@ -1,6 +1,9 @@
 # Change Log
 
 ## [X.Y.Z](https://github.com/deltaDNA/unity-sdk/releases/tag/X.Y.Z) (YYYY-MM-DD)
+### Added
+- Added support for Amazon platform option.
+
 ### Changed
 - Updated Unity Jar Resolver to v1.2.52.0.
 - Unity Jar Resolver downloads all Android dependencies from Maven.

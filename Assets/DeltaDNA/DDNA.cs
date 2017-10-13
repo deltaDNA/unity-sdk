@@ -139,8 +139,8 @@ namespace DeltaDNA
                 this.EnvironmentKey = envKey;
                 this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
                 this.EngageURL = engageURL;
-                if (String.IsNullOrEmpty(this.Platform)) {
-                    this.Platform = ClientInfo.Platform;
+                if (Platform == null) {
+                    Platform = ClientInfo.Platform;
                 }
                 this.NewSession();
 
@@ -204,7 +204,7 @@ namespace DeltaDNA
                 throw new Exception("You must first start the SDK via the StartSDK method");
             }
 
-            gameEvent.AddParam("platform", this.Platform);
+            gameEvent.AddParam("platform", Platform.ToString());
             gameEvent.AddParam("sdkVersion", Settings.SDK_VERSION);
 
             var eventSchema = gameEvent.AsDictionary();
@@ -571,7 +571,7 @@ namespace DeltaDNA
         /// By default we detect the platform field for your events.  You can override
         /// this value, make sure to set it before calling <see cref="Start"/>.
         /// </summary>
-        public string Platform { get; set; }
+        public Platform? Platform { get; set; }
 
         /// <summary>
         /// The push notification token from Apple that is associated with this device if

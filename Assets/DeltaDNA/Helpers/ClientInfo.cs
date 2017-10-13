@@ -26,12 +26,14 @@ namespace DeltaDNA
     /// </summary>
     static class ClientInfo
     {
-        private static string platform = null;
+        private static Platform? platform = null;
 
         /// <summary>
         /// The platform the game is being played on.
         /// </summary>
-        public static string Platform { get { return platform ?? (platform = GetPlatform()); }}
+        public static Platform Platform {
+            get { return platform ?? ((Platform) (platform = GetPlatform())); }
+        }
 
         private static string deviceName = null;
 
@@ -129,66 +131,48 @@ namespace DeltaDNA
         /// Gets the platform as an enumeration of the 'platform' key.
         /// </summary>
         /// <returns>The platform.</returns>
-        private static string GetPlatform()
+        private static Platform GetPlatform()
         {
-            if (RuntimePlatformIs("OSXEditor")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("OSXPlayer")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("WindowsPlayer")) return "PC_CLIENT";
-            if (RuntimePlatformIs("OSXWebPlayer")) return "WEB";
-            if (RuntimePlatformIs("OSXDashboardPlayer")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("WindowsWebPlayer")) return "WEB";
-            if (RuntimePlatformIs("WindowsEditor")) return "PC_CLIENT";
-            if (RuntimePlatformIs("IPhonePlayer"))
-            {
-                string name = SystemInfo.deviceModel;
-                if (name.Contains("iPad")) return "IOS_TABLET";
-                return "IOS_MOBILE";
-            }
-            if (RuntimePlatformIs("PS3")) return "PS3";
-            if (RuntimePlatformIs("XBOX360")) return "XBOX360";
-            if (RuntimePlatformIs("Android"))
-            {
-                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
-            }
-            if (RuntimePlatformIs("NaCL")) return "WEB";
-            if (RuntimePlatformIs("LinuxPlayer")) return "PC_CLIENT";
-            if (RuntimePlatformIs("WebGLPlayer")) return "WEB";
-            if (RuntimePlatformIs("FlashPlayer")) return "WEB";
+            if (RuntimePlatformIs("OSXEditor") ||
+                RuntimePlatformIs("OSXPlayer")) return Platform.MAC_CLIENT;
+            if (RuntimePlatformIs("WindowsPlayer")) return Platform.PC_CLIENT;
+            if (RuntimePlatformIs("OSXWebPlayer")) return Platform.WEB;
+            if (RuntimePlatformIs("OSXDashboardPlayer")) return Platform.MAC_CLIENT;
+            if (RuntimePlatformIs("WindowsWebPlayer")) return Platform.WEB;
+            if (RuntimePlatformIs("WindowsEditor")) return Platform.PC_CLIENT;
+            if (RuntimePlatformIs("IPhonePlayer")) return Platform.IOS;
+            if (RuntimePlatformIs("PS3")) return Platform.PS3;
+            if (RuntimePlatformIs("XBOX360")) return Platform.XBOX360;
+            if (RuntimePlatformIs("Android")) return Platform.ANDROID;
+            if (RuntimePlatformIs("NaCL")) return Platform.WEB;
+            if (RuntimePlatformIs("LinuxPlayer")) return Platform.PC_CLIENT;
+            if (RuntimePlatformIs("WebGLPlayer")) return Platform.WEB;
+            if (RuntimePlatformIs("FlashPlayer")) return Platform.WEB;
             if (RuntimePlatformIs("MetroPlayerX86") ||
                 RuntimePlatformIs("MetroPlayerX64") ||
                 RuntimePlatformIs("MetroPlayerARM") ||
                 RuntimePlatformIs("WSAPlayerX86") ||
                 RuntimePlatformIs("WSAPlayerX64") ||
-                RuntimePlatformIs("WSAPlayerARM"))
-            {
+                RuntimePlatformIs("WSAPlayerARM")) {
                 // Metro Apps can run anywhere...
-                if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld)
-                {
-                    return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
+                if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld) {
+                    return Platform.WINDOWS;
+                } else {
+                    return Platform.PC_CLIENT;
                 }
-                return "PC_CLIENT";
             }
-            if (RuntimePlatformIs("WP8Player"))
-            {
-                return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
-            }
+            if (RuntimePlatformIs("WP8Player")) return Platform.WINDOWS;
             if (RuntimePlatformIs("BB10Player") ||
-                RuntimePlatformIs("BlackBerryPlayer"))
-            {
-                return IsTablet() ? "BLACKBERRY_TABLET" : "BLACKBERRY_MOBILE";
-            }
-            if (RuntimePlatformIs("TizenPlayer"))
-            {
-                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
-            }
-            if (RuntimePlatformIs("PSP2")) return "PSVITA";
-            if (RuntimePlatformIs("PS4")) return "PS4";
-            if (RuntimePlatformIs("PSMPlayer")) return "WEB";
-            if (RuntimePlatformIs("XboxOne")) return "XBOXONE";
-            if (RuntimePlatformIs("SamsungTVPlayer")) return "ANDROID_CONSOLE";
-            if (RuntimePlatformIs("tvOS")) return "IOS_TV";
+                RuntimePlatformIs("BlackBerryPlayer")) return Platform.BLACKBERRY;
+            if (RuntimePlatformIs("TizenPlayer")) return Platform.ANDROID;
+            if (RuntimePlatformIs("PSP2")) return Platform.PSVITA;
+            if (RuntimePlatformIs("PS4")) return Platform.PS4;
+            if (RuntimePlatformIs("PSMPlayer")) return Platform.WEB;
+            if (RuntimePlatformIs("XboxOne")) return Platform.XBOXONE;
+            if (RuntimePlatformIs("SamsungTVPlayer")) return Platform.ANDROID_CONSOLE;
+            if (RuntimePlatformIs("tvOS")) return Platform.IOS_TV;
 
-            return "UNKNOWN";
+            return Platform.UNKNOWN;
         }
 
         private static string GetDeviceName()
