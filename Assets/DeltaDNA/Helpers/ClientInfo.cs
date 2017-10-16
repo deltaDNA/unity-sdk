@@ -135,17 +135,18 @@ namespace DeltaDNA
         {
             if (RuntimePlatformIs("OSXEditor") ||
                 RuntimePlatformIs("OSXPlayer")) return Platform.MAC_CLIENT;
-            if (RuntimePlatformIs("WindowsPlayer")) return Platform.PC_CLIENT;
+            if (RuntimePlatformIs("WindowsEditor") ||
+                RuntimePlatformIs("WindowsPlayer")) return Platform.PC_CLIENT;
             if (RuntimePlatformIs("OSXWebPlayer")) return Platform.WEB;
             if (RuntimePlatformIs("OSXDashboardPlayer")) return Platform.MAC_CLIENT;
             if (RuntimePlatformIs("WindowsWebPlayer")) return Platform.WEB;
-            if (RuntimePlatformIs("WindowsEditor")) return Platform.PC_CLIENT;
             if (RuntimePlatformIs("IPhonePlayer")) return Platform.IOS;
             if (RuntimePlatformIs("PS3")) return Platform.PS3;
             if (RuntimePlatformIs("XBOX360")) return Platform.XBOX360;
             if (RuntimePlatformIs("Android")) return Platform.ANDROID;
             if (RuntimePlatformIs("NaCL")) return Platform.WEB;
-            if (RuntimePlatformIs("LinuxPlayer")) return Platform.PC_CLIENT;
+            if (RuntimePlatformIs("LinuxEditor") ||
+                RuntimePlatformIs("LinuxPlayer")) return Platform.PC_CLIENT;
             if (RuntimePlatformIs("WebGLPlayer")) return Platform.WEB;
             if (RuntimePlatformIs("FlashPlayer")) return Platform.WEB;
             if (RuntimePlatformIs("MetroPlayerX86") ||
@@ -169,8 +170,10 @@ namespace DeltaDNA
             if (RuntimePlatformIs("PS4")) return Platform.PS4;
             if (RuntimePlatformIs("PSMPlayer")) return Platform.WEB;
             if (RuntimePlatformIs("XboxOne")) return Platform.XBOXONE;
-            if (RuntimePlatformIs("SamsungTVPlayer")) return Platform.ANDROID_CONSOLE;
+            if (RuntimePlatformIs("SamsungTVPlayer")) return Platform.ANDROID;
             if (RuntimePlatformIs("tvOS")) return Platform.IOS_TV;
+            if (RuntimePlatformIs("WiiU")) return Platform.WIIU;
+            if (RuntimePlatformIs("Switch")) return Platform.SWITCH;
 
             return Platform.UNKNOWN;
         }

@@ -15,15 +15,23 @@
 //
 
 namespace DeltaDNA {
-
+    /// <summary>
+    /// The default platforms Unity builds for mapped into our analytics.  The
+    /// SDK will pick a default for the platform, but the Platform can be 
+    /// explicitly set before calling StartSDK.  For example, if building for
+    /// Amazon store, manually set the platform else it will report as Android.
+    /// 
+    /// If you add / change the enum, remember to update the allowable values
+    /// for you game's Platform key.
+    /// </summary>
     public enum Platform {
         ANDROID,
-        ANDROID_CONSOLE,
         AMAZON,
         IOS,
         IOS_TV,
         WINDOWS,
         BLACKBERRY,
+        FACEBOOK,
         PC_CLIENT,
         MAC_CLIENT,
         WEB,
@@ -32,6 +40,8 @@ namespace DeltaDNA {
         PS3,
         XBOXONE,
         XBOX360,
+        WIIU,
+        SWITCH,
         UNKNOWN
     }
 }
