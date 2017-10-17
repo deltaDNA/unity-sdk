@@ -157,7 +157,7 @@ namespace DeltaDNA
                 RuntimePlatformIs("WSAPlayerARM")) {
                 // Metro Apps can run anywhere...
                 if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld) {
-                    return Platform.WINDOWS;
+                    return Platform.WINDOWS_MOBILE;
                 } else {
                     return Platform.PC_CLIENT;
                 }
@@ -248,7 +248,7 @@ namespace DeltaDNA
                 case "iPad6,7": return @"iPad Pro 12.9";
                 case "iPad6,8": return @"iPad Pro 12.9";
                 case "iPad6,3": return @"iPad Pro 9.7";
-                case "iPad6,4": return @"iPad Pro 9.7"; 
+                case "iPad6,4": return @"iPad Pro 9.7";
                 case "iPad6,11": return @"iPad 5G";
                 case "iPad6,12": return @"iPad 5G";
 
