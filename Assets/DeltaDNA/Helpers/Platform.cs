@@ -29,7 +29,7 @@ namespace DeltaDNA {
         AMAZON,
         IOS,
         IOS_TV,
-        WINDOWS,
+        WINDOWS_MOBILE,
         BLACKBERRY,
         FACEBOOK,
         PC_CLIENT,
