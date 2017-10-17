@@ -17,36 +17,67 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
+using UnityEditor;
 
 namespace DeltaDNAAds.Editor {
+    
     internal sealed class IosNetworks : Networks {
-        
-        private const string POD_FILE = MenuItems.EDITOR_PATH + "iOS/Podfile";
-        
+
+        private const string VERSION = "~> 1.5.0";
+
         public IosNetworks() : base("ios", "iOS") {}
 
         internal override IList<string> GetPersisted() {
-            return File.ReadAllLines(POD_FILE)
-                .Where(e => e.StartsWith("    pod 'DeltaDNAAds/"))
-                .Select(e => e.Substring(e.IndexOf("/") + 1).Replace("', version", ""))
+            return Configuration()
+                .Descendants("iosPod")
+                .Select(e => e
+                    .Attribute("name")
+                    .Value
+                    .Substring("DeltaDNAAds/".Length))
                 .ToList();
         }
-        
+
         internal override void ApplyChanges(IList<string> enabled) {
-            var podSpecs = new List<string>(File.ReadAllLines(POD_FILE));
-            
-            podSpecs.RemoveAll(e => e.StartsWith("    pod 'DeltaDNAAds/"));
-            podSpecs.InsertRange(
-                podSpecs.FindIndex(e => e.Equals("target 'Unity-iPhone' do")) + 1,
-                enabled
-                    .Select(e => string.Format("    pod 'DeltaDNAAds/{0}', version", e))
-                    .AsEnumerable());
-            
-            File.WriteAllLines(POD_FILE, podSpecs.ToArray());
-            
-            UnityEngine.Debug.Log(string.Format(
-                "Changes have been applied to {0}, please commit the updates to version control",
-                POD_FILE));
+            var config = Configuration();
+
+            config.Descendants("iosPod").Remove();
+
+            var packages = config.Descendants("iosPods").First();
+            foreach (var network in enabled) {
+                packages.Add(new XElement(
+                    "iosPod",
+                    new object[] {
+                        new XAttribute(
+                            "name",
+                            "DeltaDNAAds/" + network),
+                        new XAttribute(
+                            "version",
+                            VERSION),
+                        new XAttribute(
+                            "bitcodeEnabled",
+                            "true"),
+                        new XAttribute(
+                            "minTargetSdk",
+                        #if UNITY_5_5_OR_NEWER
+                            PlayerSettings.iOS.targetOSVersionString.ToString()),
+                        #else
+                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
+                        #endif
+                        new XElement(
+                            "sources",
+                            new object[] {
+                                new XElement(
+                                    "source",
+                                    "https://github.com/deltaDNA/CocoaPods.git"),
+                                new XElement(
+                                    "source",
+                                    "https://github.com/CocoaPods/Specs.git")
+                            })
+                    }));
+            }
+
+            config.Save(CONFIG);
         }
 
         internal override bool AreDownloadsStale() {

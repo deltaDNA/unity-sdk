@@ -17,12 +17,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace DeltaDNAAds.Editor {
+    
+    [InitializeOnLoad]
     internal sealed class AndroidNetworks : Networks {
         
-        private const string CONFIG_SCRIPT = MenuItems.EDITOR_PATH + "Android/networks";
+        static AndroidNetworks() {
+            var instance = new AndroidNetworks(false);
+            instance.ApplyChanges(instance.GetPersisted());
+        }
+        
+        private const string REPO = "http://deltadna.bintray.com/android";
+        private const string VERSION = "1.5.3";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
 
         private readonly bool download;
@@ -32,22 +42,49 @@ namespace DeltaDNAAds.Editor {
         }
 
         internal override IList<string> GetPersisted() {
-            return File.ReadAllLines(CONFIG_SCRIPT)
-                .Where(e => !e.StartsWith("//"))
-                .ToArray();
+            return Configuration()
+                .Descendants("androidPackage")
+                .Select(e => e.Attribute("spec").Value)
+                .Where(e => e.StartsWith("com.deltadna.android:deltadna-smartads-provider-"))
+                .Select(e => {
+                    var value = e.Substring(e.IndexOf("-provider-") + 10);
+                    return value.Substring(0, value.LastIndexOf(':'));
+                })
+                .ToList();
         }
         
         internal override void ApplyChanges(IList<string> enabled) {
-            var buildScript = new List<string>(File.ReadAllLines(CONFIG_SCRIPT));
+            var config = Configuration();
             
-            buildScript.RemoveAll(e => !e.StartsWith("//"));
-            buildScript.InsertRange(1, enabled.AsEnumerable());
+            config.Descendants("androidPackage").Remove();
             
-            File.WriteAllLines(CONFIG_SCRIPT, buildScript.ToArray());
-            
-            UnityEngine.Debug.Log(string.Format(
-                "Changes have been applied to {0}, please commit the updates to version control",
-                CONFIG_SCRIPT));
+            var packages = config.Descendants("androidPackages").First();
+            if (enabled.Count > 0) {
+                packages.Add(new XElement(
+                    "androidPackage",
+                    new object[] {
+                        new XAttribute(
+                            "spec",
+                            "com.deltadna.android:deltadna-smartads-core:" + VERSION),
+                        new XElement(
+                            "repositories",
+                            new object[] { new XElement("repository", REPO) })
+                    }));
+            }
+            foreach (var network in enabled) {
+                packages.Add(new XElement(
+                    "androidPackage",
+                    new object[] {
+                        new XAttribute(
+                            "spec",
+                            "com.deltadna.android:deltadna-smartads-provider-" + network + ":" + VERSION),
+                        new XElement(
+                            "repositories",
+                            new object[] { new XElement("repository", REPO) })
+                    }));
+            }
+
+            config.Save(CONFIG);
             
             if (download) DownloadLibraries();
         }
@@ -70,7 +107,7 @@ namespace DeltaDNAAds.Editor {
                 if (!downloaded.Contains(string.Format(
                     "{0}-{1}.aar",
                     network,
-                    DeltaDNAAdsUnityJarResolverDependencies.VERSION))) return true;
+                    VERSION))) return true;
             }
             
             return false;
@@ -78,8 +115,7 @@ namespace DeltaDNAAds.Editor {
         
         internal static void DownloadLibraries() {
             #if UNITY_ANDROID
-            DeltaDNAAdsUnityJarResolverDependencies.RegisterAndroidDependencies();
-            DeltaDNAAdsUnityJarResolverDependencies.Resolve();
+            GooglePlayServices.PlayServicesResolver.MenuResolve();
             #endif
         }
     }

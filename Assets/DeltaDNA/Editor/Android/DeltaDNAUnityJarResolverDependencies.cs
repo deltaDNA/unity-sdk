@@ -14,15 +14,17 @@
 // limitations under the License.
 //
 
+using DeltaDNA.Editor;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using UnityEditor;
 
 [InitializeOnLoad]
 public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
 
     #if UNITY_ANDROID
-    private static Google.JarResolver.Resolver.ResolverImpl resolver =
-        Google.JarResolver.Resolver.CreateSupportInstance("DeltaDNA");
-
+    private const string CONFIGURATION = MenuItems.ASSETS_PATH + "Editor/Android/Dependencies.xml";
     private const string REPO = "http://deltadna.bintray.com/android";
     private const string VERSION = "4.5.3";
     #endif
@@ -45,15 +47,34 @@ public class DeltaDNAUnityJarResolverDependencies : AssetPostprocessor {
     /// Registers the android dependencies.
     /// </summary>
     public static void RegisterAndroidDependencies() {
-        if (!DeltaDNA.Editor.MenuItems.AreAndroidNotificationsInProject()) {
-            resolver.ClearDependencies();
-        } else {
-            resolver.DependOn(
-                "com.deltadna.android",
-                "deltadna-sdk-notifications",
-                VERSION,
-                repositories: new string[] { REPO });
+        var config = Configuration();
+
+        config.Descendants("androidPackage").Remove();
+
+        if (!MenuItems.AreAndroidNotificationsInProject()) {
+            config.Save(CONFIGURATION);
+            return;
         }
+
+        config
+            .Descendants("androidPackages")
+            .First()
+            .Add(new XElement(
+                "androidPackage",
+                new object[] {
+                    new XAttribute(
+                        "spec",
+                        "com.deltadna.android:deltadna-sdk-notifications:" + VERSION),
+                    new XElement(
+                        "repositories",
+                        new object[] { new XElement("repository", REPO) })
+                }));
+
+        config.Save(CONFIGURATION);
+    }
+
+    private static XDocument Configuration() {
+        return XDocument.Parse(File.ReadAllText(CONFIGURATION));
     }
     #endif
     

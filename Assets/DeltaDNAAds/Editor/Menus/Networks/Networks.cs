@@ -15,9 +15,14 @@
 //
 
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace DeltaDNAAds.Editor {
     internal abstract class Networks {
+        
+        internal const string CONFIG = MenuItems.EDITOR_PATH + "Dependencies.xml";
         
         internal readonly string platform;
         internal readonly string platformVisible;
@@ -30,5 +35,9 @@ namespace DeltaDNAAds.Editor {
         internal abstract IList<string> GetPersisted();
         internal abstract void ApplyChanges(IList<string> enabled);
         internal abstract bool AreDownloadsStale();
+        
+        internal static XDocument Configuration() {
+            return XDocument.Parse(File.ReadAllText(CONFIG));
+        }
     }
 }

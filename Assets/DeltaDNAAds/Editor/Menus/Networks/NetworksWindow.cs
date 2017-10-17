@@ -137,6 +137,10 @@ namespace DeltaDNAAds.Editor {
                     || handler.AreDownloadsStale())
                     handler.ApplyChanges(items);
             }
+            
+            UnityEngine.Debug.Log(string.Format(
+                "Changes have been applied to {0}, please commit the updates to version control",
+                Networks.CONFIG));
         }
     }
 }

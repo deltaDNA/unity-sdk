@@ -240,15 +240,13 @@ We record if your game was started by the player clicking on a push notification
 
 ### SmartAds on iOS
 
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries.  The included Podfile will add our iOS SmartAds Pod to your XCode project along with all the ad networks we support.  A post process build hook prepares the XCode project Unity generates to support CocoaPods and adds the Podfile to the iOS build directory.  It then runs `pod install` to download the dependencies and create the *Unity-iPhone.xcworkspace*.  ~~You will need to open the workspace file since Unity doesn't know about this.  Clicking *build and run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *build and run* works fine.
+We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries through Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
 
-__The ad networks require a minimum target version of 7, and ideally 8 to get the latest sdks.  If the default 6 is used cocoapods will fail and no xcworkspace file will be generated.__
-
-__If updating from a previous SDK version, run `pod repo update` to update your local cache and ensure you build with the latest dependencies.  Since CocoaPods v1.0 this no longer happens by default on `pod install`.__
+__The ad networks require a minimum target version of 8. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
 
 To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
 
-If you make changes to the enabled networks the changes to the Podfile should be committed to version control.
+If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
 #### UnityAds
 
@@ -258,7 +256,7 @@ The latest versions of Unity cause conflict with Unity's internal UnityAds plugi
 
 ### Android Dependencies Google Firebase/Play Services Libraries
 
-Any library dependencies such as Google's Firebase (Google Play Services) are handled by Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to consider using the Resolver to get manage their dependencies as well, otherwise you may have to manually resolve any conflicts.
+Any library dependencies such as Google's Firebase (Google Play Services) are handled by Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to consider using the Resolver to manage their dependencies as well, otherwise you may have to manually resolve any conflicts.
 
 ### Push Notifications
 
@@ -274,9 +272,9 @@ If you no longer wish to use push notifications on Android then you can remove t
 
 The ad networks you wish to build into your app can be selected from *DeltaDNA -> SmartAds -> Select Networks*. After applying the changes the SDK will download the latest libraries from the Maven repository. If you make changes to the enabled networks the changes to the *build.gradle* file should be committed to version control.
 
-The libraries can be downloaded anytime from the *DeltaDNA -> SmartAds -> Android -> Download Libraries* menu item. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
+If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
-In order for the library download function to properly work you need to have the Android SDK installed and setup for your Unity project. From the Android SDK you will need to have a version of *build-tools* and an *SDK Platform* installed, as well as recent versions of the *Android Support Repository* and *Google Repository*.
+The libraries can be downloaded anytime from the *DeltaDNA -> SmartAds -> Android -> Download Libraries* menu item. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
 
 ### MultiDex; Working Around Android's 65k Method Limit
 1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.

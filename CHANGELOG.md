@@ -4,9 +4,11 @@
 ### Changed
 - Updated Unity Jar Resolver to v1.2.52.0.
 - Unity Jar Resolver downloads all Android dependencies from Maven.
+- Unity Jar Resolver handles SmartAds libraries for iOS.
 
 ### Removed
 - Android libraries from packages.
+- PostProcessBuild script for iOS.
 
 ## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (2017-08-22)
 ### Added
