@@ -162,7 +162,7 @@ namespace DeltaDNA
                     return Platform.PC_CLIENT;
                 }
             }
-            if (RuntimePlatformIs("WP8Player")) return Platform.WINDOWS;
+            if (RuntimePlatformIs("WP8Player")) return Platform.WINDOWS_MOBILE;
             if (RuntimePlatformIs("BB10Player") ||
                 RuntimePlatformIs("BlackBerryPlayer")) return Platform.BLACKBERRY;
             if (RuntimePlatformIs("TizenPlayer")) return Platform.ANDROID;
