@@ -142,9 +142,9 @@ namespace DeltaDNA
                 if (Platform == null) {
                     Platform = ClientInfo.Platform;
                 }
-                this.NewSession();
 
                 this.started = true;
+                this.NewSession();
 
                 if (this.launchNotificationEvent != null) {
                     RecordEvent(this.launchNotificationEvent);
