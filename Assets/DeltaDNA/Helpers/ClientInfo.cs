@@ -210,6 +210,12 @@ namespace DeltaDNA
                 case "iPhone9,2": return @"iPhone 7 Plus";
                 case "iPhone9,3": return @"iPhone 7";
                 case "iPhone9,4": return @"iPhone 7 Plus";
+                case "iPhone10,1": return @"iPhone 8";
+                case "iPhone10,4": return @"iPhone 8";
+                case "iPhone10,2": return @"iPhone 8 Plus";
+                case "iPhone10,5": return @"iPhone 8 Plus";
+                case "iPhone10,3": return @"iPhone X";
+                case "iPhone10,6": return @"iPhone X";
 
                 case "iPod1,1": return @"iPod Touch 1G";
                 case "iPod2,1": return @"iPod Touch 2G";
@@ -251,6 +257,10 @@ namespace DeltaDNA
                 case "iPad6,4": return @"iPad Pro 9.7";
                 case "iPad6,11": return @"iPad 5G";
                 case "iPad6,12": return @"iPad 5G";
+                case "iPad7,1": return @"iPad Pro 12.9 2G";
+                case "iPad7,2": return @"iPad Pro 12.9 2G";
+                case "iPad7,3": return @"iPad Pro 10.5";
+                case "iPad7,4": return @"iPad Pro 10.5";
 
 
                 // Amazon
@@ -268,6 +278,10 @@ namespace DeltaDNA
                 case "Amazon KFTT": return "Kindle Fire HD 7 (2nd Gen)";
                 case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
                 case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
+                case "Amazon KFGIWI": return "Fire HD 8 (2016)";
+                case "Amazon KFDOWI": return "Fire HD 8 (2017)";
+                case "Amazon KFAUWI": return "Fire 7 (2017)";
+                case "Amazon KFSUWI": return "Fire HD 10 (2017)";
 
                 default:
                     return Trim(name, 72);
