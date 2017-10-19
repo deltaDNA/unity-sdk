@@ -204,7 +204,7 @@ namespace DeltaDNA
                 throw new Exception("You must first start the SDK via the StartSDK method");
             }
 
-            gameEvent.AddParam("platform", Platform.ToString());
+            gameEvent.AddParam("platform", Platform);
             gameEvent.AddParam("sdkVersion", Settings.SDK_VERSION);
 
             var eventSchema = gameEvent.AsDictionary();
@@ -571,7 +571,7 @@ namespace DeltaDNA
         /// By default we detect the platform field for your events.  You can override
         /// this value, make sure to set it before calling <see cref="Start"/>.
         /// </summary>
-        public Platform? Platform { get; set; }
+        public string Platform { get; set; }
 
         /// <summary>
         /// The push notification token from Apple that is associated with this device if

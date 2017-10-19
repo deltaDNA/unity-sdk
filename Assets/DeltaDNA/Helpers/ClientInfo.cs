@@ -26,13 +26,13 @@ namespace DeltaDNA
     /// </summary>
     static class ClientInfo
     {
-        private static Platform? platform = null;
+        private static string platform = null;
 
         /// <summary>
         /// The platform the game is being played on.
         /// </summary>
-        public static Platform Platform {
-            get { return platform ?? ((Platform) (platform = GetPlatform())); }
+        public static string Platform {
+            get { return platform ?? (platform = GetPlatform()); }
         }
 
         private static string deviceName = null;
@@ -131,24 +131,24 @@ namespace DeltaDNA
         /// Gets the platform as an enumeration of the 'platform' key.
         /// </summary>
         /// <returns>The platform.</returns>
-        private static Platform GetPlatform()
+        private static string GetPlatform()
         {
             if (RuntimePlatformIs("OSXEditor") ||
-                RuntimePlatformIs("OSXPlayer")) return Platform.MAC_CLIENT;
+                RuntimePlatformIs("OSXPlayer")) return DeltaDNA.Platform.MAC_CLIENT;
             if (RuntimePlatformIs("WindowsEditor") ||
-                RuntimePlatformIs("WindowsPlayer")) return Platform.PC_CLIENT;
-            if (RuntimePlatformIs("OSXWebPlayer")) return Platform.WEB;
-            if (RuntimePlatformIs("OSXDashboardPlayer")) return Platform.MAC_CLIENT;
-            if (RuntimePlatformIs("WindowsWebPlayer")) return Platform.WEB;
-            if (RuntimePlatformIs("IPhonePlayer")) return Platform.IOS;
-            if (RuntimePlatformIs("PS3")) return Platform.PS3;
-            if (RuntimePlatformIs("XBOX360")) return Platform.XBOX360;
-            if (RuntimePlatformIs("Android")) return Platform.ANDROID;
-            if (RuntimePlatformIs("NaCL")) return Platform.WEB;
+                RuntimePlatformIs("WindowsPlayer")) return DeltaDNA.Platform.PC_CLIENT;
+            if (RuntimePlatformIs("OSXWebPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("OSXDashboardPlayer")) return DeltaDNA.Platform.MAC_CLIENT;
+            if (RuntimePlatformIs("WindowsWebPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("IPhonePlayer")) return DeltaDNA.Platform.IOS;
+            if (RuntimePlatformIs("PS3")) return DeltaDNA.Platform.PS3;
+            if (RuntimePlatformIs("XBOX360")) return DeltaDNA.Platform.XBOX360;
+            if (RuntimePlatformIs("Android")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("NaCL")) return DeltaDNA.Platform.WEB;
             if (RuntimePlatformIs("LinuxEditor") ||
-                RuntimePlatformIs("LinuxPlayer")) return Platform.PC_CLIENT;
-            if (RuntimePlatformIs("WebGLPlayer")) return Platform.WEB;
-            if (RuntimePlatformIs("FlashPlayer")) return Platform.WEB;
+                RuntimePlatformIs("LinuxPlayer")) return DeltaDNA.Platform.PC_CLIENT;
+            if (RuntimePlatformIs("WebGLPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("FlashPlayer")) return DeltaDNA.Platform.WEB;
             if (RuntimePlatformIs("MetroPlayerX86") ||
                 RuntimePlatformIs("MetroPlayerX64") ||
                 RuntimePlatformIs("MetroPlayerARM") ||
@@ -157,25 +157,25 @@ namespace DeltaDNA
                 RuntimePlatformIs("WSAPlayerARM")) {
                 // Metro Apps can run anywhere...
                 if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld) {
-                    return Platform.WINDOWS_MOBILE;
+                    return DeltaDNA.Platform.WINDOWS_MOBILE;
                 } else {
-                    return Platform.PC_CLIENT;
+                    return DeltaDNA.Platform.PC_CLIENT;
                 }
             }
-            if (RuntimePlatformIs("WP8Player")) return Platform.WINDOWS_MOBILE;
+            if (RuntimePlatformIs("WP8Player")) return DeltaDNA.Platform.WINDOWS_MOBILE;
             if (RuntimePlatformIs("BB10Player") ||
-                RuntimePlatformIs("BlackBerryPlayer")) return Platform.BLACKBERRY;
-            if (RuntimePlatformIs("TizenPlayer")) return Platform.ANDROID;
-            if (RuntimePlatformIs("PSP2")) return Platform.PSVITA;
-            if (RuntimePlatformIs("PS4")) return Platform.PS4;
-            if (RuntimePlatformIs("PSMPlayer")) return Platform.WEB;
-            if (RuntimePlatformIs("XboxOne")) return Platform.XBOXONE;
-            if (RuntimePlatformIs("SamsungTVPlayer")) return Platform.ANDROID;
-            if (RuntimePlatformIs("tvOS")) return Platform.IOS_TV;
-            if (RuntimePlatformIs("WiiU")) return Platform.WIIU;
-            if (RuntimePlatformIs("Switch")) return Platform.SWITCH;
+                RuntimePlatformIs("BlackBerryPlayer")) return DeltaDNA.Platform.BLACKBERRY;
+            if (RuntimePlatformIs("TizenPlayer")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("PSP2")) return DeltaDNA.Platform.PSVITA;
+            if (RuntimePlatformIs("PS4")) return DeltaDNA.Platform.PS4;
+            if (RuntimePlatformIs("PSMPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("XboxOne")) return DeltaDNA.Platform.XBOXONE;
+            if (RuntimePlatformIs("SamsungTVPlayer")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("tvOS")) return DeltaDNA.Platform.IOS_TV;
+            if (RuntimePlatformIs("WiiU")) return DeltaDNA.Platform.WIIU;
+            if (RuntimePlatformIs("Switch")) return DeltaDNA.Platform.SWITCH;
 
-            return Platform.UNKNOWN;
+            return DeltaDNA.Platform.UNKNOWN;
         }
 
         private static string GetDeviceName()

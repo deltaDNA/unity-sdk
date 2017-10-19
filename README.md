@@ -260,7 +260,7 @@ The latest versions of Unity cause conflict with Unity's internal UnityAds plugi
 ### Amazon
 When building an APK to be distributed on the Amazon Appstore then the platform needs to be changed to the `Platform.AMAZON` enum before `StartSDK` is called.
 ```csharp
-DDNA.Instance.Platform = Platform.AMAZON;
+DDNA.Instance.Platform = DeltaDNA.Platform.AMAZON;
 DDNA.Instance.StartSDK(...);
 ```
 
