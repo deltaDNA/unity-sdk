@@ -139,12 +139,12 @@ namespace DeltaDNA
                 this.EnvironmentKey = envKey;
                 this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
                 this.EngageURL = engageURL;
-                if (String.IsNullOrEmpty(this.Platform)) {
-                    this.Platform = ClientInfo.Platform;
+                if (Platform == null) {
+                    Platform = ClientInfo.Platform;
                 }
-                this.NewSession();
 
                 this.started = true;
+                this.NewSession();
 
                 if (this.launchNotificationEvent != null) {
                     RecordEvent(this.launchNotificationEvent);
@@ -204,7 +204,7 @@ namespace DeltaDNA
                 throw new Exception("You must first start the SDK via the StartSDK method");
             }
 
-            gameEvent.AddParam("platform", this.Platform);
+            gameEvent.AddParam("platform", Platform);
             gameEvent.AddParam("sdkVersion", Settings.SDK_VERSION);
 
             var eventSchema = gameEvent.AsDictionary();

@@ -31,7 +31,9 @@ namespace DeltaDNA
         /// <summary>
         /// The platform the game is being played on.
         /// </summary>
-        public static string Platform { get { return platform ?? (platform = GetPlatform()); }}
+        public static string Platform {
+            get { return platform ?? (platform = GetPlatform()); }
+        }
 
         private static string deviceName = null;
 
@@ -131,64 +133,49 @@ namespace DeltaDNA
         /// <returns>The platform.</returns>
         private static string GetPlatform()
         {
-            if (RuntimePlatformIs("OSXEditor")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("OSXPlayer")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("WindowsPlayer")) return "PC_CLIENT";
-            if (RuntimePlatformIs("OSXWebPlayer")) return "WEB";
-            if (RuntimePlatformIs("OSXDashboardPlayer")) return "MAC_CLIENT";
-            if (RuntimePlatformIs("WindowsWebPlayer")) return "WEB";
-            if (RuntimePlatformIs("WindowsEditor")) return "PC_CLIENT";
-            if (RuntimePlatformIs("IPhonePlayer"))
-            {
-                string name = SystemInfo.deviceModel;
-                if (name.Contains("iPad")) return "IOS_TABLET";
-                return "IOS_MOBILE";
-            }
-            if (RuntimePlatformIs("PS3")) return "PS3";
-            if (RuntimePlatformIs("XBOX360")) return "XBOX360";
-            if (RuntimePlatformIs("Android"))
-            {
-                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
-            }
-            if (RuntimePlatformIs("NaCL")) return "WEB";
-            if (RuntimePlatformIs("LinuxPlayer")) return "PC_CLIENT";
-            if (RuntimePlatformIs("WebGLPlayer")) return "WEB";
-            if (RuntimePlatformIs("FlashPlayer")) return "WEB";
+            if (RuntimePlatformIs("OSXEditor") ||
+                RuntimePlatformIs("OSXPlayer")) return DeltaDNA.Platform.MAC_CLIENT;
+            if (RuntimePlatformIs("WindowsEditor") ||
+                RuntimePlatformIs("WindowsPlayer")) return DeltaDNA.Platform.PC_CLIENT;
+            if (RuntimePlatformIs("OSXWebPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("OSXDashboardPlayer")) return DeltaDNA.Platform.MAC_CLIENT;
+            if (RuntimePlatformIs("WindowsWebPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("IPhonePlayer")) return DeltaDNA.Platform.IOS;
+            if (RuntimePlatformIs("PS3")) return DeltaDNA.Platform.PS3;
+            if (RuntimePlatformIs("XBOX360")) return DeltaDNA.Platform.XBOX360;
+            if (RuntimePlatformIs("Android")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("NaCL")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("LinuxEditor") ||
+                RuntimePlatformIs("LinuxPlayer")) return DeltaDNA.Platform.PC_CLIENT;
+            if (RuntimePlatformIs("WebGLPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("FlashPlayer")) return DeltaDNA.Platform.WEB;
             if (RuntimePlatformIs("MetroPlayerX86") ||
                 RuntimePlatformIs("MetroPlayerX64") ||
                 RuntimePlatformIs("MetroPlayerARM") ||
                 RuntimePlatformIs("WSAPlayerX86") ||
                 RuntimePlatformIs("WSAPlayerX64") ||
-                RuntimePlatformIs("WSAPlayerARM"))
-            {
+                RuntimePlatformIs("WSAPlayerARM")) {
                 // Metro Apps can run anywhere...
-                if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld)
-                {
-                    return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
+                if (SystemInfo.deviceType == UnityEngine.DeviceType.Handheld) {
+                    return DeltaDNA.Platform.WINDOWS_MOBILE;
+                } else {
+                    return DeltaDNA.Platform.PC_CLIENT;
                 }
-                return "PC_CLIENT";
             }
-            if (RuntimePlatformIs("WP8Player"))
-            {
-                return IsTablet() ? "WINDOWS_TABLET" : "WINDOWS_MOBILE";
-            }
+            if (RuntimePlatformIs("WP8Player")) return DeltaDNA.Platform.WINDOWS_MOBILE;
             if (RuntimePlatformIs("BB10Player") ||
-                RuntimePlatformIs("BlackBerryPlayer"))
-            {
-                return IsTablet() ? "BLACKBERRY_TABLET" : "BLACKBERRY_MOBILE";
-            }
-            if (RuntimePlatformIs("TizenPlayer"))
-            {
-                return IsTablet() ? "ANDROID_TABLET" : "ANDROID_MOBILE";
-            }
-            if (RuntimePlatformIs("PSP2")) return "PSVITA";
-            if (RuntimePlatformIs("PS4")) return "PS4";
-            if (RuntimePlatformIs("PSMPlayer")) return "WEB";
-            if (RuntimePlatformIs("XboxOne")) return "XBOXONE";
-            if (RuntimePlatformIs("SamsungTVPlayer")) return "ANDROID_CONSOLE";
-            if (RuntimePlatformIs("tvOS")) return "IOS_TV";
+                RuntimePlatformIs("BlackBerryPlayer")) return DeltaDNA.Platform.BLACKBERRY;
+            if (RuntimePlatformIs("TizenPlayer")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("PSP2")) return DeltaDNA.Platform.PSVITA;
+            if (RuntimePlatformIs("PS4")) return DeltaDNA.Platform.PS4;
+            if (RuntimePlatformIs("PSMPlayer")) return DeltaDNA.Platform.WEB;
+            if (RuntimePlatformIs("XboxOne")) return DeltaDNA.Platform.XBOXONE;
+            if (RuntimePlatformIs("SamsungTVPlayer")) return DeltaDNA.Platform.ANDROID;
+            if (RuntimePlatformIs("tvOS")) return DeltaDNA.Platform.IOS_TV;
+            if (RuntimePlatformIs("WiiU")) return DeltaDNA.Platform.WIIU;
+            if (RuntimePlatformIs("Switch")) return DeltaDNA.Platform.SWITCH;
 
-            return "UNKNOWN";
+            return DeltaDNA.Platform.UNKNOWN;
         }
 
         private static string GetDeviceName()
@@ -223,6 +210,12 @@ namespace DeltaDNA
                 case "iPhone9,2": return @"iPhone 7 Plus";
                 case "iPhone9,3": return @"iPhone 7";
                 case "iPhone9,4": return @"iPhone 7 Plus";
+                case "iPhone10,1": return @"iPhone 8";
+                case "iPhone10,4": return @"iPhone 8";
+                case "iPhone10,2": return @"iPhone 8 Plus";
+                case "iPhone10,5": return @"iPhone 8 Plus";
+                case "iPhone10,3": return @"iPhone X";
+                case "iPhone10,6": return @"iPhone X";
 
                 case "iPod1,1": return @"iPod Touch 1G";
                 case "iPod2,1": return @"iPod Touch 2G";
@@ -261,9 +254,13 @@ namespace DeltaDNA
                 case "iPad6,7": return @"iPad Pro 12.9";
                 case "iPad6,8": return @"iPad Pro 12.9";
                 case "iPad6,3": return @"iPad Pro 9.7";
-                case "iPad6,4": return @"iPad Pro 9.7"; 
+                case "iPad6,4": return @"iPad Pro 9.7";
                 case "iPad6,11": return @"iPad 5G";
                 case "iPad6,12": return @"iPad 5G";
+                case "iPad7,1": return @"iPad Pro 12.9 2G";
+                case "iPad7,2": return @"iPad Pro 12.9 2G";
+                case "iPad7,3": return @"iPad Pro 10.5";
+                case "iPad7,4": return @"iPad Pro 10.5";
 
 
                 // Amazon
@@ -281,6 +278,10 @@ namespace DeltaDNA
                 case "Amazon KFTT": return "Kindle Fire HD 7 (2nd Gen)";
                 case "Amazon KFOT": return "Kindle Fire (2nd Gen)";
                 case "Amazon Kindle Fire": return "Kindle Fire (1st Gen)";
+                case "Amazon KFGIWI": return "Fire HD 8 (2016)";
+                case "Amazon KFDOWI": return "Fire HD 8 (2017)";
+                case "Amazon KFAUWI": return "Fire 7 (2017)";
+                case "Amazon KFSUWI": return "Fire HD 10 (2017)";
 
                 default:
                     return Trim(name, 72);

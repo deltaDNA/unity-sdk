@@ -61,7 +61,10 @@ namespace DeltaDNAAds
 
         void FixedUpdate() {
             // Make our cube rotate
-            cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+            if (DDNA.Instance.HasStarted)
+            {
+                cubeObj.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+            }
         }
 
         public void OnInterstitialBtn_Clicked() {
@@ -134,6 +137,14 @@ namespace DeltaDNAAds
 
         public void OnNewSessionBtn_Clicked() {
             DDNA.Instance.NewSession();
+        }
+
+        public void OnStartSdkBtn_Clicked() {
+            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
+        }
+
+        public void OnStopSdkBtn_Clicked() {
+            DDNA.Instance.StopSDK();
         }
     }
 }

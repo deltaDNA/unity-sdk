@@ -1,6 +1,9 @@
 # Change Log
 
-## [X.Y.Z](https://github.com/deltaDNA/unity-sdk/releases/tag/X.Y.Z) (YYYY-MM-DD)
+## [4.6.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.0) (YYYY-MM-DD)
+### Added
+- Added support for Amazon platform option.
+
 ### Changed
 - Updated Unity Jar Resolver to v1.2.52.0.
 - Unity Jar Resolver downloads all Android dependencies from Maven.
@@ -9,6 +12,20 @@
 ### Removed
 - Android libraries from packages.
 - PostProcessBuild script for iOS.
+
+## [4.5.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.4) (2017-09-20)
+### Fixed
+- Triggering a new session before marking the sdk as started.
+- Unable to send long values as virtual currency.
+- Tapjoy causing a hardware not supported error on 64-bit architectures.
+
+### Changed
+- Updated AdColony ads on Android.
+- Updated iOS SmartAds to 1.5.2.
+
+## [4.5.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.3) (2017-09-11)
+### Fixed
+- Fixed missing resources in Tapjoy on Android.
 
 ## [4.5.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.5.2) (2017-08-22)
 ### Added

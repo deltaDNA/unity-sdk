@@ -43,7 +43,7 @@ namespace DeltaDNA {
             return (T) this;
         }
 
-        public T AddVirtualCurrency(string name, string type, int amount)
+        public T AddVirtualCurrency(string name, string type, long amount)
         {
             if (String.IsNullOrEmpty(name)) {
                 throw new ArgumentException("Name cannot be null or empty");
