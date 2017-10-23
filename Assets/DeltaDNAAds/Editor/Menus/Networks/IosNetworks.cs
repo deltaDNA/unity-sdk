@@ -24,7 +24,7 @@ namespace DeltaDNAAds.Editor {
     
     internal sealed class IosNetworks : Networks {
 
-        private const string VERSION = "~> 1.5.0";
+        private const string VERSION = "~> 1.6.0";
 
         public IosNetworks() : base("ios", "iOS") {}
 

@@ -58,6 +58,9 @@ namespace DeltaDNAAds.iOS {
 
         [DllImport("__Internal")]
         private static extern void _destroy();
+        
+        [DllImport("__Internal")]
+        private static extern void _setLoggingLevel(int level);
 
         #endregion
         #endif
@@ -67,6 +70,7 @@ namespace DeltaDNAAds.iOS {
         public void RegisterForAds(string decisionPoint)
         {
             #if UNITY_IOS
+            _setLoggingLevel((int)Logger.LogLevel);
             _registerForAds(decisionPoint);
             #endif
         }

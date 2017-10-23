@@ -34,6 +34,11 @@ namespace DeltaDNA
             WARNING = 2,
             ERROR = 3
         };
+        
+         #if UNITY_IOS
+        [DllImport("__Internal")]
+        private static extern void _logToConsole(string message);
+        #endif
 
         public const string PREFIX = "[DDSDK] ";
 
@@ -43,6 +48,8 @@ namespace DeltaDNA
         {
             sLogLevel = logLevel;
         }
+        
+        internal static Level LogLevel { get { return sLogLevel;  }}
 
         internal static void LogDebug(string msg)
         {
@@ -94,12 +101,7 @@ namespace DeltaDNA
                     break;
             }
         }
-
-        #if UNITY_IOS
-        [DllImport("__Internal")]
-        private static extern void _logToConsole(string message);
-        #endif
-
+        
         internal static void HandleLog(string logString, string stackTrace, LogType type) {
             #if UNITY_IOS
             if (Application.platform == RuntimePlatform.IPhonePlayer) {

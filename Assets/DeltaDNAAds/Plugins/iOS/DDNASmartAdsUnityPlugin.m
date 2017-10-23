@@ -17,6 +17,7 @@
 #import "DDNASmartAdsUnityPlugin.h"
 #import <DeltaDNAAds/SmartAds/DDNASmartAdFactory.h>
 #import <DeltaDNAAds/SmartAds/DDNASmartAdService.h>
+#import <DeltaDNA/DDNALog.h>
 
 // Unity callback support
 void UnitySendMessage(const char *gameObjectName, const char *methodName, const char *message);
@@ -87,6 +88,19 @@ void _resume()
 void _destroy()
 {
     [[DDNASmartAdsUnityPlugin sharedPlugin] destroy];
+}
+
+void _setLoggingLevel(int level)
+{
+    DDNALogLevel logLevel = DDNALogLevelNone;
+    switch (level) {
+        case 0: logLevel = DDNALogLevelDebug; break;
+        case 1: logLevel = DDNALogLevelInfo; break;
+        case 2: logLevel = DDNALogLevelWarn; break;
+        case 3: logLevel = DDNALogLevelError; break;
+        default: logLevel = DDNALogLevelNone; break;
+    }
+    [DDNALog setLogLevel:logLevel];
 }
 
 const char * SmartAdsObject = "DeltaDNAAds.DDNASmartAds";

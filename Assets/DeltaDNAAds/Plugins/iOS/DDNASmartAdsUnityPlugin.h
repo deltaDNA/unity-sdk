@@ -28,6 +28,7 @@ void _engageResponse(const char * engagementId, const char * response, int statu
 void _pause();
 void _resume();
 void _destroy();
+void _setLoggingLevel(int level);
 
 
 @interface DDNASmartAdsUnityPlugin : NSObject
