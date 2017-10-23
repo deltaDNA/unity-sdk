@@ -115,19 +115,7 @@ namespace DeltaDNA {
         static void ExportSmartAdsPackage()
         {
             List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNAAds"));
-
-            assets.RemoveAll(it => it.EndsWith("Plugins") || it.EndsWith("Editor"));
-            assets.AddRange(Directory.GetDirectories("Assets/DeltaDNAAds/Editor/Android"));
-            assets.AddRange(Directory.GetFiles("Assets/DeltaDNAAds/Editor/Android"));
-            assets.RemoveAll(it => it.EndsWith("Android/.gradle") || it.EndsWith("local.properties") || it.EndsWith(".meta"));
-
-            assets.Add("Assets/DeltaDNAAds/Editor/iOS");
-            assets.Add("Assets/DeltaDNAAds/Plugins/iOS");
-
-            assets.Add("Assets/DeltaDNAAds/Editor/DeltaDNAAdsSdkChecker.cs");
-            assets.Add("Assets/DeltaDNAAds/Editor/Menus");
-            assets.Add("Assets/DeltaDNAAds/Editor/networks.json");
-
+            
             assets.Add("Assets/DeltaDNAAds/DDNASmartAds.cs");
             assets.Add("Assets/DeltaDNAAds/InterstitialAd.cs");
             assets.Add("Assets/DeltaDNAAds/RewardedAd.cs");
