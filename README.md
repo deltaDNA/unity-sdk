@@ -113,6 +113,8 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
 
 Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  To add the Unity extensions download and import the `deltadna-smartads-*.unitypackage`.  We support iOS and Android platforms.
 
+Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the sdk, then speak to us.
+
 ### Usage
 
 The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNAAds\Example`.  The `AdsDemo` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
@@ -241,17 +243,13 @@ We record if your game was started by the player clicking on a push notification
 
 ### SmartAds on iOS
 
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries through Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
+We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries via Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
 
 __The ad networks require a minimum target version of 8. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
 
 To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
 
 If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
-
-#### UnityAds
-
-The latest versions of Unity cause conflict with Unity's internal UnityAds plugin.  An error can occur when the PostBuildProcess methods are run.  I've resolved this by having the `pod install` process run last.  You may need to change the order of the PostBuildProcess if your game includes multiple libraries using PostProcessBuild calls.
 
 ## Android Integration
 

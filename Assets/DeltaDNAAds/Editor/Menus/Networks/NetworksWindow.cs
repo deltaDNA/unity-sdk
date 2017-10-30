@@ -26,6 +26,7 @@ namespace DeltaDNAAds.Editor {
         
         private const int WIDTH_LABEL = 100;
         private const int WIDTH_TOGGLE = 60;
+        private const int WIDTH_TOGGLE_SMALL = 20;
         private const int WIDTH_BUTTON = 80;
         private const int HEIGHT_SEPARATOR = 20;
 
@@ -64,7 +65,7 @@ namespace DeltaDNAAds.Editor {
             style.wordWrap = true;
             style.margin = new RectOffset(5, 5, 5, 5);
             GUILayout.Label(
-                "Select the ad networks to use for the game.\n" +
+                "Select the ad networks to build into the game.\n" +
                 "\n" +
                 "After making changes press 'Apply', " +
                 "which will update the build scripts for Android and iOS. " +
@@ -72,12 +73,18 @@ namespace DeltaDNAAds.Editor {
                 "\n" +
                 "For Android the ad network libraries will be downloaded automatically, " +
                 "however for iOS the project will need to be built from Unity in order " +
-                "for CocoaPods to download the dependencies and export it as an Xcode project.",
+                "for CocoaPods to download the dependencies and export it as an Xcode project.\n" +
+                "\n" +
+                "Most networks work out of the box [A], to use others that require additional integration, " +
+                "contact support@deltadna.com for more details.\n" +
+                "\n" +
+                "The networks are labelled as supporting interstitial type ads [I] and/or rewarded type ads [R].",
                 style);
 
             GUILayout.Space(HEIGHT_SEPARATOR);
             
             GUILayout.BeginHorizontal();
+            GUILayout.Label("A", GUILayout.Width(WIDTH_TOGGLE_SMALL));
             GUILayout.Label("Network", GUILayout.Width(WIDTH_LABEL));
             
             foreach (var handler in handlers) {
@@ -86,10 +93,20 @@ namespace DeltaDNAAds.Editor {
                     GUILayout.Width(WIDTH_TOGGLE));
             }
             
+            GUILayout.Label("I", GUILayout.Width(WIDTH_TOGGLE_SMALL));
+            GUILayout.Label("R", GUILayout.Width(WIDTH_TOGGLE));
             GUILayout.EndHorizontal();
             
             foreach (IDictionary<string, object> network in networks) {
                 GUILayout.BeginHorizontal();
+                
+                var integration = network["integration"] as string;
+                if (integration != null && integration == "manual") {
+                    GUILayout.Label("", GUILayout.Width(WIDTH_TOGGLE_SMALL));
+                } else {
+                    GUILayout.Label('\u25CF'.ToString(), GUILayout.Width(WIDTH_TOGGLE_SMALL));
+                }
+                
                 GUILayout.Label(
                     network[NAME] as string,
                     GUILayout.Width(WIDTH_LABEL));
@@ -109,6 +126,28 @@ namespace DeltaDNAAds.Editor {
                         "",
                         GUILayout.Width(WIDTH_TOGGLE));
                 }
+
+                bool interstitialFound = false;
+                bool rewardedFound = false;
+                var adTypes = network["type"] as IList<object>;
+                foreach (string adType in adTypes) {
+                    if (adType == "interstitial") interstitialFound = true;
+                    if (adType == "rewarded") rewardedFound = true;
+                }
+
+                if (interstitialFound) {
+                    GUILayout.Label('\u25CF'.ToString(), GUILayout.Width(WIDTH_TOGGLE_SMALL));
+                } else {
+                    GUILayout.Label("", GUILayout.Width(WIDTH_TOGGLE_SMALL));
+                }
+
+                if (rewardedFound) {
+                    GUILayout.Label('\u25CF'.ToString(), GUILayout.Width(WIDTH_TOGGLE));
+                } else {
+                    GUILayout.Label("", GUILayout.Width(WIDTH_TOGGLE));
+                }
+
+                
                 
                 GUILayout.EndHorizontal();
             }

@@ -2,86 +2,120 @@
   {
     "name": "AdColony",
     "android": "adcolony",
-    "ios": "AdColony"
+    "ios": "AdColony",
+    "integration": "automatic",
+    "type": ["rewarded"]
   },
   {
     "name": "AdMob",
     "android": "admob",
-    "ios": "AdMob"
+    "ios": "AdMob",
+    "integration": "automatic",
+    "type": ["interstitial", "rewarded"]
   },
   {
     "name": "Amazon",
     "android": "amazon",
-    "ios": "Amazon"
+    "ios": "Amazon",
+    "integration": "automatic",
+    "type": ["interstitial"]
   },
   {
-      "name": "AppLovin",
-      "android": "applovin",
-      "ios": "AppLovin"
+    "name": "AppLovin",
+    "android": "applovin",
+    "ios": "AppLovin",
+    "integration": "automatic",
+    "type": ["rewarded"]
   },
   {
     "name": "Chartboost",
     "android": "chartboost",
-    "ios": "Chartboost"
+    "ios": "Chartboost",
+    "integration": "automatic",
+    "type": ["interstitial", "rewarded"]
   },
  {
     "name": "Facebook",
     "android": "facebook",
-    "ios": "Facebook"
+    "ios": "Facebook",
+    "integration": "manual",
+    "type": ["interstitial", "rewarded"]
   },
   {
     "name": "Flurry",
     "android": "flurry",
-    "ios": "Flurry"
+    "ios": "Flurry",
+    "integration": "automatic",
+    "type": ["interstitial", "rewarded"]
   },
   {
     "name": "HyprMX",
     "android": "hyprmx",
-    "ios": "HyprMX"
+    "ios": "HyprMX",
+    "integration": "manual",
+    "type": ["rewarded"]
   },
   {
     "name": "InMobi",
     "android": "inmobi",
-    "ios": "InMobi"
+    "ios": "InMobi",
+    "integration": "automatic",
+    "type": ["interstitial", "rewarded"]
   },
   {
     "name": "IronSource",
     "android": "ironsource",
-    "ios": "IronSource"
+    "ios": "IronSource",
+    "integration": "automatic",
+    "type": ["interstitial", "rewarded"]
   },
   {
     "name": "LoopMe",
     "android": "loopme",
-    "ios": "LoopMe"
+    "ios": "LoopMe",
+    "integration": "manual",
+    "type": ["rewarded"]
   },
   {
     "name": "MobFox",
     "android": "mobfox",
-    "ios": "MobFox"
+    "ios": "MobFox",
+    "integration": "automatic",
+    "type": ["interstitial"]
   },
   {
     "name": "MoPub",
     "android": "mopub",
-    "ios": "MoPub"
+    "ios": "MoPub",
+    "integration": "automatic",
+    "type": ["interstitial"]
   },
   {
     "name": "Tapjoy",
     "android": "tapjoy",
-    "ios": "Tapjoy"
+    "ios": "Tapjoy",
+    "integration": "automatic",
+    "type": ["rewarded"]
   },
   {
     "name": "ThirdPresence",
     "android": "thirdpresence",
-    "ios": "ThirdPresence"
+    "ios": "ThirdPresence",
+    "integration": "manual",
+    "type": ["rewarded"]
   },
   {
     "name": "Unity",
     "android": "unity",
-    "ios": "UnityAds"
+    "ios": "UnityAds",
+    "integration": "automatic",
+    "type": ["rewarded"]
   },
   {
     "name": "Vungle",
     "android": "vungle",
-    "ios": "Vungle"
+    "ios": "Vungle",
+    "integration": "automatic",
+    "type": ["rewarded"]
   }
 ]
