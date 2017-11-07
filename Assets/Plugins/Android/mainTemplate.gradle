@@ -19,6 +19,7 @@ allprojects {
 apply plugin: 'com.android.application'
 
 dependencies {
+    compile 'com.android.support:multidex:1.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 **DEPS**}
 
@@ -32,6 +33,11 @@ android {
         targetSdkVersion **TARGETSDKVERSION**
         applicationId '**APPLICATIONID**'
         multiDexEnabled true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.xml'
+        exclude 'META-INF/maven/com.squareup.okio/okio/pom.properties'
     }
 
     lintOptions {
