@@ -22,7 +22,7 @@ ProjectSettings/*
 
 # Native dependencies (add exclusions below)
 Assets/Plugins/Android/
-!Assets/Plugins/Android/deltadna-sdk-unity-notifications
+!Assets/Plugins/Android/deltadna-sdk-unity-*
 Assets/DeltaDNAAds/Resources*
 
 # Other
