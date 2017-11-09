@@ -1,92 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.5.3">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.6.0">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
