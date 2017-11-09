@@ -8,6 +8,7 @@
 - Support for Unity 2017.2
 
 ### Changed
+- Updated ad networks on Android.
 - Updated Unity Jar Resolver to v1.2.52.0.
 - Unity Jar Resolver downloads all Android dependencies from Maven.
 - Unity Jar Resolver handles SmartAds libraries for iOS.
