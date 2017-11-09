@@ -4,6 +4,9 @@
 ### Added
 - Added support for Amazon platform option.
 
+### Fixed
+- Support for Unity 2017.2
+
 ### Changed
 - Updated Unity Jar Resolver to v1.2.52.0.
 - Unity Jar Resolver downloads all Android dependencies from Maven.

@@ -293,7 +293,11 @@ namespace DeltaDNA {
                 #if UNITY_2017_1_OR_NEWER
                 using (var www = UnityWebRequestTexture.GetTexture(url))
                 {
+                    #if UNITY_2017_2_OR_NEWER
+                    yield return www.SendWebRequest();
+                    #else
                     yield return www.Send();
+                    #endif
 
                     if (www.isNetworkError || www.isHttpError) {
                         Logger.LogWarning("Failed to load resource "+url+" "+www.error);

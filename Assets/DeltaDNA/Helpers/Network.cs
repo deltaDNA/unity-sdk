@@ -70,7 +70,8 @@ namespace DeltaDNA {
         const string StatusRegex = @"^.*\s(\d{3})\s.*$";
         const string ErrorRegex = @"^(\d{3})\s.*$";
 
-        internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler) {
+        internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler)
+        {
 
             // timeout feature added in 5.6.2f1
             #if UNITY_5_6_OR_NEWER && !UNITY_5_6_0 && !UNITY_5_6_1
@@ -79,18 +80,26 @@ namespace DeltaDNA {
             www.url = request.URL;
             www.timeout = request.TimeoutSeconds;
             www.downloadHandler = new DownloadHandlerBuffer();
-            if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST) {
+            if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST)
+            {
                 www.method = UnityWebRequest.kHttpVerbPOST;
-                foreach (var entry in request.getHeaders()) {
+                foreach (var entry in request.getHeaders())
+                {
                     www.SetRequestHeader(entry.Key, entry.Value);
                 }
                 byte[] bytes = Encoding.UTF8.GetBytes(request.HTTPBody);
                 www.uploadHandler = new UploadHandlerRaw(bytes);
-            } else {
+            }
+            else
+            {
                 www.method = UnityWebRequest.kHttpVerbGET;
             }
 
+            #if UNITY_2017_2_OR_NEWER
+            yield return www.SendWebRequest();
+            #else
             yield return www.Send();
+            #endif
 
             if (completionHandler != null) {
                 completionHandler((int)www.responseCode, www.downloadHandler.text, www.error);
