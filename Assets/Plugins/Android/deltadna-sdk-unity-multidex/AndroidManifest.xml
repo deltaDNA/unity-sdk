@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.deltadna.android.sdk.unity.multidex">
-  <application android:name="android.support.multidex.MultiDexApplication"/>
-</manifest>

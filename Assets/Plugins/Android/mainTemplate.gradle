@@ -19,7 +19,6 @@ allprojects {
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile 'com.android.support:multidex:1.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 **DEPS**}
 
