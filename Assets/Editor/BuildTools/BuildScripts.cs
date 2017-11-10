@@ -122,8 +122,6 @@ namespace DeltaDNA {
 
             assets.Add("Assets/PlayServicesResolver");
 
-            assets.Add("Assets/Plugins/Android/deltadna-sdk-unity-multidex");
-
             foreach (string f in assets) { Console.WriteLine(f); }
 
             string filename = OutputFilename("deltadna-smartads", SdkVersion());
