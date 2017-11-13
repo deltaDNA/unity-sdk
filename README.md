@@ -272,7 +272,7 @@ If your application is setup using the Google Cloud Console you can find instruc
 
 The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
-If you no longer wish to use push notifications on Android then you can remove the *Assets/DeltaDNA/Plugins/Android* and *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folders from the project to decrease the number of methods and the APK size of your game.
+If you no longer wish to use push notifications on Android then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folder and *Assets/DeltaDNA/Editor/Android/Dependencies.xml* from the project to decrease the number of methods and the APK size of your game.
 
 ### SmartAds on Android
 
