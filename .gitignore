@@ -6,7 +6,7 @@ obj/
 bin/
 
 # UnityJarResolver creates this
-iOS/
+iOS/**
 
 # Project/User Preference Files
 *.pidb
