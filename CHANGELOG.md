@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.6.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.0) (YYYY-MM-DD)
+## [4.6.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.0) (2017-11-13)
 ### Added
 - Added support for Amazon platform option.
 
