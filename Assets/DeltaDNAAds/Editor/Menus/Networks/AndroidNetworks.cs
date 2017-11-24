@@ -19,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace DeltaDNAAds.Editor {
     
@@ -56,7 +55,9 @@ namespace DeltaDNAAds.Editor {
         internal override void ApplyChanges(IList<string> enabled) {
             var config = Configuration();
             
-            config.Descendants("androidPackage").Remove();
+            config
+                .Descendants("androidPackage")
+                .Remove();
             
             var packages = config.Descendants("androidPackages").First();
             if (enabled.Count > 0) {
@@ -99,6 +100,19 @@ namespace DeltaDNAAds.Editor {
                             "repositories",
                             repos.ToArray())
                     }));
+            }
+
+            if (DebugLoadHelper.IsDevelopment() && DebugLoadHelper.IsDebugNotifications()) {
+                packages.Add(new XElement(
+                    "androidPackage",
+                    new object[] {
+                        new XAttribute(
+                            "spec",
+                            "com.deltadna.android:deltadna-smartads-debug:" + VERSION),
+                        new XElement(
+                            "repositories",
+                            new object[] { new XElement("repository", REPO) })
+                        }));
             }
 
             config.Save(CONFIG);

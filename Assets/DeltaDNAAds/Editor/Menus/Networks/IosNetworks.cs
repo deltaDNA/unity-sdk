@@ -15,7 +15,6 @@
 //
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using UnityEditor;
@@ -25,6 +24,16 @@ namespace DeltaDNAAds.Editor {
     internal sealed class IosNetworks : Networks {
 
         private const string VERSION = "~> 1.7.0-beta.1";
+        private const string VERSION_DEBUG = "~> 1.0.0";
+
+        private readonly object[] sources = new object[] {
+            new XElement(
+                "source",
+                "https://github.com/deltaDNA/CocoaPods.git"),
+            new XElement(
+                "source",
+                "https://github.com/CocoaPods/Specs.git")
+        };
 
         public IosNetworks() : base("ios", "iOS") {}
 
@@ -41,7 +50,9 @@ namespace DeltaDNAAds.Editor {
         internal override void ApplyChanges(IList<string> enabled) {
             var config = Configuration();
 
-            config.Descendants("iosPod").Remove();
+            config
+                .Descendants("iosPod")
+                .Remove();
 
             var packages = config.Descendants("iosPods").First();
             foreach (var network in enabled) {
@@ -59,23 +70,40 @@ namespace DeltaDNAAds.Editor {
                             "true"),
                         new XAttribute(
                             "minTargetSdk",
-                        #if UNITY_5_5_OR_NEWER
+                            #if UNITY_5_5_OR_NEWER
                             PlayerSettings.iOS.targetOSVersionString.ToString()),
-                        #elif UNITY_5_OR_NEWER
+                            #elif UNITY_5_OR_NEWER
                             PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
-                        #else
+                            #else
                             PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
-                        #endif
-                        new XElement(
-                            "sources",
-                            new object[] {
-                                new XElement(
-                                    "source",
-                                    "https://github.com/deltaDNA/CocoaPods.git"),
-                                new XElement(
-                                    "source",
-                                    "https://github.com/CocoaPods/Specs.git")
-                            })
+                            #endif
+                        new XElement("sources", sources)
+                    }));
+            }
+
+            if (DebugLoadHelper.IsDevelopment() && DebugLoadHelper.IsDebugNotifications()) {
+                packages.Add(new XElement(
+                    "iosPod",
+                    new object[] {
+                        new XAttribute(
+                            "name",
+                            "DeltaDNADebug"),
+                        new XAttribute(
+                            "version",
+                            VERSION_DEBUG),
+                        new XAttribute(
+                            "bitcodeEnabled",
+                            "true"),
+                        new XAttribute(
+                            "minTargetSdk",
+                            #if UNITY_5_5_OR_NEWER
+                            PlayerSettings.iOS.targetOSVersionString.ToString()),
+                            #elif UNITY_5_OR_NEWER
+                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
+                            #else
+                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
+                            #endif
+                        new XElement("sources", sources)
                     }));
             }
 

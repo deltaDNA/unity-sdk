@@ -24,6 +24,8 @@ using System.Linq;
 namespace DeltaDNAAds.Editor {
     public sealed class NetworksWindow : EditorWindow {
         
+        internal const string PREFS_DEBUG = "DeltaDNAAds.Debug";
+
         private const int WIDTH_LABEL = 100;
         private const int WIDTH_TOGGLE = 60;
         private const int WIDTH_TOGGLE_SMALL = 20;
@@ -34,6 +36,7 @@ namespace DeltaDNAAds.Editor {
         private const string NAME = "name";
         
         private readonly IList<object> networks;
+        private bool debugNotifications;
         
         private readonly Networks[] handlers = new Networks[] {
             new AndroidNetworks(true),
@@ -44,7 +47,8 @@ namespace DeltaDNAAds.Editor {
         
         public NetworksWindow() : base() {
             networks = Json.Deserialize(File.ReadAllText(DEFINITIONS)) as IList<object>;
-            
+            debugNotifications = DebugLoadHelper.IsDebugNotifications();
+
             foreach (var handler in handlers) {
                 enabled[handler] = new SortedDictionary<string, bool>();
                 
@@ -146,12 +150,14 @@ namespace DeltaDNAAds.Editor {
                 } else {
                     GUILayout.Label("", GUILayout.Width(WIDTH_TOGGLE));
                 }
-
-                
                 
                 GUILayout.EndHorizontal();
             }
 
+            GUILayout.Space(HEIGHT_SEPARATOR);
+            EditorGUI.BeginDisabledGroup(!DebugLoadHelper.IsDevelopment());
+            debugNotifications = GUILayout.Toggle(debugNotifications, "Enable debug notifications");
+            EditorGUI.EndDisabledGroup();
             GUILayout.Space(HEIGHT_SEPARATOR);
 
             GUILayout.BeginHorizontal();
@@ -170,6 +176,8 @@ namespace DeltaDNAAds.Editor {
         }
         
         private void Apply() {
+            EditorPrefs.SetBool(PREFS_DEBUG, debugNotifications);
+
             foreach (var handler in handlers) {
                 var items = getEnabled(handler);
                 if (!handler.GetPersisted().SequenceEqual(items)
@@ -177,7 +185,7 @@ namespace DeltaDNAAds.Editor {
                     handler.ApplyChanges(items);
             }
             
-            UnityEngine.Debug.Log(string.Format(
+            Debug.Log(string.Format(
                 "Changes have been applied to {0}, please commit the updates to version control",
                 Networks.CONFIG));
         }
