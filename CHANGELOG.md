@@ -3,6 +3,7 @@
 ## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (YYYY-MM-DD)
 ### Added
 - MachineZone ad network.
+- SmartAds debug diagnostics on Android.
 
 ### Changed
 - Updated runtime libraries on Android.
