@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+#if UNITY_5_OR_NEWER
 using UnityEngine;
 
 namespace DeltaDNAAds {
@@ -91,3 +92,4 @@ namespace DeltaDNAAds {
         }
     }
 }
+#endif

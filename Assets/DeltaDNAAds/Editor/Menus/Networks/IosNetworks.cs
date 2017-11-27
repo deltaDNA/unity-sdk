@@ -61,8 +61,10 @@ namespace DeltaDNAAds.Editor {
                             "minTargetSdk",
                         #if UNITY_5_5_OR_NEWER
                             PlayerSettings.iOS.targetOSVersionString.ToString()),
-                        #else
+                        #elif UNITY_5_OR_NEWER
                             PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
+                        #else
+                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
                         #endif
                         new XElement(
                             "sources",

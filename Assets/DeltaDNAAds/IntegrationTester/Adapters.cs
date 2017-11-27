@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+#if UNITY_5_OR_NEWER
 using System.Collections.Generic;
 #if UNITY_2017_1_OR_NEWER
 using System;
@@ -208,3 +209,4 @@ namespace DeltaDNAAds {
         #endif
     }
 }
+#endif

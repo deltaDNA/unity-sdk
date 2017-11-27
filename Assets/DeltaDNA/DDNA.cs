@@ -55,11 +55,15 @@ namespace DeltaDNA
         }
 
         void OnEnable() {
+#if UNITY_5_OR_NEWER
             Application.logMessageReceived += Logger.HandleLog;
+#endif
         }
 
         void OnDisable() {
+#if UNITY_5_OR_NEWER
             Application.logMessageReceived -= Logger.HandleLog;
+#endif
         }
 
         void Awake()

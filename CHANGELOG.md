@@ -1,5 +1,12 @@
 # Change Log
 
+## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (????-??-??)
+### Fixed
+- Support for Unity 4.7.2
+
+### Changed
+- Updated Unity Jar Resolver to v1.2.59.0.
+
 ## [4.6.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.0) (2017-11-13)
 ### Added
 - Added support for Amazon platform option.

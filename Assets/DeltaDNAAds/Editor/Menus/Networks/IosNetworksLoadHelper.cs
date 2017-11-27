@@ -45,8 +45,10 @@ namespace DeltaDNAAds.Editor {
             
             #if UNITY_5_5_OR_NEWER
             var newVersion = PlayerSettings.iOS.targetOSVersionString.ToString();
-            #else
+            #elif UNITY_5_OR_NEWER
             var newVersion = PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.');
+            #else
+            var newVersion = PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.');
             #endif
             if (!newVersion.Equals(version)) {
                 refresh = true;

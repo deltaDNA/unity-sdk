@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿#if UNITY_5_OR_NEWER
+using NUnit.Framework;
 using System.Threading;
 
 namespace DeltaDNA {
@@ -13,3 +14,4 @@ namespace DeltaDNA {
         }
     }
 }
+#endif
