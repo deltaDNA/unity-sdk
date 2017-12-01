@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (????-??-??)
+## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (2017-12-01)
 ### Fixed
 - Support for Unity 4.7.2
 - InMobi completed callbacks not being invoked on Android.
