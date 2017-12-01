@@ -1,195 +1,195 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.6.0">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.6.1">
       <repositories>
         <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
   </androidPackages>
   <iosPods>
-    <iosPod name="DeltaDNAAds/AdColony" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/AdColony" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/AdMob" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/AdMob" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Amazon" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Amazon" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/AppLovin" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/AppLovin" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Chartboost" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Chartboost" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Facebook" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Facebook" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Flurry" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Flurry" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/HyprMX" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/HyprMX" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/InMobi" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/InMobi" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/IronSource" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/IronSource" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/LoopMe" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/LoopMe" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/MobFox" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/MobFox" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/MoPub" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/MoPub" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Tapjoy" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Tapjoy" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/ThirdPresence" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/ThirdPresence" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/UnityAds" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/UnityAds" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/Vungle" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/Vungle" version="~&gt; 1.6.0" bitcodeEnabled="true" minTargetSdk="7.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>

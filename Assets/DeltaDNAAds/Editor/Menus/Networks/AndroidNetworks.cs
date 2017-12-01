@@ -32,7 +32,7 @@ namespace DeltaDNAAds.Editor {
         }
         
         private const string REPO = "http://deltadna.bintray.com/android";
-        private const string VERSION = "1.6.0";
+        private const string VERSION = "1.6.1";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
 
         private readonly bool download;

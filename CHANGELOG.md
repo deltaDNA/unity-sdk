@@ -3,6 +3,12 @@
 ## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (????-??-??)
 ### Fixed
 - Support for Unity 4.7.2
+- InMobi completed callbacks not being invoked on Android.
+- Push notification broadcast events if targeting Android API 26 or higher.
+- Push notifications not opening app if targeting Android API 26 or higher.
+- Push notification events to not be broadcast outside of app on Android.
+- Crash when notifications icon defined as drawable resource on Android.
+- Possibility of leaking cursors on Android.
 
 ### Changed
 - Updated Unity Jar Resolver to v1.2.59.0.
