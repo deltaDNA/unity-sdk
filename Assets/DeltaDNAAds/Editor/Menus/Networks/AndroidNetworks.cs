@@ -31,8 +31,8 @@ namespace DeltaDNAAds.Editor {
             instance.ApplyChanges(instance.GetPersisted());
         }
         
-        private const string REPO = "http://deltadna.bintray.com/android";
-        private const string VERSION = "1.6.1";
+        private const string REPO = "http://corp-vm-artifactory/artifactory/deltadna-repo";
+        private const string VERSION = "1.6.2-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
 
         private readonly bool download;
@@ -72,6 +72,13 @@ namespace DeltaDNAAds.Editor {
                     }));
             }
             foreach (var network in enabled) {
+                List<object> repos = new List<object>() { new XElement("repository", REPO) };
+                if (network.Equals("hyprmx")) {
+                    repos.Add(new XElement(
+                        "repository",
+                        "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                }
+
                 packages.Add(new XElement(
                     "androidPackage",
                     new object[] {
@@ -80,7 +87,7 @@ namespace DeltaDNAAds.Editor {
                             "com.deltadna.android:deltadna-smartads-provider-" + network + ":" + VERSION),
                         new XElement(
                             "repositories",
-                            new object[] { new XElement("repository", REPO) })
+                            repos.ToArray())
                     }));
             }
 

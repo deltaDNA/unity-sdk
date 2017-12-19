@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.6.2]((https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.2) (YYYY-MM-DD)
+### Changed
+- Updated HyprMX ads on Android.
+
 ## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (2017-12-01)
 ### Fixed
 - Support for Unity 4.7.2
