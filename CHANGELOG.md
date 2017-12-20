@@ -4,6 +4,9 @@
 ### Added
 - MachineZone ad network.
 
+### Changed
+- Updated HyprMX ads on Android.
+
 ## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (2017-12-01)
 ### Fixed
 - Support for Unity 4.7.2

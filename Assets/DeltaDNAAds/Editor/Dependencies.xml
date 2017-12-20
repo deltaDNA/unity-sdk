@@ -44,6 +44,7 @@
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.7.0-SNAPSHOT">
       <repositories>
         <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master</repository>
       </repositories>
     </androidPackage>
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.7.0-SNAPSHOT">

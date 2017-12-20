@@ -72,6 +72,13 @@ namespace DeltaDNAAds.Editor {
                     }));
             }
             foreach (var network in enabled) {
+                List<object> repos = new List<object>() { new XElement("repository", REPO) };
+                if (network.Equals("hyprmx")) {
+                    repos.Add(new XElement(
+                        "repository",
+                        "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                }
+
                 packages.Add(new XElement(
                     "androidPackage",
                     new object[] {
@@ -80,7 +87,7 @@ namespace DeltaDNAAds.Editor {
                             "com.deltadna.android:deltadna-smartads-provider-" + network + ":" + VERSION),
                         new XElement(
                             "repositories",
-                            new object[] { new XElement("repository", REPO) })
+                            repos.ToArray())
                     }));
             }
 
