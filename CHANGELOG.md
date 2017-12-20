@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (YYYY-MM-DD)
+### Added
+- MachineZone ad network.
+
 ## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (2017-12-01)
 ### Fixed
 - Support for Unity 4.7.2

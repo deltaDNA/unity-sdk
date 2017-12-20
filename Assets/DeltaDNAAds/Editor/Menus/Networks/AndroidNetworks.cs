@@ -31,8 +31,8 @@ namespace DeltaDNAAds.Editor {
             instance.ApplyChanges(instance.GetPersisted());
         }
         
-        private const string REPO = "http://deltadna.bintray.com/android";
-        private const string VERSION = "1.6.1";
+        private const string REPO = "http://corp-vm-artifactory/artifactory/deltadna-repo";
+        private const string VERSION = "1.7.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
 
         private readonly bool download;

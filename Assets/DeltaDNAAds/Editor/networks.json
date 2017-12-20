@@ -77,6 +77,13 @@
     "type": ["rewarded"]
   },
   {
+    "name": "MachineZone",
+    "android": "machinezone",
+    "ios": "MachineZone",
+    "integration": "manual",
+    "type": ["interstitial", "rewarded"]
+  },
+  {
     "name": "MobFox",
     "android": "mobfox",
     "ios": "MobFox",
