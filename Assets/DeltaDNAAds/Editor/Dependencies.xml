@@ -75,11 +75,13 @@
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.7.0-SNAPSHOT">
       <repositories>
         <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>https://s3.amazonaws.com/moat-sdk-builds</repository>
       </repositories>
     </androidPackage>
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.7.0-SNAPSHOT">
       <repositories>
         <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>https://tapjoy.bintray.com/maven</repository>
       </repositories>
     </androidPackage>
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.7.0-SNAPSHOT">

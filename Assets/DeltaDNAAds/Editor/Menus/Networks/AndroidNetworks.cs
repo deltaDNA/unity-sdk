@@ -72,11 +72,21 @@ namespace DeltaDNAAds.Editor {
                     }));
             }
             foreach (var network in enabled) {
-                List<object> repos = new List<object>() { new XElement("repository", REPO) };
+                var repos = new List<object>() { new XElement("repository", REPO) };
                 if (network.Equals("hyprmx")) {
                     repos.Add(new XElement(
                         "repository",
                         "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                }
+                if (network.Equals("mopub")) {
+                    repos.Add(new XElement(
+                        "repository",
+                        "https://s3.amazonaws.com/moat-sdk-builds"));
+                }
+                if (network.Equals("tapjoy")) {
+                    repos.Add(new XElement(
+                        "repository",
+                        "https://tapjoy.bintray.com/maven"));
                 }
 
                 packages.Add(new XElement(

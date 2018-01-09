@@ -5,7 +5,22 @@
 - MachineZone ad network.
 
 ### Changed
+- Updated runtime libraries on Android.
+- Updated AdColony ads on Android.
+- Updated AdMob ads on Android.
+- Updated AppLovin ads on Android.
+- Updated Chartboost ads on Android.
+- Updated Facebook ads on Android.
+- Updated Flyrry ads on Android.
 - Updated HyprMX ads on Android.
+- Updated InMobi ads on Android.
+- Updated IronSource ads on Android.
+- Updated MobFox ads on Android.
+- Updated MoPub ads on Android.
+- Updated Tapjoy ads on Android.
+- Updated Unity ads on Android.
+- Updated Vungle ads on Android.
+- Updated IronSource to set mediation type.
 
 ## [4.6.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.6.1) (2017-12-01)
 ### Fixed
