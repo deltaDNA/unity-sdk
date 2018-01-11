@@ -17,6 +17,7 @@
 #import "DDNASmartAdsUnityPlugin.h"
 #import <DeltaDNAAds/SmartAds/DDNASmartAdFactory.h>
 #import <DeltaDNAAds/SmartAds/DDNASmartAdService.h>
+#import <DeltaDNAAds/SmartAds/DDNADebugListener.h>
 #import <DeltaDNA/DDNALog.h>
 
 // Unity callback support
@@ -103,6 +104,12 @@ void _setLoggingLevel(int level)
     [DDNALog setLogLevel:logLevel];
 }
 
+void _fireEventNewSession()
+{
+    NSLog(@"Posting NewSessionEvent to NSNotificationCenter");
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"DDNASDKNewSession" object:nil];
+}
+
 const char * SmartAdsObject = "DeltaDNAAds.DDNASmartAds";
 
 UIViewController *UnityGetGLViewController();
@@ -156,7 +163,9 @@ UIViewController *UnityGetGLViewController();
 
 @property (nonatomic, strong) DDNASmartAdFactory *factory;
 @property (nonatomic, strong) DDNASmartAdService *adService;
+@property (nonatomic, strong) DDNADebugListener *debugListener;
 @property (nonatomic, strong) NSMutableDictionary *engagements;
+@property (nonatomic, copy) NSString *decisionPoint;
 
 @end
 
@@ -176,6 +185,8 @@ UIViewController *UnityGetGLViewController();
 {
     if ((self = [super init])) {
         self.factory = [[DDNASmartAdFactory alloc] init];
+        self.debugListener = [DDNADebugListener sharedInstance];
+        [self.debugListener registerListeners];
         self.engagements = [NSMutableDictionary dictionary];
     }
     return self;
@@ -184,6 +195,13 @@ UIViewController *UnityGetGLViewController();
 - (void)registerForAds:(NSString *)decisionPoint
 {
     @synchronized(self) {
+        self.decisionPoint = decisionPoint;
+    
+        if (!self.adService) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DDNASDKNewSession" object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reRegisterForAds) name:@"DDNASDKNewSession" object:nil];
+        }
+    
         self.adService = [self.factory buildSmartAdServiceWithDelegate:self];
 
         if (self.adService) {
@@ -284,6 +302,11 @@ UIViewController *UnityGetGLViewController();
 - (void)destroy
 {
     self.adService = nil;
+}
+
+- (void)reRegisterForAds
+{
+    [self registerForAds:self.decisionPoint];
 }
 
 #pragma mark DDNASmartAdServiceDelegate

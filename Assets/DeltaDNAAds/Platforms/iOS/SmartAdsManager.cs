@@ -61,6 +61,9 @@ namespace DeltaDNAAds.iOS {
         
         [DllImport("__Internal")]
         private static extern void _setLoggingLevel(int level);
+        
+        [DllImport("__Internal")]  
+        private static extern void _fireEventNewSession(); 
 
         #endregion
         #endif
@@ -182,6 +185,13 @@ namespace DeltaDNAAds.iOS {
         {
             #if UNITY_IOS
             _destroy();
+            #endif
+        }
+
+        public void OnNewSession()
+        {
+            #if UNITY_IOS
+            _fireEventNewSession();
             #endif
         }
 

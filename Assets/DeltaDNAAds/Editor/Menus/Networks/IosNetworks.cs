@@ -23,7 +23,7 @@ namespace DeltaDNAAds.Editor {
     
     internal sealed class IosNetworks : Networks {
 
-        private const string VERSION = "~> 1.7.0-beta.1";
+        private const string VERSION = "~> 1.7.0-beta.3";
         private const string VERSION_DEBUG = "~> 1.0.0";
 
         private readonly object[] sources = new object[] {

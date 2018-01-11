@@ -35,6 +35,7 @@ namespace DeltaDNAAds {
         void OnPause();
         void OnResume();
         void OnDestroy();
+        void OnNewSession();
     }
 
 }
