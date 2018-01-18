@@ -10,26 +10,22 @@ using UnityEditor.iOS.Xcode.Extensions;
 
 namespace DeltaDNAAds
 {
-    public class AddDebugNotificationExtension : ScriptableObject
+    public class EnableDebugNotificationExtension : ScriptableObject
     {
         private const int BUILD_ORDER_ADD_EXTENSION = 10000;    // after the UnityJarResolver runs pod install
     
         [PostProcessBuildAttribute(BUILD_ORDER_ADD_EXTENSION)]
-        public static void OnPostProcessAddNotificationContentExtension(
+        public static void OnPostProcessEnableNotificationExtension(
             BuildTarget buildTarget, string buildPath)
         {
-            Debug.Log("Adding DDNA notification extension into XCode Project" + buildPath);
+            Debug.Log("Adding DDNA debug notification content extension into XCode Project");
             
             PBXProject proj = new PBXProject();
             string projPath = PBXProject.GetPBXProjectPath(buildPath);
             proj.ReadFromFile(projPath);
 
-            Debug.Log("ProjectPath = " + projPath);
-            Debug.Log("Application.dataPath = " + Application.dataPath);
-
             string mainTarget = proj.TargetGuidByName(PBXProject.GetUnityTargetName());
-
-            string srcPath = Application.dataPath + "/DeltaDNAAds/Editor/iOS/Notification Content/";
+            string srcPath = Application.dataPath + "/DeltaDNAAds/Editor/iOS/NotificationContent/";
             string destPath = buildPath + "/Notification Content/";
  
             FileUtil.CopyFileOrDirectory(srcPath, destPath);
