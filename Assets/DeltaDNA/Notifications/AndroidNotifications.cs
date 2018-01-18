@@ -55,14 +55,22 @@ namespace DeltaDNA
         /// </summary>
         public event Action<string> OnDidFailToRegisterForPushNotifications;
 
+        /// <summary>
+        /// Holds whether notifications are present in the project as they can
+        /// be removed.
+        /// </summary>
+        private bool? notificationsPresent;
+
         void Awake()
         {
             gameObject.name = this.GetType().ToString();
             DontDestroyOnLoad(this);
 
             #if UNITY_ANDROID && !UNITY_EDITOR
-            ddnaNotifications = new Android.DDNANotifications();
-            ddnaNotifications.MarkUnityLoaded();
+            if (AreNotificationsPresent()) {
+                ddnaNotifications = new Android.DDNANotifications();
+                ddnaNotifications.MarkUnityLoaded();
+            }
             #endif
         }
 
@@ -83,7 +91,7 @@ namespace DeltaDNA
         /// deltaDNA notifications should be registered as a secondary (non-main)
         /// instance.</param>
         public void RegisterForPushNotifications(bool secondary = false) {
-            if (Application.platform == RuntimePlatform.Android) {
+            if (Application.platform == RuntimePlatform.Android && AreNotificationsPresent()) {
                 #if UNITY_ANDROID && !UNITY_EDITOR
                 try {
                     ddnaNotifications.Register(
@@ -102,11 +110,24 @@ namespace DeltaDNA
         /// </summary>
         public void UnregisterForPushNotifications()
         {
-            if (Application.platform == RuntimePlatform.Android) {
+            if (Application.platform == RuntimePlatform.Android && AreNotificationsPresent()) {
                 #if UNITY_ANDROID && !UNITY_EDITOR
                 DDNA.Instance.AndroidRegistrationID = null;
                 #endif
             }
+        }
+
+        private bool AreNotificationsPresent() {
+            if (notificationsPresent == null) {
+                try {
+                    new AndroidJavaClass("com.deltadna.android.sdk.notifications.DDNANotifications");
+                    notificationsPresent = true;
+                } catch (AndroidJavaException) {
+                    notificationsPresent = false;
+                }
+            }
+
+            return (bool) notificationsPresent;
         }
 
         #region Native Bridge
