@@ -102,7 +102,7 @@ namespace DeltaDNAAds.Editor {
                     }));
             }
 
-            if (DebugLoadHelper.IsDevelopment() && DebugLoadHelper.IsDebugNotifications()) {
+            if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
                 packages.Add(new XElement(
                     "androidPackage",
                     new object[] {

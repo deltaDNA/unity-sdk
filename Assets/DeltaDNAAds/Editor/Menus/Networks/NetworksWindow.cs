@@ -47,7 +47,7 @@ namespace DeltaDNAAds.Editor {
         
         public NetworksWindow() : base() {
             networks = Json.Deserialize(File.ReadAllText(DEFINITIONS)) as IList<object>;
-            debugNotifications = DebugLoadHelper.IsDebugNotifications();
+            debugNotifications = InitialisationHelper.IsDebugNotifications();
 
             foreach (var handler in handlers) {
                 enabled[handler] = new SortedDictionary<string, bool>();
@@ -155,7 +155,7 @@ namespace DeltaDNAAds.Editor {
             }
 
             GUILayout.Space(HEIGHT_SEPARATOR);
-            EditorGUI.BeginDisabledGroup(!DebugLoadHelper.IsDevelopment());
+            EditorGUI.BeginDisabledGroup(!InitialisationHelper.IsDevelopment());
             debugNotifications = GUILayout.Toggle(debugNotifications, "Enable debug notifications");
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(HEIGHT_SEPARATOR);

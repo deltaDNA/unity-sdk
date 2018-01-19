@@ -70,18 +70,12 @@ namespace DeltaDNAAds.Editor {
                             "true"),
                         new XAttribute(
                             "minTargetSdk",
-                            #if UNITY_5_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString()),
-                            #elif UNITY_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
-                            #else
-                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
-                            #endif
+                            InitialisationHelper.IosMinTargetVersion()),
                         new XElement("sources", sources)
                     }));
             }
 
-            if (DebugLoadHelper.IsDevelopment() && DebugLoadHelper.IsDebugNotifications()) {
+            if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
                 packages.Add(new XElement(
                     "iosPod",
                     new object[] {
@@ -96,13 +90,7 @@ namespace DeltaDNAAds.Editor {
                             "true"),
                         new XAttribute(
                             "minTargetSdk",
-                            #if UNITY_5_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString()),
-                            #elif UNITY_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
-                            #else
-                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
-                            #endif
+                            InitialisationHelper.IosMinTargetVersion()),
                         new XElement("sources", sources)
                     }));
             }
