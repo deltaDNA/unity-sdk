@@ -41,10 +41,9 @@ namespace DeltaDNAAds.Editor {
             lock (LOCK) {
                 return Configuration()
                     .Descendants("iosPod")
-                    .Select(e => e
-                        .Attribute("name")
-                        .Value
-                        .Substring("DeltaDNAAds/".Length))
+                    .Select(e => e.Attribute("name").Value)
+                    .Where(e => e.StartsWith("DeltaDNAAds/"))
+                    .Select(e => e.Substring("DeltaDNAAds/".Length))
                     .ToList();
             }
         }
