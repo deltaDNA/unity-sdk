@@ -19,6 +19,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Working with Engage](#working-with-engage)
  * [Legacy Interface](#legacy-interface)
  * [Events](#events)
+ * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on iOS](#smartads-on-ios)
@@ -27,7 +28,6 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
  * [Permissions](#permissions)
- * [Diagnostics](#diagnostics)
 * [Migrations](#migrations)
  * [4.2](#version-4.2)
  * [4.3](#version-4.3)
@@ -237,8 +237,6 @@ Callbacks can be added to the following events to be notified when an ad has ope
 ### Diagnostics
 
 More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the SmartAds configuration UI, accessible from *DeltaDNA -> SmartAds -> Select Networks* in the Unity Editor. Please note that this option is only available in development mode and should never be used for production builds.
-
-For iOS additional steps described [here](https://github.com/deltaDNA/ios-debug-sdk/README.md) need to be followed to complete the integration of the debug notifications.
 
 ## iOS Integration
 

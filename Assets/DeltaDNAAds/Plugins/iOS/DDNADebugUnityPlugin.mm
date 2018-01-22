@@ -7,16 +7,16 @@
 
 @end
 
-IMPL_APP_CONTROLLER_SUBCLASS(DDNAUnityAppController)
+//IMPL_APP_CONTROLLER_SUBCLASS(DDNAUnityAppController)
 
 @implementation DDNAUnityAppController
 
 -(BOOL)application:(UIApplication*) application didFinishLaunchingWithOptions:(NSDictionary*) options
 {
     NSLog(@"[OverrideAppDelegate application:%@ didFinishLaunchingWithOptions:%@]", application, options);
-    
+
     [self setupPushNotifications];
-    
+
     return [super application:application didFinishLaunchingWithOptions:options];
 }
 
@@ -24,17 +24,17 @@ IMPL_APP_CONTROLLER_SUBCLASS(DDNAUnityAppController)
 {
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     center.delegate = self;
-    
+
     [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge) completionHandler:^(BOOL granted, NSError * _Nullable error) {
         if (granted) {
 
             UNNotificationAction *stopAction = [UNNotificationAction actionWithIdentifier:@"com.deltadna.stopAction" title:@"Stop Notifications" options:UNNotificationActionOptionDestructive];
-            
+
             UNNotificationCategory *diagnosticCategory = [UNNotificationCategory categoryWithIdentifier:@"com.deltadna.diagnosticCategory" actions:@[stopAction] intentIdentifiers:@[] options:UNNotificationCategoryOptionNone];
-            
+
             UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
             [center setNotificationCategories:[NSSet setWithObjects:diagnosticCategory, nil]];
-            
+
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 [[UIApplication sharedApplication] registerForRemoteNotifications];
             });

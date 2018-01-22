@@ -18,7 +18,18 @@ namespace DeltaDNAAds
         public static void OnPostProcessEnableNotificationExtension(
             BuildTarget buildTarget, string buildPath)
         {
+            if (!DeltaDNAAds.Editor.DebugLoadHelper.IsDebugNotifications()) {
+                return;
+            }
+            
             Debug.Log("Adding DDNA debug notification content extension into XCode Project");
+            
+            string unityPlugin = buildPath + "/Libraries/DeltaDNAAds/Plugins/iOS/DDNADebugUnityPlugin.mm";
+            File.WriteAllText(
+                unityPlugin,
+                File.ReadAllText(unityPlugin).Replace(
+                    "//IMPL_APP_CONTROLLER_SUBCLASS(DDNAUnityAppController)",
+                    "IMPL_APP_CONTROLLER_SUBCLASS(DDNAUnityAppController)"));
             
             PBXProject proj = new PBXProject();
             string projPath = PBXProject.GetPBXProjectPath(buildPath);
