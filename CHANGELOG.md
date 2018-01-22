@@ -5,6 +5,9 @@
 - MachineZone ad network.
 - SmartAds debug diagnostics on iOS and Android.
 
+### Fixed
+- Crash on Android when notifications are removed from project.
+
 ### Changed
 - Updated runtime libraries on Android.
 - Updated AdColony ads on Android.
