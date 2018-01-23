@@ -36,8 +36,10 @@ android {
     buildToolsVersion '**BUILDTOOLS**'
 
     defaultConfig {
-        targetSdkVersion **TARGETSDKVERSION**
         applicationId '**APPLICATIONID**'
+        
+        minSdkVersion 16
+        targetSdkVersion **TARGETSDKVERSION**
 
         multiDexEnabled true
     }
