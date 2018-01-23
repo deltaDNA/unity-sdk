@@ -156,7 +156,7 @@ namespace DeltaDNAAds.Editor {
 
             GUILayout.Space(HEIGHT_SEPARATOR);
             EditorGUI.BeginDisabledGroup(!InitialisationHelper.IsDevelopment());
-            debugNotifications = GUILayout.Toggle(debugNotifications, "Enable debug notifications");
+            debugNotifications = GUILayout.Toggle(debugNotifications, "Enable debug notifications in development builds");
             EditorGUI.EndDisabledGroup();
             GUILayout.Space(HEIGHT_SEPARATOR);
 
