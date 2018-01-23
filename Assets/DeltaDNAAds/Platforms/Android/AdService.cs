@@ -49,7 +49,7 @@ namespace DeltaDNAAds.Android
             adService.Call("registerForAds", decisionPoint);
         }
 
-        public void OnSessionUpdated() {
+        public void OnNewSession() {
             adService.Call("onSessionUpdated");
         }
 
