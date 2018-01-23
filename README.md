@@ -236,7 +236,7 @@ Callbacks can be added to the following events to be notified when an ad has ope
 
 ### Diagnostics
 
-More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the SmartAds configuration UI, accessible from *DeltaDNA -> SmartAds -> Select Networks* in the Unity Editor. Please note that this option is only available in development mode and should never be used for production builds.
+More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the SmartAds configuration UI, accessible from *DeltaDNA -> SmartAds -> Select Networks* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
 
 ## iOS Integration
 
