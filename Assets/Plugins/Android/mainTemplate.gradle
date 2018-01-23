@@ -4,7 +4,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        // use newer version of the plugin for newer unity/gradle versions
+        if (gradle.gradleVersion.split('\\.').first().toInteger() < 4) {
+            classpath 'com.android.tools.build:gradle:2.1.0'
+        } else {
+            classpath 'com.android.tools.build:gradle:2.3.3'
+        }
     }
 }
 
@@ -20,7 +25,9 @@ apply plugin: 'com.android.application'
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-**DEPS**}
+
+**DEPS**
+}
 
 android {
     // Fix complaint that 3rd party libraries (ours!) have the same package name
@@ -31,6 +38,7 @@ android {
     defaultConfig {
         targetSdkVersion **TARGETSDKVERSION**
         applicationId '**APPLICATIONID**'
+
         multiDexEnabled true
     }
 
@@ -42,17 +50,20 @@ android {
     lintOptions {
         abortOnError false
     }
+
 **SIGN**
+
     buildTypes {
         debug {
             jniDebuggable true
         }
+
         release {
             // Set minifyEnabled to true if you want to run ProGuard on your project
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'
+
             **SIGNCONFIG**
         }
     }
-
 }
