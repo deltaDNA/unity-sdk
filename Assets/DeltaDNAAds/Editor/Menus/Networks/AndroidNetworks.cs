@@ -19,7 +19,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace DeltaDNAAds.Editor {
     
@@ -42,66 +41,85 @@ namespace DeltaDNAAds.Editor {
         }
 
         internal override IList<string> GetPersisted() {
-            return Configuration()
-                .Descendants("androidPackage")
-                .Select(e => e.Attribute("spec").Value)
-                .Where(e => e.StartsWith("com.deltadna.android:deltadna-smartads-provider-"))
-                .Select(e => {
-                    var value = e.Substring(e.IndexOf("-provider-") + 10);
-                    return value.Substring(0, value.LastIndexOf(':'));
-                })
-                .ToList();
+            lock (LOCK) {
+                return Configuration()
+                    .Descendants("androidPackage")
+                    .Select(e => e.Attribute("spec").Value)
+                    .Where(e => e.StartsWith("com.deltadna.android:deltadna-smartads-provider-"))
+                    .Select(e => {
+                        var value = e.Substring(e.IndexOf("-provider-") + 10);
+                        return value.Substring(0, value.LastIndexOf(':'));
+                    })
+                    .ToList();
+            }
         }
         
         internal override void ApplyChanges(IList<string> enabled) {
-            var config = Configuration();
+            lock (LOCK) {
+                var config = Configuration();
             
-            config.Descendants("androidPackage").Remove();
+                config
+                    .Descendants("androidPackage")
+                    .Remove();
             
-            var packages = config.Descendants("androidPackages").First();
-            if (enabled.Count > 0) {
-                packages.Add(new XElement(
-                    "androidPackage",
-                    new object[] {
-                        new XAttribute(
-                            "spec",
-                            "com.deltadna.android:deltadna-smartads-core:" + VERSION),
-                        new XElement(
-                            "repositories",
-                            new object[] { new XElement("repository", REPO) })
-                    }));
-            }
-            foreach (var network in enabled) {
-                var repos = new List<object>() { new XElement("repository", REPO) };
-                if (network.Equals("hyprmx")) {
-                    repos.Add(new XElement(
-                        "repository",
-                        "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                var packages = config.Descendants("androidPackages").First();
+                if (enabled.Count > 0) {
+                    packages.Add(new XElement(
+                        "androidPackage",
+                        new object[] {
+                            new XAttribute(
+                                "spec",
+                                "com.deltadna.android:deltadna-smartads-core:" + VERSION),
+                            new XElement(
+                                "repositories",
+                                new object[] { new XElement("repository", REPO) })
+                        }));
                 }
-                if (network.Equals("mopub")) {
-                    repos.Add(new XElement(
-                        "repository",
-                        "https://s3.amazonaws.com/moat-sdk-builds"));
-                }
-                if (network.Equals("tapjoy")) {
-                    repos.Add(new XElement(
-                        "repository",
-                        "https://tapjoy.bintray.com/maven"));
+                foreach (var network in enabled) {
+                    var repos = new List<object>() { new XElement("repository", REPO) };
+                    if (network.Equals("hyprmx")) {
+                        repos.Add(new XElement(
+                            "repository",
+                            "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                    }
+                    if (network.Equals("mopub")) {
+                        repos.Add(new XElement(
+                            "repository",
+                            "https://s3.amazonaws.com/moat-sdk-builds"));
+                    }
+                    if (network.Equals("tapjoy")) {
+                        repos.Add(new XElement(
+                            "repository",
+                            "https://tapjoy.bintray.com/maven"));
+                    }
+
+                    packages.Add(new XElement(
+                        "androidPackage",
+                        new object[] {
+                            new XAttribute(
+                                "spec",
+                                "com.deltadna.android:deltadna-smartads-provider-" + network + ":" + VERSION),
+                            new XElement(
+                                "repositories",
+                                repos.ToArray())
+                        }));
                 }
 
-                packages.Add(new XElement(
-                    "androidPackage",
-                    new object[] {
-                        new XAttribute(
-                            "spec",
-                            "com.deltadna.android:deltadna-smartads-provider-" + network + ":" + VERSION),
-                        new XElement(
-                            "repositories",
-                            repos.ToArray())
-                    }));
-            }
+                if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
+                    packages.Add(new XElement(
+                        "androidPackage",
+                        new object[] {
+                            new XAttribute(
+                                "spec",
+                                "com.deltadna.android:deltadna-smartads-debug:" + VERSION),
+                            new XElement(
+                                "repositories",
+                                new object[] { new XElement("repository", REPO) })
+                        }));
+                }
 
-            config.Save(CONFIG);
+                config.Save(CONFIG);
+            }
             
             if (download) DownloadLibraries();
         }

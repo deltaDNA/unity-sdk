@@ -19,6 +19,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Working with Engage](#working-with-engage)
  * [Legacy Interface](#legacy-interface)
  * [Events](#events)
+ * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on iOS](#smartads-on-ios)
@@ -232,6 +233,10 @@ Callbacks can be added to the following events to be notified when an ad has ope
 * ~~`OnRewardedAdOpened` - Called when a rewarded ad is shown on screen.~~ Prefer `RewardedAd.OnRewardedAdOpened`.
 * ~~`OnRewardedAdFailedToOpen` - Called if a rewarded ad fails to show.~~ Prefer `RewardedAd.OnRewardedAdFailedToOpen`.
 * ~~`OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.~~ See `RewardedAd.OnRewardedAdClosed`.
+
+### Diagnostics
+
+More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the SmartAds configuration UI, accessible from *DeltaDNA -> SmartAds -> Select Networks* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
 
 ## iOS Integration
 

@@ -29,6 +29,7 @@ void _pause();
 void _resume();
 void _destroy();
 void _setLoggingLevel(int level);
+void _fireEventNewSession();
 
 
 @interface DDNASmartAdsUnityPlugin : NSObject

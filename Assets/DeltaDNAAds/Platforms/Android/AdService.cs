@@ -45,9 +45,12 @@ namespace DeltaDNAAds.Android
             }
         }
 
-        public void RegisterForAds(string decisionPoint)
-        {
-            adService.Call("init", decisionPoint);
+        public void RegisterForAds(string decisionPoint) {
+            adService.Call("registerForAds", decisionPoint);
+        }
+
+        public void OnNewSession() {
+            adService.Call("onSessionUpdated");
         }
 
         public bool IsInterstitialAdAllowed(Engagement engagement) {

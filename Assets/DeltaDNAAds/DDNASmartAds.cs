@@ -61,17 +61,17 @@ namespace DeltaDNAAds
                 return;
             }
 
-            DDNA.Instance.OnNewSession -= this.RegisterForAds;
-            DDNA.Instance.OnNewSession += this.RegisterForAds;
-
-            try {
-                if (Application.platform == RuntimePlatform.IPhonePlayer) {
+            try
+            {
+                if (Application.platform == RuntimePlatform.IPhonePlayer)
+                {
                     #if UNITY_IOS
                     manager = new DeltaDNAAds.iOS.SmartAdsManager();
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
                     #endif
                 }
-                else if (Application.platform == RuntimePlatform.Android) {
+                else if (Application.platform == RuntimePlatform.Android)
+                {
                     #if UNITY_ANDROID
                     manager = new DeltaDNAAds.Android.AdService(
                         this,
@@ -79,12 +79,20 @@ namespace DeltaDNAAds
                     manager.RegisterForAds(SMARTADS_DECISION_POINT);
                     #endif
                 }
-                else {
-                    Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
+                else
+                {
+                    Logger.LogWarning("SmartAds is not currently supported on " + Application.platform);
                 }
-            } catch (Exception exception) {
+            }
+            catch (Exception exception)
+            {
                 this.DidFailToRegisterForInterstitialAds(exception.Message);
                 this.DidFailToRegisterForRewardedAds(exception.Message);
+            }
+
+            if (manager != null) {
+                DDNA.Instance.OnNewSession -= manager.OnNewSession;
+                DDNA.Instance.OnNewSession += manager.OnNewSession;
             }
         }
 
