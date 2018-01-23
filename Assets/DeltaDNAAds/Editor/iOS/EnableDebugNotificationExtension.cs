@@ -5,13 +5,16 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
+#if UNITY_IOS
 using UnityEditor.iOS.Xcode;
 using UnityEditor.iOS.Xcode.Extensions;
+#endif
 
 namespace DeltaDNAAds
 {
     public class EnableDebugNotificationExtension : ScriptableObject
     {
+        #if UNITY_IOS
         private const int BUILD_ORDER_ADD_EXTENSION = 10000;    // after the UnityJarResolver runs pod install
     
         [PostProcessBuildAttribute(BUILD_ORDER_ADD_EXTENSION)]
@@ -82,5 +85,6 @@ namespace DeltaDNAAds
             
             proj.WriteToFile(projPath);
         }
+        #endif
     }
 }
