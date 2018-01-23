@@ -18,7 +18,8 @@ namespace DeltaDNAAds
         public static void OnPostProcessEnableNotificationExtension(
             BuildTarget buildTarget, string buildPath)
         {
-            if (!DeltaDNAAds.Editor.DebugLoadHelper.IsDebugNotifications()) {
+            if (!DeltaDNAAds.Editor.DebugLoadHelper.IsDevelopment()
+                || !DeltaDNAAds.Editor.DebugLoadHelper.IsDebugNotifications()) {
                 return;
             }
             
