@@ -20,14 +20,15 @@ using UnityEngine;
 namespace DeltaDNAAds.Editor {
     
     [InitializeOnLoad]
-    internal sealed class DebugLoadHelper : ScriptableObject {
+    internal sealed class InitialisationHelper : ScriptableObject {
         
-        static DebugLoadHelper() {
+        static InitialisationHelper() {
             EditorApplication.update += Update;
         }
 
         private static bool isDevelopment;
         private static bool isDebugNotifications;
+        private static string iosMinTargetVersion;
 
         static void Update() {
             bool refresh = false;
@@ -39,6 +40,18 @@ namespace DeltaDNAAds.Editor {
 
             if (EditorPrefs.GetBool(NetworksWindow.PREFS_DEBUG) != isDebugNotifications) {
                 isDebugNotifications = EditorPrefs.GetBool(NetworksWindow.PREFS_DEBUG);
+                refresh = true;
+            }
+            
+            #if UNITY_5_5_OR_NEWER
+            var newVersion = PlayerSettings.iOS.targetOSVersionString.ToString();
+            #elif UNITY_5_OR_NEWER
+            var newVersion = PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.');
+            #else
+            var newVersion = PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.');
+            #endif
+            if (!newVersion.Equals(iosMinTargetVersion)) {
+                iosMinTargetVersion = newVersion;
                 refresh = true;
             }
 
@@ -57,6 +70,10 @@ namespace DeltaDNAAds.Editor {
 
         internal static bool IsDebugNotifications() {
             return isDebugNotifications;
+        }
+        
+        internal static string IosMinTargetVersion() {
+            return iosMinTargetVersion;
         }
     }
 }

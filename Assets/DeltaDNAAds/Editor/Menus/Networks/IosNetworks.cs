@@ -38,76 +38,67 @@ namespace DeltaDNAAds.Editor {
         public IosNetworks() : base("ios", "iOS") {}
 
         internal override IList<string> GetPersisted() {
-            return Configuration()
-                .Descendants("iosPod")
-                .Select(e => e
-                    .Attribute("name")
-                    .Value
-                    .Substring("DeltaDNAAds/".Length))
-                .ToList();
+            lock (LOCK) {
+                return Configuration()
+                    .Descendants("iosPod")
+                    .Select(e => e.Attribute("name").Value)
+                    .Where(e => e.StartsWith("DeltaDNAAds/"))
+                    .Select(e => e.Substring("DeltaDNAAds/".Length))
+                    .ToList();
+            }
         }
 
         internal override void ApplyChanges(IList<string> enabled) {
-            var config = Configuration();
+            lock (LOCK) {
+                var config = Configuration();
 
-            config
-                .Descendants("iosPod")
-                .Remove();
+                config
+                    .Descendants("iosPod")
+                    .Remove();
 
-            var packages = config.Descendants("iosPods").First();
-            foreach (var network in enabled) {
-                packages.Add(new XElement(
-                    "iosPod",
-                    new object[] {
-                        new XAttribute(
-                            "name",
-                            "DeltaDNAAds/" + network),
-                        new XAttribute(
-                            "version",
-                            VERSION),
-                        new XAttribute(
-                            "bitcodeEnabled",
-                            "true"),
-                        new XAttribute(
-                            "minTargetSdk",
-                            #if UNITY_5_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString()),
-                            #elif UNITY_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
-                            #else
-                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
-                            #endif
-                        new XElement("sources", sources)
-                    }));
+                var packages = config.Descendants("iosPods").First();
+                foreach (var network in enabled) {
+                    packages.Add(new XElement(
+                        "iosPod",
+                        new object[] {
+                            new XAttribute(
+                                "name",
+                                "DeltaDNAAds/" + network),
+                            new XAttribute(
+                                "version",
+                                VERSION),
+                            new XAttribute(
+                                "bitcodeEnabled",
+                                "true"),
+                            new XAttribute(
+                                "minTargetSdk",
+                                InitialisationHelper.IosMinTargetVersion()),
+                            new XElement("sources", sources)
+                        }));
+                }
+
+                if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
+                    packages.Add(new XElement(
+                        "iosPod",
+                        new object[] {
+                            new XAttribute(
+                                "name",
+                                "DeltaDNADebug"),
+                            new XAttribute(
+                                "version",
+                                VERSION_DEBUG),
+                            new XAttribute(
+                                "bitcodeEnabled",
+                                "true"),
+                            new XAttribute(
+                                "minTargetSdk",
+                                InitialisationHelper.IosMinTargetVersion()),
+                            new XElement("sources", sources)
+                        }));
+                }
+
+                config.Save(CONFIG);
             }
-
-            if (DebugLoadHelper.IsDevelopment() && DebugLoadHelper.IsDebugNotifications()) {
-                packages.Add(new XElement(
-                    "iosPod",
-                    new object[] {
-                        new XAttribute(
-                            "name",
-                            "DeltaDNADebug"),
-                        new XAttribute(
-                            "version",
-                            VERSION_DEBUG),
-                        new XAttribute(
-                            "bitcodeEnabled",
-                            "true"),
-                        new XAttribute(
-                            "minTargetSdk",
-                            #if UNITY_5_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString()),
-                            #elif UNITY_5_OR_NEWER
-                            PlayerSettings.iOS.targetOSVersionString.ToString().Substring(4).Replace('_', '.')),
-                            #else
-                            PlayerSettings.iOS.targetOSVersion.ToString().Substring(4).Replace('_', '.')),
-                            #endif
-                        new XElement("sources", sources)
-                    }));
-            }
-
-            config.Save(CONFIG);
         }
 
         internal override bool AreDownloadsStale() {
