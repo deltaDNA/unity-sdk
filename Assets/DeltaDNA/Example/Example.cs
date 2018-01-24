@@ -173,15 +173,6 @@ public class Example : MonoBehaviour {
         });
     }
 
-    public void OnNotificationOpenedBtn_Clicked() {
-        var payload = new Dictionary<string, object>();
-        payload.Add("_ddId", 1);
-        payload.Add("_ddName", "Example Notification");
-        payload.Add("_ddLaunch", true);
-
-        DDNA.Instance.RecordPushNotification(payload);
-    }
-
     public void OnUploadEventsBtn_Clicked() {
         DDNA.Instance.Upload();
     }
