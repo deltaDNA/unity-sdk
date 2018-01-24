@@ -1,102 +1,102 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
         <repository>https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-machinezone:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-machinezone:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
         <repository>https://s3.amazonaws.com/moat-sdk-builds</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
         <repository>https://tapjoy.bintray.com/maven</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.7.0-SNAPSHOT">
+    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.7.0">
       <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
+        <repository>http://deltadna.bintray.com/android</repository>
       </repositories>
     </androidPackage>
   </androidPackages>
