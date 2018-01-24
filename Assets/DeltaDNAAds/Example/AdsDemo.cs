@@ -22,9 +22,8 @@ namespace DeltaDNAAds
     public class AdsDemo : MonoBehaviour {
 
         public const string ENVIRONMENT_KEY = "76410301326725846610230818914037";
-        public const string COLLECT_URL = "http://collect2470ntysd.deltadna.net/collect/api";
-        public const string ENGAGE_URL = "http://engage2470ntysd.deltadna.net";
-        public const string ENGAGE_TEST_URL = "http://www.deltadna.net/qa/engage";
+        public const string COLLECT_URL = "https://collect2470ntysd.deltadna.net/collect/api";
+        public const string ENGAGE_URL = "https://engage2470ntysd.deltadna.net";
 
         private int clickCount = 0;
 
