@@ -2,10 +2,35 @@ fileFormatVersion: 2
 guid: 514c67905344497b8175f448162e7f53
 labels:
 - gvh
-- gvh_version-1.2.59.0
 - gvh_targets-editor
-MonoAssemblyImporter:
-  serializedVersion: 1
+- gvh_version-1.2.59.0
+PluginImporter:
+  serializedVersion: 2
   iconMap: {}
   executionOrder: {}
+  isPreloaded: 0
+  isOverridable: 0
+  platformData:
+    data:
+      first:
+        Any: 
+      second:
+        enabled: 0
+        settings: {}
+    data:
+      first:
+        Editor: Editor
+      second:
+        enabled: 1
+        settings:
+          DefaultValueInitialized: true
+    data:
+      first:
+        Windows Store Apps: WindowsStoreApps
+      second:
+        enabled: 0
+        settings:
+          CPU: AnyCPU
   userData: 
+  assetBundleName: 
+  assetBundleVariant: 
