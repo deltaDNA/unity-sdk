@@ -23,11 +23,13 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [iOS Integration](#ios-integration)
  * [Push Notifications](#push-notifications)
  * [SmartAds on iOS](#smartads-on-ios)
+ * [Unity 4.7 iOS](#unity-4.7-ios)
 * [Android Integration](#android-integration)
  * [Amazon](#amazon)
  * [Push Notifications](#push-notifications)
  * [SmartAds on Android](#smartads-on-android)
  * [Permissions](#permissions)
+ * [Unity 4.7 Android](#unity-4.7-android)
 * [Migrations](#migrations)
  * [4.2](#version-4.2)
  * [4.3](#version-4.3)
@@ -257,6 +259,13 @@ To select which ad networks should be included in the game select *DeltaDNA* fro
 
 If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
+### Unity 4.7 iOS
+
+We've had some luck building with Unity 4.7.2, but you will need to make a couple of manual changes:
+  * Move files under Assets/DeltaDNA[Ads]/Plugins/iOS to Assets/Plugins/iOS.
+  * The UnityJarResolver will run and generate a Podfile, but it won't build th project.  Edit the Podile and set "integrate_targets => *true*", then run pod install manually from the command line.  Open the resulting workspace.
+  * Under Build Phases -> Compile Sources add the -fobj-arc flag to DDNAUnityNotificationsPlugin.m.
+
 ## Android Integration
 
 ### Amazon
@@ -316,6 +325,16 @@ Some ad networks will also try to request additional permissions, such as `andro
     tools:node="remove"/>
 ```
 You will need to do this for each permission that you would like to remove. Please note that with some of these permissions removed the performance of the ad networks could decrease.
+
+### Unity 4.7 Android
+When using an older version of Unity, such as 4.7, the following steps need to be followed in order to include our SDKs in a project:
+1. Install Android SDK Tools revision 25.2.5 for [Windows](https://dl.google.com/android/repository/tools_r25.2.5-windows.zip)|[Linux](https://dl.google.com/android/repository/tools_r25.2.5-linux.zip)|[Mac OS X](https://dl.google.com/android/repository/tools_r25.2.5-macosx.zip).
+2. Open the Android SDK Manager.
+3. Install *Android SDK Platform-tools 27*, *Android SDK Build-tools 27.0.2*, *SDK Platform 26*, *Android Support Repository*, and *Google Repository*.
+4. Point the Unity Editor to use the newly installed Android SDK Tools.
+5. In the Unity Editor set the *Minimum API Level* to *15*.
+
+If SmartAds is imported into the project then the *Minimum API Level* needs to be set to *16* and LoopMe needs to be removed from the ad networks. Additional networks may need to be deselected in order to workaround Android's dex limit when using Unity's older build chain.
 
 ## Migrations
 
