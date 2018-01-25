@@ -31,6 +31,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [Migrations](#migrations)
  * [4.2](#version-4.2)
  * [4.3](#version-4.3)
+ * [4.7](#version-4.7)
 * [License](#license)
 
 ## Analytics
@@ -325,6 +326,9 @@ Since we've had to change how the SmartAds networks are defined you may need to 
 
 ### Version 4.3
 Between version 4.2 and version 4.3 we updated our push notifications to use Firebase (play-services-*-10.2).  This requires changing the way push notification integration works.  To better manage the Android dependencies we now use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver).  This allows other plugins to also specify dependencies on the Firebase/Play-Services libraries and the Unity Jar Resolver will work out which library to use, hopefully reducing duplicate library errors at build time.
+
+### Version 4.7
+*IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNAAds/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
 
 #### SDK Health Check
 You can run a health check once you've upgraded the SDK to identify mistakes related to previous versions, such as conflicting configuration entries and duplicate libraries. It can be accessed from the Editor menu under *DeltaDNA -> Health Check SDK*. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.

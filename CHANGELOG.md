@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (YYYY-MM-DD)
+## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (2018-01-25)
 ### Added
 - MachineZone ad network.
 - SmartAds debug diagnostics on iOS and Android.

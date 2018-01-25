@@ -16,6 +16,7 @@
 
 using DeltaDNA.Editor;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 
 namespace DeltaDNAAds.Editor {
@@ -28,6 +29,12 @@ namespace DeltaDNAAds.Editor {
         }
 
         protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
+            if (File.Exists("Assets/DeltaDNAAds/Editor/Menus/Networks/IosNetworksLoadHelper.cs")) {
+                problems.Add(Tuple.New(
+                    "[SmartAds] IosNetworksLoadHelper.cs should be deleted from the project in Assets/DeltaDNAAds/Editor/Menus/Networks.",
+                    Severity.WARNING));
+            }
+            
             if (new AndroidNetworks(false).AreDownloadsStale()) {
                 problems.Add(Tuple.New(
                     "[SmartAds] Android libraries are stale, please update them from the Editor menu.",
