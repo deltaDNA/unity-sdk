@@ -50,7 +50,7 @@ namespace DeltaDNA {
             return "0";
         }
 
-        static string SdkVersion()
+        static string Version()
         {
             string tempLine;
             string regex = "SDK_VERSION\\s*=\\s*\"(.+)\";";
@@ -75,7 +75,7 @@ namespace DeltaDNA {
             return name+"-"+version+".unitypackage";
         }
 
-        static void ExportSdkPackage()
+        static void ExportPackage()
         {
             List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNA"));
             // remove unit tests
@@ -108,32 +108,9 @@ namespace DeltaDNA {
 
             foreach (string f in assets) { Console.WriteLine(f); }
 
-            string filename = OutputFilename("deltadna-sdk", SdkVersion());
+            string filename = OutputFilename("deltadna-sdk", Version());
             AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
-        }
-
-        static void ExportSmartAdsPackage()
-        {
-            List<string> assets = new List<string>(Directory.GetDirectories("Assets/DeltaDNAAds"));
-            
-            assets.Add("Assets/DeltaDNAAds/DDNASmartAds.cs");
-            assets.Add("Assets/DeltaDNAAds/InterstitialAd.cs");
-            assets.Add("Assets/DeltaDNAAds/RewardedAd.cs");
-
-            assets.Add("Assets/PlayServicesResolver");
-
-            foreach (string f in assets) { Console.WriteLine(f); }
-
-            string filename = OutputFilename("deltadna-smartads", SdkVersion());
-            AssetDatabase.ExportPackage(assets.ToArray(), filename, ExportPackageOptions.Recurse);
-        }
-
-        static void ExportPackages()
-        {
-            ExportSdkPackage();
-            ExportSmartAdsPackage();
         }
     }
-
 }
 #endif

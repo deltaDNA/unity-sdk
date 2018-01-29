@@ -2,7 +2,7 @@
 
 ## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  They are packaged into separate unitypackages for easy installation.  The analytics can be installed independently, but the SmartAds depends on the analytics.  The unitypackages can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.
+The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
@@ -31,9 +31,10 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Permissions](#permissions)
  * [Unity 4.7 Android](#unity-4.7-android)
 * [Migrations](#migrations)
- * [4.2](#version-4.2)
- * [4.3](#version-4.3)
- * [4.7](#version-4.7)
+ * [4.2](#version-42)
+ * [4.3](#version-43)
+ * [4.7](#version-47)
+ * [4.8](#version-48)
 * [License](#license)
 
 ## Analytics
@@ -44,7 +45,7 @@ Our analytics SDK is written entirely in Unity with no native code requirements.
 
 For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).
 
-Checkout the example in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
+Checkout `BasicExample` class in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
 
 ```csharp
 DDNA.Instance.ClientVersion = "1.0.0";
@@ -115,13 +116,13 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
 
 ## SmartAds
 
-Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  To add the Unity extensions download and import the `deltadna-smartads-*.unitypackage`.  We support iOS and Android platforms.
+Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  We support iOS and Android platforms.
 
 Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the sdk, then speak to us.
 
 ### Usage
 
-The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNAAds\Example`.  The `AdsDemo` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
+The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNA\Example`.  The `SmartAdsExample` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
 
 Start the analytics SDK.
 
@@ -262,7 +263,7 @@ If you make changes to the enabled networks the changes to the `Dependencies.xml
 ### Unity 4.7 iOS
 
 We've had some luck building with Unity 4.7.2, but you will need to make a couple of manual changes:
-  * Move files under Assets/DeltaDNA[Ads]/Plugins/iOS to Assets/Plugins/iOS.
+  * Move files under Assets/DeltaDNA/[Ads]/Plugins/iOS to Assets/Plugins/iOS.
   * The UnityJarResolver will run and generate a Podfile, but it won't build th project.  Edit the Podile and set "integrate_targets => *true*", then run pod install manually from the command line.  Open the resulting workspace.
   * Under Build Phases -> Compile Sources add the -fobj-arc flag to DDNAUnityNotificationsPlugin.m.
 
@@ -347,7 +348,10 @@ Since we've had to change how the SmartAds networks are defined you may need to 
 Between version 4.2 and version 4.3 we updated our push notifications to use Firebase (play-services-*-10.2).  This requires changing the way push notification integration works.  To better manage the Android dependencies we now use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver).  This allows other plugins to also specify dependencies on the Firebase/Play-Services libraries and the Unity Jar Resolver will work out which library to use, hopefully reducing duplicate library errors at build time.
 
 ### Version 4.7
-*IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNAAds/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
+*IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNA/Ads/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
+
+### Version 4.8
+*Assets/DeltaDNAAds* sources have been moved to *Assets/DeltaDNA/Ads*, as such the old sources should be removed to avoid duplicate classes.
 
 #### SDK Health Check
 You can run a health check once you've upgraded the SDK to identify mistakes related to previous versions, such as conflicting configuration entries and duplicate libraries. It can be accessed from the Editor menu under *DeltaDNA -> Health Check SDK*. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.

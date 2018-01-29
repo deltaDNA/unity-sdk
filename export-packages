@@ -17,7 +17,7 @@ fi
     -nographics \
     -projectPath $(pwd) \
     -logFile ./unity-build.log \
-    -executeMethod DeltaDNA.BuildScripts.ExportPackages
+    -executeMethod DeltaDNA.BuildScripts.ExportPackage
 
 if grep -q 'Exiting batchmode successfully now!' unity-build.log
 then
