@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.1) (2018-02-06)
+## Fixed
+- Disabled chunked transfer for Unity 2017.3.
+
 ## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (2018-01-25)
 ### Added
 - MachineZone ad network.

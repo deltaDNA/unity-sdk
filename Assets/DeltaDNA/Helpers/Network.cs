@@ -89,6 +89,7 @@ namespace DeltaDNA {
                 }
                 byte[] bytes = Encoding.UTF8.GetBytes(request.HTTPBody);
                 www.uploadHandler = new UploadHandlerRaw(bytes);
+                www.chunkedTransfer = false;
             }
             else
             {
