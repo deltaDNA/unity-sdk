@@ -503,7 +503,7 @@ namespace DeltaDNA
         /// </summary>
         public string CollectURL {
             get { return this.collectURL; }
-            private set { this.collectURL = FixURL(value); }
+            private set { this.collectURL = Utils.FixURL(value); }
         }
 
         /// <summary>
@@ -511,7 +511,7 @@ namespace DeltaDNA
         /// </summary>
         public string EngageURL {
             get { return this.engageURL; }
-            private set { this.engageURL = FixURL(value); }
+            private set { this.engageURL = Utils.FixURL(value); }
         }
 
         /// <summary>
@@ -790,17 +790,6 @@ namespace DeltaDNA
             uri = uri.Replace("{env_key}", envKey);
             uri = uri.Replace("{hash}", hash);
             return uri;
-        }
-
-        private static string FixURL(string url) {
-            if (!url.ToLower().StartsWith("http://") && !url.ToLower().StartsWith("https://")) {
-                return "https://" + url;
-            } else if (url.ToLower().StartsWith("http://")) {
-                Logger.LogWarning("Changing " + url + " to use HTTPS");
-                return "https://" + url.Substring("http://".Length);
-            } else {
-                return url;
-            }
         }
 
         private static string GenerateHash(string data, string secret){

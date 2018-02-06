@@ -15,6 +15,7 @@
 //
 
 using UnityEngine;
+using System.Collections;
 
 namespace DeltaDNA
 {
@@ -52,9 +53,7 @@ namespace DeltaDNA
                             _instance = singleton.AddComponent<T>();
                             singleton.name = typeof(T).ToString();
 
-                            #if !UNITY_EDITOR && !UNITY_DEBUG
                             DontDestroyOnLoad(singleton);
-                            #endif
 
                             // Logger.LogDebug("[Singleton] An instance of " + typeof(T) +
                             //           " is needed in the scene, so '" + singleton +
