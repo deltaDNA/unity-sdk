@@ -1,8 +1,11 @@
 # Change Log
 
 ## [4.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.1) (2018-02-06)
-## Fixed
+### Fixed
 - Disabled chunked transfer for Unity 2017.3.
+
+### Changed
+- Collect and Engage URLs will be forced to use HTTPS.
 
 ## [4.7.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.0) (2018-01-25)
 ### Added

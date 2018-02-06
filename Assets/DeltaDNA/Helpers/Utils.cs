@@ -27,7 +27,7 @@ using Windows.Storage.Streams;
 
 namespace DeltaDNA
 {
-    static class Utils
+    public static class Utils
     {
         public static Dictionary<K,V> HashtableToDictionary<K,V> (Hashtable table)
         {
@@ -184,5 +184,18 @@ namespace DeltaDNA
         }
 
         #endif
+        
+        public static string FixURL(string url) 
+        {
+            if (!url.ToLower().StartsWith("http://") && !url.ToLower().StartsWith("https://")) {
+                return "https://" + url;
+            } else if (url.ToLower().StartsWith("http://")) {
+                Logger.LogWarning("Changing " + url + " to use HTTPS");
+                return "https://" + url.Substring("http://".Length);
+            } else {
+                return url;
+            }
+        }
+
     }
 }
