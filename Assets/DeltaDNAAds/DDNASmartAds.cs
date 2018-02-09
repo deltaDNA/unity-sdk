@@ -395,8 +395,6 @@ namespace DeltaDNAAds
         public override void OnDestroy()
         {
             if (manager != null) {
-                Logger.LogDebug("Destroying StartAds");
-                DDNA.Instance.OnNewSession -= this.RegisterForAds;
                 manager.OnDestroy();
             }
             base.OnDestroy();
