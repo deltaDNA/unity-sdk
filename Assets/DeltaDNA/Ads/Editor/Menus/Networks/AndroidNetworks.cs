@@ -30,8 +30,8 @@ namespace DeltaDNA.Ads.Editor {
             instance.ApplyChanges(instance.IsEnabled(), instance.GetNetworks());
         }
         
-        private const string REPO = "http://deltadna.bintray.com/android";
-        private const string VERSION = "1.7.0";
+        private const string REPO = "http://corp-vm-artifactory/artifactory/deltadna-repo";
+        private const string VERSION = "1.8.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
 
         private readonly bool download;
@@ -47,7 +47,7 @@ namespace DeltaDNA.Ads.Editor {
                     .Where(e => e
                         .Attribute("spec")
                         .Value
-                        .Equals("com.deltadna.android:deltadna-smartads-core"))
+                        .StartsWith("com.deltadna.android:deltadna-smartads-core:"))
                     .Any();
             }
         }

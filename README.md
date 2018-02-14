@@ -122,22 +122,7 @@ Most ad networks will start showing ads without additional setup, but the brande
 
 ### Usage
 
-The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNA\Example`.  The `SmartAdsExample` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled by calling `RegisterForAds`.  This *must* be called after starting the analytics SDK.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
-
-Start the analytics SDK.
-
-```csharp
-DDNA.Instance.ClientVersion = "1.0.0";
-DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
-                       "YOUR_COLLECT_URL",
-                       "YOUR_ENGAGE_URL");
-```
-
-Register for ads.
-
-```csharp
-DDNASmartAds.Instance.RegisterForAds();
-```
+The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNA\Example`.  The `SmartAdsExample` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled when the Analytics SDK is started.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
 
 If everything went well the SmartAds service will start fetching ads in the background.  The `DDNASmartAds` class provides the following delegates to report if the service was successfully configured:
 
@@ -351,7 +336,9 @@ Between version 4.2 and version 4.3 we updated our push notifications to use Fir
 *IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNA/Ads/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
 
 ### Version 4.8
-*Assets/DeltaDNAAds* sources have been moved to *Assets/DeltaDNA/Ads*, as such the old sources should be removed to avoid duplicate classes.
+* *Assets/DeltaDNAAds* should be deleted from the project since the classes have been moved to a new location.
+* SmartAds needs to be enabled from the configuration UI accessed from the Editor menu under *DeltaDNA -> SmartAds -> Configuration*.
+* *DDNASmartAds.RegisterForAds()* has been deprecated and will now be called as part of starting the Analytics SDK.
 
 #### SDK Health Check
 You can run a health check once you've upgraded the SDK to identify mistakes related to previous versions, such as conflicting configuration entries and duplicate libraries. It can be accessed from the Editor menu under *DeltaDNA -> Health Check SDK*. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.
@@ -359,7 +346,7 @@ You can run a health check once you've upgraded the SDK to identify mistakes rel
 #### Android Dependencies
 After importing the new DeltaDNA SDK package into your project make sure to remove the old *deltadna-sdk-notifications* AAR file from *Assets/DeltaDNA/Plugins/Android*. You also need to remove any *play-services* and *support* AAR and JAR libraries in that location as they will cause conflicts with the libraries downloaded by the Unity Jar Resolver.
 
-As with any SDK update you should update the Android SmartAds libraries from *DeltaDNA -> SmartAds -> Android -> Download Libraries*.
+As with any SDK update you should update the Android SmartAds libraries from *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*.
 
 #### Android Notifications
 We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Notifications -> Android -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.

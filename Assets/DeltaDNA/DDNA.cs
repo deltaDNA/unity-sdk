@@ -93,6 +93,11 @@ namespace DeltaDNA
             GameObject androidNotifications = new GameObject();
             this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
             androidNotifications.transform.parent = gameObject.transform;
+            
+            #if DDNA_SMARTADS
+            // initialise SmartAds so it can register for events
+            var smartAds = Ads.DDNASmartAds.Instance;
+            #endif
         }
 
         #region Client Interface
@@ -173,9 +178,8 @@ namespace DeltaDNA
             string sessionID = GenerateSessionID();
             Logger.LogInfo("Starting new session "+sessionID);
             this.SessionID = sessionID;
-            if (this.OnNewSession != null) {
-                this.OnNewSession();
-            }
+            
+            if (OnNewSession != null) OnNewSession();
         }
 
         /// <summary>

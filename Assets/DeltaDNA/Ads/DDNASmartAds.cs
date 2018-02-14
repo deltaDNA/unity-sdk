@@ -33,7 +33,12 @@ namespace DeltaDNA.Ads
 
         private ISmartAdsManager manager;
         private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
-
+        
+        internal DDNASmartAds() {
+            DDNA.Instance.OnNewSession -= OnNewSession;
+            DDNA.Instance.OnNewSession += OnNewSession;
+        }
+        
         #region Public interface
 
         public event Action OnDidRegisterForInterstitialAds;
@@ -48,56 +53,10 @@ namespace DeltaDNA.Ads
         public event Action OnRewardedAdOpened;
         public event Action<string> OnRewardedAdFailedToOpen;
         public event Action<bool> OnRewardedAdClosed;
-
-        public void RegisterForAds()
-        {
-            Logger.LogInfo("Registering for ads");
-
-            if (!DDNA.Instance.HasStarted) {
-                Logger.LogError("The DeltaDNA SDK must be started before calling RegisterForAds.");
-                return;
-            }
-
-            try
-            {
-                if (Application.platform == RuntimePlatform.IPhonePlayer)
-                {
-                    #if UNITY_IOS
-                    manager = new iOS.SmartAdsManager();
-                    manager.RegisterForAds(SMARTADS_DECISION_POINT);
-                    #endif
-                }
-                else if (Application.platform == RuntimePlatform.Android)
-                {
-                    #if UNITY_ANDROID
-                    manager = new Android.AdService(
-                        this,
-                        Settings.SDK_VERSION.Remove(0, Settings.SDK_VERSION.IndexOf(" v") + 2));
-                    manager.RegisterForAds(SMARTADS_DECISION_POINT);
-                    #endif
-                } 
-                else 
-                {
-                    #if UNITY_EDITOR
-                    manager = new UnityPlayer.AdService();
-                    manager.RegisterForAds(SMARTADS_DECISION_POINT);
-                    #else
-                    Logger.LogWarning("SmartAds is not currently supported on "+Application.platform);
-                    #endif
-                }
-            }
-            catch (Exception exception)
-            {
-                this.DidFailToRegisterForInterstitialAds(exception.Message);
-                this.DidFailToRegisterForRewardedAds(exception.Message);
-            }
-
-            if (manager != null) {
-                DDNA.Instance.OnNewSession -= manager.OnNewSession;
-                DDNA.Instance.OnNewSession += manager.OnNewSession;
-            }
-        }
-
+        
+        [Obsolete("RegisterForAds is obsolete as of version 4.8 in favour of automatic registration.")]
+        public void RegisterForAds() {}
+        
         public bool IsInterstitialAdAllowed(Engagement engagement)
         {
             return manager != null && manager.IsInterstitialAdAllowed(engagement);
@@ -364,8 +323,8 @@ namespace DeltaDNA.Ads
         void ShowInterstitialAdImpl(string decisionPoint)
         {
             if (manager == null) {
-                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
-                this.DidFailToOpenInterstitialAd("Not registered");
+                Logger.LogDebug("SmartAds manager hasn't been created");
+                DidFailToOpenInterstitialAd("Not registered");
             } else if (String.IsNullOrEmpty(decisionPoint)) {
                 Logger.LogInfo("Showing interstitial ad");
                 manager.ShowInterstitialAd();
@@ -378,8 +337,8 @@ namespace DeltaDNA.Ads
         void ShowRewardedAdImpl(string decisionPoint)
         {
             if (manager == null) {
-                Logger.LogWarning("RegisterForAds must be called before calling trying to show ads");
-                this.DidFailToOpenRewardedAd("Not registered");
+                Logger.LogDebug("SmartAds manager hasn't been created");
+                DidFailToOpenRewardedAd("Not registered");
             } else if (String.IsNullOrEmpty(decisionPoint)) {
                 Logger.LogInfo("Showing rewarded ad");
                 manager.ShowRewardedAd();
@@ -388,13 +347,67 @@ namespace DeltaDNA.Ads
                 manager.ShowRewardedAd(decisionPoint);
             }
         }
-
+        
         public override void OnDestroy()
         {
+            Logger.LogDebug("Destroying SmartAds");
+            
+            DDNA.Instance.OnNewSession -= OnNewSession;
+            
             if (manager != null) {
+                Logger.LogDebug("Destroying SmartAds manager");
                 manager.OnDestroy();
             }
+            
             base.OnDestroy();
+        }
+        
+        public void OnNewSession() {
+            if (manager == null) CreateManager();
+            
+            RegisterForAdsInternal();
+        }
+        
+        private void CreateManager() {
+            Logger.LogDebug("Creating SmartAds manager");
+            
+            try {
+                if (Application.platform == RuntimePlatform.IPhonePlayer) {
+                    #if UNITY_IOS
+                    manager = new iOS.SmartAdsManager();
+                    #endif
+                } else if (Application.platform == RuntimePlatform.Android) {
+                    #if UNITY_ANDROID
+                    manager = new Android.AdService(
+                        this,
+                        Settings.SDK_VERSION.Remove(0, Settings.SDK_VERSION.IndexOf(" v") + 2));
+                    #endif
+                } else {
+                    #if UNITY_EDITOR
+                    manager = new UnityPlayer.AdService();
+                    #else
+                    Logger.LogWarning("SmartAds is not currently supported on " + Application.platform);
+                    #endif
+                }
+            } catch (Exception exception) {
+                DidFailToRegisterForInterstitialAds(exception.Message);
+                DidFailToRegisterForRewardedAds(exception.Message);
+            }
+            
+            if (manager != null) {
+                DDNA.Instance.OnNewSession -= manager.OnNewSession;
+                DDNA.Instance.OnNewSession += manager.OnNewSession;
+            }
+        }
+        
+        private void RegisterForAdsInternal() {
+            Logger.LogInfo("Registering for ads");
+            
+            if (manager != null) {
+                manager.RegisterForAds(SMARTADS_DECISION_POINT);
+            } else {
+                Logger.LogWarning("SmartAds manager hasn't been created");
+            }
         }
     }
 }
