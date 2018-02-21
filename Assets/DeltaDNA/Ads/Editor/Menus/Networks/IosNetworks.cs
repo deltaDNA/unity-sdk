@@ -43,7 +43,7 @@ namespace DeltaDNA.Ads.Editor {
                     .Where(e => e
                         .Attribute("name")
                         .Value
-                        .StartsWith("DeltaDNAAds"))
+                        .Equals("DeltaDNAAds"))
                     .Any();
             }
         }

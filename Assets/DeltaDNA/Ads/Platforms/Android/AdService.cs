@@ -58,7 +58,7 @@ namespace DeltaDNA.Ads.Android {
 
         public void OnNewSession() {
             #if DDNA_SMARTADS
-            adService.Call("onSessionUpdated");
+            adService.Call("onNewSession");
             #endif
         }
 

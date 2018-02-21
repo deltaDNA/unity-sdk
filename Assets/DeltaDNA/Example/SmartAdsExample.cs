@@ -35,7 +35,7 @@ namespace DeltaDNA.Ads
             DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
             DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
             DDNA.Instance.ClientVersion = "1.0.0";
-
+            
             // Setup Ad notifications
             DDNASmartAds.Instance.OnDidRegisterForInterstitialAds += () => {
                 Debug.Log("Registered for interstitial ads.");
@@ -49,12 +49,9 @@ namespace DeltaDNA.Ads
             DDNASmartAds.Instance.OnDidFailToRegisterForRewardedAds += (string reason) => {
                 Debug.Log("Failed to register for rewarded ads, " + reason);
             };
-
-            // Start collecting data
+            
+            // Start collecting data and register for ads
             DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
-
-            // Register for ads
-            DDNASmartAds.Instance.RegisterForAds();
         }
 
         void FixedUpdate() {

@@ -14,9 +14,6 @@
 // limitations under the License.
 //
 
-using UnityEngine;
-using System.Collections;
-
 namespace DeltaDNA.Ads {
 
     internal interface ISmartAdsManager {
@@ -36,5 +33,4 @@ namespace DeltaDNA.Ads {
         void OnDestroy();
         void OnNewSession();
     }
-
 }
