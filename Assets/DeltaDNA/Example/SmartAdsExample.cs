@@ -16,7 +16,7 @@
 
 using UnityEngine;
 
-namespace DeltaDNA.Ads
+namespace DeltaDNA
 {
     public class SmartAdsExample : MonoBehaviour {
 
@@ -37,16 +37,16 @@ namespace DeltaDNA.Ads
             DDNA.Instance.ClientVersion = "1.0.0";
             
             // Setup Ad notifications
-            DDNASmartAds.Instance.OnDidRegisterForInterstitialAds += () => {
+            SmartAds.Instance.OnDidRegisterForInterstitialAds += () => {
                 Debug.Log("Registered for interstitial ads.");
             };
-            DDNASmartAds.Instance.OnDidFailToRegisterForInterstitialAds += (string reason) => {
+            SmartAds.Instance.OnDidFailToRegisterForInterstitialAds += (string reason) => {
                 Debug.Log("Failed to register for interstitial ads, " + reason);
             };
-            DDNASmartAds.Instance.OnDidRegisterForRewardedAds += () => {
+            SmartAds.Instance.OnDidRegisterForRewardedAds += () => {
                 Debug.Log("Registered for rewarded ads.");
             };
-            DDNASmartAds.Instance.OnDidFailToRegisterForRewardedAds += (string reason) => {
+            SmartAds.Instance.OnDidFailToRegisterForRewardedAds += (string reason) => {
                 Debug.Log("Failed to register for rewarded ads, " + reason);
             };
             

@@ -36,6 +36,7 @@ Thumbs.db
 ehthumbs.db
 Icon7
 
-# VSCode
+# VS / VSCode
 Assets/VSCode*
 .vscode/
+.vs/

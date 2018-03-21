@@ -16,7 +16,7 @@
 
 using System;
 
-namespace DeltaDNA.Ads {
+namespace DeltaDNA {
 
     using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
@@ -33,7 +33,7 @@ namespace DeltaDNA.Ads {
 
         public static InterstitialAd Create()
         {
-            if (!DDNASmartAds.Instance.IsInterstitialAdAllowed(null)) return null;
+            if (!SmartAds.Instance.IsInterstitialAdAllowed(null)) return null;
 
             var instance = new InterstitialAd();
             instance.Parameters = new JSONObject();
@@ -42,7 +42,7 @@ namespace DeltaDNA.Ads {
 
         public static InterstitialAd Create(Engagement engagement)
         {
-            if (!DDNASmartAds.Instance.IsInterstitialAdAllowed(engagement)) return null;
+            if (!SmartAds.Instance.IsInterstitialAdAllowed(engagement)) return null;
 
             JSONObject parameters = null;
 
@@ -60,27 +60,27 @@ namespace DeltaDNA.Ads {
 
         public bool IsReady()
         {
-            return DDNASmartAds.Instance.IsInterstitialAdAvailable();
+            return SmartAds.Instance.IsInterstitialAdAvailable();
         }
 
         public void Show()
         {
-            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdOpened += this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen += this.OnInterstitialAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdClosed += this.OnInterstitialAdClosedHandler;
+            SmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            SmartAds.Instance.OnInterstitialAdOpened += this.OnInterstitialAdOpenedHandler;
+            SmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+            SmartAds.Instance.OnInterstitialAdFailedToOpen += this.OnInterstitialAdFailedToOpenHandler;
+            SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+            SmartAds.Instance.OnInterstitialAdClosed += this.OnInterstitialAdClosedHandler;
 
-            DDNASmartAds.Instance.ShowInterstitialAd();
+            SmartAds.Instance.ShowInterstitialAd();
         }
 
         public JSONObject Parameters { get; private set; }
 
         private void OnInterstitialAdOpenedHandler()
         {
-            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+            SmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            SmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
 
             if (this.OnInterstitialAdOpened != null) {
                 this.OnInterstitialAdOpened();
@@ -89,9 +89,9 @@ namespace DeltaDNA.Ads {
 
         private void OnInterstitialAdFailedToOpenHandler(string reason)
         {
-            DDNASmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
-            DDNASmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
-            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+            SmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
+            SmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
+            SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
 
             if (this.OnInterstitialAdFailedToOpen != null) {
                 this.OnInterstitialAdFailedToOpen(reason);
@@ -100,7 +100,7 @@ namespace DeltaDNA.Ads {
 
         private void OnInterstitialAdClosedHandler()
         {
-            DDNASmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
+            SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
 
             if (this.OnInterstitialAdClosed != null) {
                 this.OnInterstitialAdClosed();

@@ -74,9 +74,9 @@ namespace DeltaDNA.Ads.UnityPlayer {
 
             DDNA.Instance.RequestEngagement(engagement, (response) => {
                 if (!response.ContainsKey("parameters")) {
-                    DDNASmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
                         "Invalid Engage response, missing 'parameters' key");
-                    DDNASmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
                             "Invalid Engage response, missing 'parameters' key");
                     return;
                 }
@@ -85,18 +85,18 @@ namespace DeltaDNA.Ads.UnityPlayer {
 
                 if (!config.ContainsKey("adShowSession")
                     || !(config["adShowSession"] as bool? ?? false)) {
-                    DDNASmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
                         "Ads disabled for this session");
-                    DDNASmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
                         "Ads disabled for this session");
                     return;
                 }
 
                 if (!config.ContainsKey("adProviders")
                     && !config.ContainsKey("adRewardedProviders")) {
-                    DDNASmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
                         "Invalid Engage response, missing 'adProviders' key");
-                    DDNASmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
                             "Invalid Engage response, missing 'adRewardedProviders' key");
                     return;
                 }
@@ -112,10 +112,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                     : -1;
 
                 if (!config.ContainsKey("adProviders")) {
-                    DDNASmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
                         "No interstitial ad providers defined");
                 } else if ((config["adProviders"] as IList<object>).Count == 0) {
-                    DDNASmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
                         "No interstitial ad providers defined");
                 } else {
                     interstitialAgent = new AdAgent(
@@ -127,10 +127,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 }
 
                 if (!config.ContainsKey("adRewardedProviders")) {
-                    DDNASmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
                         "No rewarded ad providers defined");
                 }  else if ((config["adRewardedProviders"] as IList<object>).Count == 0) {
-                    DDNASmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
                         "No rewarded ad providers defined");
                 } else {
                     rewardedAgent = new AdAgent(
@@ -147,7 +147,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
             if (interstitialAgent != null) {
                 ShowAd(interstitialAgent, null);
             } else {
-                DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                SmartAds.Instance.DidFailToOpenInterstitialAd(
                     "Interstitial agent is not initialised");
             }
         }
@@ -156,7 +156,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
             if (interstitialAgent != null) {
                 ShowAd(interstitialAgent, adPoint);
             } else {
-                DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                SmartAds.Instance.DidFailToOpenInterstitialAd(
                     "Interstitial agent is not initialised");
             }
         }
@@ -165,7 +165,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
             if (rewardedAgent != null) {
                 ShowAd(rewardedAgent, null);
             } else {
-                DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                SmartAds.Instance.DidFailToOpenRewardedAd(
                     "Rewarded agent is not initialised");
             }
         }
@@ -174,7 +174,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
             if (rewardedAgent != null) {
                 ShowAd(rewardedAgent, adPoint);
             } else {
-                DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                SmartAds.Instance.DidFailToOpenRewardedAd(
                     "Rewarded agent is not initialised");
             }
         }
@@ -224,10 +224,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 Debug.Log("Ad points not supported by configuration");
 
                 if (!agent.rewarded) {
-                    DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                    SmartAds.Instance.DidFailToOpenInterstitialAd(
                         "Ad points not supported by configuration");
                 } else {
-                    DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                    SmartAds.Instance.DidFailToOpenRewardedAd(
                         "Ad points not supported by configuration");
                 }
 
@@ -240,10 +240,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 Debug.Log("Not showing ad before minimum interval");
 
                 if (!agent.rewarded) {
-                    DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                    SmartAds.Instance.DidFailToOpenInterstitialAd(
                         "Too soon");
                 } else {
-                    DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                    SmartAds.Instance.DidFailToOpenRewardedAd(
                         "Too soon");
                 }
 
@@ -255,10 +255,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 Debug.Log("Number of ads shown this session exceeded the maximum");
 
                 if (!agent.rewarded) {
-                    DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                    SmartAds.Instance.DidFailToOpenInterstitialAd(
                         "Session limit reached");
                 } else {
-                    DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                    SmartAds.Instance.DidFailToOpenRewardedAd(
                         "Session limit reached");
                 }
                 
@@ -269,10 +269,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 Debug.Log("No ad loaded by agent");
 
                 if (!agent.rewarded) {
-                    DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                    SmartAds.Instance.DidFailToOpenInterstitialAd(
                         "Not ready");
                 } else {
-                    DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                    SmartAds.Instance.DidFailToOpenRewardedAd(
                         "Not ready");
                 }
 
@@ -287,10 +287,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
                         if (IsAdAllowed(agent, engagement)) {
                             ShowAd(agent, null);
                         } else if (!agent.rewarded) {
-                            DDNASmartAds.Instance.DidFailToOpenInterstitialAd(
+                            SmartAds.Instance.DidFailToOpenInterstitialAd(
                                 "Not allowed");
                         } else if (agent.rewarded) {
-                            DDNASmartAds.Instance.DidFailToOpenRewardedAd(
+                            SmartAds.Instance.DidFailToOpenRewardedAd(
                                 "Not allowed");
                         }
                 });

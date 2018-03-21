@@ -100,9 +100,9 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 adapter.shownCount++;
 
                 if (!rewarded) {
-                    DDNASmartAds.Instance.DidOpenInterstitialAd();
+                    SmartAds.Instance.DidOpenInterstitialAd();
                 } else {
-                    DDNASmartAds.Instance.DidOpenRewardedAd();
+                    SmartAds.Instance.DidOpenRewardedAd();
                 }
             }
         }
@@ -113,9 +113,9 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 state = State.READY;
 
                 if (!rewarded) {
-                    DDNASmartAds.Instance.DidCloseInterstitialAd();
+                    SmartAds.Instance.DidCloseInterstitialAd();
                 } else {
-                    DDNASmartAds.Instance.DidCloseRewardedAd(
+                    SmartAds.Instance.DidCloseRewardedAd(
                         "{\"reward\":" + (complete ? "true" : "false") + "}");
                 }
 

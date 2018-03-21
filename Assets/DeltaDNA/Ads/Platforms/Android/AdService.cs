@@ -35,7 +35,7 @@ namespace DeltaDNA.Ads.Android {
         private AndroidJavaObject adService;
         #endif
 
-        internal AdService(DDNASmartAds ads, string sdkVersion) {
+        internal AdService(SmartAds ads, string sdkVersion) {
             #if DDNA_SMARTADS
             engageListeners = new Dictionary<string, AndroidJavaObject>();
 

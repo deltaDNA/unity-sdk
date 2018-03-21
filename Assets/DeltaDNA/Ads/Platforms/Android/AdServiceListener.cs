@@ -22,10 +22,10 @@ namespace DeltaDNA.Ads.Android
     #if UNITY_ANDROID
     internal class AdServiceListener : AndroidJavaProxy {
 
-        private DDNASmartAds ads;
+        private SmartAds ads;
         private readonly IDictionary<string, AndroidJavaObject> engageListeners;
 
-        internal AdServiceListener(DDNASmartAds ads, IDictionary<string, AndroidJavaObject> engageListeners) : base(Utils.AdServiceListenerClassName) {
+        internal AdServiceListener(SmartAds ads, IDictionary<string, AndroidJavaObject> engageListeners) : base(Utils.AdServiceListenerClassName) {
             this.ads = ads;
             this.engageListeners = engageListeners;
         }

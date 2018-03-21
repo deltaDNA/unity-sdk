@@ -15,8 +15,9 @@
 //
 
 using System;
+using DeltaDNA.Ads;
 
-namespace DeltaDNA.Ads
+namespace DeltaDNA
 {
     using Application = UnityEngine.Application;
     using RuntimePlatform = UnityEngine.RuntimePlatform;
@@ -27,14 +28,14 @@ namespace DeltaDNA.Ads
     /// The DDNASmartAds provides a service for fetching and showing ads.  It supports showing
     /// interstitial and rewarded ad types.
     /// </summary>
-    public class DDNASmartAds : Singleton<DDNASmartAds> {
+    public class SmartAds : Singleton<SmartAds> {
 
         public const string SMARTADS_DECISION_POINT = "advertising";
 
         private ISmartAdsManager manager;
         private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
         
-        internal DDNASmartAds() {
+        internal SmartAds() {
             DDNA.Instance.OnNewSession -= OnNewSession;
             DDNA.Instance.OnNewSession += OnNewSession;
         }
@@ -349,13 +350,8 @@ namespace DeltaDNA.Ads
         }
         
         public override void OnDestroy()
-        {
-            Logger.LogDebug("Destroying SmartAds");
-            
-            DDNA.Instance.OnNewSession -= OnNewSession;
-            
+        {   
             if (manager != null) {
-                Logger.LogDebug("Destroying SmartAds manager");
                 manager.OnDestroy();
             }
             
@@ -374,17 +370,17 @@ namespace DeltaDNA.Ads
             try {
                 if (Application.platform == RuntimePlatform.IPhonePlayer) {
                     #if UNITY_IOS
-                    manager = new iOS.SmartAdsManager();
+                    manager = new Ads.iOS.SmartAdsManager();
                     #endif
                 } else if (Application.platform == RuntimePlatform.Android) {
                     #if UNITY_ANDROID
-                    manager = new Android.AdService(
+                    manager = new Ads.Android.AdService(
                         this,
                         Settings.SDK_VERSION.Remove(0, Settings.SDK_VERSION.IndexOf(" v") + 2));
                     #endif
                 } else {
                     #if UNITY_EDITOR
-                    manager = new UnityPlayer.AdService();
+                    manager = new Ads.UnityPlayer.AdService();
                     #else
                     Logger.LogWarning("SmartAds is not currently supported on " + Application.platform);
                     #endif

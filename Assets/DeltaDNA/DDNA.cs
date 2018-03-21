@@ -96,7 +96,8 @@ namespace DeltaDNA
             
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
-            var smartAds = Ads.DDNASmartAds.Instance;
+            var smartAds = SmartAds.Instance;
+            smartAds.transform.parent = gameObject.transform;
             #endif
         }
 

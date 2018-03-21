@@ -112,7 +112,7 @@ void _fireEventNewSession()
     [[NSNotificationCenter defaultCenter] postNotificationName:@"DDNASDKNewSession" object:nil];
 }
 
-const char * SmartAdsObject = "DeltaDNAAds.DDNASmartAds";
+const char * SmartAdsObject = "DeltaDNA.SmartAds";
 
 UIViewController *UnityGetGLViewController();
 
