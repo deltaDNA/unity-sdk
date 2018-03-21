@@ -43,7 +43,7 @@ namespace DeltaDNA.Ads.Editor {
                     .Where(e => e
                         .Attribute("name")
                         .Value
-                        .Equals("DeltaDNAAds"))
+                        .Equals("DeltaDNAAds/SmartAds"))
                     .Any();
             }
         }
@@ -53,7 +53,7 @@ namespace DeltaDNA.Ads.Editor {
                 return Configuration()
                     .Descendants("iosPod")
                     .Select(e => e.Attribute("name").Value)
-                    .Where(e => e.StartsWith("DeltaDNAAds/"))
+                    .Where(e => (e.StartsWith("DeltaDNAAds/") && !e.Equals("DeltaDNAAds/SmartAds")))
                     .Select(e => e.Substring("DeltaDNAAds/".Length))
                     .ToList();
             }
@@ -74,7 +74,7 @@ namespace DeltaDNA.Ads.Editor {
                         new object[] {
                             new XAttribute(
                                 "name",
-                                "DeltaDNAAds"),
+                                "DeltaDNAAds/SmartAds"),
                             new XAttribute(
                                 "version",
                                 VERSION),
