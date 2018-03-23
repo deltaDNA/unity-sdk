@@ -70,17 +70,21 @@ namespace DeltaDNA
 
         void Awake()
         {
-            if (this.eventStore == null) {
+            if (this.eventStore == null)
+            {
                 string eventStorePath = null;
-                if (this.Settings.UseEventStore) {
+                if (this.Settings.UseEventStore)
+                {
                     eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
-                    if (!Utils.IsDirectoryWritable(eventStorePath)) {
+                    if (!Utils.IsDirectoryWritable(eventStorePath))
+                    {
                         Logger.LogWarning("Event store path unwritable, event caching disabled.");
                         this.Settings.UseEventStore = false;
                     }
                 }
                 this.eventStore = new EventStore(eventStorePath);
-                if (this.Settings.UseEventStore && !this.eventStore.IsInitialised) {   // failed to access files for some reason
+                if (this.Settings.UseEventStore && !this.eventStore.IsInitialised)
+                {   // failed to access files for some reason
                     Logger.LogWarning("Failed to access event store path, event caching disabled.");
                     this.Settings.UseEventStore = false;
                     this.eventStore = new EventStore(eventStorePath);
@@ -95,11 +99,17 @@ namespace DeltaDNA
             GameObject androidNotifications = new GameObject();
             this.AndroidNotifications = androidNotifications.AddComponent<AndroidNotifications>();
             androidNotifications.transform.parent = gameObject.transform;
+
             
+
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
             var smartAds = SmartAds.Instance;
             smartAds.transform.parent = gameObject.transform;
+
+            this.EngageFactory = new EngageFactory(this, smartAds);
+            #else
+            this.EngageFactory = new EngageFactory(this, null);
             #endif
         }
 
@@ -487,6 +497,12 @@ namespace DeltaDNA
         /// Helper for Android push notifications.
         /// </summary>
         public AndroidNotifications AndroidNotifications { get; private set; }
+        
+        /// <summary>
+        /// The EngageFactory helps with using the Engage service.
+        /// </summary>
+        /// <value>The engage factory.</value>
+        public EngageFactory EngageFactory { get; private set; }
 
         /// <summary>
         /// Clears the persistent data, such as user id. The SDK should be stopped

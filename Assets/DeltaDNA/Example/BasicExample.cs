@@ -114,13 +114,13 @@ public class BasicExample : MonoBehaviour {
     }
 
     public void OnEngagementBtn_Clicked() {
-        var engagement = new Engagement("gameLoaded")
+        var customParams = new Params()
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
-
-        DDNA.Instance.RequestEngagement(engagement, (Dictionary<string, object> response) => {
-            popUpContent.text = MiniJSON.Json.Serialize(response);
+            
+        DDNA.Instance.EngageFactory.RequestGameParameters("gameLoaded", (gameParameters) => {
+            popUpContent.text = MiniJSON.Json.Serialize(gameParameters);
         });
 
         popUpTitle.text = "Engage returned";
@@ -128,13 +128,12 @@ public class BasicExample : MonoBehaviour {
     }
 
     public void OnImageMessageBtn_Clicked() {
-        var engagement = new Engagement("testImageMessage")
+        var customParams = new Params()
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
-
-        DDNA.Instance.RequestEngagement(engagement, (response) => {
-            ImageMessage imageMessage = ImageMessage.Create(response);
+            
+        DDNA.Instance.EngageFactory.RequestImageMessage("testImageMessage", (imageMessage) => {
 
             // Check we got an engagement with a valid image message.
             if (imageMessage != null) {
@@ -162,8 +161,6 @@ public class BasicExample : MonoBehaviour {
             } else {
                 Debug.Log("Engage didn't return an image message.");
             }
-        }, (exception) => {
-            Debug.Log("Engage reported an error: " + exception.Message);
         });
     }
 

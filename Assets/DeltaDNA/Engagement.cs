@@ -29,17 +29,18 @@ namespace DeltaDNA {
         /// Creates a new Engagement with a decision point.
         /// </summary>
         /// <param name="decisionPoint">The Decision Point.</param>
-        public Engagement(string decisionPoint)
-        {
+        public Engagement(string decisionPoint) : this(decisionPoint, new Params()) {}
+        
+        internal Engagement(string decisionPoint, Params parameters) {
             if (String.IsNullOrEmpty(decisionPoint)) {
                 throw new ArgumentException("decisionPoint cannot be null or empty");
             }
-
-            this.DecisionPoint = decisionPoint;
-            this.Flavour = "engagement";
-            this.parameters = new Params();
+            
+            DecisionPoint = decisionPoint;
+            Flavour = "engagement";
+            this.parameters = parameters;
         }
-
+        
         /// <summary>
         /// Gets the decision point.
         /// </summary>
@@ -127,6 +128,6 @@ namespace DeltaDNA {
     public class Engagement : Engagement<Engagement> 
     {
         public Engagement(string decisionPoint) : base(decisionPoint) {}
+        internal Engagement(string decisionPoint, Params parameters) : base(decisionPoint, parameters) {}
     };
-
 } // namespace DeltaDNA

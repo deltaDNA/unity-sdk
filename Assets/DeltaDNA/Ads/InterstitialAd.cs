@@ -17,53 +17,61 @@
 using System;
 
 namespace DeltaDNA {
+    
+    public class InterstitialAd : Ad {
+        
+        /// <summary>
+        /// Called when the ad is shown on screen.
+        /// </summary>
+        public event Action<InterstitialAd> OnInterstitialAdOpened;
+        /// <summary>
+        /// Called when the ad has failed to show.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
+        public event Action<InterstitialAd, string> OnInterstitialAdFailedToOpen;
+        /// <summary>
+        /// Called when the ad has been closed.
+        /// </summary>
+        public event Action<InterstitialAd> OnInterstitialAdClosed;
 
-    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
-
-    public class InterstitialAd {
-
-        public event Action OnInterstitialAdOpened;
-        public event Action<string> OnInterstitialAdFailedToOpen;
-        public event Action OnInterstitialAdClosed;
-
-        private InterstitialAd()
+        private InterstitialAd(Engagement engagement) : base(engagement)
         {
 
         }
 
         public static InterstitialAd Create()
         {
-            if (!SmartAds.Instance.IsInterstitialAdAllowed(null)) return null;
-
-            var instance = new InterstitialAd();
-            instance.Parameters = new JSONObject();
-            return instance;
+            if (!SmartAds.Instance.IsInterstitialAdAllowed(null, false)) return null;
+            
+            return CreateUnchecked(null);
         }
 
         public static InterstitialAd Create(Engagement engagement)
         {
-            if (!SmartAds.Instance.IsInterstitialAdAllowed(engagement)) return null;
-
-            JSONObject parameters = null;
-
-            if (engagement != null && engagement.JSON != null) {
-                if (engagement.JSON.ContainsKey("parameters")) {
-                    parameters = engagement.JSON["parameters"] as JSONObject;
-                }
+            if (!SmartAds.Instance.IsInterstitialAdAllowed(engagement, false)) return null;
+            
+            return CreateUnchecked(engagement);
+        }
+        
+        internal static InterstitialAd CreateUnchecked(Engagement engagement) {
+            if (engagement != null && engagement.JSON == null) {
+                return new InterstitialAd(null);
+            } else {
+                return new InterstitialAd(engagement);
             }
-
-            var instance = new InterstitialAd();
-            instance.Parameters = parameters ?? new JSONObject();
-
-            return instance;
         }
-
-        public bool IsReady()
+        
+        public override bool IsReady()
         {
-            return SmartAds.Instance.IsInterstitialAdAvailable();
+            if (engagement  == null) {
+                return SmartAds.Instance.HasLoadedInterstitialAd();
+            } else {
+                return SmartAds.Instance.IsInterstitialAdAllowed(engagement, true)
+                    && SmartAds.Instance.HasLoadedInterstitialAd();
+            }
         }
-
-        public void Show()
+        
+        public override void Show()
         {
             SmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
             SmartAds.Instance.OnInterstitialAdOpened += this.OnInterstitialAdOpenedHandler;
@@ -71,20 +79,17 @@ namespace DeltaDNA {
             SmartAds.Instance.OnInterstitialAdFailedToOpen += this.OnInterstitialAdFailedToOpenHandler;
             SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
             SmartAds.Instance.OnInterstitialAdClosed += this.OnInterstitialAdClosedHandler;
-
-            SmartAds.Instance.ShowInterstitialAd();
+            
+            if (engagement == null) Logger.LogWarning("Prefer showing ads with Engagements");
+            SmartAds.Instance.ShowInterstitialAd(engagement);
         }
-
-        public JSONObject Parameters { get; private set; }
-
+        
         private void OnInterstitialAdOpenedHandler()
         {
             SmartAds.Instance.OnInterstitialAdOpened -= this.OnInterstitialAdOpenedHandler;
             SmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
 
-            if (this.OnInterstitialAdOpened != null) {
-                this.OnInterstitialAdOpened();
-            }
+            if (OnInterstitialAdOpened != null) OnInterstitialAdOpened(this);
         }
 
         private void OnInterstitialAdFailedToOpenHandler(string reason)
@@ -93,18 +98,14 @@ namespace DeltaDNA {
             SmartAds.Instance.OnInterstitialAdFailedToOpen -= this.OnInterstitialAdFailedToOpenHandler;
             SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
 
-            if (this.OnInterstitialAdFailedToOpen != null) {
-                this.OnInterstitialAdFailedToOpen(reason);
-            }
+            if (OnInterstitialAdFailedToOpen != null) OnInterstitialAdFailedToOpen(this, reason);
         }
 
         private void OnInterstitialAdClosedHandler()
         {
             SmartAds.Instance.OnInterstitialAdClosed -= this.OnInterstitialAdClosedHandler;
 
-            if (this.OnInterstitialAdClosed != null) {
-                this.OnInterstitialAdClosed();
-            }
+            if (OnInterstitialAdClosed != null) OnInterstitialAdClosed(this);
         }
     }
 }

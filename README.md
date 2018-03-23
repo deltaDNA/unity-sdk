@@ -14,10 +14,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Engage](#engage)
 * [SmartAds](#smartads)
  * [Usage](#usage)
- * [Create an Interstitial Ad](#create-an-interstitial-ad)
- * [Create a Rewarded Ad](#create-a-rewarded-ad)
- * [Working with Engage](#working-with-engage)
- * [Legacy Interface](#legacy-interface)
+ * [Showing ads](#showing-ads)
  * [Events](#events)
  * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
@@ -128,87 +125,46 @@ If everything went well the SmartAds service will start fetching ads in the back
 * `OnDidRegisterForRewardedAds` - Called when rewarded ads have successfully been configured.
 * `OnDidFailToRegisterForRewardedAds` - Called when rewarded ads can't be configured for some reason.
 
-### Create an Interstitial Ad
+### Showing ads
 
-An interstitial ad is a fullscreen popup that the player can dismiss from a close button.  In order to show an interstitial ad, try to create an `InterstitialAd` and then show it.
-
+Showing interstitial ads can be done by creating an instance of an `InterstitialAd` and calling `Show()`. The result should be null-checked after `Create()` is called as the creation may fail if the time or session limits have been exceeded.
 ```csharp
-var interstitialAd = InterstitialAd.Create();
-if (interstitialAd != null) {
-    interstitialAd.Show();
+InterstitialAd ad = InterstitialAd.Create();
+if (ad != null) {
+    ad.Show();
 }
 ```
+Rewarded ads are created in a similar way, but through the `RewardedAd` class instead.
 
-`Create` checks that the game has permission to show an ad at this point.  It checks that an ad has loaded, that the number of ads for this session hasn't been exceeded and that it's not too soon since the last ad was shown.  If a non null object is returned you are allowed to show an ad.  This allows you to easily control the number and frequency of ads shown to your players from our platform.
-
-The following events can be added to an `InterstitialAd`:
-
-* `OnInterstitialAdOpened` - Called when the ad is showing on screen.
-* `OnInterstitialAdFailedToOpen` - Called if the ad fails to open for some reason.
-* `OnInterstitialAdClosed` - Called when the ad has been closed.
-
-### Create a Rewarded Ad
-
-A rewarded ad is a short video, typically 30 seconds in length that the player must watch before being able to dismiss.  To show a rewarded ad, try to create a `RewardedAd` and then show it.
-
+Ads can be created off an Engage request by using the `EngageFactory` and using one of the `RequestInterstitialAd` or `RequestRewardedAd` methods. Unlike with an `ImageMessage` the factory will always return a non-null ad object in the callback.
 ```csharp
-var rewardedAd = RewardedAd.Create();
-if (rewardedAd != null) {
-    rewardedAd.Show();
-}
+DDNA.Instance.EngageFactory.RequestInterstitialAd(
+    "showInterstitial",
+    (ad) => { /* do something with the ad */});
 ```
 
-As with `InterstitialAd` the `Create` method will only return an object if you're allowed to show a rewarded ad and there is one available to show at this point.  So, for example if you get a non null object you can present a UI to the player that offers them a rewarded ad to watch.
-
-The following events can be added to a `RewardedAd`:
-
-* `OnRewardedAdOpened` - Called when the ad is showing on screen.
-* `OnRewardedAdFailedToOpen` - Called if the ad fails to open for some reason.
-* `OnRewardedAdClosed` - Called when the ad is finished.  A boolean reward flag indicates if the ad was watched enough that you can reward the player.
-
-### Working with Engage
-
-To fully take advantage of deltaDNA's SmartAds you want to work with our Engage service.  The game can ask Engage if it should show an ad for this particular player.  Engage will tailor its response according to which campaigns are running and which segment this player is in.  You try to create an ad from an `Engagement` object, it will only succeed if the Engage response allows it and the session, time and loaded constraints are satisfied.  We can also add additional parameters into the Engage response which the game can use, perhaps to customise the reward for this player.
-
+Alternatively, if more control is needed, ads can also be created by performing an Engage request and creating an `InterstitialAd` or `RewardedAd` instance from the returned `Engagement`.
 ```csharp
-var engagement = new Engagement("showRewarded");
+Engagement engagement = new Engagement("showAdOrImageMessage")
+DDNA.Instance.RequestEngagement(
+    engagement,
+    (response) => {
+        RewardedAd ad = RewardedAd.Create(engagement);
+        ImageMessage image = ImageMessage.Create(engagement);
 
-DDNA.Instance.RequestEngagement(engagement, response => {
-
-    var rewardedAd = RewardedAd.Create(response);
-
-    if (rewardedAd != null) {
-
-        // See what reward is being offered
-        if (rewardedAd.Parameters.ContainsKey("rewardAmount")) {
-            int rewardAmount = System.Convert.ToInt32(rewardedAd.Parameters["rewardAmount"]);
-
-            // Present offer to player...
-
-            // If they choose to watch the add
-            rewardedAd.Show();
+        if (image != null) {
+            // code for showing the Image Message
+        } else if (ad != null) {
+            ad.Show();
         }
-    }
-
-}, exception => {
-    Debug.Log("Engage encountered an error: "+exception.Message);
-});
+    });
 ```
 
 Checkout the included example project for more details.
 
-### Legacy Interface
-
-Prior to the inclusion of the `InterstitialAd` and `RewardedAd` classes you could show ads directly from the `DDNASmartAds` object.  This still works since this is what the ad classes use, but it's preferred to use the separate classes.
-
-You can test if an interstitial ad has loaded with `DDNASmartAds.Instance.IsInterstitialAdAvailable()`.  Show an interstitial ad by calling `DDNASmartAds.Instance.ShowInterstitialAd()`.  You can test if a rewarded ad has loaded with `DDNASmartAds.Instance.IsRewardedAdAvailable()`.  Show a rewarded ad by calling `DDNASmartAds.Instance.ShowRewardedAd()`.  These calls don't tell you in advance if showing the ad will fail because of session and time limits, another reason why we recommend using the `InterstitialAd` and `RewardedAd` classes.
-
-The additional show methods that use Decision Points are now deprecated, since they hide what Engage is returning which prevents you from controlling if and when to show the ad in your game.
-
 ### Events
 
 Callbacks can be added to the following events to be notified when an ad has opened or closed.
-
 * `OnDidRegisterForInterstitialAds` - Called when you have successfully enabled interstitial ads for your game.
 * `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads are unavailable for some reason.  A string parameter reports a possible error.
 * ~~`OnInterstitialAdOpened` - Called when an interstitial ad is shown on screen.~~  Prefer `InterstitialAd.OnInterstitialAdOpened`.
@@ -216,9 +172,22 @@ Callbacks can be added to the following events to be notified when an ad has ope
 * ~~`OnInterstitialAdClosed` - Called when the user has closed an interstitial ad.~~ Prefer `InterstitialAd.OnInterstitialAdClosed`.
 * `OnDidRegisterForRewardedAds` - Called when you have successfully enabled rewarded ads for your game.
 * `OnDidFailToRegisterForRewardedAds` - Called if rewarded ads are unavailable for some reason.  A string parameter reports a possible error.
+* ~~`OnRewardedAdLoaded` - Called when a rewarded ad is loaded.~~ Prefer `RewardedAd.OnRewardedAdLoaded`.
 * ~~`OnRewardedAdOpened` - Called when a rewarded ad is shown on screen.~~ Prefer `RewardedAd.OnRewardedAdOpened`.
 * ~~`OnRewardedAdFailedToOpen` - Called if a rewarded ad fails to show.~~ Prefer `RewardedAd.OnRewardedAdFailedToOpen`.
 * ~~`OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.~~ See `RewardedAd.OnRewardedAdClosed`.
+
+The `InterstitialAd` class supports the following event callbacks:
+* `OnInterstitialAdOpened` - Called when an ad is opened.
+* `OnInterstitialAdFailedToOpen` - Called when an ad fails to show.
+* `OnInterstitialAdClosed` - Called when an ad is closed.
+
+The `RewardedAd` class supports the following event callbacks:
+* `OnRewardedAdLoaded` - Called when an ad is loaded.
+* `OnRewardedAdExpired` - Called when an ad has expired due to another ad being currently shown.
+* `OnRewardedAdOpened` - Called when an ad is opened.
+* `OnRewardedAdFailedToOpen` - Called when an ad fails to show.
+* `OnRewardedAdClosed` - Called when an ad is closed. A boolean parameter indicates if the user had watched enough of the ad to be rewarded.
 
 ### Diagnostics
 
@@ -335,6 +304,7 @@ Between version 4.2 and version 4.3 we updated our push notifications to use Fir
 * *DDNA.StartSDK()* methods which take the environment key, Collect, and Engage URLs have been deprecated in favour of configuring these through the UI accessed from the Editor menu under *DeltaDNA -> Configure* and a simpler *DDNA.StartSDK()* method.
 * SmartAds needs to be enabled from the configuration UI.
 * *DDNASmartAds.RegisterForAds()* has been deprecated and will now be called as part of starting the Analytics SDK.
+* Methods for checking if ads are available and showing them from the `SmartAds` instance have been removed in favour of using the `InterstitialAd` and `RewardedAd` objects. See [here](#showing-ads) for more details.
 
 #### SDK Health Check
 You can run a health check once you've upgraded the SDK to identify mistakes related to previous versions, such as conflicting configuration entries and duplicate libraries. It can be accessed from the Editor menu under *DeltaDNA -> Health Check SDK*. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.

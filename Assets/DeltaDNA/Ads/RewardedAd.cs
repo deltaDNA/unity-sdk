@@ -17,53 +17,76 @@
 using System;
 
 namespace DeltaDNA {
+    
+    public class RewardedAd : Ad {
+        
+        private bool waitingToLoad;
+        
+        /// <summary>
+        /// Called when the ad has loaded.
+        /// </summary>
+        public event Action<RewardedAd> OnRewardedAdLoaded;
+        /// <summary>
+        /// Called when the ad has expired due to another ad being shown.
+        /// </summary>
+        public event Action<RewardedAd> OnRewardedAdExpired;
+        /// <summary>
+        /// Called when the ad is shown on screen.
+        /// </summary>
+        public event Action<RewardedAd> OnRewardedAdOpened;
+        /// <summary>
+        /// Called when the ad has failed to show.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
+        public event Action<RewardedAd, string> OnRewardedAdFailedToOpen;
+        /// <summary>
+        /// Called when the ad has been closed.
+        /// Whether the user should be rewarded will be passed in the parameter.
+        /// </summary>
+        public event Action<RewardedAd, bool> OnRewardedAdClosed;
 
-    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
-
-    public class RewardedAd {
-
-        public event Action OnRewardedAdOpened;
-        public event Action<string> OnRewardedAdFailedToOpen;
-        public event Action<bool> OnRewardedAdClosed;
-
-        private RewardedAd()
+        private RewardedAd(Engagement engagement) : base(engagement)
         {
-
+            this.engagement = engagement;
+            
+            SmartAds.Instance.OnRewardedAdLoaded -= NotifyOnLoaded;
+            SmartAds.Instance.OnRewardedAdLoaded += NotifyOnLoaded;
+            SmartAds.Instance.OnRewardedAdOpenedWithDecisionPoint -= NotifyOnOpened;
+            SmartAds.Instance.OnRewardedAdOpenedWithDecisionPoint += NotifyOnOpened;
         }
 
         public static RewardedAd Create()
         {
-            if (!SmartAds.Instance.IsRewardedAdAllowed(null)) return null;
-
-            var instance = new RewardedAd();
-            instance.Parameters = new JSONObject();
-            return instance;
+            if (!SmartAds.Instance.IsRewardedAdAllowed(null, false)) return null;
+            
+            return CreateUnchecked(null);
         }
-
-        public static RewardedAd Create(Engagement engagement)
-        {
-            if (!SmartAds.Instance.IsRewardedAdAllowed(engagement)) return null;
-
-            JSONObject parameters = null;
-
-            if (engagement != null && engagement.JSON != null) {
-                if (engagement.JSON.ContainsKey("parameters")) {
-                    parameters = engagement.JSON["parameters"] as JSONObject;
-                }
+        
+        public static RewardedAd Create(Engagement engagement) {
+            if (!SmartAds.Instance.IsRewardedAdAllowed(engagement, false)) return null;
+            
+            return CreateUnchecked(engagement);
+        }
+        
+        internal static RewardedAd CreateUnchecked(Engagement engagement) {
+            if (engagement != null && engagement.JSON == null) {
+                return new RewardedAd(null);
+            } else {
+                return new RewardedAd(engagement);
             }
-
-            var instance = new RewardedAd();
-            instance.Parameters = parameters ?? new JSONObject();
-
-            return instance;
         }
-
-        public bool IsReady()
+        
+        public override bool IsReady()
         {
-            return SmartAds.Instance.IsRewardedAdAvailable();
+            if (engagement == null) {
+                return SmartAds.Instance.HasLoadedRewardedAd();
+            } else {
+                return SmartAds.Instance.IsRewardedAdAllowed(engagement, true)
+                    && SmartAds.Instance.HasLoadedRewardedAd();
+            }
         }
-
-        public void Show()
+        
+        public override void Show()
         {
             SmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
             SmartAds.Instance.OnRewardedAdOpened += this.OnRewaredAdOpenedHandler;
@@ -71,20 +94,66 @@ namespace DeltaDNA {
             SmartAds.Instance.OnRewardedAdFailedToOpen += this.OnRewardedAdFailedToOpenHandler;
             SmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
             SmartAds.Instance.OnRewardedAdClosed += this.OnRewardedAdClosedHandler;
-
-            SmartAds.Instance.ShowRewardedAd();
+            
+            if (engagement == null) Logger.LogWarning("Prefer showing ads with Engagements");
+            SmartAds.Instance.ShowRewardedAd(engagement);
         }
-
-        public JSONObject Parameters { get; private set; }
-
+        
+        public string RewardType {
+            get {
+                var parameters = EngageParams;
+                return (parameters != null) ? parameters["ddnaAdRewardType"] as string : null;
+            }
+        }
+        
+        public long RewardAmount {
+            get {
+                var parameters = EngageParams;
+                return (parameters != null) ? parameters["ddnaAdRewardAmount"] as long? ?? 0 : 0;
+            }
+        }
+        
+        private void NotifyOnLoaded() {
+            if (SmartAds.Instance.IsRewardedAdAllowed(engagement, true)) {
+                waitingToLoad = false;
+                
+                if (OnRewardedAdLoaded != null) OnRewardedAdLoaded(this);
+            } else if (!waitingToLoad) {
+                SmartAds.Instance.StartCoroutine(NotifyOnLoadedDelayable(
+                    SmartAds.Instance.TimeUntilRewardedAdAllowed(engagement)));
+            }
+        }
+        
+        private System.Collections.IEnumerator NotifyOnLoadedDelayable(float waitFor) {
+            waitingToLoad = true;
+            
+            yield return new UnityEngine.WaitForSeconds(waitFor);
+            
+            if (waitingToLoad) {
+                waitingToLoad = false;
+                
+                if (SmartAds.Instance.HasLoadedRewardedAd()
+                    && OnRewardedAdLoaded != null) {
+                    OnRewardedAdLoaded(this);
+                }
+            }
+        }
+        
+        private void NotifyOnOpened(string decisionPoint) {
+            if (engagement != null
+                && !engagement.DecisionPoint.Equals(decisionPoint)
+                && !waitingToLoad
+                && OnRewardedAdExpired != null) {
+                OnRewardedAdExpired(this);
+            }
+        }
+        
         private void OnRewaredAdOpenedHandler()
         {
             SmartAds.Instance.OnRewardedAdOpened -= this.OnRewaredAdOpenedHandler;
             SmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
 
-            if (this.OnRewardedAdOpened != null) {
-                this.OnRewardedAdOpened();
-            }
+            if (OnRewardedAdOpened != null) OnRewardedAdOpened(this);
         }
 
         private void OnRewardedAdFailedToOpenHandler(string reason)
@@ -93,18 +162,14 @@ namespace DeltaDNA {
             SmartAds.Instance.OnRewardedAdFailedToOpen -= this.OnRewardedAdFailedToOpenHandler;
             SmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
 
-            if (this.OnRewardedAdFailedToOpen != null) {
-                this.OnRewardedAdFailedToOpen(reason);
-            }
+            if (OnRewardedAdFailedToOpen != null) OnRewardedAdFailedToOpen(this, reason);
         }
 
         private void OnRewardedAdClosedHandler(bool reward)
         {
             SmartAds.Instance.OnRewardedAdClosed -= this.OnRewardedAdClosedHandler;
 
-            if (this.OnRewardedAdClosed != null) {
-                this.OnRewardedAdClosed(reward);
-            }
+            if (OnRewardedAdClosed != null) OnRewardedAdClosed(this, reward);
         }
     }
 }

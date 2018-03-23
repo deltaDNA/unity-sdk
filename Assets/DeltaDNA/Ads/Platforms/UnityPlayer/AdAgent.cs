@@ -34,8 +34,10 @@ namespace DeltaDNA.Ads.UnityPlayer {
         private string adPoint;
         private State state;
 
-        internal long lastShowTime;
+        internal DateTime lastShowTime;
         internal int shownCount;
+
+        internal event Action<string, DateTime> RecordAdShown;
 
         internal AdAgent(
             bool rewarded,
@@ -90,27 +92,36 @@ namespace DeltaDNA.Ads.UnityPlayer {
         public void OnLoaded(AdAdapter adapter) {
             if (state == State.LOADING) {
                 state = State.LOADED;
+
+                if (rewarded) {
+                    SmartAds.Instance.DidLoadRewardedAd();
+                }
             }
         }
 
         public void OnShowing(AdAdapter adapter) {
             if (state == State.LOADED) {
                 state = State.SHOWING;
-                
+
+                shownCount++;
                 adapter.shownCount++;
 
                 if (!rewarded) {
                     SmartAds.Instance.DidOpenInterstitialAd();
                 } else {
-                    SmartAds.Instance.DidOpenRewardedAd();
+                    SmartAds.Instance.DidOpenRewardedAd(adPoint);
                 }
             }
         }
 
         public void OnClosed(AdAdapter adapter, bool complete) {
             if (state == State.SHOWING) {
-                lastShowTime = DateTime.UtcNow.Ticks;
+                lastShowTime = DateTime.UtcNow;
                 state = State.READY;
+
+                if (!string.IsNullOrEmpty(adPoint)) {
+                    RecordAdShown(adPoint, lastShowTime);
+                }
 
                 if (!rewarded) {
                     SmartAds.Instance.DidCloseInterstitialAd();

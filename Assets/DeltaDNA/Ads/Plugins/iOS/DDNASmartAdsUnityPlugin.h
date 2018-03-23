@@ -20,12 +20,16 @@
 
 // Unity Binding
 void _registerForAds(const char * decisionPoint);
-int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams);
-int _isInterstitialAdAvailable();
-void _showInterstitialAd(const char * decisionPoint);
-int _isRewardedAdAllowed(const char * decisionPoint, const char * engageParams);
-int _isRewardedAdAvailable();
-void _showRewardedAd(const char * decisionPoint);
+int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime);
+int _hasLoadedInterstitialAd();
+void _showInterstitialAd(const char * decisionPoint, const char * engageParams);
+int _isRewardedAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime);
+long _timeUntilRewardedAdAllowed(const char * decisionPoint, const char * engageParams);
+int _hasLoadedRewardedAd();
+void _showRewardedAd(const char * decisionPoint, const char * engageParams);
+long _getLastShown(const char * decisionPoint);
+long _getSessionCount(const char * decisionPoint);
+long _getDailyCount(const char * decisionPoint);
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
 void _pause();
 void _resume();
@@ -39,12 +43,16 @@ void _fireEventNewSession();
 + (instancetype)sharedPlugin;
 
 - (void)registerForAds:(NSString *)decisionPoint;
-- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
-- (BOOL)isInterstitialAdAvailable;
-- (void)showInterstitialAdWithDecisionPoint:(NSString *)decisionPoint;
-- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
-- (BOOL)isRewardedAdAvailable;
-- (void)showRewardedAdWithDecisionPoint:(NSString *)decisionPoint;
+- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime;
+- (BOOL)hasLoadedInterstitialAd;
+- (void)showInterstitialAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
+- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime;
+- (long)timeUntilRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
+- (BOOL)hasLoadedRewardedAd;
+- (void)showRewardedAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
+- (long)getLastShown:(NSString *)decisionPoint;
+- (long)getSessionCount:(NSString *)decisionPoint;
+- (long)getDailyCount:(NSString *)decisionPoint;
 - (void)engageResponseForId:(NSString *)engagementId
                    response:(NSString *)response
                  statusCode:(NSInteger)statusCode

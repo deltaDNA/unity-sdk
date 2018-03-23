@@ -56,6 +56,7 @@ namespace DeltaDNA.Ads.Editor {
                     instance.GetNetworks(),
                     isDevelopment && instance.AreDebugNotificationsEnabled());
                 
+                var smartAdsOn = instance.IsEnabled();
                 var isDebugNotifications = isDevelopment && instance.AreDebugNotificationsEnabled();
                 
                 instance = new IosNetworks();
@@ -64,7 +65,14 @@ namespace DeltaDNA.Ads.Editor {
                     instance.GetNetworks(),
                     isDevelopment && instance.AreDebugNotificationsEnabled());
                 
+                smartAdsOn = smartAdsOn && instance.IsEnabled();
                 isDebugNotifications = isDebugNotifications && instance.AreDebugNotificationsEnabled();
+                
+                if (smartAdsOn) {
+                    DefineSymbolsHelper.Add(DefineSymbolsHelper.SMARTADS);
+                } else {
+                    DefineSymbolsHelper.Remove(DefineSymbolsHelper.SMARTADS);
+                }
                 
                 if (isDevelopment) {
                     if (isDebugNotifications) {

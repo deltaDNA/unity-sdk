@@ -23,6 +23,13 @@ namespace DeltaDNA {
     public class Params {
 
         private Dictionary<string, object> _params = new Dictionary<string, object>();
+        
+        public Params() {}
+        
+        public Params(Params p)
+        {
+            this._params = new Dictionary<string, object>(p._params);
+        }
 
         public Params AddParam(string key, object value)
         {
