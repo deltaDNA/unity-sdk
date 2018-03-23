@@ -14,10 +14,13 @@
 // limitations under the License.
 //
 
+using DeltaDNA.Ads.Editor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using UnityEditor;
 
 namespace DeltaDNA.Editor {
@@ -30,6 +33,54 @@ namespace DeltaDNA.Editor {
         }
 
         protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
+            if (File.Exists(ConfigurationWindow.CONFIG)) {
+                Configuration config;
+                using (var stringReader = new StringReader(File.ReadAllText(ConfigurationWindow.CONFIG))) {
+                    using (var xmlReader = XmlReader.Create(stringReader)) {
+                        config = new XmlSerializer(
+                            typeof(Configuration), new XmlRootAttribute("configuration"))
+                            .Deserialize(xmlReader) as Configuration;
+                    }
+                }
+                
+                if (string.IsNullOrEmpty(config.environmentKeyDev)
+                    && string.IsNullOrEmpty(config.environmentKeyLive)) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Environment key has not been configured.",
+                        Severity.ERROR));
+                }
+                if (string.IsNullOrEmpty(config.collectUrl)) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Collect URL has not been configured.",
+                        Severity.ERROR));
+                }
+                if (string.IsNullOrEmpty(config.engageUrl)) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Engage URL has not been configured.",
+                        Severity.ERROR));
+                }
+                
+                if (InitialisationHelper.IsDevelopment() && config.environmentKey == 1) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Using live environment key for a development build.",
+                        Severity.WARNING));
+                } else if (!InitialisationHelper.IsDevelopment() && config.environmentKey == 0) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Using dev environment key for a live build.",
+                        Severity.WARNING));
+                }
+                
+                if (string.IsNullOrEmpty(config.clientVersion) && config.useApplicationVersion) {
+                    problems.Add(Tuple.New(
+                        "[Analytics] Client version has not been configured.",
+                        Severity.WARNING));
+                }
+            } else {
+                problems.Add(Tuple.New(
+                    "[Analytics] Application has not been configured with Platform keys and URLs.",
+                    Severity.ERROR));
+            }
+            
             var androidLibs = MenuItems.ASSETS_PATH + "/Plugins/Android";
             if (Directory.Exists(androidLibs)) {
                 var files = Directory.GetFiles(androidLibs, "*.aar");
@@ -118,7 +169,7 @@ namespace DeltaDNA.Editor {
                     .Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "enabled")
                     .Value == "false") {
                     problems.Add(Tuple.New(
-                        "Android push notifications not enabled due to disabled service. This can be configured through the Editor menu.",
+                        "[Notifications] Android push notifications not enabled due to disabled service.",
                         Severity.WARNING));
                 }
             }
@@ -136,13 +187,13 @@ namespace DeltaDNA.Editor {
                         switch (e) {
                             case NotificationsConfigurator.ATTR_APP_ID:
                                 problems.Add(Tuple.New(
-                                    "Application ID not set for Android push notifications. This can be configured through the Editor menu.",
+                                    "[Notifications] Application ID not set for Android push notifications.",
                                     Severity.WARNING));
                                 break;
 
                             case NotificationsConfigurator.ATTR_SENDER_ID:
                                 problems.Add(Tuple.New(
-                                    "Sender ID not set for Android push notifications. This can be configured through the Editor menu.",
+                                    "[Notifications] Sender ID not set for Android push notifications.",
                                     Severity.WARNING));
                                 break;
                         }

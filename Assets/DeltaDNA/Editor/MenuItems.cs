@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+// Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,26 +20,28 @@ using UnityEngine;
 
 namespace DeltaDNA.Editor {
     public sealed class MenuItems : MonoBehaviour {
-
+        
+        static MenuItems() {
+            if (File.Exists("Assets/DeltaDNA/Editor/Android/Menus/MenuItems.cs")) {
+                File.Delete("Assets/DeltaDNA/Editor/Android/Menus/MenuItems.cs");
+            }
+        }
+        
         internal const string MENU_PATH = "DeltaDNA";
         internal const string ASSETS_PATH = "Assets/DeltaDNA/";
         
         internal static string AndroidSdkLocation {
             get { return EditorPrefs.GetString("AndroidSdkRoot"); }
         }
-
-        [MenuItem(MENU_PATH + "/Health Check SDK", priority = 1)]
+        
+        [MenuItem(MENU_PATH + "/Configure", priority = 1)]
+        public static void ConfigureSdk() {
+            WindowHelper.Show<ConfigurationWindow>("Configuration");
+        }
+        
+        [MenuItem(MENU_PATH + "/Run Health Check", priority = 2)]
         public static void CheckSdk() {
             SdkChecker.Run();
-        }
-
-        [MenuItem(MENU_PATH + "/Notifications/Android/Configure", priority = 2)]
-        public static void Configure() {
-            WindowHelper.Show<NotificationsWindow>("Notifications");
-        }
-
-        internal static bool AreAndroidNotificationsInProject() {
-            return Directory.Exists("Assets/Plugins/Android/deltadna-sdk-unity-notifications");
         }
     }
 }

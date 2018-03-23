@@ -18,7 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using UnityEditor;
-using UnityEngine;
 
 namespace DeltaDNA.Editor {
 
@@ -27,7 +26,7 @@ namespace DeltaDNA.Editor {
 
         static NotificationsConfigurator() {
             // makes sure to avoid invalid Android resources after importing
-            new NotificationsConfigurator().Apply(true);
+            new NotificationsConfigurator().Apply();
         }
 
         internal const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
@@ -99,7 +98,7 @@ namespace DeltaDNA.Editor {
             }
         }
         
-        internal void Apply(bool quiet = false) {
+        internal void Apply() {
             if (!File.Exists(NOTIFICATIONS_XML_PATH)) {
                 Directory.CreateDirectory(NOTIFICATIONS_XML_PATH.Substring(
                     0,
@@ -262,12 +261,6 @@ namespace DeltaDNA.Editor {
                     .Remove();
             }
             manifest.Save(MANIFEST_XML_PATH);
-
-            if (!quiet) {
-                Debug.Log(
-                    "Saved options to " + NOTIFICATIONS_XML_PATH +
-                    " and " + MANIFEST_XML_PATH);
-            }
         }
     }
 }

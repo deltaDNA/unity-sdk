@@ -2,6 +2,7 @@
 
 ## [4.8.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.0) (2018-??-??)
 ### Added
+- Configuration UI for the SDK.
 - Automatic registration for ads.
 - Test ads support for when running in the Unity Editor.
 

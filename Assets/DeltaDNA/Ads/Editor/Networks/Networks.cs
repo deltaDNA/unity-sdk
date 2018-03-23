@@ -21,7 +21,7 @@ using System.Xml.Linq;
 namespace DeltaDNA.Ads.Editor {
     internal abstract class Networks {
         
-        internal const string CONFIG = MenuItems.EDITOR_PATH + "Dependencies.xml";
+        internal const string CONFIG = "Assets/DeltaDNA/Ads/Editor/Dependencies.xml";
         
         protected static readonly object LOCK = new object();
         
@@ -35,7 +35,11 @@ namespace DeltaDNA.Ads.Editor {
         
         internal abstract bool IsEnabled();
         internal abstract IList<string> GetNetworks();
-        internal abstract void ApplyChanges(bool enabled, IList<string> networks);
+        internal abstract bool AreDebugNotificationsEnabled();
+        internal abstract void ApplyChanges(
+            bool enabled,
+            IList<string> networks,
+            bool debugNotifications);
         internal abstract bool AreDownloadsStale();
         
         internal static XDocument Configuration() {

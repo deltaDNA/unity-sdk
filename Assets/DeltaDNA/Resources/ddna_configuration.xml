@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <environment_key_dev>76410301326725846610230818914037</environment_key_dev>
+  <environment_key_live />
+  <environment_key>0</environment_key>
+  <collect_url>https://collect2470ntysd.deltadna.net/collect/api</collect_url>
+  <engage_url>https://engage2470ntysd.deltadna.net</engage_url>
+  <hash_secret>1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq</hash_secret>
+  <client_version />
+  <use_application_version>true</use_application_version>
+</configuration>

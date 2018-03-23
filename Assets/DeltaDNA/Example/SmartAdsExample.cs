@@ -20,10 +20,6 @@ namespace DeltaDNA
 {
     public class SmartAdsExample : MonoBehaviour {
 
-        public const string ENVIRONMENT_KEY = "76410301326725846610230818914037";
-        public const string COLLECT_URL = "https://collect2470ntysd.deltadna.net/collect/api";
-        public const string ENGAGE_URL = "https://engage2470ntysd.deltadna.net";
-
         private int clickCount = 0;
 
         [SerializeField]
@@ -33,8 +29,6 @@ namespace DeltaDNA
         void Start() {
             // Configure the SDK
             DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
-            DDNA.Instance.HashSecret = "1VLjWqChV2YC1sJ4EPKGzSF3TbhS26hq";
-            DDNA.Instance.ClientVersion = "1.0.0";
             
             // Setup Ad notifications
             SmartAds.Instance.OnDidRegisterForInterstitialAds += () => {
@@ -51,7 +45,7 @@ namespace DeltaDNA
             };
             
             // Start collecting data and register for ads
-            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
+            DDNA.Instance.StartSDK();
         }
 
         void FixedUpdate() {
@@ -135,7 +129,7 @@ namespace DeltaDNA
         }
 
         public void OnStartSdkBtn_Clicked() {
-            DDNA.Instance.StartSDK(ENVIRONMENT_KEY, COLLECT_URL, ENGAGE_URL);
+            DDNA.Instance.StartSDK();
         }
 
         public void OnStopSdkBtn_Clicked() {
@@ -143,3 +137,4 @@ namespace DeltaDNA
         }
     }
 }
+    
