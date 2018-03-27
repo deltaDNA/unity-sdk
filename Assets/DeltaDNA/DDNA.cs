@@ -15,12 +15,14 @@
 //
 
 using System;
-using System.Text;
-using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using UnityEngine;
-
 
 namespace DeltaDNA
 {
@@ -102,30 +104,36 @@ namespace DeltaDNA
         }
 
         #region Client Interface
-
+        
         /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
         /// generate a new user id if this is the first run.
         /// </summary>
-        /// <param name="envKey">The unique environment key for this game environment.</param>
-        /// <param name="collectURL">The Collect URL for this game.</param>
-        /// <param name="engageURL">The Engage URL for this game.</param>
-        public void StartSDK(string envKey, string collectURL, string engageURL)
-        {
-            StartSDK(envKey, collectURL, engageURL, null);
+        public void StartSDK() {
+            StartSDK(null);
         }
-
+        
         /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.
         /// </summary>
-        /// <param name="envKey">The unique environment key for this game environment.</param>
-        /// <param name="collectURL">The Collect URL for this game.</param>
-        /// <param name="engageURL">The Engage URL for this game.</param>
         /// <param name="userID">The user id for the player, if set to null we create one for you.</param>
-        public void StartSDK(string envKey, string collectURL, string engageURL, string userID)
-        {
-            lock (_lock)
-            {
+        public void StartSDK(string userID) {
+            var configResource = Resources.Load("ddna_configuration", typeof(TextAsset));
+            Configuration config;
+            if (configResource != null) {
+                using (var stringReader = new StringReader((configResource as TextAsset).text)) {
+                    using (var xmlReader = XmlReader.Create(stringReader)) {
+                        config = (new XmlSerializer(
+                            typeof(Configuration), new XmlRootAttribute("configuration")))
+                            .Deserialize(xmlReader) as Configuration;
+                    }
+                }
+            } else {
+                Logger.LogWarning("Failed to find DDNA SDK configuration");
+                config = new Configuration();
+            }
+            
+            lock (_lock) {
                 bool newPlayer = false;
                 if (String.IsNullOrEmpty(this.UserID)) {    // first time!
                     newPlayer = true;
@@ -141,16 +149,27 @@ namespace DeltaDNA
                 this.UserID = userID;
 
                 if (newPlayer) {
-                    Logger.LogInfo("Starting DDNA SDK with new user "+UserID);
+                    Logger.LogInfo("Starting DDNA SDK with new user " + UserID);
                 } else {
-                    Logger.LogInfo("Starting DDNA SDK with existing user "+UserID);
+                    Logger.LogInfo("Starting DDNA SDK with existing user " + UserID);
                 }
 
-                this.EnvironmentKey = envKey;
-                this.CollectURL = collectURL;   // TODO: warn if no http is present, prepend it, although we support both
-                this.EngageURL = engageURL;
+                EnvironmentKey = (config.environmentKey == 0)
+                    ? config.environmentKeyDev
+                    : config.environmentKeyLive;
+                CollectURL = config.collectUrl;
+                EngageURL = config.engageUrl;
                 if (Platform == null) {
                     Platform = ClientInfo.Platform;
+                }
+
+                if (!string.IsNullOrEmpty(config.hashSecret)) {
+                    HashSecret = config.hashSecret;
+                }
+                if (config.useApplicationVersion) {
+                    ClientVersion = Application.version;
+                } else if (!string.IsNullOrEmpty(config.clientVersion)) {
+                    ClientVersion = config.clientVersion;
                 }
 
                 this.started = true;
@@ -164,11 +183,34 @@ namespace DeltaDNA
                 TriggerDefaultEvents(newPlayer);
 
                 // Setup automated event uploads
-                if (Settings.BackgroundEventUpload && !IsInvoking("Upload"))
-                {
+                if (Settings.BackgroundEventUpload && !IsInvoking("Upload")) {
                     InvokeRepeating("Upload", Settings.BackgroundEventUploadStartDelaySeconds, Settings.BackgroundEventUploadRepeatRateSeconds);
                 }
             }
+        }
+        
+        /// <summary>
+        /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
+        /// generate a new user id if this is the first run.
+        /// </summary>
+        /// <param name="envKey">The unique environment key for this game environment.</param>
+        /// <param name="collectURL">The Collect URL for this game.</param>
+        /// <param name="engageURL">The Engage URL for this game.</param>
+        [Obsolete("Deprecated as of version 4.8, please use the Editor configuration UI and StartSDK() instead")]
+        public void StartSDK(string envKey, string collectURL, string engageURL) {
+            StartSDK();
+        }
+
+        /// <summary>
+        /// Starts the SDK.  Call before sending events or making engagements.
+        /// </summary>
+        /// <param name="envKey">The unique environment key for this game environment.</param>
+        /// <param name="collectURL">The Collect URL for this game.</param>
+        /// <param name="engageURL">The Engage URL for this game.</param>
+        /// <param name="userID">The user id for the player, if set to null we create one for you.</param>
+        [Obsolete("Deprecated as of version 4.8, please use the Editor configuration UI and StartSDK(userID) instead")]
+        public void StartSDK(string envKey, string collectURL, string engageURL, string userID) {
+            StartSDK(userID);
         }
 
         /// <summary>

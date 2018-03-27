@@ -25,21 +25,15 @@ namespace DeltaDNA.Ads.Editor {
         static InitialisationHelper() {
             EditorApplication.update += Update;
         }
-
+        
         private static bool isDevelopment;
-        private static bool isDebugNotifications;
         private static string iosMinTargetVersion;
-
+        
         static void Update() {
             bool refresh = false;
-
+            
             if (EditorUserBuildSettings.development != isDevelopment) {
                 isDevelopment = EditorUserBuildSettings.development;
-                refresh = true;
-            }
-
-            if (EditorPrefs.GetBool(SmartAdsWindow.PREFS_DEBUG) != isDebugNotifications) {
-                isDebugNotifications = EditorPrefs.GetBool(SmartAdsWindow.PREFS_DEBUG);
                 refresh = true;
             }
             
@@ -54,13 +48,23 @@ namespace DeltaDNA.Ads.Editor {
                 iosMinTargetVersion = newVersion;
                 refresh = true;
             }
-
+            
             if (refresh) {
                 Networks instance = new AndroidNetworks(true);
-                instance.ApplyChanges(instance.IsEnabled(), instance.GetNetworks());
+                instance.ApplyChanges(
+                    instance.IsEnabled(),
+                    instance.GetNetworks(),
+                    isDevelopment && instance.AreDebugNotificationsEnabled());
+                
+                var isDebugNotifications = isDevelopment && instance.AreDebugNotificationsEnabled();
                 
                 instance = new IosNetworks();
-                instance.ApplyChanges(instance.IsEnabled(), instance.GetNetworks());
+                instance.ApplyChanges(
+                    instance.IsEnabled(),
+                    instance.GetNetworks(),
+                    isDevelopment && instance.AreDebugNotificationsEnabled());
+                
+                isDebugNotifications = isDebugNotifications && instance.AreDebugNotificationsEnabled();
                 
                 if (isDevelopment) {
                     if (isDebugNotifications) {
@@ -73,13 +77,9 @@ namespace DeltaDNA.Ads.Editor {
                 }
             }
         }
-
+        
         internal static bool IsDevelopment() {
             return isDevelopment;
-        }
-
-        internal static bool IsDebugNotifications() {
-            return isDebugNotifications;
         }
         
         internal static string IosMinTargetVersion() {

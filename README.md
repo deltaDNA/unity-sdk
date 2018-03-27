@@ -2,7 +2,7 @@
 
 ## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package.
+The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
@@ -45,13 +45,10 @@ Our analytics SDK is written entirely in Unity with no native code requirements.
 
 For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).
 
-Checkout `BasicExample` class in `Assets\DeltaDNA\Example` to see how to use the SDK.  At a minimum you will want to set the Client Version and start the SDK from a custom `MonoBehaviour`.
+Checkout `BasicExample` class in `Assets\DeltaDNA\Example` to see how to use the SDK. At a minimum you will want to set the environment, Collect, and Engage URLs in the configuration UI accessible from the Editor under *DeltaDNA -> Configuration*. Finally you will need to start the SDK from a custom `MonoBehaviour`.
 
 ```csharp
-DDNA.Instance.ClientVersion = "1.0.0";
-DDNA.Instance.StartSDK("YOUR_ENVIRONMENT_KEY",
-                       "YOUR_COLLECT_URL",
-                       "YOUR_ENGAGE_URL");
+DDNA.Instance.StartSDK();
 ```
 
 On the first run this will create new user id and send a `newPlayer` event. On every call it will send a `gameStarted` and `clientDevice` event.
@@ -225,7 +222,7 @@ Callbacks can be added to the following events to be notified when an ad has ope
 
 ### Diagnostics
 
-More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the SmartAds configuration UI, accessible from *DeltaDNA -> SmartAds -> Select Networks* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
+More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the configuration UI, accessible from *DeltaDNA -> Configure* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
 
 ## iOS Integration
 
@@ -258,7 +255,7 @@ We've had some luck building with Unity 4.7.2, but you will need to make a coupl
 When building an APK to be distributed on the Amazon Appstore then the platform needs to be changed to the `Platform.AMAZON` enum before `StartSDK` is called.
 ```csharp
 DDNA.Instance.Platform = DeltaDNA.Platform.AMAZON;
-DDNA.Instance.StartSDK(...);
+DDNA.Instance.StartSDK();
 ```
 
 ### Android Dependencies Google Firebase/Play Services Libraries
@@ -267,7 +264,7 @@ Any library dependencies such as Google's Firebase (Google Play Services) are ha
 
 ### Push Notifications
 
-Our push notifications use Firebase messaging (this was changed in version 4.3, if you're upgrading see the migration [guide](#version-4.3) below). In order to configure notifications you will need to set the *Application* and *Sender IDs* from the configuration screen, which can be accessed from the Unity Editor menu under *DeltaDNA -> Notifications -> Android -> Configure*. The IDs can be found in the Firebase Console for your application ([1](Docs/firebase_console_1.png), [2](Docs/firebase_console_2.png), and [3](Docs/firebase_console_3.png)). Pressing *Apply* will persist the changes to resource files in your project, which should be committed to source control.
+Our push notifications use Firebase messaging (this was changed in version 4.3, if you're upgrading see the migration [guide](#version-4.3) below). In order to configure notifications you will need to set the *Application* and *Sender IDs* from the configuration UI, which can be accessed from the Unity Editor menu under *DeltaDNA -> Configure*. The IDs can be found in the Firebase Console for your application ([1](Docs/firebase_console_1.png), [2](Docs/firebase_console_2.png), and [3](Docs/firebase_console_3.png)). Pressing *Apply* will persist the changes to resource files in your project, which should be committed to source control.
 
 If your application is setup using the Google Cloud Console you can find instructions [here](https://developers.google.com/cloud-messaging/android/android-migrate-fcm#import_your_gcm_project_as_a_firebase_project) on how to migrate the project to Firebase. Firebase projects are backwards compatible with applications using Google Cloud Messaging.
 
@@ -277,11 +274,9 @@ If you no longer wish to use push notifications on Android then you can remove t
 
 ### SmartAds on Android
 
-The ad networks you wish to build into your app can be selected from *DeltaDNA -> SmartAds -> Select Networks*. After applying the changes the SDK will download the latest libraries from the Maven repository. If you make changes to the enabled networks the changes to the *build.gradle* file should be committed to version control.
-
 If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
-The libraries can be downloaded anytime from the *DeltaDNA -> SmartAds -> Android -> Download Libraries* menu item. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
+The libraries will be downloaded when *Apply* is selected in the configuration UI or by selecting *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
 
 ### MultiDex; Working Around Android's 65k Method Limit
 1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.
@@ -336,8 +331,9 @@ Between version 4.2 and version 4.3 we updated our push notifications to use Fir
 *IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNA/Ads/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
 
 ### Version 4.8
-* *Assets/DeltaDNAAds* should be deleted from the project since the classes have been moved to a new location.
-* SmartAds needs to be enabled from the configuration UI accessed from the Editor menu under *DeltaDNA -> SmartAds -> Configuration*.
+* *Assets/DeltaDNA* and *Assets/DeltaDNAAds* should be deleted before importing the new SDK to avoid class conflicts and retaining unused files in the project.
+* *DDNA.StartSDK()* methods which take the environment key, Collect, and Engage URLs have been deprecated in favour of configuring these through the UI accessed from the Editor menu under *DeltaDNA -> Configure* and a simpler *DDNA.StartSDK()* method.
+* SmartAds needs to be enabled from the configuration UI.
 * *DDNASmartAds.RegisterForAds()* has been deprecated and will now be called as part of starting the Analytics SDK.
 
 #### SDK Health Check
@@ -349,7 +345,7 @@ After importing the new DeltaDNA SDK package into your project make sure to remo
 As with any SDK update you should update the Android SmartAds libraries from *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*.
 
 #### Android Notifications
-We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Notifications -> Android -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.
+We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.
 
 We highly recommend removing any entries previously added for DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the Firebase implementation. If you never added anything else to the manifest file then you can probably remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest). In addition you will also be able to remove the *string* resource from *Assets/Plugins/Android/res/values* which contains your application's Sender ID.
 

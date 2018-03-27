@@ -27,19 +27,22 @@ namespace DeltaDNA.Ads.Editor {
         
         static AndroidNetworks() {
             var instance = new AndroidNetworks(false);
-            instance.ApplyChanges(instance.IsEnabled(), instance.GetNetworks());
+            instance.ApplyChanges(
+                instance.IsEnabled(),
+                instance.GetNetworks(),
+                instance.AreDebugNotificationsEnabled());
         }
         
         private const string REPO = "http://corp-vm-artifactory/artifactory/deltadna-repo";
         private const string VERSION = "1.8.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
-
+        
         private readonly bool download;
         
         public AndroidNetworks(bool download) : base("android", "Android") {
             this.download = download;
         }
-
+        
         internal override bool IsEnabled() {
             lock (LOCK) {
                 return Configuration()
@@ -51,7 +54,7 @@ namespace DeltaDNA.Ads.Editor {
                     .Any();
             }
         }
-
+        
         internal override IList<string> GetNetworks() {
             lock (LOCK) {
                 return Configuration()
@@ -66,14 +69,30 @@ namespace DeltaDNA.Ads.Editor {
             }
         }
         
-        internal override void ApplyChanges(bool enabled, IList<string> networks) {
+        internal override bool AreDebugNotificationsEnabled() {
+            lock (LOCK) {
+                return Configuration()
+                    .Descendants("androidPackage")
+                    .Where(e => e
+                        .Attribute("spec")
+                        .Value
+                        .StartsWith("com.deltadna.android:deltadna-smartads-debug:"))
+                    .Any();
+            }
+        }
+        
+        internal override void ApplyChanges(
+            bool enabled,
+            IList<string> networks,
+            bool debugNotifications) {
+            
             lock (LOCK) {
                 var config = Configuration();
-            
+                
                 config
                     .Descendants("androidPackage")
                     .Remove();
-
+                
                 if (enabled) {
                     var packages = config.Descendants("androidPackages").First();
                     packages.Add(new XElement(
@@ -86,7 +105,7 @@ namespace DeltaDNA.Ads.Editor {
                                 "repositories",
                                 new object[] { new XElement("repository", REPO) })
                         }));
-
+                    
                     foreach (var network in networks) {
                         var repos = new List<object>() { new XElement("repository", REPO) };
                         if (network.Equals("hyprmx")) {
@@ -104,7 +123,7 @@ namespace DeltaDNA.Ads.Editor {
                                 "repository",
                                 "https://tapjoy.bintray.com/maven"));
                         }
-
+                        
                         packages.Add(new XElement(
                             "androidPackage",
                             new object[] {
@@ -116,8 +135,8 @@ namespace DeltaDNA.Ads.Editor {
                                     repos.ToArray())
                             }));
                     }
-
-                    if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
+                    
+                    if (debugNotifications) {
                         packages.Add(new XElement(
                             "androidPackage",
                             new object[] {
@@ -130,7 +149,7 @@ namespace DeltaDNA.Ads.Editor {
                             }));
                     }
                 }
-
+                
                 config.Save(CONFIG);
             }
             

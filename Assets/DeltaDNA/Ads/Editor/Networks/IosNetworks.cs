@@ -21,10 +21,10 @@ using System.Xml.Linq;
 namespace DeltaDNA.Ads.Editor {
     
     internal sealed class IosNetworks : Networks {
-
+        
         private const string VERSION = "~> 1.7.0";
         private const string VERSION_DEBUG = "~> 1.0.0";
-
+        
         private readonly object[] sources = new object[] {
             new XElement(
                 "source",
@@ -33,9 +33,9 @@ namespace DeltaDNA.Ads.Editor {
                 "source",
                 "https://github.com/CocoaPods/Specs.git")
         };
-
+        
         public IosNetworks() : base("ios", "iOS") {}
-
+        
         internal override bool IsEnabled() {
             lock (LOCK) {
                 return Configuration()
@@ -47,7 +47,7 @@ namespace DeltaDNA.Ads.Editor {
                     .Any();
             }
         }
-
+        
         internal override IList<string> GetNetworks() {
             lock (LOCK) {
                 return Configuration()
@@ -58,15 +58,31 @@ namespace DeltaDNA.Ads.Editor {
                     .ToList();
             }
         }
-
-        internal override void ApplyChanges(bool enabled, IList<string> networks) {
+        
+        internal override bool AreDebugNotificationsEnabled() {
+            lock (LOCK) {
+                return Configuration()
+                    .Descendants("iosPod")
+                    .Where(e => e
+                        .Attribute("name")
+                        .Value
+                        .Equals("DeltaDNADebug"))
+                        .Any();
+            }
+        }
+        
+        internal override void ApplyChanges(
+            bool enabled,
+            IList<string> networks,
+            bool debugNotifications) {
+            
             lock (LOCK) {
                 var config = Configuration();
-
+                
                 config
                     .Descendants("iosPod")
                     .Remove();
-
+                
                 if (enabled) {
                     var packages = config.Descendants("iosPods").First();
                     packages.Add(new XElement(
@@ -86,7 +102,7 @@ namespace DeltaDNA.Ads.Editor {
                                 InitialisationHelper.IosMinTargetVersion()),
                             new XElement("sources", sources)
                         }));
-
+                    
                     foreach (var network in networks) {
                         packages.Add(new XElement(
                             "iosPod",
@@ -106,8 +122,8 @@ namespace DeltaDNA.Ads.Editor {
                                 new XElement("sources", sources)
                             }));
                     }
-
-                    if (InitialisationHelper.IsDevelopment() && InitialisationHelper.IsDebugNotifications()) {
+                    
+                    if (debugNotifications) {
                         packages.Add(new XElement(
                             "iosPod",
                             new object[] {
@@ -127,11 +143,11 @@ namespace DeltaDNA.Ads.Editor {
                             }));
                     }
                 }
-
+                
                 config.Save(CONFIG);
             }
         }
-
+        
         internal override bool AreDownloadsStale() {
             return false;
         }

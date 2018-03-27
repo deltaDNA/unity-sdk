@@ -19,12 +19,17 @@ using UnityEngine;
 
 namespace DeltaDNA.Editor {
     internal sealed class WindowHelper {
-
+        
+        internal const int WIDTH_LABEL = 145;
+        internal const int WIDTH_BUTTON = 80;
+        internal const int WIDTH_TOGGLE = 80;
+        internal const int HEIGHT_SEPARATOR = 20;
+        
         internal static void Show<T>(string title) where T : EditorWindow {
             System.Type inspectorType = typeof(UnityEditor.Editor)
                 .Assembly
                 .GetType("UnityEditor.InspectorWindow");
-
+            
             var foundInspector = false;
             foreach (var window in Resources.FindObjectsOfTypeAll<EditorWindow>()) {
                 if (window.GetType() == inspectorType) {
@@ -32,7 +37,7 @@ namespace DeltaDNA.Editor {
                     break;
                 }
             }
-
+            
             if (foundInspector) {
                 EditorWindow.GetWindow<T>(
                     title,
