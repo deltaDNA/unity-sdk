@@ -71,8 +71,8 @@ namespace DeltaDNA.Editor {
             return result;
         }
 
-        private static List<Tuple<string, Severity>> GetProblems() {
-            var problems = new List<Tuple<string, Severity>>();
+        private static List<DDNATuple<string, Severity>> GetProblems() {
+            var problems = new List<DDNATuple<string, Severity>>();
             foreach (var checker in checkers) {
                 checker.PerformCheck(problems);
             }
@@ -83,24 +83,24 @@ namespace DeltaDNA.Editor {
             checkers.Add(this);
         }
 
-        protected abstract void PerformCheck(IList<Tuple<string, Severity>> problems);
+        protected abstract void PerformCheck(IList<DDNATuple<string, Severity>> problems);
     }
 
-    internal class Tuple<T1, T2> {
+    internal class DDNATuple<T1, T2> {
 
         internal T1 First { get; private set; }
         internal T2 Second { get; private set; }
 
-        internal Tuple(T1 first, T2 second) {
+        internal DDNATuple(T1 first, T2 second) {
             First = first;
             Second = second;
         }
     }
 
-    internal static class Tuple {
+    internal static class DDNATuple {
 
-        internal static Tuple<T1, T2> New<T1, T2>(T1 first, T2 second) {
-            return new Tuple<T1, T2>(first, second);
+        internal static DDNATuple<T1, T2> New<T1, T2>(T1 first, T2 second) {
+            return new DDNATuple<T1, T2>(first, second);
         }
     }
 }

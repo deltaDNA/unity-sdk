@@ -32,7 +32,7 @@ namespace DeltaDNA.Editor {
             new DeltaDNASdkChecker().Register();
         }
 
-        protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
+        protected override void PerformCheck(IList<DDNATuple<string, Severity>> problems) {
             if (File.Exists(ConfigurationWindow.CONFIG)) {
                 Configuration config;
                 using (var stringReader = new StringReader(File.ReadAllText(ConfigurationWindow.CONFIG))) {
@@ -45,38 +45,38 @@ namespace DeltaDNA.Editor {
                 
                 if (string.IsNullOrEmpty(config.environmentKeyDev)
                     && string.IsNullOrEmpty(config.environmentKeyLive)) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Environment key has not been configured.",
                         Severity.ERROR));
                 }
                 if (string.IsNullOrEmpty(config.collectUrl)) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Collect URL has not been configured.",
                         Severity.ERROR));
                 }
                 if (string.IsNullOrEmpty(config.engageUrl)) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Engage URL has not been configured.",
                         Severity.ERROR));
                 }
                 
                 if (InitialisationHelper.IsDevelopment() && config.environmentKey == 1) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Using live environment key for a development build.",
                         Severity.WARNING));
                 } else if (!InitialisationHelper.IsDevelopment() && config.environmentKey == 0) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Using dev environment key for a live build.",
                         Severity.WARNING));
                 }
                 
                 if (string.IsNullOrEmpty(config.clientVersion) && config.useApplicationVersion) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Analytics] Client version has not been configured.",
                         Severity.WARNING));
                 }
             } else {
-                problems.Add(Tuple.New(
+                problems.Add(DDNATuple.New(
                     "[Analytics] Application has not been configured with Platform keys and URLs.",
                     Severity.ERROR));
             }
@@ -85,7 +85,7 @@ namespace DeltaDNA.Editor {
             if (Directory.Exists(androidLibs)) {
                 var files = Directory.GetFiles(androidLibs, "*.aar");
                 if (files.Length > 1) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Found multiple libraries in '" + androidLibs + "' folder. Please make sure it only contains the most recent 'android-sdk-notifications' AAR.  Also remove any play-services-*.aar and support-v4-*.aar, these are now handled by Google's Play Services Resolver.",
                         Severity.ERROR));
                 }
@@ -99,7 +99,7 @@ namespace DeltaDNA.Editor {
                     .Descendants("permissions")
                     .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Found invalid C2D_MESSAGE 'permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
@@ -107,7 +107,7 @@ namespace DeltaDNA.Editor {
                     .Descendants("uses-permission")
                     .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.EndsWith("C2D_MESSAGE"))
                     .Count() > 0) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Found invalid C2D_MESSAGE 'uses-permission' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
@@ -115,7 +115,7 @@ namespace DeltaDNA.Editor {
                     .Descendants("receiver")
                     .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value == "com.google.android.gms.gcm.GcmReceiver")
                     .Count() > 0) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Found invalid GcmReceiver 'receiver' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
@@ -123,7 +123,7 @@ namespace DeltaDNA.Editor {
                     .Descendants("service")
                     .Where(e => e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value.StartsWith("com.deltadna.android.sdk.notifications"))
                     .Count() > 0) {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Found invalid deltaDNA notification 'service' entry in '" + androidManifest + "'. This entry should be removed for Firebase notifications.",
                         Severity.ERROR));
                 }
@@ -134,25 +134,25 @@ namespace DeltaDNA.Editor {
                     .ForEach(e => {
                         switch (e.Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "name").Value) {
                             case NotificationsConfigurator.ATTR_ICON:
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsConfigurator.ATTR_ICON + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
                             case NotificationsConfigurator.ATTR_TITLE:
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Found conflicting 'meta-data' entry for '" + NotificationsConfigurator.ATTR_TITLE + "' in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.ERROR));
                                 break;
 
                             case "ddna_sender_id":
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Found deprecated 'meta-data' entry for 'ddna_sender_id' in in '" + androidManifest + "'. This entry should be removed and configured through the Editor menu instead.",
                                     Severity.WARNING));
                                 break;
 
                             case "ddna_start_launch_intent":
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Found deprecated 'meta-data' entry for 'ddna_start_launch_intent' in in '" + androidManifest + "'. This entry should be removed.",
                                     Severity.WARNING));
                                 break;
@@ -168,7 +168,7 @@ namespace DeltaDNA.Editor {
                     .First()
                     .Attribute(NotificationsConfigurator.NAMESPACE_ANDROID + "enabled")
                     .Value == "false") {
-                    problems.Add(Tuple.New(
+                    problems.Add(DDNATuple.New(
                         "[Notifications] Android push notifications not enabled due to disabled service.",
                         Severity.WARNING));
                 }
@@ -186,13 +186,13 @@ namespace DeltaDNA.Editor {
                     .ForEach(e => {
                         switch (e) {
                             case NotificationsConfigurator.ATTR_APP_ID:
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Application ID not set for Android push notifications.",
                                     Severity.WARNING));
                                 break;
 
                             case NotificationsConfigurator.ATTR_SENDER_ID:
-                                problems.Add(Tuple.New(
+                                problems.Add(DDNATuple.New(
                                     "[Notifications] Sender ID not set for Android push notifications.",
                                     Severity.WARNING));
                                 break;
