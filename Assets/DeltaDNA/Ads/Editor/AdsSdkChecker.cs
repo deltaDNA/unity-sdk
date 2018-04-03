@@ -28,21 +28,21 @@ namespace DeltaDNA.Ads.Editor {
             new AdsSdkChecker().Register();
         }
 
-        protected override void PerformCheck(IList<Tuple<string, Severity>> problems) {
+        protected override void PerformCheck(IList<DDNATuple<string, Severity>> problems) {
             if (Directory.Exists("Assets/DeltaDNAAds")) {
-                problems.Add(Tuple.New(
+                problems.Add(DDNATuple.New(
                     "[SmartAds] Assets/DeltaDNAAds should be removed as it has been replaced by Assets/DeltaDNA/Ads",
                     Severity.WARNING));
             }
 
             if (File.Exists("Assets/DeltaDNAAds/Editor/Menus/Networks/IosNetworksLoadHelper.cs")) {
-                problems.Add(Tuple.New(
+                problems.Add(DDNATuple.New(
                     "[SmartAds] IosNetworksLoadHelper.cs should be deleted from the project in Assets/DeltaDNAAds/Editor/Menus/Networks.",
                     Severity.WARNING));
             }
             
             if (new AndroidNetworks(false).AreDownloadsStale()) {
-                problems.Add(Tuple.New(
+                problems.Add(DDNATuple.New(
                     "[SmartAds] Android libraries are stale, please update them from the Editor menu.",
                     Severity.WARNING));
             }

@@ -6,6 +6,9 @@
 - Automatic registration for ads.
 - Test ads support for when running in the Unity Editor.
 
+### Fixed
+- Namespace clash with Tuple classes.
+
 ## [4.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.7.1) (2018-02-06)
 ### Fixed
 - Disabled chunked transfer for Unity 2017.3.
