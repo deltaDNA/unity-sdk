@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+using System;
 #if UNITY_IOS
 using System.Runtime.InteropServices;
 #endif
@@ -29,22 +30,34 @@ namespace DeltaDNA.Ads.iOS {
         private static extern void _registerForAds(string decisionPoint);
 
         [DllImport("__Internal")]
-        private static extern int _isInterstitialAdAllowed(string decisionPoint, string engageParams);
+        private static extern int _isInterstitialAdAllowed(string decisionPoint, string engageParams, bool checkTime);
 
         [DllImport("__Internal")]
-        private static extern int _isInterstitialAdAvailable();
+        private static extern int _hasLoadedInterstitialAd();
 
         [DllImport("__Internal")]
-        private static extern void _showInterstitialAd(string decisionPoint);
+        private static extern void _showInterstitialAd(string decisionPoint, string engageParams);
 
         [DllImport("__Internal")]
-        private static extern int _isRewardedAdAllowed(string decisionPoint, string engageParams);
+        private static extern int _isRewardedAdAllowed(string decisionPoint, string engageParams, bool CheckTime);
 
         [DllImport("__Internal")]
-        private static extern int _isRewardedAdAvailable();
+        private static extern long _timeUntilRewardedAdAllowed(string decisionPoint, string engageParams);
 
         [DllImport("__Internal")]
-        private static extern void _showRewardedAd(string decisionPoint);
+        private static extern int _hasLoadedRewardedAd();
+
+        [DllImport("__Internal")]
+        private static extern void _showRewardedAd(string decisionPoint, string engageParams);
+
+        [DllImport("__Internal")]
+        private static extern long _getLastShown(string decisionPoint);
+
+        [DllImport("__Internal")]
+        private static extern long _getSessionCount(string decisionPoint);
+
+        [DllImport("__Internal")]
+        private static extern long _getDailyCount(string decisionPoint);
 
         [DllImport("__Internal")]
         private static extern void _engageResponse(string id, string response, int statusCode, string error);
@@ -77,85 +90,103 @@ namespace DeltaDNA.Ads.iOS {
             #endif
         }
 
-        public bool IsInterstitialAdAllowed(Engagement engagement)
+        public bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime)
         {
             #if UNITY_IOS && DDNA_SMARTADS
-            string decisionPoint = null;
-            string engageParams = null;
+            return _isInterstitialAdAllowed(
+                (engagement != null) ? engagement.DecisionPoint : null,
+                GetParameters(engagement),
+                checkTime) > 0;
+            #else
+            return false;
+            #endif
+        }
 
-            if (engagement != null && engagement.JSON != null) {
-                try {
-                    decisionPoint = engagement.DecisionPoint;
-                    engageParams = MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
-                } catch (System.Exception) {}
+        public bool HasLoadedInterstitialAd()
+        {
+            #if UNITY_IOS && DDNA_SMARTADS
+            return _hasLoadedInterstitialAd() > 0;
+            #else
+            return false;
+            #endif
+        }
+
+        public void ShowInterstitialAd(Engagement engagement)
+        {
+            #if UNITY_IOS && DDNA_SMARTADS
+            _showInterstitialAd(
+                (engagement != null) ? engagement.DecisionPoint : null,
+                GetParameters(engagement));
+            #endif
+        }
+
+        public bool IsRewardedAdAllowed(Engagement engagement, bool checkTime)
+        {
+            #if UNITY_IOS && DDNA_SMARTADS
+            return _isRewardedAdAllowed(
+                (engagement != null) ? engagement.DecisionPoint : null,
+                GetParameters(engagement),
+                checkTime) > 0;
+            #else
+            return false;
+            #endif
+        }
+
+        public long TimeUntilRewardedAdAllowed(Engagement engagement) {
+            #if UNITY_IOS && DDNA_SMARTADS
+            return _timeUntilRewardedAdAllowed(
+                (engagement != null) ? engagement.DecisionPoint : null,
+                GetParameters(engagement));
+            #else
+            return 0;
+            #endif
+        }
+
+        public bool HasLoadedRewardedAd()
+        {
+            #if UNITY_IOS && DDNA_SMARTADS
+            return _hasLoadedRewardedAd() > 0;
+            #else
+            return false;
+            #endif
+        }
+
+        public void ShowRewardedAd(Engagement engagement)
+        {
+            #if UNITY_IOS && DDNA_SMARTADS
+            _showRewardedAd(
+                (engagement != null) ? engagement.DecisionPoint : null,
+                GetParameters(engagement));
+            #endif
+        }
+
+        public DateTime? GetLastShown(string decisionPoint) {
+            #if UNITY_IOS && DDNA_SMARTADS
+            var value = _getLastShown(decisionPoint);
+            if (value > 0) {
+                return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddSeconds(value);
+            } else {
+                return null;
             }
-            return _isInterstitialAdAllowed(decisionPoint, engageParams) > 0;
             #else
-            return false;
+            return null;
             #endif
         }
 
-        public bool IsInterstitialAdAvailable()
-        {
+        public long GetSessionCount(string decisionPoint) {
             #if UNITY_IOS && DDNA_SMARTADS
-            return _isInterstitialAdAvailable() > 0;
+            return _getSessionCount(decisionPoint);
             #else
-            return false;
+            return 0;
             #endif
         }
 
-        public void ShowInterstitialAd()
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            _showInterstitialAd(null);
-            #endif
-        }
-
-        public void ShowInterstitialAd(string decisionPoint)
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            _showInterstitialAd(decisionPoint);
-            #endif
-        }
-
-        public bool IsRewardedAdAllowed(Engagement engagement)
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            string decisionPoint = null;
-            string engageParams = null;
-
-            if (engagement != null && engagement.JSON != null) {
-                try {
-                    decisionPoint = engagement.DecisionPoint;
-                    engageParams = MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
-                } catch (System.Exception) {}
-            }
-            return _isRewardedAdAllowed(decisionPoint, engageParams) > 0;
+        public long GetDailyCount(string decisionPoint) {
+            #if  UNITY_IOS && DDNA_SMARTADS
+            return _getDailyCount(decisionPoint);
             #else
-            return false;
-            #endif
-        }
-
-        public bool IsRewardedAdAvailable()
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            return _isRewardedAdAvailable() > 0;
-            #else
-            return false;
-            #endif
-        }
-
-        public void ShowRewardedAd()
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            _showRewardedAd(null);
-            #endif
-        }
-
-        public void ShowRewardedAd(string decisionPoint)
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            _showRewardedAd(decisionPoint);
+            return 0;
             #endif
         }
 
@@ -195,5 +226,22 @@ namespace DeltaDNA.Ads.iOS {
         }
 
         #endregion
+
+        #if UNITY_IOS && DDNA_SMARTADS
+        private static string GetParameters(Engagement engagement) {
+            string parameters = null;
+            if (engagement != null
+                && engagement.JSON != null
+                && engagement.JSON.ContainsKey("parameters")) {
+                try {
+                    parameters = MiniJSON.Json.Serialize(engagement.JSON[@"parameters"]);
+                } catch (Exception e) {
+                    Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
+                }
+            }
+            
+            return parameters;
+        }
+        #endif
     }
 }

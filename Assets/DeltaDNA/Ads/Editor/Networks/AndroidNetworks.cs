@@ -33,7 +33,10 @@ namespace DeltaDNA.Ads.Editor {
                 instance.AreDebugNotificationsEnabled());
         }
         
-        private const string REPO = "http://corp-vm-artifactory/artifactory/deltadna-repo";
+        private static readonly string[] REPOS = {
+            "http://corp-vm-artifactory/artifactory/deltadna-repo",
+            "~/.m2/repository"
+        };
         private const string VERSION = "1.8.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
         
@@ -103,22 +106,20 @@ namespace DeltaDNA.Ads.Editor {
                                 "com.deltadna.android:deltadna-smartads-core:" + VERSION),
                             new XElement(
                                 "repositories",
-                                new object[] { new XElement("repository", REPO) })
+                                REPOS.Select(e => new XElement("repository", e)))
                         }));
                     
                     foreach (var network in networks) {
-                        var repos = new List<object>() { new XElement("repository", REPO) };
+                        var repos = REPOS.Select(e => new XElement("repository", e)).ToList();
                         if (network.Equals("hyprmx")) {
                             repos.Add(new XElement(
                                 "repository",
                                 "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
-                        }
-                        if (network.Equals("mopub")) {
+                        } else if (network.Equals("mopub")) {
                             repos.Add(new XElement(
                                 "repository",
                                 "https://s3.amazonaws.com/moat-sdk-builds"));
-                        }
-                        if (network.Equals("tapjoy")) {
+                        } else if (network.Equals("tapjoy")) {
                             repos.Add(new XElement(
                                 "repository",
                                 "https://tapjoy.bintray.com/maven"));
@@ -145,7 +146,7 @@ namespace DeltaDNA.Ads.Editor {
                                     "com.deltadna.android:deltadna-smartads-debug:" + VERSION),
                                 new XElement(
                                     "repositories",
-                                    new object[] { new XElement("repository", REPO) })
+                                    REPOS.Select(e => new XElement("repository", e)))
                             }));
                     }
                 }

@@ -35,6 +35,8 @@ namespace DeltaDNA
         private ISmartAdsManager manager;
         private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
         
+        internal event Action<string> OnRewardedAdOpenedWithDecisionPoint;
+
         internal SmartAds() {
             DDNA.Instance.OnNewSession -= OnNewSession;
             DDNA.Instance.OnNewSession += OnNewSession;
@@ -42,68 +44,102 @@ namespace DeltaDNA
         
         #region Public interface
 
+        /// <summary>
+        /// Called when the registration for interstitial ads succeeds.
+        /// </summary>
         public event Action OnDidRegisterForInterstitialAds;
+        /// <summary>
+        /// Called when the registration for interstitial ads fails.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
         public event Action<string> OnDidFailToRegisterForInterstitialAds;
+        /// <summary>
+        /// Called when the registration for rewarede ads succeeds.
+        /// </summary>
         public event Action OnDidRegisterForRewardedAds;
+        /// <summary>
+        /// Called when the registration for rewarded ad fails.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
         public event Action<string> OnDidFailToRegisterForRewardedAds;
 
+        /// <summary>
+        /// Called when an interstitial ad is shown on screen.
+        /// </summary>
         public event Action OnInterstitialAdOpened;
+        /// <summary>
+        /// Called when an interstitial ad fails to show.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
         public event Action<string> OnInterstitialAdFailedToOpen;
+        /// <summary>
+        /// Called when an interstitial ad is closed.
+        /// </summary>
         public event Action OnInterstitialAdClosed;
 
+        /// <summary>
+        /// Called when a rewarded ad is loaded.
+        /// </summary>
+        public event Action OnRewardedAdLoaded;
+        /// <summary>
+        /// Called when a rewarded ad is shown on screen.
+        /// </summary>
         public event Action OnRewardedAdOpened;
+        /// <summary>
+        /// Called when a rewarded ad fails to show.
+        /// The reason for the failure will be passed in the parameter.
+        /// </summary>
         public event Action<string> OnRewardedAdFailedToOpen;
+        /// <summary>
+        /// Called when a rewarded ad is closed.
+        /// Whether the user should be rewarded will be passed in the parameter.
+        /// </summary>
         public event Action<bool> OnRewardedAdClosed;
+
+        #endregion
+
+        #region Native Bridge
         
-        [Obsolete("RegisterForAds is obsolete as of version 4.8 in favour of automatic registration.")]
-        public void RegisterForAds() {}
+        internal bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime) {
+            return manager.IsInterstitialAdAllowed(engagement, checkTime);
+        }
         
-        public bool IsInterstitialAdAllowed(Engagement engagement)
-        {
-            return manager != null && manager.IsInterstitialAdAllowed(engagement);
+        internal bool IsRewardedAdAllowed(Engagement engagement, bool checkTime) {
+            return manager.IsRewardedAdAllowed(engagement, checkTime);
         }
-
-        public bool IsInterstitialAdAvailable()
-        {
-            return manager != null && manager.IsInterstitialAdAvailable();
+        
+        internal long TimeUntilRewardedAdAllowed(Engagement engagement) {
+            return manager.TimeUntilRewardedAdAllowed(engagement);
         }
-
-        public void ShowInterstitialAd()
-        {
-            ShowInterstitialAdImpl(null);
+        
+        internal bool HasLoadedInterstitialAd() {
+            return manager.HasLoadedInterstitialAd();
         }
-
-        [Obsolete("Prefer 'InterstitialAd' with an 'Engagement' instead.")]
-        public void ShowInterstitialAd(string decisionPoint)
-        {
-            ShowInterstitialAdImpl(decisionPoint);
+        
+        internal bool HasLoadedRewardedAd() {
+            return manager.HasLoadedRewardedAd();
         }
-
-        public bool IsRewardedAdAllowed(Engagement engagement)
-        {
-            return manager != null && manager.IsRewardedAdAllowed(engagement);
+        
+        internal void ShowInterstitialAd(Engagement engagement) {
+            manager.ShowInterstitialAd(engagement);
         }
-
-        public bool IsRewardedAdAvailable()
-        {
-            return manager != null && manager.IsRewardedAdAvailable();
+        
+        internal void ShowRewardedAd(Engagement engagement) {
+            manager.ShowRewardedAd(engagement);
         }
-
-        public void ShowRewardedAd()
-        {
-            ShowRewardedAdImpl(null);
+        
+        internal DateTime? GetLastShown(string decisionPoint) {
+            return manager.GetLastShown(decisionPoint);
         }
-
-        [Obsolete("Prefer 'RewardedAd' with an 'Engagement' instead.")]
-        public void ShowRewardedAd(string decisionPoint)
-        {
-            ShowRewardedAdImpl(decisionPoint);
+        
+        internal long GetSessionCount(string decisionPoint) {
+            return manager.GetSessionCount(decisionPoint);
         }
-
-#endregion
-
-#region Native Bridge
-
+        
+        internal long GetDailyCount(string decisionPoint) {
+            return manager.GetDailyCount(decisionPoint);
+        }
+        
         // Methods may be called from threads other than UnityMain, action queue ensures methods
         // execute on the UnityMain thread.  Actions created explicity to avoid variables not being
         // captured correctly.
@@ -198,12 +234,23 @@ namespace DeltaDNA
 
             actions.Enqueue(action);
         }
-
-        internal void DidOpenRewardedAd()
+        
+        internal void DidLoadRewardedAd() {
+            actions.Enqueue(() => {
+                Logger.LogDebug("Loaded a rewarded ad");
+                
+                if (OnRewardedAdLoaded != null) OnRewardedAdLoaded();
+            });
+        }
+        
+        internal void DidOpenRewardedAd(string decisionPoint)
         {
             Action action = delegate() {
-                Logger.LogDebug("Opened a rewarded ad");
-
+                Logger.LogDebug("Opened a rewarded ad: " + decisionPoint);
+                
+                if (OnRewardedAdOpenedWithDecisionPoint != null) {
+                    OnRewardedAdOpenedWithDecisionPoint(decisionPoint);
+                }
                 if (OnRewardedAdOpened != null) {
                     OnRewardedAdOpened();
                 }
@@ -215,7 +262,7 @@ namespace DeltaDNA
         internal void DidFailToOpenRewardedAd(string reason)
         {
             Action action = delegate() {
-                Logger.LogDebug("Failed to open a rewarded ad: "+reason);
+                Logger.LogDebug("Failed to open a rewarded ad: " + reason);
 
                 if (OnRewardedAdFailedToOpen != null) {
                     OnRewardedAdFailedToOpen(reason);
@@ -236,7 +283,7 @@ namespace DeltaDNA
                     }
                 } catch (Exception) {}
 
-                Logger.LogDebug("Closed a rewarded ad: reward="+reward);
+                Logger.LogDebug("Closed a rewarded ad: " + reward);
 
                 if (OnRewardedAdClosed != null) {
                     OnRewardedAdClosed(reward);
@@ -299,7 +346,7 @@ namespace DeltaDNA
             actions.Enqueue(action);
         }
 
-#endregion
+        #endregion
 
         void Update()
         {
@@ -318,34 +365,6 @@ namespace DeltaDNA
                 } else {
                     manager.OnResume();
                 }
-            }
-        }
-
-        void ShowInterstitialAdImpl(string decisionPoint)
-        {
-            if (manager == null) {
-                Logger.LogDebug("SmartAds manager hasn't been created");
-                DidFailToOpenInterstitialAd("Not registered");
-            } else if (String.IsNullOrEmpty(decisionPoint)) {
-                Logger.LogInfo("Showing interstitial ad");
-                manager.ShowInterstitialAd();
-            } else {
-                Logger.LogInfo("Showing interstitial ad for "+decisionPoint);
-                manager.ShowInterstitialAd(decisionPoint);
-            }
-        }
-
-        void ShowRewardedAdImpl(string decisionPoint)
-        {
-            if (manager == null) {
-                Logger.LogDebug("SmartAds manager hasn't been created");
-                DidFailToOpenRewardedAd("Not registered");
-            } else if (String.IsNullOrEmpty(decisionPoint)) {
-                Logger.LogInfo("Showing rewarded ad");
-                manager.ShowRewardedAd();
-            } else {
-                Logger.LogInfo("Showing rewarded ad for "+decisionPoint);
-                manager.ShowRewardedAd(decisionPoint);
             }
         }
         

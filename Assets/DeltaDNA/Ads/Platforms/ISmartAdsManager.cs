@@ -14,20 +14,30 @@
 // limitations under the License.
 //
 
+using System;
+
 namespace DeltaDNA.Ads {
-
+    
     internal interface ISmartAdsManager {
-
+        
         void RegisterForAds(string decisionPoint);
-        bool IsInterstitialAdAllowed(Engagement engagement);
-        bool IsInterstitialAdAvailable();
-        void ShowInterstitialAd();
-        void ShowInterstitialAd(string decisionPoint);
-        bool IsRewardedAdAllowed(Engagement engagement);
-        bool IsRewardedAdAvailable();
-        void ShowRewardedAd();
-        void ShowRewardedAd(string decisionPoint);
+        
+        bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime);
+        bool IsRewardedAdAllowed(Engagement engagement, bool checkTime);
+        long TimeUntilRewardedAdAllowed(Engagement engagement);
+        
+        bool HasLoadedInterstitialAd();
+        bool HasLoadedRewardedAd();
+        
+        void ShowInterstitialAd(Engagement engagement);
+        void ShowRewardedAd(Engagement engagement);
+        
+        DateTime? GetLastShown(string decisionPoint);
+        long GetSessionCount(string decisionPoint);
+        long GetDailyCount(string decisionPoint);
+        
         void EngageResponse(string id, string response, int statusCode, string error);
+        
         void OnPause();
         void OnResume();
         void OnDestroy();

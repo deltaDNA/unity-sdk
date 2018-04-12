@@ -34,12 +34,12 @@ namespace DeltaDNA.Ads.Android
             ads.DidRegisterForInterstitialAds();
         }
 
-        void onRegisteredForRewardedAds() {
-            ads.DidRegisterForRewardedAds();
-        }
-
         void onFailedToRegisterForInterstitialAds(string reason) {
             ads.DidFailToRegisterForInterstitialAds(reason);
+        }
+
+        void onRegisteredForRewardedAds() {
+            ads.DidRegisterForRewardedAds();
         }
 
         void onFailedToRegisterForRewardedAds(string reason) {
@@ -57,9 +57,13 @@ namespace DeltaDNA.Ads.Android
         void onInterstitialAdClosed() {
             ads.DidCloseInterstitialAd();
         }
-
-        void onRewardedAdOpened() {
-            ads.DidOpenRewardedAd();
+        
+        void onRewardedAdLoaded() {
+            ads.DidLoadRewardedAd();
+        }
+        
+        void onRewardedAdOpened(string decisionPoint) {
+            ads.DidOpenRewardedAd(decisionPoint);
         }
 
         void onRewardedAdFailedToOpen(string reason) {

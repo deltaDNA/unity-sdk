@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
+using System;
 #if DDNA_SMARTADS
 using UnityEngine;
-using System;
 using System.Collections.Generic;
 #endif
 
@@ -55,89 +55,116 @@ namespace DeltaDNA.Ads.Android {
             adService.Call("registerForAds", decisionPoint);
             #endif
         }
-
-        public void OnNewSession() {
+        
+        public bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime) {
             #if DDNA_SMARTADS
-            adService.Call("onNewSession");
-            #endif
-        }
-
-        public bool IsInterstitialAdAllowed(Engagement engagement) {
-            #if DDNA_SMARTADS
-            string parameters = null;
-            if (engagement != null && engagement.JSON != null && engagement.JSON.ContainsKey("parameters")) {
-                try {
-                    parameters = MiniJSON.Json.Serialize(engagement.JSON["parameters"]);
-                } catch (Exception e) {
-                    Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
-                }
-            }
-
+            string parameters = getParameters(engagement);
+            
             return adService.Call<bool>(
                 "isInterstitialAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
-                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null,
+                checkTime);
             #else
             return false;
             #endif
         }
-
-        public bool IsInterstitialAdAvailable() {
+        
+        public bool IsRewardedAdAllowed(Engagement engagement, bool checkTime) {
             #if DDNA_SMARTADS
-            return adService.Call<bool>("isInterstitialAdAvailable");
-            #else
-            return false;
-            #endif
-        }
-
-        public void ShowInterstitialAd() {
-            ShowInterstitialAd(null);
-        }
-
-        public void ShowInterstitialAd(string decisionPoint) {
-            #if DDNA_SMARTADS
-            adService.Call("showInterstitialAd", decisionPoint);
-            #endif
-        }
-
-        public bool IsRewardedAdAllowed(Engagement engagement) {
-            #if DDNA_SMARTADS
-            string parameters = null;
-            if (engagement != null && engagement.JSON != null && engagement.JSON.ContainsKey("parameters")) {
-                try {
-                    parameters = MiniJSON.Json.Serialize(engagement.JSON["parameters"]);
-                } catch (Exception e) {
-                    Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
-                }
-            }
-
+            string parameters = getParameters(engagement);
+            
             return adService.Call<bool>(
                 "isRewardedAdAllowed",
                 (engagement != null) ? engagement.DecisionPoint : null,
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null,
+                checkTime);
+            #else
+            return false;
+            #endif
+        }
+        
+        public long TimeUntilRewardedAdAllowed(Engagement engagement) {
+            #if DDNA_SMARTADS
+            string parameters = getParameters(engagement);
+            
+            return adService.Call<int>(
+                "timeUntilRewardedAdAllowed",
+                (engagement != null) ? engagement.DecisionPoint : null,
                 (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
             #else
-            return false;
+            return 0;
             #endif
         }
-
-        public bool IsRewardedAdAvailable() {
+        
+        public bool HasLoadedInterstitialAd() {
             #if DDNA_SMARTADS
-            return adService.Call<bool>("isRewardedAdAvailable");
+            return adService.Call<bool>("hasLoadedInterstitialAd");
             #else
             return false;
             #endif
         }
-
-        public void ShowRewardedAd() {
-            ShowRewardedAd(null);
-        }
-
-        public void ShowRewardedAd(string decisionPoint) {
+        
+        public bool HasLoadedRewardedAd() {
             #if DDNA_SMARTADS
-            adService.Call("showRewardedAd", decisionPoint);
+            return adService.Call<bool>("hasLoadedRewardedAd");
+            #else
+            return false;
             #endif
         }
-
+        
+        public void ShowInterstitialAd(Engagement engagement) {
+            #if DDNA_SMARTADS
+            string parameters = getParameters(engagement);
+            
+            adService.Call(
+                "showInterstitialAd",
+                (engagement != null) ? engagement.DecisionPoint : null,
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
+            #endif
+        }
+        
+        public void ShowRewardedAd(Engagement engagement) {
+            #if DDNA_SMARTADS
+            string parameters = getParameters(engagement);
+            
+            adService.Call(
+                "showRewardedAd",
+                (engagement != null) ? engagement.DecisionPoint : null,
+                (parameters != null) ? new AndroidJavaObject(Utils.JSONObjectClassName, parameters) : null);
+            #endif
+        }
+        
+        public DateTime? GetLastShown(string decisionPoint) {
+            #if DDNA_SMARTADS
+            var value = adService.Call<AndroidJavaObject>("getLastShown", decisionPoint);
+            if (value != null) {
+                return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                    .AddMilliseconds(value.Call<long>("getTime"));
+            } else {
+                return null;
+            }
+            #else
+            return null;
+            #endif
+        }
+        
+        public long GetSessionCount(string decisionPoint) {
+            #if DDNA_SMARTADS
+            return adService.Call<int>("getSessionCount", decisionPoint);
+            #else
+            return 0;
+            #endif
+        }
+        
+        public long GetDailyCount(string decisionPoint) {
+            #if DDNA_SMARTADS
+            return adService.Call<int>("getDailyCount", decisionPoint);
+            #else
+            return 0;
+            #endif
+        }
+        
         public void EngageResponse(string id, string response, int statusCode, string error) {
             #if DDNA_SMARTADS
             // android sdk expects request listener callbacks on the main thread
@@ -190,6 +217,29 @@ namespace DeltaDNA.Ads.Android {
             adService.Call("onDestroy");
             #endif
         }
+        
+        public void OnNewSession() {
+            #if DDNA_SMARTADS
+            adService.Call("onNewSession");
+            #endif
+        }
+        
+        #if DDNA_SMARTADS
+        private static string getParameters(Engagement engagement) {
+            string parameters = null;
+            if (engagement != null
+                && engagement.JSON != null
+                && engagement.JSON.ContainsKey("parameters")) {
+                try {
+                    parameters = MiniJSON.Json.Serialize(engagement.JSON["parameters"]);
+                } catch (Exception e) {
+                    Logger.LogDebug("Exception serialising Engagement response parameters: " + e.Message);
+                }
+            }
+            
+            return parameters;
+        }
+        #endif
         
         #if DDNA_SMARTADS && UNITY_2017_1_OR_NEWER
         private class Runnable : AndroidJavaProxy {

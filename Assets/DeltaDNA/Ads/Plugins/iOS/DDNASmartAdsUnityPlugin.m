@@ -40,34 +40,54 @@ void _registerForAds(const char * decisionPoint)
     [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint)];
 }
 
-int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams)
+int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime)
 {
-    return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAllowed:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAllowed:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams) checkTime:checkTime];
 }
 
-int _isInterstitialAdAvailable()
+int _hasLoadedInterstitialAd()
 {
-    return [[DDNASmartAdsUnityPlugin sharedPlugin] isInterstitialAdAvailable];
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] hasLoadedInterstitialAd];
 }
 
-void _showInterstitialAd(const char * decisionPoint)
+void _showInterstitialAd(const char * decisionPoint, const char * engageParams)
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAdWithDecisionPoint:GetStringParam(decisionPoint)];
+    [[DDNASmartAdsUnityPlugin sharedPlugin] showInterstitialAd:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
 }
 
-int _isRewardedAdAllowed(const char * decsionPoint, const char * engageParams)
+int _isRewardedAdAllowed(const char * decsionPoint, const char * engageParams, bool checkTime)
 {
-    return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAllowed:GetStringParam(decsionPoint) engageParams:GetStringParam(engageParams)];
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAllowed:GetStringParam(decsionPoint) engageParams:GetStringParam(engageParams) checkTime:checkTime];
 }
 
-int _isRewardedAdAvailable()
+long _timeUntilRewardedAdAllowed(const char * decisionPoint, const char * engageParams)
 {
-    return [[DDNASmartAdsUnityPlugin sharedPlugin] isRewardedAdAvailable];
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] timeUntilRewardedAdAllowed:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
 }
 
-void _showRewardedAd(const char * decisionPoint)
+int _hasLoadedRewardedAd()
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] showRewardedAdWithDecisionPoint:GetStringParam(decisionPoint)];
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] hasLoadedRewardedAd];
+}
+
+void _showRewardedAd(const char * decisionPoint, const char * engageParams)
+{
+    [[DDNASmartAdsUnityPlugin sharedPlugin] showRewardedAd:GetStringParam(decisionPoint) engageParams:GetStringParam(engageParams)];
+}
+
+long _getLastShown(const char * decisionPoint)
+{
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] getLastShown:GetStringParam(decisionPoint)];
+}
+
+long _getSessionCount(const char * decisionPoint)
+{
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] getSessionCount:GetStringParam(decisionPoint)];
+}
+
+long _getDailyCount(const char * decisionPoint)
+{
+    return [[DDNASmartAdsUnityPlugin sharedPlugin] getDailyCount:GetStringParam(decisionPoint)];
 }
 
 void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error)
@@ -214,63 +234,115 @@ UIViewController *UnityGetGLViewController();
     }
 }
 
-- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams
+- (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime
 {
     @synchronized (self) {
         if (self.adService) {
             NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
-            return [self.adService isInterstitialAdAllowedForDecisionPoint:decisionPoint engagementParameters:engageParamsDict];
+            return [self.adService isInterstitialAdAllowedForDecisionPoint:decisionPoint parameters:engageParamsDict checkTime:checkTime];
         } else {
             return NO;
         }
     }
 }
 
-- (BOOL)isInterstitialAdAvailable
+- (BOOL)hasLoadedInterstitialAd
 {
     @synchronized(self) {
         if (self.adService) {
-            return [self.adService isInterstitialAdAvailable];
+            return [self.adService hasLoadedInterstitialAd];
         } else {
             return NO;
         }
     }
 }
 
-- (void)showInterstitialAdWithDecisionPoint:(NSString *)decisionPoint
+- (void)showInterstitialAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams
 {
     @synchronized(self) {
-        [self.adService showInterstitialAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint];
+        NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
+        [self.adService showInterstitialAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint parameters:engageParamsDict];
     }
 }
 
-- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams
+- (BOOL)isRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime
 {
     @synchronized (self) {
         if (self.adService) {
             NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
-            return [self.adService isRewardedAdAllowedForDecisionPoint:decisionPoint engagementParameters:engageParamsDict];
+            return [self.adService isRewardedAdAllowedForDecisionPoint:decisionPoint parameters:engageParamsDict checkTime:checkTime];
         } else {
             return NO;
         }
     }
 }
 
-- (BOOL)isRewardedAdAvailable
+- (long)timeUntilRewardedAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams
 {
     @synchronized(self) {
         if (self.adService) {
-            return [self.adService isRewardedAdAvailable];
+            NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
+            return [self.adService timeUntilRewardedAdAllowedForDecisionPoint:decisionPoint parameters:engageParamsDict];
+        } else {
+            return 0;
+        }
+    }
+}
+
+- (BOOL)hasLoadedRewardedAd
+{
+    @synchronized(self) {
+        if (self.adService) {
+            return [self.adService hasLoadedRewardedAd];
         } else {
             return NO;
         }
     }
 }
 
-- (void)showRewardedAdWithDecisionPoint:(NSString *)decisionPoint
+- (void)showRewardedAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams
 {
     @synchronized(self) {
-        [self.adService showRewardedAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint];
+        NSDictionary *engageParamsDict = [NSDictionary dictionaryWithJSONString:engageParams];
+        [self.adService showRewardedAdFromRootViewController:UnityGetGLViewController() decisionPoint:decisionPoint parameters:engageParamsDict];
+    }
+}
+
+- (long)getLastShown:(NSString *)decisionPoint
+{
+    @synchronized(self) {
+        if (self.adService) {
+            NSDate *lastShown = [self.adService lastShownForDecisionPoint:decisionPoint];
+            if (lastShown != nil) {
+                return [lastShown timeIntervalSince1970];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+}
+
+- (long)getSessionCount:(NSString *)decisionPoint
+{
+    @synchronized(self) {
+        if (self.adService) {
+            return [self.adService sessionCountForDecisionPoint:decisionPoint];
+        } else {
+            return 0;
+        }
+    }
+}
+
+- (long)getDailyCount:(NSString *)decisionPoint
+{
+    @synchronized(self) {
+        if (self.adService) {
+            return [self.adService dailyCountForDecisionPoint:decisionPoint];
+        } else {
+            return 0;
+        }
     }
 }
 
@@ -350,9 +422,14 @@ UIViewController *UnityGetGLViewController();
     UnitySendMessage(SmartAdsObject, "DidFailToRegisterForRewardedAds", [reason UTF8String]);
 }
 
-- (void)didOpenRewardedAd
+- (void)didLoadRewardedAd
 {
-    UnitySendMessage(SmartAdsObject, "DidOpenRewardedAd", "");
+    UnitySendMessage(SmartAdsObject, "DidLoadRewardedAd", "");
+}
+
+- (void)didOpenRewardedAdForDecisionPoint:(NSString *)decisionPoint
+{
+    UnitySendMessage(SmartAdsObject, "DidOpenRewardedAd", [decisionPoint UTF8String]);
     UnityPause(YES);
 }
 
