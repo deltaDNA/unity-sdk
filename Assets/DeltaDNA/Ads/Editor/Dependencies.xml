@@ -7,100 +7,7 @@
         <repository>~/.m2/repository</repository>
       </repositories>
     </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-adcolony:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-admob:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-amazon:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
     <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-chartboost:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-facebook:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-flurry:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-hyprmx:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-        <repository>https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-inmobi:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-ironsource:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-loopme:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-machinezone:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mobfox:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-mopub:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-        <repository>https://s3.amazonaws.com/moat-sdk-builds</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-tapjoy:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-        <repository>https://tapjoy.bintray.com/maven</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-thirdpresence:1.8.0-SNAPSHOT">
       <repositories>
         <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
         <repository>~/.m2/repository</repository>
@@ -126,7 +33,19 @@
         <source>https://github.com/CocoaPods/Specs.git</source>
       </sources>
     </iosPod>
-    <iosPod name="DeltaDNAAds/AdMob" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
+    <iosPod name="DeltaDNAAds/AppLovin" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
+      <sources>
+        <source>https://github.com/deltaDNA/CocoaPods.git</source>
+        <source>https://github.com/CocoaPods/Specs.git</source>
+      </sources>
+    </iosPod>
+    <iosPod name="DeltaDNAAds/UnityAds" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
+      <sources>
+        <source>https://github.com/deltaDNA/CocoaPods.git</source>
+        <source>https://github.com/CocoaPods/Specs.git</source>
+      </sources>
+    </iosPod>
+    <iosPod name="DeltaDNAAds/Vungle" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
       <sources>
         <source>https://github.com/deltaDNA/CocoaPods.git</source>
         <source>https://github.com/CocoaPods/Specs.git</source>
