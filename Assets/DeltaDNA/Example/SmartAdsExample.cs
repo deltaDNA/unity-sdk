@@ -177,14 +177,12 @@ namespace DeltaDNA
             var lastShownText = (!action.LastShown.HasValue)
                 ? "N/A"
                 : action.LastShown.Value.ToString("HH:mm");
-            var adShowWaitSecs = (!action.LastShown.HasValue)
+            var adShowElapsedSecs = (!action.LastShown.HasValue)
                 ? 0
-                : (action.LastShown.Value - DateTime.Now).Seconds
-                + action.AdShowWaitSecs;
-            var secsText = (adShowWaitSecs == 0)
-                ? ""
-                : " (" + Math.Max(0, adShowWaitSecs) + " secs)";
-
+                : (DateTime.UtcNow - action.LastShown.Value).TotalSeconds;
+            var secsText = (adShowElapsedSecs < action.AdShowWaitSecs)
+                ? " (" + Math.Max(0, Math.Ceiling(action.AdShowWaitSecs - adShowElapsedSecs)) + " secs)"
+                : "";
             view.text = string.Format(
                 "Session: {0} ({1}) | Today: {2} ({3}) | Time: {4}{5}",
                 action.SessionCount,

@@ -119,7 +119,7 @@ public class BasicExample : MonoBehaviour {
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
             
-        DDNA.Instance.EngageFactory.RequestGameParameters("gameLoaded", (gameParameters) => {
+        DDNA.Instance.EngageFactory.RequestGameParameters("gameLoaded", customParams, (gameParameters) => {
             popUpContent.text = MiniJSON.Json.Serialize(gameParameters);
         });
 
@@ -133,7 +133,7 @@ public class BasicExample : MonoBehaviour {
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
             
-        DDNA.Instance.EngageFactory.RequestImageMessage("testImageMessage", (imageMessage) => {
+        DDNA.Instance.EngageFactory.RequestImageMessage("testImageMessage", customParams, (imageMessage) => {
 
             // Check we got an engagement with a valid image message.
             if (imageMessage != null) {

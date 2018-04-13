@@ -26,7 +26,7 @@ namespace DeltaDNA
     /// service.  It makes the request to Engage and notifies on a callback when the
     /// requst completes.
     /// </summary>
-    public class EngageFactory : ScriptableObject
+    public class EngageFactory
     {
         private readonly DDNA ddna;
         private readonly SmartAds smartads;
@@ -127,6 +127,7 @@ namespace DeltaDNA
                 ddna.RequestEngagement(engagement,
                     (response) =>
                     {
+                        Logger.LogDebug("Creating an interstitial ad at '" + decisionPoint + "'");
                         callback(InterstitialAd.CreateUnchecked(response));
                     }, (exception) =>
                     {
@@ -167,6 +168,7 @@ namespace DeltaDNA
                 ddna.RequestEngagement(engagement,
                     (response) =>
                     {
+                        Logger.LogDebug("Creating a rewarded ad at '" + decisionPoint + "'");
                         callback(RewardedAd.CreateUnchecked(response));
                     }, (exception) =>
                     {
@@ -183,10 +185,10 @@ namespace DeltaDNA
                 Params parametersCopy;
                 try {
                     parametersCopy = new Params(parameters);
-                } catch (Exception e) {
+                } catch (Exception) {
                     parametersCopy = new Params();
                 }
-                return new Engagement(decisionPoint, parameters);
+                return new Engagement(decisionPoint, parametersCopy);
             } else {
                 return new Engagement(decisionPoint);
             }
