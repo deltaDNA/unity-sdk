@@ -59,6 +59,24 @@ namespace DeltaDNA.Ads.Editor {
                 }
             }
         }
+        
+        internal bool On { 
+            get { return this.on; }
+            set {
+                foreach (var handler in handlers) {
+                    var anyEnabled = handler.GetNetworks().Count > 0;
+                    if (!anyEnabled && !on && value) {
+                        foreach (IDictionary<string, object> network in networks) {
+                            var platformName = network[handler.platform] as string;
+                            if (platformName != null) {
+                                enabled[handler][platformName] = network["default"] as bool? ?? false;
+                            }
+                        }
+                    }
+                }
+                this.on = value; 
+            }
+        }
          
         private IList<string> getEnabled(Networks handler) {
             return enabled[handler]

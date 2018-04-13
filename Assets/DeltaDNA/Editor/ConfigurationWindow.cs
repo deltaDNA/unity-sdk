@@ -174,12 +174,12 @@ namespace DeltaDNA.Editor {
                 true,
                 styleFoldout);
             GUILayout.FlexibleSpace();
-            ads.on = GUILayout.Toggle(ads.on, "Enabled");
+            ads.On = GUILayout.Toggle(ads.On, "Enabled");
             GUILayout.EndHorizontal();
             if (foldoutSmartAds) {
                 GUILayout.Label("Networks", EditorStyles.boldLabel);
                 
-                EditorGUI.BeginDisabledGroup(!ads.on);
+                EditorGUI.BeginDisabledGroup(!ads.On);
                 
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(

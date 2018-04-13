@@ -1,55 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-core:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-applovin:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-unity:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
-    <androidPackage spec="com.deltadna.android:deltadna-smartads-provider-vungle:1.8.0-SNAPSHOT">
-      <repositories>
-        <repository>http://corp-vm-artifactory/artifactory/deltadna-repo</repository>
-        <repository>~/.m2/repository</repository>
-      </repositories>
-    </androidPackage>
   </androidPackages>
   <iosPods>
-    <iosPod name="DeltaDNAAds/SmartAds" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
-      <sources>
-        <source>https://github.com/deltaDNA/CocoaPods.git</source>
-        <source>https://github.com/CocoaPods/Specs.git</source>
-      </sources>
-    </iosPod>
-    <iosPod name="DeltaDNAAds/AppLovin" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
-      <sources>
-        <source>https://github.com/deltaDNA/CocoaPods.git</source>
-        <source>https://github.com/CocoaPods/Specs.git</source>
-      </sources>
-    </iosPod>
-    <iosPod name="DeltaDNAAds/UnityAds" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
-      <sources>
-        <source>https://github.com/deltaDNA/CocoaPods.git</source>
-        <source>https://github.com/CocoaPods/Specs.git</source>
-      </sources>
-    </iosPod>
-    <iosPod name="DeltaDNAAds/Vungle" version="~&gt; 1.8.0-beta.2" bitcodeEnabled="true" minTargetSdk="8.0">
-      <sources>
-        <source>https://github.com/deltaDNA/CocoaPods.git</source>
-        <source>https://github.com/CocoaPods/Specs.git</source>
-      </sources>
-    </iosPod>
   </iosPods>
 </dependencies>
