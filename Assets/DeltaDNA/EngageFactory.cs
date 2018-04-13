@@ -113,23 +113,27 @@ namespace DeltaDNA
         /// <param name="callback">the callback to handle the result</param>
         public void RequestInterstitialAd(string decisionPoint, Params parameters, Action<InterstitialAd> callback) {
 
-            Engagement engagement = BuildEngagement(decisionPoint, parameters)
-                .AddParam("ddnaAdSessionCount", smartads.GetSessionCount(decisionPoint))
-                .AddParam("ddnaAdDailyCount", smartads.GetDailyCount(decisionPoint));
+            if (smartads != null)
+            {
+                Engagement engagement = BuildEngagement(decisionPoint, parameters)
+                    .AddParam("ddnaAdSessionCount", smartads.GetSessionCount(decisionPoint))
+                    .AddParam("ddnaAdDailyCount", smartads.GetDailyCount(decisionPoint));
 
-            if (smartads.GetLastShown(decisionPoint).HasValue) {
-                engagement.AddParam("ddnaAdLastShownTime", smartads.GetLastShown(decisionPoint).Value);
+                if (smartads.GetLastShown(decisionPoint).HasValue)
+                {
+                    engagement.AddParam("ddnaAdLastShownTime", smartads.GetLastShown(decisionPoint).Value);
+                }
+
+                ddna.RequestEngagement(engagement,
+                    (response) =>
+                    {
+                        callback(InterstitialAd.CreateUnchecked(response));
+                    }, (exception) =>
+                    {
+                        Logger.LogWarning("Creating interstitial ad despite failed Engage request");
+                        callback(InterstitialAd.CreateUnchecked(engagement));
+                    });
             }
-            
-            ddna.RequestEngagement(engagement,
-                (response) =>
-                {
-                    callback(InterstitialAd.CreateUnchecked(response));
-                }, (exception) =>
-                {
-                    Logger.LogWarning("Creating interstitial ad despite failed Engage request");
-                    callback(InterstitialAd.CreateUnchecked(engagement));
-                });
         }
         
         /// <summary>
@@ -148,24 +152,28 @@ namespace DeltaDNA
         /// <param name="parameters">an optional set of real-time parameters</param>
         /// <param name="callback">the callback to handle the result</param>
         public void RequestRewardedAd(string decisionPoint, Params parameters, Action<RewardedAd> callback) {
-        
-            Engagement engagement = BuildEngagement(decisionPoint, parameters)
-                .AddParam("ddnaAdSessionCount", smartads.GetSessionCount(decisionPoint))
-                .AddParam("ddnaAdDailyCount", smartads.GetDailyCount(decisionPoint));
 
-            if (smartads.GetLastShown(decisionPoint).HasValue) {
-                engagement.AddParam("ddnaAdLastShownTime", smartads.GetLastShown(decisionPoint).Value);
+            if (smartads != null)
+            {
+                Engagement engagement = BuildEngagement(decisionPoint, parameters)
+                    .AddParam("ddnaAdSessionCount", smartads.GetSessionCount(decisionPoint))
+                    .AddParam("ddnaAdDailyCount", smartads.GetDailyCount(decisionPoint));
+
+                if (smartads.GetLastShown(decisionPoint).HasValue)
+                {
+                    engagement.AddParam("ddnaAdLastShownTime", smartads.GetLastShown(decisionPoint).Value);
+                }
+
+                ddna.RequestEngagement(engagement,
+                    (response) =>
+                    {
+                        callback(RewardedAd.CreateUnchecked(response));
+                    }, (exception) =>
+                    {
+                        Logger.LogWarning("Creating rewarded ad despite failed Engage request");
+                        callback(RewardedAd.CreateUnchecked(engagement));
+                    });
             }
-            
-            ddna.RequestEngagement(engagement,
-                (response) =>
-                {
-                    callback(RewardedAd.CreateUnchecked(response));
-                }, (exception) =>
-                {
-                    Logger.LogWarning("Creating rewarded ad despite failed Engage request");
-                    callback(RewardedAd.CreateUnchecked(engagement));
-                });
         }
         
         protected static Engagement BuildEngagement(string decisionPoint, Params parameters) {
