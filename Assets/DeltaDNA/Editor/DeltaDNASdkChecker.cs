@@ -70,7 +70,7 @@ namespace DeltaDNA.Editor {
                         Severity.WARNING));
                 }
                 
-                if (string.IsNullOrEmpty(config.clientVersion) && config.useApplicationVersion) {
+                if (string.IsNullOrEmpty(config.clientVersion) && !config.useApplicationVersion) {
                     problems.Add(DDNATuple.New(
                         "[Analytics] Client version has not been configured.",
                         Severity.WARNING));
