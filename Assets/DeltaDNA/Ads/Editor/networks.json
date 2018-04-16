@@ -13,7 +13,7 @@
     "ios": "AdMob",
     "integration": "automatic",
     "type": [ "interstitial", "rewarded" ],
-    "default": false
+    "default": true
   },
   {
     "name": "Amazon",
@@ -29,7 +29,7 @@
     "ios": "AppLovin",
     "integration": "automatic",
     "type": [ "rewarded" ],
-    "default": true
+    "default": false
   },
   {
     "name": "Chartboost",
