@@ -120,7 +120,7 @@ namespace DeltaDNA
         /// generate a new user id if this is the first run.
         /// </summary>
         public void StartSDK() {
-            StartSDK(null);
+            StartSDK((string) null);
         }
         
         /// <summary>
@@ -142,7 +142,29 @@ namespace DeltaDNA
                 Logger.LogWarning("Failed to find DDNA SDK configuration");
                 config = new Configuration();
             }
-            
+
+            StartSDK(config, userID);
+        }
+
+        /// <summary>
+        /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
+        /// generate a new user id if this is the first run. This method can be used if the
+        /// game configuration needs to be provided in the code as opposed to using the
+        /// configuration UI.
+        /// </summary>
+        /// <param name="config">The game configuration for the SDK.</param>
+        public void StartSDK(Configuration config) {
+            StartSDK(config, null);
+        }
+
+        /// <summary>
+        /// Starts the SDK.  Call before sending events or making engagements.  This method
+        /// can be used if the game configuration needs to be provided in the code as opposed
+        /// to using the configuration UI.
+        /// </summary>
+        /// <param name="config">The game configuration for the SDK.</param>
+        /// <param name="userID">The user id for the player, if set to null we create one for you.</param>
+        public void StartSDK(Configuration config, string userID) {
             lock (_lock) {
                 bool newPlayer = false;
                 if (String.IsNullOrEmpty(this.UserID)) {    // first time!
