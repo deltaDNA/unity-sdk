@@ -180,7 +180,7 @@ namespace DeltaDNA
             var adShowElapsedSecs = (!action.LastShown.HasValue)
                 ? 0
                 : (DateTime.UtcNow - action.LastShown.Value).TotalSeconds;
-            var secsText = (adShowElapsedSecs < action.AdShowWaitSecs)
+            var secsText = (adShowElapsedSecs > 0 && adShowElapsedSecs < action.AdShowWaitSecs)
                 ? " (" + Math.Max(0, Math.Ceiling(action.AdShowWaitSecs - adShowElapsedSecs)) + " secs)"
                 : "";
             view.text = string.Format(
