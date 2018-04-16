@@ -80,13 +80,11 @@ namespace DeltaDNA {
             // get the assets minus tests and configuration
             List<string> assets = Directory
                 .GetDirectories("Assets/DeltaDNA")
-                .Where(e => e.EndsWith("Editor") || e.EndsWith("Resources"))
+                .Where(e => !(e.EndsWith("Editor") || e.EndsWith("Resources")))
                 .ToList();
-            
+
             // add some of the previously excluded files
-            assets.Add("Assets/DeltaDNA/Editor/DeltaDNASdkChecker.cs");
-            assets.Add("Assets/DeltaDNA/Editor/SdkChecker.cs");
-            assets.Add("Assets/DeltaDNA/Editor/WindowHelper.cs");
+            assets.AddRange(Directory.GetFiles("Assets/DeltaDNA/Editor", "*.cs"));
             assets.Add("Assets/DeltaDNA/Editor/Android");
             assets.Add("Assets/DeltaDNA/Editor/iOS");
             assets.Add("Assets/DeltaDNA/Plugins/iOS");
@@ -101,7 +99,7 @@ namespace DeltaDNA {
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.h",
                 "Assets/Plugins/iOS/NSString+DDNAHelpers.m"
             });
-            
+
             // add Android notifications excluding the resources with the configuration
             assets.AddRange(Directory
                 .GetDirectories("Assets/Plugins/Android/deltadna-sdk-unity-notifications")
