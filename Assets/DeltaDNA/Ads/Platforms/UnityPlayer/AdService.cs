@@ -37,15 +37,11 @@ namespace DeltaDNA.Ads.UnityPlayer {
 
         private const int CONFIG_DELAY = 60;
         private const bool DEFAULT_AD_SHOW_POINT = true;
-        private const int DEFAULT_MAX_PER_NETWORK = 0;
         private const int DEFAULT_AD_MINIMUM_INTERVAL = 0;
         private const int DEFAULT_AD_MAX_PER_SESSION = -1;
 
         private readonly AdMetrics metrics = new AdMetrics();
 
-        private string decisionPoint;
-
-        private int maxPerNetwork = DEFAULT_MAX_PER_NETWORK;
         private int adMinimumInterval = DEFAULT_AD_MINIMUM_INTERVAL;
         private int adMaxPerSession = DEFAULT_AD_MAX_PER_SESSION;
 
@@ -53,8 +49,6 @@ namespace DeltaDNA.Ads.UnityPlayer {
         private AdAgent rewardedAgent;
 
         public void RegisterForAds(string decisionPoint) {
-            this.decisionPoint = decisionPoint;
-
             var engagement = new Engagement(decisionPoint);
             engagement.Flavour = "internal";
             engagement.AddParam("adSdkVersion", Settings.SDK_VERSION);
@@ -88,9 +82,6 @@ namespace DeltaDNA.Ads.UnityPlayer {
                     return;
                 }
 
-                maxPerNetwork = (config.ContainsKey("adMaxPerNetwork"))
-                    ? config["adMaxPerNetwork"] as int? ?? DEFAULT_MAX_PER_NETWORK
-                    : DEFAULT_MAX_PER_NETWORK;
                 adMinimumInterval = (config.ContainsKey("adMinimumInterval"))
                     ? config["adMinimumInterval"] as int? ?? DEFAULT_AD_MINIMUM_INTERVAL
                     : DEFAULT_AD_MINIMUM_INTERVAL;
@@ -108,8 +99,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
                     interstitialAgent = new AdAgent(
                         false,
                         (config["adProviders"] as IList<object>).Count,
-                        adMaxPerSession,
-                        maxPerNetwork);
+                        adMaxPerSession);
                     interstitialAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
                     interstitialAgent.RequestAd();
 
@@ -126,8 +116,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
                     rewardedAgent = new AdAgent(
                         true,
                         (config["adRewardedProviders"] as IList<object>).Count,
-                        adMaxPerSession,
-                        maxPerNetwork);
+                        adMaxPerSession);
                     rewardedAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
                     rewardedAgent.RequestAd();
 

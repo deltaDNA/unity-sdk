@@ -27,7 +27,6 @@ namespace DeltaDNA.Ads.UnityPlayer {
         internal readonly bool rewarded;
         private readonly IList<AdAdapter> adapters;
         private readonly int adMaxPerSession;
-        private readonly int maxPerNetwork;
         
         private AdAdapter adapter;
 
@@ -42,8 +41,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
         internal AdAgent(
             bool rewarded,
             int count,
-            int adMaxPerSession,
-            int maxPerNetwork) {
+            int adMaxPerSession) {
 
             this.rewarded = rewarded;
             adapters = Enumerable
@@ -51,7 +49,6 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 .Select(e => new AdAdapter(rewarded, e))
                 .ToList();
             this.adMaxPerSession = adMaxPerSession;
-            this.maxPerNetwork = maxPerNetwork;
 
             adapter = (adapters.Count > 0) ? adapters.First() : null;
             state = State.READY;

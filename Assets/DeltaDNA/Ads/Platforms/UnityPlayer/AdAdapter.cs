@@ -94,7 +94,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 Position(label, new Rect(Screen.width/4, Screen.height/8, Screen.width/2, Screen.height/4));
 
                 var button1 = new GameObject("Close", typeof(RectTransform));
-                var button1Image = button1.AddComponent<Image>();
+                button1.AddComponent<Image>();
                 var button1Button = button1.AddComponent<Button>();
                 button1Button.onClick.AddListener(() => closed.Invoke());
                 var button1Text = new GameObject("Close Text", typeof(RectTransform));
@@ -110,7 +110,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
 
                 if (!rewarded) return;
                 var button2 = new GameObject("Close with Reward", typeof(RectTransform));
-                var button2Image = button2.AddComponent<Image>();
+                button2.AddComponent<Image>();
                 var button2Button = button2.AddComponent<Button>();
                 button2Button.onClick.AddListener(() => closedWithReward.Invoke());
                 var button2Text = new GameObject("Close with Reward Text", typeof(RectTransform));
