@@ -127,23 +127,23 @@ If everything went well the SmartAds service will start fetching ads in the back
 
 ### Showing ads
 
-Showing interstitial ads can be done by creating an instance of an `InterstitialAd` and calling `Show()`. The result should be null-checked after `Create()` is called as the creation may fail if the time or session limits have been exceeded.
+The simplest way to showing an interstitial ad is by creating an instance of `InterstitialAd` and calling `Show()`. The result should be null-checked after `Create()` is called as the creation may fail if the time or session limits have been exceeded.
 ```csharp
 InterstitialAd ad = InterstitialAd.Create();
 if (ad != null) {
     ad.Show();
 }
 ```
-Rewarded ads are created in a similar way, but through the `RewardedAd` class instead.
+Rewarded ads are created in a similar way, but with the `RewardedAd` class instead.
 
-Ads can be created off an Engage request by using the `EngageFactory` and using one of the `RequestInterstitialAd` or `RequestRewardedAd` methods. Unlike with an `ImageMessage` the factory will always return a non-null ad object in the callback.
+Ads can be controlled via Engage by using the `EngageFactory` and calling one of the `RequestInterstitialAd` or `RequestRewardedAd` methods. Unlike with an `ImageMessage` the factory will always return a non-null ad object in the callback.  The `isReady` method returns true if the ad is ready to show, this checks that an ad has loaded from the network and the Engage rules are satisfied.
 ```csharp
 DDNA.Instance.EngageFactory.RequestInterstitialAd(
     "showInterstitial",
     (ad) => { /* do something with the ad */});
 ```
 
-Alternatively, if more control is needed, ads can also be created by performing an Engage request and creating an `InterstitialAd` or `RewardedAd` instance from the returned `Engagement`.
+Alternatively, if more control over the possible Engage responses is needed, Engage checked ads can be created by performing an Engage request and then creating an `InterstitialAd` or `RewardedAd` instance from the returned `Engagement`.  The following example shows how to handle Engage returning an ad or an image message.
 ```csharp
 Engagement engagement = new Engagement("showAdOrImageMessage")
 DDNA.Instance.RequestEngagement(
@@ -167,15 +167,8 @@ Checkout the included example project for more details.
 Callbacks can be added to the following events to be notified when an ad has opened or closed.
 * `OnDidRegisterForInterstitialAds` - Called when you have successfully enabled interstitial ads for your game.
 * `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads are unavailable for some reason.  A string parameter reports a possible error.
-* ~~`OnInterstitialAdOpened` - Called when an interstitial ad is shown on screen.~~  Prefer `InterstitialAd.OnInterstitialAdOpened`.
-* ~~`OnInterstitialAdFailedToOpen` - Called if an interstitial ad fails to show.~~ Prefer `InterstitialAd.OnInterstitialAdFailedToOpen`.
-* ~~`OnInterstitialAdClosed` - Called when the user has closed an interstitial ad.~~ Prefer `InterstitialAd.OnInterstitialAdClosed`.
 * `OnDidRegisterForRewardedAds` - Called when you have successfully enabled rewarded ads for your game.
 * `OnDidFailToRegisterForRewardedAds` - Called if rewarded ads are unavailable for some reason.  A string parameter reports a possible error.
-* ~~`OnRewardedAdLoaded` - Called when a rewarded ad is loaded.~~ Prefer `RewardedAd.OnRewardedAdLoaded`.
-* ~~`OnRewardedAdOpened` - Called when a rewarded ad is shown on screen.~~ Prefer `RewardedAd.OnRewardedAdOpened`.
-* ~~`OnRewardedAdFailedToOpen` - Called if a rewarded ad fails to show.~~ Prefer `RewardedAd.OnRewardedAdFailedToOpen`.
-* ~~`OnRewardedAdClosed` - Called when the user had closed a rewarded ad.  A boolean parameter indicates if the user had watched enough of the ad to be rewarded.~~ See `RewardedAd.OnRewardedAdClosed`.
 
 The `InterstitialAd` class supports the following event callbacks:
 * `OnInterstitialAdOpened` - Called when an ad is opened.
@@ -213,9 +206,9 @@ If you make changes to the enabled networks the changes to the `Dependencies.xml
 
 ### Unity 4.7 iOS
 
-We've had some luck building with Unity 4.7.2, but you will need to make a couple of manual changes:
+Although no longer officially supported the sdk will build with Unity 4.7.2, but you will need to make a couple of manual changes:
   * Move files under Assets/DeltaDNA/[Ads]/Plugins/iOS to Assets/Plugins/iOS.
-  * The UnityJarResolver will run and generate a Podfile, but it won't build th project.  Edit the Podile and set "integrate_targets => *true*", then run pod install manually from the command line.  Open the resulting workspace.
+  * The UnityJarResolver will run and generate a Podfile, but it won't build the project.  Edit the Podile and set "integrate_targets => *true*", then run pod install manually from the command line.  Open the resulting workspace.
   * Under Build Phases -> Compile Sources add the -fobj-arc flag to DDNAUnityNotificationsPlugin.m.
 
 ## Android Integration
@@ -324,3 +317,7 @@ If you no longer wish to use notifications then remove the *Assets/Plugins/Andro
 ## License
 
 The sources are available under the Apache 2.0 license.
+
+## Contact Us
+
+For more information, please visit [deltadna.com](https://deltadna.com/). For questions or assistance, please email us at [support@deltadna.com](mailto:support@deltadna.com).
