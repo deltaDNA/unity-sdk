@@ -34,8 +34,7 @@ namespace DeltaDNA.Ads.Editor {
         }
         
         private static readonly string[] REPOS = {
-            "http://corp-vm-artifactory/artifactory/deltadna-repo",
-            "~/.m2/repository"
+            "http://corp-vm-artifactory/artifactory/deltadna-repo"
         };
         private const string VERSION = "1.8.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
