@@ -59,16 +59,6 @@ namespace DeltaDNA
             // Configure the SDK
             DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 
-            // Start the SDK. We recommend using the configuration UI for setting your game's
-            // keys and calling StartSDK() or StartSDK(userID) instead.
-            DDNA.Instance.StartSDK(new Configuration() {
-                environmentKeyDev = "76410301326725846610230818914037",
-                environmentKey = 0,
-                collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
-                engageUrl = "https://engage2470ntysd.deltadna.net",
-                useApplicationVersion = true
-            });
-
             // Setup Ad notifications
             SmartAds.Instance.OnDidRegisterForInterstitialAds += () => {
                 Debug.Log("Registered for interstitial ads.");
@@ -130,9 +120,16 @@ namespace DeltaDNA
                 rewardedAd1 = null;
                 rewardedAd2 = null;
             };
-            
-            // Start collecting data and register for ads
-            DDNA.Instance.StartSDK();
+
+            // Start the SDK. We recommend using the configuration UI for setting your game's
+            // keys and calling StartSDK() or StartSDK(userID) instead.
+            DDNA.Instance.StartSDK(new Configuration() {
+                environmentKeyDev = "76410301326725846610230818914037",
+                environmentKey = 0,
+                collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
+                engageUrl = "https://engage2470ntysd.deltadna.net",
+                useApplicationVersion = true
+            });
         }
 
         void FixedUpdate() {

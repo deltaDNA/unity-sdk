@@ -36,16 +36,6 @@ public class BasicExample : MonoBehaviour {
         // Configure the SDK
         DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 
-        // Start the SDK. We recommend using the configuration UI for setting your game's
-        // keys and calling StartSDK() or StartSDK(userID) instead.
-        DDNA.Instance.StartSDK(new Configuration() {
-            environmentKeyDev = "76410301326725846610230818914037",
-            environmentKey = 0,
-            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
-            engageUrl = "https://engage2470ntysd.deltadna.net",
-            useApplicationVersion = true
-        });
-
         // Enable push notifications
         DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an iOS push token: " + n);
@@ -72,8 +62,15 @@ public class BasicExample : MonoBehaviour {
         };
         DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
 
-        // Start collecting data
-        DDNA.Instance.StartSDK();
+        // Start the SDK. We recommend using the configuration UI for setting your game's
+        // keys and calling StartSDK() or StartSDK(userID) instead.
+        DDNA.Instance.StartSDK(new Configuration() {
+            environmentKeyDev = "76410301326725846610230818914037",
+            environmentKey = 0,
+            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
+            engageUrl = "https://engage2470ntysd.deltadna.net",
+            useApplicationVersion = true
+        });
     }
 
     void FixedUpdate() {
@@ -179,7 +176,15 @@ public class BasicExample : MonoBehaviour {
     }
 
     public void OnStartSDKBtn_Clicked() {
-        DDNA.Instance.StartSDK();
+        // Start the SDK. We recommend using the configuration UI for setting your game's
+        // keys and calling StartSDK() or StartSDK(userID) instead.
+        DDNA.Instance.StartSDK(new Configuration() {
+            environmentKeyDev = "76410301326725846610230818914037",
+            environmentKey = 0,
+            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
+            engageUrl = "https://engage2470ntysd.deltadna.net",
+            useApplicationVersion = true
+        });
     }
 
     public void OnStopSDKBtn_Clicked() {
