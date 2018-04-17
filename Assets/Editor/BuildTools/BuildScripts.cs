@@ -87,6 +87,7 @@ namespace DeltaDNA {
             assets.AddRange(Directory.GetFiles("Assets/DeltaDNA/Editor", "*.cs"));
             assets.Add("Assets/DeltaDNA/Editor/Android");
             assets.Add("Assets/DeltaDNA/Editor/iOS");
+            assets.Add("Assets/DeltaDNA/Editor/Resources");
             assets.Add("Assets/DeltaDNA/Plugins/iOS");
             assets.Add("Assets/DeltaDNA/Resources/iso_4217.xml");
 
