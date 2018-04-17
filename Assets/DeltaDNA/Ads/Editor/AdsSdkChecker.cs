@@ -41,7 +41,7 @@ namespace DeltaDNA.Ads.Editor {
                     Severity.WARNING));
             }
             
-            if (new AndroidNetworks(false).AreDownloadsStale()) {
+            if (new AndroidNetworks().AreDownloadsStale()) {
                 problems.Add(DDNATuple.New(
                     "[SmartAds] Android libraries are stale, please update them from the Editor menu.",
                     Severity.WARNING));

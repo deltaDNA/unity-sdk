@@ -26,7 +26,7 @@ namespace DeltaDNA.Ads.Editor {
     internal sealed class AndroidNetworks : Networks {
         
         static AndroidNetworks() {
-            var instance = new AndroidNetworks(false);
+            var instance = new AndroidNetworks();
             instance.ApplyChanges(
                 instance.IsEnabled(),
                 instance.GetNetworks(),
@@ -40,11 +40,7 @@ namespace DeltaDNA.Ads.Editor {
         private const string VERSION = "1.8.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
         
-        private readonly bool download;
-        
-        public AndroidNetworks(bool download) : base("android", "Android") {
-            this.download = download;
-        }
+        public AndroidNetworks() : base("android", "Android") {}
         
         internal override bool IsEnabled() {
             lock (LOCK) {
@@ -153,8 +149,6 @@ namespace DeltaDNA.Ads.Editor {
                 
                 config.Save(CONFIG);
             }
-            
-            if (download) DownloadLibraries();
         }
         
         internal override bool AreDownloadsStale() {
@@ -179,12 +173,6 @@ namespace DeltaDNA.Ads.Editor {
             }
             
             return false;
-        }
-        
-        internal static void DownloadLibraries() {
-            #if UNITY_ANDROID
-            GooglePlayServices.PlayServicesResolver.MenuResolve();
-            #endif
         }
     }
 }

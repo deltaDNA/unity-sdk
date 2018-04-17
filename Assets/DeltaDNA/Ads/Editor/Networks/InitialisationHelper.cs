@@ -50,7 +50,7 @@ namespace DeltaDNA.Ads.Editor {
             }
             
             if (refresh) {
-                Networks instance = new AndroidNetworks(true);
+                Networks instance = new AndroidNetworks();
                 instance.ApplyChanges(
                     instance.IsEnabled(),
                     instance.GetNetworks(),

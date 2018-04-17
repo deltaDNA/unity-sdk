@@ -33,7 +33,7 @@ namespace DeltaDNA.Ads.Editor {
         internal bool debugNotifications;
         
         internal readonly Networks[] handlers = new Networks[] {
-            new AndroidNetworks(true),
+            new AndroidNetworks(),
             new IosNetworks()
         };
         internal readonly IDictionary<Networks, SortedDictionary<string, bool>> enabled =
