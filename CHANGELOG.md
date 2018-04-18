@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.8.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.0) (2018-??-??)
+## [4.8.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.0) (2018-04-18)
 ### Added
 - Configuration UI for the SDK.
 - Automatic registration for ads.
