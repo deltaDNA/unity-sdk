@@ -29,8 +29,9 @@ namespace DeltaDNA.Editor {
             new NotificationsConfigurator().Apply();
         }
 
-        internal const string NOTIFICATIONS_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/res/values/values.xml";
-        internal const string MANIFEST_XML_PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications/AndroidManifest.xml";
+        private const string PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications";
+        internal const string NOTIFICATIONS_XML_PATH = PATH + "/res/values/values.xml";
+        internal const string MANIFEST_XML_PATH = PATH + "/AndroidManifest.xml";
         internal static XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 
         internal const string ATTR_APP_ID = "ddna_application_id";
@@ -99,6 +100,8 @@ namespace DeltaDNA.Editor {
         }
         
         internal void Apply() {
+            if (!Directory.Exists(PATH)) return;
+
             if (!File.Exists(NOTIFICATIONS_XML_PATH)) {
                 Directory.CreateDirectory(NOTIFICATIONS_XML_PATH.Substring(
                     0,

@@ -1,5 +1,9 @@
 # Change Log
 
+## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
+### Fixed
+- Crash in Editor when Android notifications are removed from project.
+
 ## [4.8.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.0) (2018-04-18)
 ### Added
 - Configuration UI for the SDK.
