@@ -15,18 +15,14 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-#if UNITY_5_6_OR_NEWER
-using UnityEngine.Networking;
-#endif
 
 namespace DeltaDNA {
 
-    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
+    using JSONObject = Dictionary<string, object>;
 
     public class ImageMessage {
 
@@ -199,6 +195,7 @@ namespace DeltaDNA {
 
         private class SpriteMap : MonoBehaviour
         {
+            private ImageMessageStore store;
             private JSONObject configuration;
             private Texture2D texture;
 
@@ -208,6 +205,8 @@ namespace DeltaDNA {
 
             public void Build(JSONObject configuration)
             {
+                store = new ImageMessageStore(DDNA.Instance);
+
                 try {
                     this.URL = configuration["url"] as string;
                     this.Width = (int)((long)configuration["width"]);
@@ -222,9 +221,15 @@ namespace DeltaDNA {
             public void LoadResource(Action<string> callback)
             {
                 #if !UNITY_2017_1_OR_NEWER
-                this.texture = new Texture2D(this.Width, this.Height);
+                texture = new Texture2D(this.Width, this.Height);
                 #endif
-                StartCoroutine(LoadResourceCoroutine(this.URL, callback));
+                StartCoroutine(store.Get(
+                    URL,
+                    t => {
+                        texture = t;
+                        callback(null);
+                    },
+                    callback));
             }
 
             public Texture Texture {
@@ -287,42 +292,6 @@ namespace DeltaDNA {
                     Mathf.FloorToInt(rect.width),
                     Mathf.FloorToInt(rect.height));
             }
-
-            private IEnumerator LoadResourceCoroutine(string url, Action<string> callback)
-            {
-                #if UNITY_2017_1_OR_NEWER
-                using (var www = UnityWebRequestTexture.GetTexture(url))
-                {
-                    #if UNITY_2017_2_OR_NEWER
-                    yield return www.SendWebRequest();
-                    #else
-                    yield return www.Send();
-                    #endif
-
-                    if (www.isNetworkError || www.isHttpError) {
-                        Logger.LogWarning("Failed to load resource "+url+" "+www.error);
-                    } else {
-                        this.texture = DownloadHandlerTexture.GetContent(www);
-                    }
-
-                    callback(www.error);
-                }
-
-                #else
-                WWW www = new WWW(url);
-
-                yield return www;
-
-                if (www.error == null) {
-                    www.LoadImageIntoTexture(texture);
-                } else {
-                    Logger.LogWarning("Failed to load resource "+url+" "+www.error);
-                }
-
-                callback(www.error);
-                #endif
-            }
-
         }
 
         private class Layer : MonoBehaviour {
