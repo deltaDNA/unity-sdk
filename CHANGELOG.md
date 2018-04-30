@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.8.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.1) (2018-04-30)
+### Fixed
+- Prevent Smartads debug notifications being triggered by other push notification libraries.
+
 ## [4.8.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.0) (2018-04-18)
 ### Added
 - Configuration UI for the SDK.

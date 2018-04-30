@@ -208,6 +208,9 @@ UIViewController *UnityGetGLViewController();
     if ((self = [super init])) {
         self.factory = [[DDNASmartAdFactory alloc] init];
         self.debugListener = [DDNADebugListener sharedInstance];
+        #if !DDNA_DEBUG_NOTIFICATIONS
+        [self.debugListener disableNotifications];
+        #endif
         [self.debugListener registerListeners];
         self.engagements = [NSMutableDictionary dictionary];
     }
