@@ -187,12 +187,32 @@ public class BasicExample : MonoBehaviour {
         });
     }
 
+    public void OnStartSDKNewUserBtn_Clicked() {
+        // Start the SDK. We recommend using the configuration UI for setting your game's
+        // keys and calling StartSDK() or StartSDK(userID) instead.
+        DDNA.Instance.StartSDK(new Configuration() {
+            environmentKeyDev = "76410301326725846610230818914037",
+            environmentKey = 0,
+            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
+            engageUrl = "https://engage2470ntysd.deltadna.net",
+            useApplicationVersion = true
+        }, System.Guid.NewGuid().ToString());
+    }
+
     public void OnStopSDKBtn_Clicked() {
         DDNA.Instance.StopSDK();
     }
 
     public void OnNewSessionBtn_Clicked() {
         DDNA.Instance.NewSession();
+    }
+
+    public void OnForgetMeBtn_Clicked() {
+        DDNA.Instance.ForgetMe();
+    }
+
+    public void OnClearPersistentDataBtn_Clicked() {
+        DDNA.Instance.ClearPersistentData();
     }
 }
 } // namespace DeltaDNA
