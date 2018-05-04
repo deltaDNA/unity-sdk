@@ -20,7 +20,7 @@ namespace DeltaDNA.Ads {
     
     internal interface ISmartAdsManager {
         
-        void RegisterForAds(string decisionPoint);
+        void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted);
         
         bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime);
         bool IsRewardedAdAllowed(Engagement engagement, bool checkTime);

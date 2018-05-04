@@ -35,9 +35,9 @@ void UnityPause( int pause );
 #define GetStringParam( _x_ ) ( _x_ != NULL ) ? [NSString stringWithUTF8String:_x_] : [NSString stringWithUTF8String:""]
 
 // Functions called from Unity
-void _registerForAds(const char * decisionPoint)
+void _registerForAds(const char * decisionPoint, bool userConsent, bool ageRestricted)
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint)];
+    [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint) userConsent:userConsent ageRestricted:ageRestricted];
 }
 
 int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime)
@@ -188,6 +188,8 @@ UIViewController *UnityGetGLViewController();
 @property (nonatomic, strong) DDNADebugListener *debugListener;
 @property (nonatomic, strong) NSMutableDictionary *engagements;
 @property (nonatomic, copy) NSString *decisionPoint;
+@property (nonatomic, assign) BOOL userConsent;
+@property (nonatomic, assign) BOOL ageRestricted;
 
 @end
 
@@ -217,10 +219,12 @@ UIViewController *UnityGetGLViewController();
     return self;
 }
 
-- (void)registerForAds:(NSString *)decisionPoint
+- (void)registerForAds:(NSString *)decisionPoint userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted
 {
     @synchronized(self) {
         self.decisionPoint = decisionPoint;
+        self.userConsent = userConsent;
+        self.ageRestricted = ageRestricted;
     
         if (!self.adService) {
             [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DDNASDKNewSession" object:nil];
@@ -230,7 +234,7 @@ UIViewController *UnityGetGLViewController();
         self.adService = [self.factory buildSmartAdServiceWithDelegate:self];
 
         if (self.adService) {
-            [self.adService beginSessionWithDecisionPoint:decisionPoint];
+            [self.adService beginSessionWithDecisionPoint:decisionPoint userConsent:userConsent ageRestricted:ageRestricted];
         } else {
             UnitySendMessage(SmartAdsObject, "DidFailToRegisterForAds", "Failed to build ad service");
         }
@@ -383,7 +387,7 @@ UIViewController *UnityGetGLViewController();
 
 - (void)reRegisterForAds
 {
-    [self registerForAds:self.decisionPoint];
+    [self registerForAds:self.decisionPoint userConsent:self.userConsent ageRestricted:self.ageRestricted];
 }
 
 #pragma mark DDNASmartAdServiceDelegate

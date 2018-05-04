@@ -72,6 +72,7 @@ namespace DeltaDNA
                         interstitialAd.OnInterstitialAdClosed += OnInterstitialAdClosed;
 
                         interstitialBtn.interactable = true;
+                        interstitialMsg.text = "Ready";
                 }));
             };
             SmartAds.Instance.OnDidFailToRegisterForInterstitialAds += (string reason) => {
@@ -95,6 +96,7 @@ namespace DeltaDNA
                         rewardedAd1.OnRewardedAdClosed += OnRewardedAdClosed;
 
                         rewarded1Btn.interactable = true;
+                        rewarded1Msg.text = "Ready";
                     }));
                 DDNA.Instance.EngageFactory.RequestRewardedAd(
                     "rewardedAd2",
@@ -107,6 +109,7 @@ namespace DeltaDNA
                         rewardedAd2.OnRewardedAdClosed += OnRewardedAdClosed;
 
                         rewarded2Btn.interactable = true;
+                        rewarded2Msg.text = "Ready";
                     }));
             };
             SmartAds.Instance.OnDidFailToRegisterForRewardedAds += (string reason) => {
@@ -176,6 +179,11 @@ namespace DeltaDNA
             rewarded2Stats.text = "";
 
             DDNA.Instance.NewSession();
+        }
+
+        public void OnGdprToggle_ValueChanged(bool value) {
+            DDNA.Instance.Settings.AdvertiserGdprUserConsent = value;
+            OnNewSessionBtn_Clicked();
         }
 
         private void UpdateStats(Ad action, Text view) {

@@ -19,7 +19,7 @@
 #import <Foundation/Foundation.h>
 
 // Unity Binding
-void _registerForAds(const char * decisionPoint);
+void _registerForAds(const char * decisionPoint, bool userConsent, bool ageRestricted);
 int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime);
 int _hasLoadedInterstitialAd();
 void _showInterstitialAd(const char * decisionPoint, const char * engageParams);
@@ -42,7 +42,7 @@ void _fireEventNewSession();
 
 + (instancetype)sharedPlugin;
 
-- (void)registerForAds:(NSString *)decisionPoint;
+- (void)registerForAds:(NSString *)decisionPoint userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted;
 - (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime;
 - (BOOL)hasLoadedInterstitialAd;
 - (void)showInterstitialAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams;

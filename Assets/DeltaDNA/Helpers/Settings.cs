@@ -146,5 +146,19 @@ namespace DeltaDNA
         /// </summary>
         /// <value>The session timeout seconds.</value>
         public int SessionTimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Controls user consent for advertiser tracking.
+        /// 
+        /// Changes to this value will be applied on the next session.
+        /// </summary>
+        public bool AdvertiserGdprUserConsent { get; set; }
+
+        /// <summary>
+        /// Controls whether the current user should be age resitected (under 16).
+        /// 
+        /// Changes to this valie will be applied on the next session.
+        /// </summary>
+        public bool AdvertiserGdprAgeRestrictedUser { get; set; }
     }
 }

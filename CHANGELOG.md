@@ -3,6 +3,7 @@
 ## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
 ### Added
 - API for forgetting the user and stopping tracking (GDPR).
+- Settings for advertising tracking consent and age restriction (GDPR).
 
 ### Fixed
 - Crash in Editor when Android notifications are removed from project.

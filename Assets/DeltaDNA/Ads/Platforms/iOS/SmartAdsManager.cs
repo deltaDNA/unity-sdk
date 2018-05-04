@@ -27,7 +27,7 @@ namespace DeltaDNA.Ads.iOS {
         #region Interface to native implementation
 
         [DllImport("__Internal")]
-        private static extern void _registerForAds(string decisionPoint);
+        private static extern void _registerForAds(string decisionPoint, bool userConsent, bool ageRestricted);
 
         [DllImport("__Internal")]
         private static extern int _isInterstitialAdAllowed(string decisionPoint, string engageParams, bool checkTime);
@@ -82,11 +82,11 @@ namespace DeltaDNA.Ads.iOS {
 
         #region Public interface
 
-        public void RegisterForAds(string decisionPoint)
+        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted)
         {
             #if UNITY_IOS && DDNA_SMARTADS
             _setLoggingLevel((int)Logger.LogLevel);
-            _registerForAds(decisionPoint);
+            _registerForAds(decisionPoint, userConsent, ageRestricted);
             #endif
         }
 

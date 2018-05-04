@@ -419,7 +419,10 @@ namespace DeltaDNA
             Logger.LogInfo("Registering for ads");
             
             if (manager != null) {
-                manager.RegisterForAds(SMARTADS_DECISION_POINT);
+                manager.RegisterForAds(
+                    SMARTADS_DECISION_POINT,
+                    DDNA.Instance.Settings.AdvertiserGdprUserConsent,
+                    DDNA.Instance.Settings.AdvertiserGdprAgeRestrictedUser);
             } else {
                 Logger.LogWarning("SmartAds manager hasn't been created");
             }

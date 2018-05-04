@@ -48,7 +48,7 @@ namespace DeltaDNA.Ads.UnityPlayer {
         private AdAgent interstitialAgent;
         private AdAgent rewardedAgent;
 
-        public void RegisterForAds(string decisionPoint) {
+        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted) {
             var engagement = new Engagement(decisionPoint);
             engagement.Flavour = "internal";
             engagement.AddParam("adSdkVersion", Settings.SDK_VERSION);

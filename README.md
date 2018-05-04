@@ -16,6 +16,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Usage](#usage)
  * [Showing ads](#showing-ads)
  * [Events](#events)
+ * [User Consent for Tracking and Age Restriction (GDPR)](#user-consent-for-tracking-and-age-restriction-(gdpr))
  * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
  * [Push Notifications](#push-notifications)
@@ -182,6 +183,10 @@ The `RewardedAd` class supports the following event callbacks:
 * `OnRewardedAdOpened` - Called when an ad is opened.
 * `OnRewardedAdFailedToOpen` - Called when an ad fails to show.
 * `OnRewardedAdClosed` - Called when an ad is closed. A boolean parameter indicates if the user had watched enough of the ad to be rewarded.
+
+### User Consent for Tracking and Age Restriction (GDPR)
+
+By default user consent is not given for advertising user tracking and the user is assumed to not be age restricted (16 and over). These settings can be changed through the `Settings` class by calling `DDNA.Instance.Settings` and changing the advertising properties. Changes to either of the values while SmartAds is running will take effect during the next session.
 
 ### Diagnostics
 

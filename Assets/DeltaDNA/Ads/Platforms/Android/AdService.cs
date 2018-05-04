@@ -50,9 +50,9 @@ namespace DeltaDNA.Ads.Android {
             #endif
         }
 
-        public void RegisterForAds(string decisionPoint) {
+        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted) {
             #if DDNA_SMARTADS
-            adService.Call("registerForAds", decisionPoint);
+            adService.Call("registerForAds", decisionPoint, userConsent, ageRestricted);
             #endif
         }
         
