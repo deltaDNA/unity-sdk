@@ -15,10 +15,9 @@
 //
 
 using System;
-using UnityEngine;
 
-namespace DeltaDNA
-{
+namespace DeltaDNA {
+
     using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     /// <summary>
@@ -26,12 +25,12 @@ namespace DeltaDNA
     /// service.  It makes the request to Engage and notifies on a callback when the
     /// requst completes.
     /// </summary>
-    public class EngageFactory
-    {
-        private readonly DDNA ddna;
+    public class EngageFactory {
+
+        private readonly DDNABase ddna;
         private readonly SmartAds smartads;
-    
-        public EngageFactory(DDNA ddna, SmartAds smartads) {
+
+        internal EngageFactory(DDNABase ddna, SmartAds smartads) {
             this.ddna = ddna;
             this.smartads = smartads;
         }
@@ -193,6 +192,5 @@ namespace DeltaDNA
                 return new Engagement(decisionPoint);
             }
         }
-    
     }
 }

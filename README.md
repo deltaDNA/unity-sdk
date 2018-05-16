@@ -27,6 +27,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [SmartAds on Android](#smartads-on-android)
  * [Permissions](#permissions)
  * [Unity 4.7 Android](#unity-4.7-android)
+* [Forgetting a User (GDPR)](#forgetting-a-user-(gdpr))
 * [Migrations](#migrations)
  * [4.2](#version-42)
  * [4.3](#version-43)
@@ -278,6 +279,11 @@ When using an older version of Unity, such as 4.7, the following steps need to b
 5. In the Unity Editor set the *Minimum API Level* to *15*.
 
 If SmartAds is imported into the project then the *Minimum API Level* needs to be set to *16* and LoopMe needs to be removed from the ad networks. Additional networks may need to be deselected in order to workaround Android's dex limit when using Unity's older build chain.
+
+## Forgetting a User (GDPR)
+If a user no longer wishes to be tracked and would like to be forgotten the `ForgetMe()` API can be used. This will stop the SDK from sending/receiving any further information to/from the Platform, as well as initiating a data deletion request on behalf of the user. The SDK will continue to work as it normally would, without any additional work required.
+
+If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality. 
 
 ## Migrations
 
