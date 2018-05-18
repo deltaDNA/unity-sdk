@@ -10,6 +10,9 @@
 - Crash in Editor when debug notifications are enabled for iOS.
 - Unity Jar Resolver looping when debug notifications are enabled.
 
+### Changed
+- Unity Jar Resolver updated to 1.2.71.
+
 ## [4.8.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.1) (2018-04-30)
 ### Fixed
 - Prevent Smartads debug notifications being triggered by other push notification libraries.
