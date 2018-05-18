@@ -6,6 +6,7 @@
 
 ### Fixed
 - Crash in Editor when Android notifications are removed from project.
+- Crash in Editor when debug notifications are enabled for iOS.
 
 ## [4.8.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.1) (2018-04-30)
 ### Fixed

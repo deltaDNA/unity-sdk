@@ -27,6 +27,7 @@ namespace DeltaDNA.Ads.Editor {
         }
         
         private static bool isDevelopment;
+        private static bool isDebugNotifications;
         private static string iosMinTargetVersion;
         
         static void Update() {
@@ -57,7 +58,7 @@ namespace DeltaDNA.Ads.Editor {
                     isDevelopment && instance.AreDebugNotificationsEnabled());
                 
                 var smartAdsOn = instance.IsEnabled();
-                var isDebugNotifications = isDevelopment && instance.AreDebugNotificationsEnabled();
+                isDebugNotifications = isDevelopment && instance.AreDebugNotificationsEnabled();
                 
                 instance = new IosNetworks();
                 instance.ApplyChanges(
@@ -88,6 +89,10 @@ namespace DeltaDNA.Ads.Editor {
         
         internal static bool IsDevelopment() {
             return isDevelopment;
+        }
+        
+        internal static bool IsDebugNotifications() {
+            return isDebugNotifications;
         }
         
         internal static string IosMinTargetVersion() {
