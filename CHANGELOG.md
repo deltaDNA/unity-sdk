@@ -7,6 +7,7 @@
 ### Fixed
 - Crash in Editor when Android notifications are removed from project.
 - Crash in Editor when debug notifications are enabled for iOS.
+- Unity Jar Resolver looping when debug notifications are enabled.
 
 ## [4.8.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.8.1) (2018-04-30)
 ### Fixed

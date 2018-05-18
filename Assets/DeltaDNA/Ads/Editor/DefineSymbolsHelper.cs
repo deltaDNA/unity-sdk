@@ -21,23 +21,23 @@ using UnityEditor;
 namespace DeltaDNA.Ads.Editor {
     
     internal sealed class DefineSymbolsHelper {
-
+        
         internal const string SMARTADS = "DDNA_SMARTADS";
         internal const string DEBUG_NOTIFICATIONS = "DDNA_DEBUG_NOTIFICATIONS";
         
         internal static void Add(string symbol) {
             var symbols = GetSymbols();
-            symbols.Remove(symbol);
-            symbols.Add(symbol);
-            
-            SetSymbols(symbols);
+            if (!symbols.Remove(symbol)) {
+                symbols.Add(symbol);
+                SetSymbols(symbols);
+            }
         }
         
         internal static void Remove(string symbol) {
             var symbols = GetSymbols();
-            symbols.Remove(symbol);
-
-            SetSymbols(symbols);
+            if (symbols.Remove(symbol)) {
+                SetSymbols(symbols);
+            }
         }
         
         private static List<string> GetSymbols() {
