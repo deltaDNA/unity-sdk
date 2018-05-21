@@ -204,7 +204,7 @@ We record if your game was started by the player clicking on a push notification
 
 We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries via Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
 
-__The ad networks require a minimum target version of 8. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
+__The ad networks require a minimum target version of 9. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
 
 To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
 

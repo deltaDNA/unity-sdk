@@ -1,6 +1,6 @@
 # Change Log
 
-## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
+## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)
 ### Added
 - API for forgetting the user and stopping tracking (GDPR).
 - Settings for advertising tracking consent and age restriction (GDPR).
