@@ -73,7 +73,15 @@ namespace DeltaDNA {
 
         override internal void RecordPushNotification(Dictionary<string, object> payload) {}
 
+        override internal void RequestSessionConfiguration() {
+            ddna.NotifyOnSessionConfigured(false);
+        }
+
         override internal void Upload() {}
+
+        override internal void DownloadImageAssets() {
+            ddna.NotifyOnImageCachePopulated();
+        }
 
         override internal void ClearPersistentData() {}
 

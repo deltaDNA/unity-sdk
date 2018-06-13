@@ -114,6 +114,10 @@ namespace DeltaDNA {
         /// <value>The response from Engage as JSON.</value>
         public JSONObject JSON { get; private set; }
 
+        internal string GetDecisionPointAndFlavour() {
+            return DecisionPoint + '@' + Flavour;
+        }
+
         public override string ToString ()
         {
             return string.Format ("[Engagement: DecisionPoint={0}, Flavour={1}, Raw={2}, StatusCode={3}, Error={4}, JSON={5}]", 

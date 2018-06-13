@@ -30,12 +30,33 @@ namespace DeltaDNA {
     public class DDNA : Singleton<DDNA> {
 
         private const string PF_KEY_USER_ID = "DDSDK_USER_ID";
+        internal const string PF_KEY_FIRST_SESSION = "DDSDK_FIRST_SESSION";
+        internal const string PF_KEY_LAST_SESSION = "DDSDK_LAST_SESSION";
         internal const string PF_KEY_FORGET_ME = "DDSDK_FORGET_ME";
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
 
         private static object _lock = new object();
 
         public event Action OnNewSession;
+        /// <summary>
+        /// Will be called when the session configuration will be successfully
+        /// retrieved. The type parameter specifies whether the response was
+        /// cached or not.
+        /// </summary>
+        public event Action<bool> OnSessionConfigured;
+        /// <summary>
+        /// Will be called when the session configuration request fails.
+        /// </summary>
+        public event Action OnSessionConfigurationFailed;
+        /// <summary>
+        /// Will be called when the image cache will be successfully populated.
+        /// </summary>
+        public event Action OnImageCachePopulated;
+        /// <summary>
+        /// Will be called when the image cache will fail to be populated. The
+        /// reason for the failure will be passed as the type argument.
+        /// </summary>
+        public event Action<string> OnImageCachingFailed;
 
         private DDNABase delegated;
         private string collectURL;
@@ -169,6 +190,8 @@ namespace DeltaDNA {
                 }
 
                 if (newPlayer && delegated is DDNANonTracking) {
+                    PlayerPrefs.DeleteKey(PF_KEY_FIRST_SESSION);
+                    PlayerPrefs.DeleteKey(PF_KEY_LAST_SESSION);
                     PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
                     PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
 
@@ -210,7 +233,17 @@ namespace DeltaDNA {
             string sessionID = GenerateSessionID();
             Logger.LogInfo("Starting new session "+sessionID);
             SessionID = sessionID;
-            
+
+            RequestSessionConfiguration();
+            if (!PlayerPrefs.HasKey(PF_KEY_FIRST_SESSION)) {
+                PlayerPrefs.SetString(
+                    PF_KEY_FIRST_SESSION,
+                    DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT));
+            }
+            PlayerPrefs.SetString(
+                PF_KEY_LAST_SESSION,
+                DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT));
+
             if (OnNewSession != null) OnNewSession();
         }
 
@@ -284,12 +317,38 @@ namespace DeltaDNA {
         }
 
         /// <summary>
+        /// Makes a session configuration request. This method should be called if
+        /// a session configuration request has previously failed.
+        ///
+        /// The result will be notified via <see cref="OnSessionConfigured"/> or
+        /// <see cref="OnSessionConfigurationFailed"/> in case of failure.
+        /// </summary>
+        public void RequestSessionConfiguration() {
+            delegated.RequestSessionConfiguration();
+        }
+
+        /// <summary>
         /// Uploads waiting events to our Collect service.  By default this is called automatically in the
         /// background.  If you disable auto uploading via <see cref="Settings.BackgroundEventUpload"/> you
         /// will need to call this method yourself periodically.
         /// </summary>
         public void Upload() {
             delegated.Upload();
+        }
+
+        /// <summary>
+        /// Downloads image assets from the session configuration.
+        ///
+        /// This happens automatically whenever a session configuration request
+        /// takes place, such as during a new session or when
+        /// <see cref="RequestSessionConfiguration"/> is called.
+        ///
+        /// The success or failure will be notified via
+        /// <see cref="OnImageCachePopulated"/> or <see cref="OnImageCachingFailed"/>
+        /// respectively.
+        /// </summary>
+        public void DownloadImageAssets() {
+            delegated.DownloadImageAssets();
         }
 
         /// <summary>
@@ -304,6 +363,8 @@ namespace DeltaDNA {
             }
 
             PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
+            PlayerPrefs.DeleteKey(PF_KEY_FIRST_SESSION);
+            PlayerPrefs.DeleteKey(PF_KEY_LAST_SESSION);
             PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
             PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
 
@@ -490,7 +551,7 @@ namespace DeltaDNA {
         }
 
         #endregion
-        #region Private Helpers
+        #region Helpers
 
         public override void OnDestroy() {
             PlayerPrefs.Save();
@@ -522,6 +583,22 @@ namespace DeltaDNA {
                 url = FormatURI(Settings.ENGAGE_URL_PATTERN, this.EngageURL, this.EnvironmentKey, null);
             }
             return url;
+        }
+
+        internal void NotifyOnSessionConfigured(bool cached) {
+            if (OnSessionConfigured != null) OnSessionConfigured(cached);
+        }
+
+        internal void NotifyOnSessionConfigurationFailed() {
+            if (OnSessionConfigurationFailed != null) OnSessionConfigurationFailed();
+        }
+
+        internal void NotifyOnImageCachePopulated() {
+            if (OnImageCachePopulated != null) OnImageCachePopulated();
+        }
+
+        internal void NotifyOnImageCachingFailed(string cause) {
+            if (OnImageCachingFailed != null) OnImageCachingFailed(cause);
         }
 
         internal static string GenerateHash(string data, string secret) {
