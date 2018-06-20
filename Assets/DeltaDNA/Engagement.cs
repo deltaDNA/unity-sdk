@@ -112,7 +112,7 @@ namespace DeltaDNA {
         /// or marked with 'isCachedResponse=true' key if the cache was used.  
         /// </summary>
         /// <value>The response from Engage as JSON.</value>
-        public JSONObject JSON { get; private set; }
+        public JSONObject JSON { get; internal set; }
 
         internal string GetDecisionPointAndFlavour() {
             return DecisionPoint + '@' + Flavour;

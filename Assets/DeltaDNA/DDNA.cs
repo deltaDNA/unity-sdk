@@ -260,17 +260,20 @@ namespace DeltaDNA {
         /// Records an event using the GameEvent class.
         /// </summary>
         /// <param name="gameEvent">Event to record.</param>
+        /// <returns><see cref="EventAction"/> for this event</returns>
         /// <exception cref="System.Exception">Thrown if the SDK has not been started.</exception>
-        public void RecordEvent<T>(T gameEvent) where T : GameEvent<T> {
-            delegated.RecordEvent(gameEvent);
+        public EventAction RecordEvent<T>(T gameEvent) where T : GameEvent<T> {
+            return delegated.RecordEvent(gameEvent);
         }
 
         /// <summary>
         /// Records an event with no custom parameters.
         /// </summary>
         /// <param name="eventName">Name of the event.</param>
-        public void RecordEvent(string eventName) {
-            delegated.RecordEvent(eventName);
+        /// <returns><see cref="EventAction"/> for this event</returns>
+        /// <exception cref="System.Exception">Thrown if the SDK has not been started.</exception>
+        public EventAction RecordEvent(string eventName) {
+            return delegated.RecordEvent(eventName);
         }
 
         /// <summary>
@@ -279,8 +282,10 @@ namespace DeltaDNA {
         /// </summary>
         /// <param name="eventName">Event name.</param>
         /// <param name="eventParams">Event parameters.</param>
-        public void RecordEvent(string eventName, Dictionary<string, object> eventParams) {
-            delegated.RecordEvent(eventName, eventParams);
+        /// <returns><see cref="EventAction"/> for this event</returns>
+        /// <exception cref="System.Exception">Thrown if the SDK has not been started.</exception>
+        public EventAction RecordEvent(string eventName, Dictionary<string, object> eventParams) {
+            return delegated.RecordEvent(eventName, eventParams);
         }
 
         /// <summary>
@@ -566,12 +571,8 @@ namespace DeltaDNA {
             delegated.OnApplicationPause(pauseStatus);
         }
 
-        private string GenerateSessionID() {
-            return Guid.NewGuid().ToString();
-        }
-
-        private string GenerateUserID() {
-            return Guid.NewGuid().ToString();
+        internal virtual ImageMessageStore GetImageMessageStore() {
+            return delegated.ImageMessageStore;
         }
 
         internal string ResolveEngageURL(string httpBody) {
@@ -599,6 +600,14 @@ namespace DeltaDNA {
 
         internal void NotifyOnImageCachingFailed(string cause) {
             if (OnImageCachingFailed != null) OnImageCachingFailed(cause);
+        }
+
+        private string GenerateSessionID() {
+            return Guid.NewGuid().ToString();
+        }
+
+        private string GenerateUserID() {
+            return Guid.NewGuid().ToString();
         }
 
         internal static string GenerateHash(string data, string secret) {

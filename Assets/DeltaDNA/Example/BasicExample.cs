@@ -101,7 +101,17 @@ public class BasicExample : MonoBehaviour {
                 )
             );
 
-        DDNA.Instance.RecordEvent(gameEvent);
+        DDNA.Instance
+                .RecordEvent(gameEvent)
+                .Add(new GameParametersHandler(gameParameters => {
+                    // do something with the game parameters
+                    Logger.LogInfo("Received game parameters from event trigger: " + gameParameters);
+                }))
+                .Add(new ImageMessageHandler(DDNA.Instance, imageMessage => {
+                    // the image message is already prepared so it will show instantly
+                    imageMessage.Show();
+                }))
+                .Run();
     }
 
     public void OnTransactionEventBtn_Clicked() {

@@ -24,7 +24,8 @@ using UnityEngine.Networking;
 #endif
 
 namespace DeltaDNA {
-    internal sealed class ImageMessageStore {
+
+    internal class ImageMessageStore {
 
         private readonly string cache = Application.temporaryCachePath + "/deltadna/image_messages/";
 
@@ -38,6 +39,19 @@ namespace DeltaDNA {
             } else {
                 Logger.LogInfo("Created image message cache at " + cache);
             }
+        }
+
+        #if UNITY_EDITOR
+        internal ImageMessageStore() {
+            parent = null;
+        }
+        #endif
+
+        internal virtual bool Has(string url) {
+            return Directory
+                .GetFiles(cache)
+                .Where(e => GetName(e).Equals(GetName(url)))
+                .Count() > 0;
         }
 
         internal Texture2D Get(string url) {
