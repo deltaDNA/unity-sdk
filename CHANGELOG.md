@@ -1,5 +1,9 @@
 # Change Log
 
+## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
+### Added
+- Image message asset caching.
+
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)
 ### Added
 - API for forgetting the user and stopping tracking (GDPR).

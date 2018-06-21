@@ -26,6 +26,7 @@ namespace DeltaDNA {
     internal class DDNAImpl : DDNABase {
 
         private readonly EventStore eventStore = null;
+        private readonly ImageMessageStore imageMessageStore = null;
 
         private bool started = false;
         private bool uploading = false;
@@ -53,6 +54,7 @@ namespace DeltaDNA {
                 Settings.UseEventStore = false;
                 eventStore = new EventStore(eventStorePath);
             }
+            imageMessageStore = new ImageMessageStore(ddna);
 
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
@@ -294,9 +296,8 @@ namespace DeltaDNA {
         }
 
         override internal void ClearPersistentData() {
-            if (eventStore != null) {
-                eventStore.ClearAll();
-            }
+            if (eventStore != null) eventStore.ClearAll();
+            if (imageMessageStore != null) imageMessageStore.Clear();
 
             Engage.ClearCache();
         }
