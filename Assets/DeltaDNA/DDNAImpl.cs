@@ -17,6 +17,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
 using UnityEngine;
 
 namespace DeltaDNA {
@@ -36,6 +39,13 @@ namespace DeltaDNA {
 
         private string pushNotificationToken = null;
         private string androidRegistrationId = null;
+
+        private ReadOnlyCollection<string> whitelistDps =
+            new ReadOnlyCollection<string>(new List<string>());
+        private ReadOnlyCollection<string> whitelistEvents =
+            new ReadOnlyCollection<string>(new List<string>());
+        private ReadOnlyCollection<string> cacheImages =
+            new ReadOnlyCollection<string>(new List<string>());
 
         internal DDNAImpl(DDNA ddna) : base(ddna) {
             string eventStorePath = null;
@@ -129,6 +139,9 @@ namespace DeltaDNA {
         override internal void RecordEvent<T>(T gameEvent) {
             if (!started) {
                 throw new Exception("You must first start the SDK via the StartSDK method");
+            } else if (whitelistEvents.Count != 0 && !whitelistEvents.Contains(gameEvent.Name)) {
+                Logger.LogDebug("Event " + gameEvent.Name + " is not whitelisted, ignoring");
+                return;
             }
 
             gameEvent.AddParam("platform", Platform);
@@ -170,6 +183,15 @@ namespace DeltaDNA {
         override internal void RequestEngagement(Engagement engagement, Action<Dictionary<string, object>> callback) {
             if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method.");
+            } else if (whitelistDps.Count != 0
+                && !whitelistDps.Contains(engagement.GetDecisionPointAndFlavour())) {
+                Logger.LogDebug(string.Format(
+                    "Decision point {0} is not whitelisted",
+                    engagement.GetDecisionPointAndFlavour()));
+                engagement.StatusCode = 200;
+                engagement.Raw = "{}";
+                callback(engagement.JSON);
+                return;
             }
 
             if (String.IsNullOrEmpty(this.EngageURL)) {
@@ -205,6 +227,15 @@ namespace DeltaDNA {
         override internal void RequestEngagement(Engagement engagement, Action<Engagement> onCompleted, Action<Exception> onError) {
             if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method.");
+            } else if (whitelistDps.Count != 0
+                && !whitelistDps.Contains(engagement.GetDecisionPointAndFlavour())) {
+                Logger.LogDebug(string.Format(
+                    "Decision point {0} is not whitelisted",
+                    engagement.GetDecisionPointAndFlavour()));
+                engagement.StatusCode = 200;
+                engagement.Raw = "{}";
+                onCompleted(engagement);
+                return;
             }
 
             if (String.IsNullOrEmpty(this.EngageURL)) {
@@ -281,6 +312,33 @@ namespace DeltaDNA {
             }
         }
 
+        override internal void RequestSessionConfiguration() {
+            Logger.LogDebug("Requesting session configuration");
+
+            var firstSession = PlayerPrefs.HasKey(DDNA.PF_KEY_FIRST_SESSION)
+                ? DateTime.ParseExact(
+                    PlayerPrefs.GetString(DDNA.PF_KEY_FIRST_SESSION),
+                    Settings.EVENT_TIMESTAMP_FORMAT,
+                    CultureInfo.InvariantCulture)
+                : (DateTime?) null;
+            var lastSession = PlayerPrefs.HasKey(DDNA.PF_KEY_LAST_SESSION)
+                ? DateTime.ParseExact(
+                    PlayerPrefs.GetString(DDNA.PF_KEY_LAST_SESSION),
+                    Settings.EVENT_TIMESTAMP_FORMAT,
+                    CultureInfo.InvariantCulture)
+                : (DateTime?) null;
+
+            RequestEngagement(
+                new Engagement("config") { Flavour = "internal" }
+                    .AddParam("timeSinceFirstSession", firstSession != null
+                        ? ((TimeSpan) (DateTime.UtcNow - firstSession)).TotalMilliseconds
+                        : 0)
+                    .AddParam("timeSinceLastSession", lastSession != null
+                        ? ((TimeSpan) (DateTime.UtcNow - lastSession)).TotalMilliseconds
+                        : 0),
+                HandleSessionConfigurationCallback);
+        }
+
         override internal void Upload() {
             if (!started) {
                 Logger.LogError("You must first start the SDK via the StartSDK method.");
@@ -293,6 +351,21 @@ namespace DeltaDNA {
             }
 
             StartCoroutine(UploadCoroutine());
+        }
+
+        override internal void DownloadImageAssets() {
+            Logger.LogDebug("Downloading image assets");
+
+            StartCoroutine(imageMessageStore.Prefetch(
+                () => {
+                    Logger.LogDebug("Image cache populated");
+                    ddna.NotifyOnImageCachePopulated();
+                },
+                e => {
+                    Logger.LogDebug("Image caching failed due to " + e);
+                    ddna.NotifyOnImageCachingFailed(e);
+                },
+                cacheImages.ToArray()));
         }
 
         override internal void ClearPersistentData() {
@@ -346,7 +419,7 @@ namespace DeltaDNA {
         }
 
         #endregion
-        #region Private Helpers
+        #region Helpers
 
         private IEnumerator UploadCoroutine() {
             uploading = true;
@@ -477,6 +550,54 @@ namespace DeltaDNA {
                 }
 
                 RecordEvent(clientDeviceEvent);
+            }
+        }
+
+        private void HandleSessionConfigurationCallback(JSONObject response) {
+            if (response.Count > 0) {
+                var parameters = response["parameters"];
+
+                if (parameters != null && parameters is JSONObject) {
+                    object dpWhitelist = null;
+                    (parameters as JSONObject).TryGetValue("dpWhitelist", out dpWhitelist);
+                    if (dpWhitelist != null && dpWhitelist is List<object>) {
+                        whitelistDps = new ReadOnlyCollection<string>(
+                            (dpWhitelist as List<object>)
+                            .Select(e => e as string)
+                            .ToList());
+                    }
+
+                    object eventsWhitelist = null;
+                    (parameters as JSONObject).TryGetValue("eventsWhitelist", out eventsWhitelist);
+                    if (eventsWhitelist != null && eventsWhitelist is List<object>) {
+                        whitelistEvents = new ReadOnlyCollection<string>(
+                            (eventsWhitelist as List<object>)
+                            .Select(e => e as string)
+                            .ToList());
+                    }
+
+                    object imageCache = null;
+                    (parameters as JSONObject).TryGetValue("imageCache", out imageCache);
+                    if (imageCache != null && imageCache is List<object>) {
+                        cacheImages = new ReadOnlyCollection<string>(
+                            (imageCache as List<object>)
+                            .Select(e => e as string)
+                            .ToList());
+                        DownloadImageAssets();
+                    }
+
+                    Logger.LogDebug("Session configured");
+                    object cached = null;
+                    (parameters as JSONObject).TryGetValue("isCachedResponse", out cached);
+                    if (cached != null && cached is bool) {
+                        ddna.NotifyOnSessionConfigured(cached as bool? ?? false);
+                    } else {
+                        ddna.NotifyOnSessionConfigured(false);
+                    }
+                }
+            } else {
+                Logger.LogWarning("Session configuration failed");
+                ddna.NotifyOnSessionConfigurationFailed();
             }
         }
 

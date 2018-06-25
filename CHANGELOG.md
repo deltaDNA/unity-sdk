@@ -2,6 +2,8 @@
 
 ## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
 ### Added
+- Session configuration.
+- Event and decision point whitelisting.
 - Image message asset caching.
 
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)

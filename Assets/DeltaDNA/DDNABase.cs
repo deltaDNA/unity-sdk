@@ -55,7 +55,10 @@ namespace DeltaDNA {
 
         internal abstract void RecordPushNotification(Dictionary<string, object> payload);
 
+        internal abstract void RequestSessionConfiguration();
+
         internal abstract void Upload();
+        internal abstract void DownloadImageAssets();
 
         internal abstract void ClearPersistentData();
         internal abstract void ForgetMe();
