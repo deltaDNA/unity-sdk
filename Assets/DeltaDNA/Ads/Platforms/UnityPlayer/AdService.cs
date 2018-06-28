@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace DeltaDNA.Ads.UnityPlayer {
 
-    using JSONObject = IDictionary<string, object>;
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
 
     #if UNITY_EDITOR
     internal class AdService : ISmartAdsManager {
@@ -48,81 +48,68 @@ namespace DeltaDNA.Ads.UnityPlayer {
         private AdAgent interstitialAgent;
         private AdAgent rewardedAgent;
 
-        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted) {
-            var engagement = new Engagement(decisionPoint);
-            engagement.Flavour = "internal";
-            engagement.AddParam("adSdkVersion", Settings.SDK_VERSION);
+        public void RegisterForAds(JSONObject response, bool userConsent, bool ageRestricted) {
 
-            DDNA.Instance.RequestEngagement(engagement, (response) => {
-                if (!response.ContainsKey("parameters")) {
-                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
-                        "Invalid Engage response, missing 'parameters' key");
-                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
-                        "Invalid Engage response, missing 'parameters' key");
-                    return;
-                }
+            var config = response["parameters"] as IDictionary<string, object>;
 
-                var config = response["parameters"] as IDictionary<string, object>;
+            if (!config.ContainsKey("adShowSession")
+                || !(config["adShowSession"] as bool? ?? false)) {
+                SmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    "Ads disabled for this session");
+                SmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    "Ads disabled for this session");
+                return;
+            }
 
-                if (!config.ContainsKey("adShowSession")
-                    || !(config["adShowSession"] as bool? ?? false)) {
-                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
-                        "Ads disabled for this session");
-                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
-                        "Ads disabled for this session");
-                    return;
-                }
+            if (!config.ContainsKey("adProviders")
+                && !config.ContainsKey("adRewardedProviders")) {
+                SmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    "Invalid Engage response, missing 'adProviders' key");
+                SmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    "Invalid Engage response, missing 'adRewardedProviders' key");
+                return;
+            }
 
-                if (!config.ContainsKey("adProviders")
-                    && !config.ContainsKey("adRewardedProviders")) {
-                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
-                        "Invalid Engage response, missing 'adProviders' key");
-                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
-                        "Invalid Engage response, missing 'adRewardedProviders' key");
-                    return;
-                }
+            adMinimumInterval = (config.ContainsKey("adMinimumInterval"))
+                ? config["adMinimumInterval"] as int? ?? DEFAULT_AD_MINIMUM_INTERVAL
+                : DEFAULT_AD_MINIMUM_INTERVAL;
+            adMaxPerSession = (config.ContainsKey("adMaxPerSession"))
+                ? config["adMaxPerSession"] as int? ?? DEFAULT_AD_MAX_PER_SESSION
+                : DEFAULT_AD_MAX_PER_SESSION;
 
-                adMinimumInterval = (config.ContainsKey("adMinimumInterval"))
-                    ? config["adMinimumInterval"] as int? ?? DEFAULT_AD_MINIMUM_INTERVAL
-                    : DEFAULT_AD_MINIMUM_INTERVAL;
-                adMaxPerSession = (config.ContainsKey("adMaxPerSession"))
-                    ? config["adMaxPerSession"] as int? ?? DEFAULT_AD_MAX_PER_SESSION
-                    : DEFAULT_AD_MAX_PER_SESSION;
+            if (!config.ContainsKey("adProviders")) {
+                SmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    "No interstitial ad providers defined");
+            } else if ((config["adProviders"] as IList<object>).Count == 0) {
+                SmartAds.Instance.DidFailToRegisterForInterstitialAds(
+                    "No interstitial ad providers defined");
+            } else {
+                interstitialAgent = new AdAgent(
+                    false,
+                    (config["adProviders"] as IList<object>).Count,
+                    adMaxPerSession);
+                interstitialAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
+                interstitialAgent.RequestAd();
 
-                if (!config.ContainsKey("adProviders")) {
-                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
-                        "No interstitial ad providers defined");
-                } else if ((config["adProviders"] as IList<object>).Count == 0) {
-                    SmartAds.Instance.DidFailToRegisterForInterstitialAds(
-                        "No interstitial ad providers defined");
-                } else {
-                    interstitialAgent = new AdAgent(
-                        false,
-                        (config["adProviders"] as IList<object>).Count,
-                        adMaxPerSession);
-                    interstitialAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
-                    interstitialAgent.RequestAd();
+                SmartAds.Instance.DidRegisterForInterstitialAds();
+            }
 
-                    SmartAds.Instance.DidRegisterForInterstitialAds();
-                }
+            if (!config.ContainsKey("adRewardedProviders")) {
+                SmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    "No rewarded ad providers defined");
+            }  else if ((config["adRewardedProviders"] as IList<object>).Count == 0) {
+                SmartAds.Instance.DidFailToRegisterForRewardedAds(
+                    "No rewarded ad providers defined");
+            } else {
+                rewardedAgent = new AdAgent(
+                    true,
+                    (config["adRewardedProviders"] as IList<object>).Count,
+                    adMaxPerSession);
+                rewardedAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
+                rewardedAgent.RequestAd();
 
-                if (!config.ContainsKey("adRewardedProviders")) {
-                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
-                        "No rewarded ad providers defined");
-                }  else if ((config["adRewardedProviders"] as IList<object>).Count == 0) {
-                    SmartAds.Instance.DidFailToRegisterForRewardedAds(
-                        "No rewarded ad providers defined");
-                } else {
-                    rewardedAgent = new AdAgent(
-                        true,
-                        (config["adRewardedProviders"] as IList<object>).Count,
-                        adMaxPerSession);
-                    rewardedAgent.RecordAdShown += ((dp, time) => metrics.RecordAdShown(dp, time));
-                    rewardedAgent.RequestAd();
-
-                    SmartAds.Instance.DidRegisterForRewardedAds();
-                }
-            });
+                SmartAds.Instance.DidRegisterForRewardedAds();
+            }
         }
 
         public void OnNewSession() {

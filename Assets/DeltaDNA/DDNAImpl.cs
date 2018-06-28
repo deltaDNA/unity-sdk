@@ -616,6 +616,10 @@ namespace DeltaDNA {
                         DownloadImageAssets();
                     }
 
+                    #if DDNA_SMARTADS
+                    SmartAds.Instance.RegisterForAdsInternal(response);
+                    #endif
+
                     Logger.LogDebug("Session configured");
                     object cached = null;
                     (parameters as JSONObject).TryGetValue("isCachedResponse", out cached);

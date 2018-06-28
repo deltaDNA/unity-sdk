@@ -30,8 +30,6 @@ namespace DeltaDNA
     /// </summary>
     public class SmartAds : Singleton<SmartAds> {
 
-        public const string SMARTADS_DECISION_POINT = "advertising";
-
         private ISmartAdsManager manager;
         private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
 
@@ -39,10 +37,7 @@ namespace DeltaDNA
         
         internal event Action<string> OnRewardedAdOpenedWithDecisionPoint;
 
-        internal SmartAds() {
-            DDNA.Instance.OnNewSession -= OnNewSession;
-            DDNA.Instance.OnNewSession += OnNewSession;
-        }
+        internal SmartAds() {}
 
         internal SmartAds Config(EngageCache engageCache) {
             this.engageCache = engageCache;
@@ -322,38 +317,6 @@ namespace DeltaDNA
             actions.Enqueue(action);
         }
 
-        internal void RequestEngagement(string request)
-        {
-            Action action = delegate() {
-                JSONObject engagement = null;
-                try {
-                    engagement = Json.Deserialize(request) as JSONObject;
-                } catch (Exception exception) {
-                    Logger.LogError("Failed to deserialise engage request: "+exception.Message);
-                }
-
-                if (engagement != null) {
-                    var decisionPoint = engagement["decisionPoint"] as string;
-                    var flavour = engagement["flavour"] as string;
-                    var parameters = engagement["parameters"] as JSONObject;
-                    var id = engagement["id"] as string;
-
-                    EngageResponse engageResponse = (response, statusCode, error) => {
-                        manager.EngageResponse(id, response, statusCode, error);
-                    };
-
-                    EngageRequest engageRequest = new EngageRequest(decisionPoint);
-                    engageRequest.Flavour = flavour;
-                    engageRequest.Parameters = parameters;
-
-                    StartCoroutine(Engage.Request(
-                        this, engageCache, engageRequest, engageResponse));
-                }
-            };
-
-            actions.Enqueue(action);
-        }
-
         #endregion
 
         void Update()
@@ -385,12 +348,6 @@ namespace DeltaDNA
             base.OnDestroy();
         }
         
-        public void OnNewSession() {
-            if (manager == null) CreateManager();
-            
-            RegisterForAdsInternal();
-        }
-        
         private void CreateManager() {
             Logger.LogDebug("Creating SmartAds manager");
             
@@ -416,24 +373,16 @@ namespace DeltaDNA
                 DidFailToRegisterForInterstitialAds(exception.Message);
                 DidFailToRegisterForRewardedAds(exception.Message);
             }
-            
-            if (manager != null) {
-                DDNA.Instance.OnNewSession -= manager.OnNewSession;
-                DDNA.Instance.OnNewSession += manager.OnNewSession;
-            }
         }
         
-        private void RegisterForAdsInternal() {
+        internal void RegisterForAdsInternal(JSONObject config) {
             Logger.LogInfo("Registering for ads");
-            
-            if (manager != null) {
-                manager.RegisterForAds(
-                    SMARTADS_DECISION_POINT,
-                    DDNA.Instance.Settings.AdvertiserGdprUserConsent,
-                    DDNA.Instance.Settings.AdvertiserGdprAgeRestrictedUser);
-            } else {
-                Logger.LogWarning("SmartAds manager hasn't been created");
-            }
+
+            if (manager == null) CreateManager();
+            if (manager != null) manager.RegisterForAds(
+                config,
+                DDNA.Instance.Settings.AdvertiserGdprUserConsent,
+                DDNA.Instance.Settings.AdvertiserGdprAgeRestrictedUser);
         }
     }
 }

@@ -22,10 +22,13 @@ namespace DeltaDNA.Ads.Editor {
     
     internal sealed class IosNetworks : Networks {
         
-        private const string VERSION = "~> 1.9.0";
+        private const string VERSION = "~> 1.10.0-beta.3";
         private const string VERSION_DEBUG = "~> 1.0.0";
         
         private readonly object[] sources = new object[] {
+            new XElement(
+                "source",
+                "git@corp-vm-gitlab:gamesanalytics/CocoaPods.git"),
             new XElement(
                 "source",
                 "https://github.com/deltaDNA/CocoaPods.git"),

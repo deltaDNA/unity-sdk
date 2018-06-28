@@ -7,6 +7,11 @@
 ### Removed
 - MachineZone ads.
 
+### Updated
+- Android notifications library.
+- AdColony, AdMob, AppLovin, Chartboost, InMobi, IronSource, LoopMe, MobFox, MoPub, Tapjoy, Unity, and Vungle ads with GDPR compatibility on Android.
+- Facebook and Flurry ads on Android.
+
 ## [4.10.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10.0) (2018-08-07)
 ### Added
 - Session configuration.

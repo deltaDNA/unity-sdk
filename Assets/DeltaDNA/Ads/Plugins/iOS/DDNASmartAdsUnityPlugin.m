@@ -35,9 +35,9 @@ void UnityPause( int pause );
 #define GetStringParam( _x_ ) ( _x_ != NULL ) ? [NSString stringWithUTF8String:_x_] : [NSString stringWithUTF8String:""]
 
 // Functions called from Unity
-void _registerForAds(const char * decisionPoint, bool userConsent, bool ageRestricted)
+void _registerForAds(const char * config, bool userConsent, bool ageRestricted)
 {
-    [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(decisionPoint) userConsent:userConsent ageRestricted:ageRestricted];
+    [[DDNASmartAdsUnityPlugin sharedPlugin] registerForAds:GetStringParam(config) userConsent:userConsent ageRestricted:ageRestricted];
 }
 
 int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime)
@@ -88,14 +88,6 @@ long _getSessionCount(const char * decisionPoint)
 long _getDailyCount(const char * decisionPoint)
 {
     return [[DDNASmartAdsUnityPlugin sharedPlugin] getDailyCount:GetStringParam(decisionPoint)];
-}
-
-void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error)
-{
-    [[DDNASmartAdsUnityPlugin sharedPlugin] engageResponseForId:GetStringParam(engagementId)
-                                                       response:GetStringParam(response)
-                                                     statusCode:statusCode
-                                                          error:GetStringParam(error)];
 }
 
 void _pause()
@@ -186,8 +178,7 @@ UIViewController *UnityGetGLViewController();
 @property (nonatomic, strong) DDNASmartAdFactory *factory;
 @property (nonatomic, strong) DDNASmartAdService *adService;
 @property (nonatomic, strong) DDNADebugListener *debugListener;
-@property (nonatomic, strong) NSMutableDictionary *engagements;
-@property (nonatomic, copy) NSString *decisionPoint;
+@property (nonatomic, copy) NSString *config;
 @property (nonatomic, assign) BOOL userConsent;
 @property (nonatomic, assign) BOOL ageRestricted;
 
@@ -214,27 +205,20 @@ UIViewController *UnityGetGLViewController();
         [self.debugListener disableNotifications];
         #endif
         [self.debugListener registerListeners];
-        self.engagements = [NSMutableDictionary dictionary];
     }
     return self;
 }
 
-- (void)registerForAds:(NSString *)decisionPoint userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted
+- (void)registerForAds:(NSString *)config userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted
 {
     @synchronized(self) {
-        self.decisionPoint = decisionPoint;
+        self.config = config;
         self.userConsent = userConsent;
-        self.ageRestricted = ageRestricted;
-    
-        if (!self.adService) {
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DDNASDKNewSession" object:nil];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reRegisterForAds) name:@"DDNASDKNewSession" object:nil];
-        }
-    
+        self.ageRestricted = ageRestricted;   
         self.adService = [self.factory buildSmartAdServiceWithDelegate:self];
 
         if (self.adService) {
-            [self.adService beginSessionWithDecisionPoint:decisionPoint userConsent:userConsent ageRestricted:ageRestricted];
+            [self.adService beginSessionWithConfig:[NSDictionary dictionaryWithJSONString:config] userConsent:userConsent ageRestricted:ageRestricted];
         } else {
             UnitySendMessage(SmartAdsObject, "DidFailToRegisterForAds", "Failed to build ad service");
         }
@@ -353,23 +337,6 @@ UIViewController *UnityGetGLViewController();
     }
 }
 
-- (void)engageResponseForId:(NSString *)engagementId response:(NSString *)response statusCode:(NSInteger)statusCode error:(NSString *)error
-{
-    @synchronized(self) {
-        if (self.engagements[engagementId]) {
-            void (^handler)(NSString *, NSInteger, NSError *);
-            handler = self.engagements[engagementId];
-            NSError * nserror = nil;
-            if (error != nil && error.length > 0) {
-                [NSError errorWithDomain:NSURLErrorDomain code:-57 userInfo:@{NSLocalizedDescriptionKey: error}];
-            }
-            handler(response, statusCode, nserror);
-        } else {
-            NSLog(@"Engagement with id %@ not found", engagementId);
-        }
-    }
-}
-
 - (void)pause
 {
     [self.adService pause];
@@ -387,7 +354,7 @@ UIViewController *UnityGetGLViewController();
 
 - (void)reRegisterForAds
 {
-    [self registerForAds:self.decisionPoint userConsent:self.userConsent ageRestricted:self.ageRestricted];
+    [self registerForAds:self.config userConsent:self.userConsent ageRestricted:self.ageRestricted];
 }
 
 #pragma mark DDNASmartAdServiceDelegate
@@ -459,26 +426,6 @@ UIViewController *UnityGetGLViewController();
     };
 
     UnitySendMessage(SmartAdsObject, "RecordEvent", [[NSString stringWithContentsOfDictionary:message] UTF8String]);
-}
-
-- (void)requestEngagementWithDecisionPoint:(NSString *)decisionPoint
-                                   flavour:(NSString *)flavour
-                                parameters:(NSDictionary *)parameters
-                         completionHandler:(void (^)(NSString *response, NSInteger statusCode, NSError *connectionError))completionHandler
-{
-    NSString *engagementId = [[NSUUID UUID] UUIDString];
-
-    NSDictionary *engagement = @{
-            @"decisionPoint": decisionPoint,
-            @"flavour": flavour,
-            @"parameters": parameters == nil ? @{} : parameters,
-            @"id": engagementId
-    };
-
-    void (^handlerCopy)(NSString *, NSInteger, NSError *) = [completionHandler copy];
-    [self.engagements setObject:handlerCopy forKey:engagementId];
-
-    UnitySendMessage(SmartAdsObject, "RequestEngagement", [[NSString stringWithContentsOfDictionary:engagement] UTF8String]);
 }
 
 @end

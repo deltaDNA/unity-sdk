@@ -19,7 +19,7 @@
 #import <Foundation/Foundation.h>
 
 // Unity Binding
-void _registerForAds(const char * decisionPoint, bool userConsent, bool ageRestricted);
+void _registerForAds(const char * config, bool userConsent, bool ageRestricted);
 int _isInterstitialAdAllowed(const char * decisionPoint, const char * engageParams, bool checkTime);
 int _hasLoadedInterstitialAd();
 void _showInterstitialAd(const char * decisionPoint, const char * engageParams);
@@ -30,7 +30,6 @@ void _showRewardedAd(const char * decisionPoint, const char * engageParams);
 long _getLastShown(const char * decisionPoint);
 long _getSessionCount(const char * decisionPoint);
 long _getDailyCount(const char * decisionPoint);
-void _engageResponse(const char * engagementId, const char * response, int statusCode, const char * error);
 void _pause();
 void _resume();
 void _destroy();
@@ -42,7 +41,7 @@ void _fireEventNewSession();
 
 + (instancetype)sharedPlugin;
 
-- (void)registerForAds:(NSString *)decisionPoint userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted;
+- (void)registerForAds:(NSString *)config userConsent:(BOOL)userConsent ageRestricted:(BOOL)ageRestricted;
 - (BOOL)isInterstitialAdAllowed:(NSString *)decisionPoint engageParams:(NSString *)engageParams checkTime:(BOOL)checkTime;
 - (BOOL)hasLoadedInterstitialAd;
 - (void)showInterstitialAd:(NSString *)decisionPoint engageParams:(NSString *)engageParams;
@@ -53,10 +52,6 @@ void _fireEventNewSession();
 - (long)getLastShown:(NSString *)decisionPoint;
 - (long)getSessionCount:(NSString *)decisionPoint;
 - (long)getDailyCount:(NSString *)decisionPoint;
-- (void)engageResponseForId:(NSString *)engagementId
-                   response:(NSString *)response
-                 statusCode:(NSInteger)statusCode
-                      error:(NSString *)error;
 - (void)pause;
 - (void)resume;
 - (void)destroy;
