@@ -35,6 +35,13 @@ namespace DeltaDNA {
             gameObject = ddna.gameObject;
         }
 
+        #if UNITY_EDITOR
+        internal DDNABase() {
+            ddna = null;
+            gameObject = null;
+        }
+        #endif
+
         #region Unity Lifecycle
 
         internal abstract void OnApplicationPause(bool pauseStatus);
@@ -46,9 +53,9 @@ namespace DeltaDNA {
         internal abstract void StartSDK(bool newPlayer);
         internal abstract void StopSDK();
 
-        internal abstract void RecordEvent<T>(T gameEvent) where T : GameEvent<T>;
-        internal abstract void RecordEvent(string eventName);
-        internal abstract void RecordEvent(string eventName, Dictionary<string, object> eventParams);
+        internal abstract EventAction RecordEvent<T>(T gameEvent) where T : GameEvent<T>;
+        internal abstract EventAction RecordEvent(string eventName);
+        internal abstract EventAction RecordEvent(string eventName, Dictionary<string, object> eventParams);
 
         internal abstract void RequestEngagement(Engagement engagement, Action<Dictionary<string, object>> callback);
         internal abstract void RequestEngagement(Engagement engagement, Action<Engagement> onCompleted, Action<Exception> onError);
@@ -63,6 +70,7 @@ namespace DeltaDNA {
         internal abstract void ClearPersistentData();
         internal abstract void ForgetMe();
 
+        internal ImageMessageStore ImageMessageStore { get; set; }
         internal EngageFactory EngageFactory { get; set; }
 
         #endregion

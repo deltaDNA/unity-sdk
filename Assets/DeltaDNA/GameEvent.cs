@@ -24,7 +24,7 @@ namespace DeltaDNA {
     /// </summary>
     public class GameEvent<T> where T : GameEvent<T> {
     
-        private readonly Params parameters;
+        internal readonly Params parameters;
 
         public GameEvent(string name) 
         {
@@ -64,5 +64,4 @@ namespace DeltaDNA {
 
         public GameEvent(string name) : base(name) {}
     }
-
 } // namespace DeltaDNA

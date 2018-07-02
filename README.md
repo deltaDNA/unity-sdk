@@ -11,6 +11,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [Analytics](#analytics)
 * [Quick Start](#quick-start)
  * [Custom Events](#custom-events)
+ * [Event Triggers](#event-triggers)
  * [Engage](#engage)
 * [SmartAds](#smartads)
  * [Usage](#usage)
@@ -34,6 +35,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [4.3](#version-43)
  * [4.7](#version-47)
  * [4.8](#version-48)
+ * [4.10](#version-410)
 * [License](#license)
 
 ## Analytics
@@ -62,6 +64,20 @@ var gameEvent = new GameEvent("myEvent")
     .AddParam("action", "sell");
 
 DDNA.Instance.RecordEvent(gameEvent);
+```
+
+### Event Triggers
+All `RecordEvent` methods return an `EventAction` instance on which `EventActionHandler`s can be registered through the `Add` method, for handling triggers which match the conditions setup on the Platform for Event-Triggered Campaigns. Once all the handlers have been registered `Run()` needs to be called in order for the event triggers to be evaluated and for a matching handler to be run. This happens on the client without any network use and as such it is instantaneous.
+```csharp
+RecordEvent(new GameEvent("missionStarted").AddParam("missionLevel", 1))
+    .Add(new GameParametersHandler(gameParameters => {
+        // do something with the game parameters
+    }))
+    .Add(new ImageMessageHandler(imageMessage => {
+        // the image message is already prepared so it will show instantly
+        imageMessage.Show();
+    }))
+    .Run();
 ```
 
 ### Engage
@@ -309,6 +325,9 @@ Between version 4.2 and version 4.3 we updated our push notifications to use Fir
 * SmartAds needs to be enabled from the configuration UI.
 * *DDNASmartAds.RegisterForAds()* has been deprecated and will now be called as part of starting the Analytics SDK.
 * Methods for checking if ads are available and showing them from the `SmartAds` instance have been removed in favour of using the `InterstitialAd` and `RewardedAd` objects. See [here](#showing-ads) for more details.
+
+### Version 4.10
+* `RecordEvent` methods have been changed to return an `EventAction` object, which can be used for Event-Triggered Campaigns. This means that chaining calls on the `DDNA` SDK instance after calling `RecordEvent` is no longer supported.
 
 #### SDK Health Check
 You can run a health check once you've upgraded the SDK to identify mistakes related to previous versions, such as conflicting configuration entries and duplicate libraries. It can be accessed from the Editor menu under *DeltaDNA -> Health Check SDK*. Please note that there could still be issues with your project which the utility may be unable to detect. Always consult the documentation for more details.

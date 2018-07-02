@@ -4,6 +4,7 @@
 ### Added
 - Session configuration.
 - Event and decision point whitelisting.
+- Event-Triggered Campaign support.
 - Image message asset caching.
 
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)

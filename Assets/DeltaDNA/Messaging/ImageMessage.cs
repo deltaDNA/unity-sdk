@@ -31,12 +31,13 @@ namespace DeltaDNA {
         public event Action<EventArgs> OnDismiss;
         public event Action<EventArgs> OnAction;
 
+        private readonly DDNA ddna;
+
         private JSONObject configuration;
         private GameObject gameObject;
         private SpriteMap spriteMap;
 
         private int depth;
-        private bool resourcesLoaded = false;
         private bool showing = false;
         private Engagement engagement;
 
@@ -54,11 +55,18 @@ namespace DeltaDNA {
             public string ActionValue { get; set; }
         }
 
-        private ImageMessage(JSONObject configuration, string name, int depth, Engagement engagement)
-        {
+        private ImageMessage(
+            DDNA ddna,
+            JSONObject configuration,
+            string name,
+            int depth,
+            Engagement engagement) {
+
+            this.ddna = ddna;
+
             gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
-            spriteMap.Build(configuration);
+            spriteMap.Build(ddna, configuration);
 
             this.configuration = configuration;
             this.spriteMap = spriteMap;
@@ -66,13 +74,15 @@ namespace DeltaDNA {
             this.engagement = engagement;
         }
 
-        public static ImageMessage Create(Engagement engagement)
-        {
-            return Create(engagement, null);
+        public static ImageMessage Create(Engagement engagement) {
+            return Create(DDNA.Instance, engagement, null);
         }
 
-        public static ImageMessage Create(Engagement engagement, JSONObject options)
-        {
+        public static ImageMessage Create(Engagement engagement, JSONObject options) {
+            return Create(DDNA.Instance, engagement, options);
+        }
+
+        public static ImageMessage Create(DDNA ddna, Engagement engagement, JSONObject options) {
             if (engagement == null || engagement.JSON == null || !engagement.JSON.ContainsKey("image")) return null;
 
             string name = "DeltaDNA Image Message";
@@ -92,7 +102,7 @@ namespace DeltaDNA {
             try {
                 var configuration = engagement.JSON["image"] as JSONObject;
                 if (ValidConfiguration(configuration)) {
-                    imageMessage = new ImageMessage(configuration, name, depth, engagement);
+                    imageMessage = new ImageMessage(ddna, configuration, name, depth, engagement);
                     if (engagement.JSON.ContainsKey("parameters")) {
                         imageMessage.Parameters = engagement.JSON["parameters"] as JSONObject;
                     }
@@ -125,38 +135,48 @@ namespace DeltaDNA {
             return true;
         }
 
-        public void FetchResources()
-        {
-            this.spriteMap.LoadResource((error) => {
-                if (error == null) {
-                    this.resourcesLoaded = true;
-                    if (this.OnDidReceiveResources != null) {
-                        this.OnDidReceiveResources();
+        public void FetchResources() {
+            if (IsReady()) {
+                if (OnDidReceiveResources != null) OnDidReceiveResources();
+            } else {
+                spriteMap.LoadResource((error) => {
+                    if (error == null) {
+                        if (OnDidReceiveResources != null) {
+                            OnDidReceiveResources();
+                        }
+                    } else {
+                        if (OnDidFailToReceiveResources != null) {
+                            OnDidFailToReceiveResources(error);
+                        }
                     }
-                } else {
-                    if (this.OnDidFailToReceiveResources != null) {
-                        this.OnDidFailToReceiveResources(error);
-                    }
-                }
-            });
+                });
+            }
         }
 
-        public bool IsReady()
-        {
-            return this.resourcesLoaded;
+        public bool IsReady() {
+            return ddna.GetImageMessageStore().Has(spriteMap.URL);
         }
 
-        public void Show()
-        {
-            if (this.resourcesLoaded) {
+        public void Show() {
+            if (IsReady()) {
                 try {
+                    if (spriteMap.Texture == null) {
+                        /*
+                         * This is a workaround for when we're showing for an
+                         * event trigger, as the instance didn't go through the
+                         * FetchResources() call to load the texture we need to
+                         * do it now.
+                         */
+                        spriteMap.LoadResource(e => {});
+                    }
+
                     gameObject.AddComponent<Canvas>();
                     gameObject.AddComponent<GraphicRaycaster>();
                     gameObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
 
                     if (this.configuration.ContainsKey("shim")) {
                         ShimLayer shimLayer = gameObject.AddComponent<ShimLayer>();
-                        shimLayer.Build(gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
+                        shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
                     JSONObject layout = this.configuration["layout"] as JSONObject;
@@ -166,10 +186,10 @@ namespace DeltaDNA {
                     }
 
                     BackgroundLayer backgroundLayer = gameObject.AddComponent<BackgroundLayer>();
-                    backgroundLayer.Build(gameObject, this, orientation as JSONObject, this.spriteMap.Background, this.depth-1);
+                    backgroundLayer.Build(ddna, gameObject, this, orientation as JSONObject, this.spriteMap.Background, this.depth-1);
 
                     ButtonsLayer buttonLayer = gameObject.AddComponent<ButtonsLayer>();
-                    buttonLayer.Build(gameObject, this, orientation as JSONObject, this.spriteMap.Buttons, backgroundLayer, this.depth-2);
+                    buttonLayer.Build(ddna, gameObject, this, orientation as JSONObject, this.spriteMap.Buttons, backgroundLayer, this.depth-2);
 
                     showing = true;
                 } catch (KeyNotFoundException exception) {
@@ -203,9 +223,9 @@ namespace DeltaDNA {
             public int Width { get; private set; }
             public int Height { get; private set; }
 
-            public void Build(JSONObject configuration)
+            public void Build(DDNA ddna, JSONObject configuration)
             {
-                store = new ImageMessageStore(DDNA.Instance);
+                store = ddna.GetImageMessageStore();
 
                 try {
                     this.URL = configuration["url"] as string;
@@ -296,6 +316,7 @@ namespace DeltaDNA {
 
         private class Layer : MonoBehaviour {
 
+            protected DDNA ddna;
             protected GameObject parent;
             protected ImageMessage imageMessage;
             protected List<Action> actions = new List<Action>();
@@ -345,7 +366,7 @@ namespace DeltaDNA {
                                         imageMessage.OnAction(eventArgs);
                                     }
                                 }
-                                DDNA.Instance.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
@@ -358,7 +379,7 @@ namespace DeltaDNA {
                                 if (valueObj != null) {
                                     Application.OpenURL((string)valueObj);
                                 }
-                                DDNA.Instance.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
@@ -368,7 +389,7 @@ namespace DeltaDNA {
                                 if (imageMessage.OnDismiss != null) {
                                     imageMessage.OnDismiss(eventArgs);
                                 }
-                                DDNA.Instance.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
                             break;
@@ -403,8 +424,9 @@ namespace DeltaDNA {
             private Texture2D texture;
             private readonly byte dimmedMaskAlpha = 128;
 
-            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject config, int depth)
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject config, int depth)
             {
+                this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;
@@ -470,8 +492,9 @@ namespace DeltaDNA {
             private Rect position;
             private float scale;
 
-            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
             {
+                this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.texture = texture;
@@ -656,8 +679,9 @@ namespace DeltaDNA {
             private List<Texture> textures = new List<Texture>();
             private List<Rect> positions = new List<Rect>();
 
-            public void Build(GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
             {
+                this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;

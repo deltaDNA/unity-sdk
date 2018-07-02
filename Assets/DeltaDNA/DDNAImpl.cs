@@ -29,7 +29,6 @@ namespace DeltaDNA {
     internal class DDNAImpl : DDNABase {
 
         private readonly EventStore eventStore = null;
-        private readonly ImageMessageStore imageMessageStore = null;
 
         private bool started = false;
         private bool uploading = false;
@@ -44,6 +43,8 @@ namespace DeltaDNA {
             new ReadOnlyCollection<string>(new List<string>());
         private ReadOnlyCollection<string> whitelistEvents =
             new ReadOnlyCollection<string>(new List<string>());
+        private Dictionary<string, ReadOnlyCollection<EventTrigger>> eventTriggers =
+            new Dictionary<string, ReadOnlyCollection<EventTrigger>>();
         private ReadOnlyCollection<string> cacheImages =
             new ReadOnlyCollection<string>(new List<string>());
 
@@ -64,7 +65,7 @@ namespace DeltaDNA {
                 Settings.UseEventStore = false;
                 eventStore = new EventStore(eventStorePath);
             }
-            imageMessageStore = new ImageMessageStore(ddna);
+            ImageMessageStore = new ImageMessageStore(ddna);
 
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
@@ -136,12 +137,12 @@ namespace DeltaDNA {
             }
         }
 
-        override internal void RecordEvent<T>(T gameEvent) {
+        override internal EventAction RecordEvent<T>(T gameEvent) {
             if (!started) {
                 throw new Exception("You must first start the SDK via the StartSDK method");
             } else if (whitelistEvents.Count != 0 && !whitelistEvents.Contains(gameEvent.Name)) {
                 Logger.LogDebug("Event " + gameEvent.Name + " is not whitelisted, ignoring");
-                return;
+                return EventAction.CreateEmpty(gameEvent as GameEvent);
             }
 
             gameEvent.AddParam("platform", Platform);
@@ -165,19 +166,24 @@ namespace DeltaDNA {
             } catch (Exception ex) {
                 Logger.LogWarning("Unable to generate JSON for '"+gameEvent.Name+"' event. "+ex.Message);
             }
+
+            return new EventAction(
+                gameEvent as GameEvent,
+                eventTriggers.ContainsKey(gameEvent.Name)
+                    ? eventTriggers[gameEvent.Name]
+                    : EventAction.EMPTY_TRIGGERS);
         }
 
-        override internal void RecordEvent(string eventName) {
-            var gameEvent = new GameEvent(eventName);
-            RecordEvent(gameEvent);
+        override internal EventAction RecordEvent(string eventName) {
+            return RecordEvent(new GameEvent(eventName));
         }
 
-        override internal void RecordEvent(string eventName, Dictionary<string, object> eventParams) {
+        override internal EventAction RecordEvent(string eventName, Dictionary<string, object> eventParams) {
             var gameEvent = new GameEvent(eventName);
             foreach (var key in eventParams.Keys) {
                 gameEvent.AddParam(key, eventParams[key]);
             }
-            RecordEvent(gameEvent);
+            return RecordEvent(gameEvent);
         }
 
         override internal void RequestEngagement(Engagement engagement, Action<Dictionary<string, object>> callback) {
@@ -356,7 +362,7 @@ namespace DeltaDNA {
         override internal void DownloadImageAssets() {
             Logger.LogDebug("Downloading image assets");
 
-            StartCoroutine(imageMessageStore.Prefetch(
+            StartCoroutine(ImageMessageStore.Prefetch(
                 () => {
                     Logger.LogDebug("Image cache populated");
                     ddna.NotifyOnImageCachePopulated();
@@ -370,7 +376,7 @@ namespace DeltaDNA {
 
         override internal void ClearPersistentData() {
             if (eventStore != null) eventStore.ClearAll();
-            if (imageMessageStore != null) imageMessageStore.Clear();
+            if (ImageMessageStore != null) ImageMessageStore.Clear();
 
             Engage.ClearCache();
         }
@@ -574,6 +580,19 @@ namespace DeltaDNA {
                             (eventsWhitelist as List<object>)
                             .Select(e => e as string)
                             .ToList());
+                    }
+
+                    object triggers = null;
+                    (parameters as JSONObject).TryGetValue("triggers", out triggers);
+                    if (triggers != null && triggers is List<object>) {
+                        eventTriggers = (triggers as List<object>)
+                            .Select((e, i) => new EventTrigger(this, i, e as JSONObject))
+                            .GroupBy(e => e.GetEventName())
+                            .ToDictionary(e => e.Key, e => {
+                                var list = e.ToList();
+                                list.Sort();
+                                return new ReadOnlyCollection<EventTrigger>(list);
+                            });
                     }
 
                     object imageCache = null;
