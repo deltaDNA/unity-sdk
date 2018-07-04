@@ -1,6 +1,6 @@
 # Change Log
 
-## [VERSION](https://github.com/deltaDNA/unity-sdk/releases/tag/VERSION) (YYYY-MM-DD)
+## [4.10-beta.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.1) (2018-07-04)
 ### Added
 - Session configuration.
 - Event and decision point whitelisting.
