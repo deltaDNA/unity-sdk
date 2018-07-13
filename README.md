@@ -73,7 +73,7 @@ RecordEvent(new GameEvent("missionStarted").AddParam("missionLevel", 1))
     .Add(new GameParametersHandler(gameParameters => {
         // do something with the game parameters
     }))
-    .Add(new ImageMessageHandler(imageMessage => {
+    .Add(new ImageMessageHandler(DDNA.Instance, imageMessage => {
         // the image message is already prepared so it will show instantly
         imageMessage.Show();
     }))
