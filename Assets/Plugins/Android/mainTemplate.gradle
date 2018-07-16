@@ -1,39 +1,60 @@
 buildscript {
     repositories {
-        jcenter()
+        if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+            jcenter()
+            google()
+        } else {
+            jcenter()
+        }
     }
 
     dependencies {
         // use newer version of the plugin for newer unity/gradle versions
-        if (gradle.gradleVersion.split('\\.').first().toInteger() < 4) {
+        if (GradleVersion.current() < GradleVersion.version("4.0")) {
             classpath 'com.android.tools.build:gradle:2.1.0'
-        } else {
+        } else if (GradleVersion.current() < GradleVersion.version("4.2")) {
             classpath 'com.android.tools.build:gradle:2.3.3'
+        } else {
+            classpath 'com.android.tools.build:gradle:3.0.1'
         }
     }
 }
 
 allprojects {
-   repositories {
-      flatDir {
-        dirs 'libs'
-      }
-   }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+
+        if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+            jcenter()
+            google()
+        } else {
+            jcenter()
+        }
+    }
 }
 
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+    } else {
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+    }
 
-**DEPS**
+    **DEPS**
 }
 
 android {
-    // Fix complaint that 3rd party libraries (ours!) have the same package name
-    enforceUniquePackageName false
     compileSdkVersion **APIVERSION**
     buildToolsVersion '**BUILDTOOLS**'
+
+    if (GradleVersion.current() < GradleVersion.version("4.2")) {
+        // fix complaint that 3rd party libraries (ours!) have the same package name
+        enforceUniquePackageName false
+    }
 
     defaultConfig {
         applicationId '**APPLICATIONID**'
@@ -41,7 +62,16 @@ android {
         minSdkVersion 16
         targetSdkVersion **TARGETSDKVERSION**
 
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+
         multiDexEnabled true
+
+        if (GradleVersion.current() >= GradleVersion.version("4.0")) {
+            ndk {
+                abiFilters **ABIFILTERS**
+            }
+        }
     }
 
     packagingOptions {
@@ -53,19 +83,37 @@ android {
         abortOnError false
     }
 
-**SIGN**
+    aaptOptions {
+        noCompress '.unity3d', '.ress', '.resource', '.obb'**STREAMING_ASSETS**
+    }
+
+    **SIGN**
 
     buildTypes {
         debug {
+            minifyEnabled **MINIFY_DEBUG**
+            if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+                useProguard **PROGUARD_DEBUG**
+            }
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
             jniDebuggable true
         }
 
         release {
-            // Set minifyEnabled to true if you want to run ProGuard on your project
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'
+            minifyEnabled **MINIFY_RELEASE**
+            if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+                useProguard **PROGUARD_RELEASE**
+            }
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
 
             **SIGNCONFIG**
         }
+
+        **PACKAGING_OPTIONS**
+        **SPLITS**
+        **BUILT_APK_LOCATION**
     }
+
+    **SPLITS_VERSION_CODE**
+    **SOURCE_BUILD_SETUP**
 }

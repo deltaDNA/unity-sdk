@@ -1,14 +1,21 @@
 buildscript {
     repositories {
-        mavenCentral()
+        if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+            jcenter()
+            google()
+        } else {
+            jcenter()
+        }
     }
     
     dependencies {
         // use newer version of the plugin for newer unity/gradle versions
-        if (gradle.gradleVersion.split('\\.').first().toInteger() < 4) {
+        if (GradleVersion.current() < GradleVersion.version("4.0")) {
             classpath 'com.android.tools.build:gradle:2.1.0'
-        } else {
+        } else if (GradleVersion.current() < GradleVersion.version("4.2")) {
             classpath 'com.android.tools.build:gradle:2.3.3'
+        } else {
+            classpath 'com.android.tools.build:gradle:3.0.1'
         }
     }
 }
@@ -16,8 +23,13 @@ buildscript {
 apply plugin: 'android-library'
 
 dependencies {
-    compile fileTree(dir: 'bin', include: ['*.jar'])
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    if (GradleVersion.current() >= GradleVersion.version("4.2")) {
+        implementation fileTree(dir: 'bin', include: ['*.jar'])
+        implementation fileTree(dir: 'libs', include: ['*.jar'])
+    } else {
+        compile fileTree(dir: 'bin', include: ['*.jar'])
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+    }
 }
 
 android {
@@ -26,6 +38,7 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
         }
     }
 
