@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (YYYY-MM-DD)
+### Fixed
+- Gradle template not setting app version on Unity 2017.1+.
+- Gradle template causing build error on Unity 2018.2.
+
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)
 ### Added
 - API for forgetting the user and stopping tracking (GDPR).
