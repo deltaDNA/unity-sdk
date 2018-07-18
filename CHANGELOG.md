@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (YYYY-MM-DD)
+## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (2018-06-18)
 ### Fixed
 - Gradle template not setting app version on Unity 2017.1+.
 - Gradle template causing build error on Unity 2018.2.
