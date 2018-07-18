@@ -105,7 +105,7 @@ public class IosNotifications : MonoBehaviour
         var payload = DeltaDNA.MiniJSON.Json.Deserialize(notification) as Dictionary<string, object>;
         payload["_ddCommunicationSender"] = "APPLE_NOTIFICATION";
 
-        if (payload["_ddLaunch"] as bool? ?? false) {
+        if (Convert.ToBoolean(payload["_ddLaunch"])) {
             Logger.LogDebug("Did launch with iOS push notification");
 
             DDNA.Instance.RecordPushNotification(payload);

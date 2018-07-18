@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.10-beta.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.2) (2018-07-18)
+### Changed
+- Included changes from 4.9.1 release.
+
 ## [4.10-beta.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.1) (2018-07-04)
 ### Added
 - Session configuration.
@@ -7,10 +11,11 @@
 - Event-Triggered Campaign support.
 - Image message asset caching.
 
-## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (YYYY-MM-DD)
+## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (2018-07-18)
 ### Fixed
 - Gradle template not setting app version on Unity 2017.1+.
 - Gradle template causing build error on Unity 2018.2.
+- Wrong notification received callback invoked on iOS.
 
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)
 ### Added
