@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.10-beta.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.2) (2018-07-18)
+### Changed
+- Included changes from 4.9.1 release.
+
 ## [4.10-beta.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.1) (2018-07-04)
 ### Added
 - Session configuration.
