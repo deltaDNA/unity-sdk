@@ -4,6 +4,7 @@
 ### Fixed
 - Gradle template not setting app version on Unity 2017.1+.
 - Gradle template causing build error on Unity 2018.2.
+- Wrong notification received callback invoked on iOS.
 
 ## [4.9.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.0) (2018-05-21)
 ### Added
