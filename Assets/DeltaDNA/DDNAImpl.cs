@@ -29,6 +29,7 @@ namespace DeltaDNA {
     internal class DDNAImpl : DDNABase {
 
         private readonly EventStore eventStore = null;
+        private readonly EngageCache engageCache = null;
 
         private bool started = false;
         private bool uploading = false;
@@ -65,11 +66,12 @@ namespace DeltaDNA {
                 Settings.UseEventStore = false;
                 eventStore = new EventStore(eventStorePath);
             }
+            engageCache = new EngageCache(Settings);
             ImageMessageStore = new ImageMessageStore(ddna);
 
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
-            var smartAds = SmartAds.Instance;
+            var smartAds = SmartAds.Instance.Config(engageCache);
             smartAds.transform.parent = gameObject.transform;
 
             EngageFactory = new EngageFactory(this, smartAds);
@@ -84,6 +86,7 @@ namespace DeltaDNA {
             if (pauseStatus) {
                 lastActive = DateTime.UtcNow;
                 eventStore.FlushBuffers();
+                engageCache.Save();
             } else {
                 var backgroundSeconds = (DateTime.UtcNow - lastActive).TotalSeconds;
                 if (backgroundSeconds > Settings.SessionTimeoutSeconds) {
@@ -224,7 +227,7 @@ namespace DeltaDNA {
                     callback(responseJSON);
                 };
 
-                StartCoroutine(Engage.Request(ddna, request, handler));
+                StartCoroutine(Engage.Request(ddna, engageCache, request, handler));
             } catch (Exception ex) {
                 Logger.LogWarning("Engagement request failed: "+ex.Message);
             }
@@ -263,7 +266,7 @@ namespace DeltaDNA {
                     onCompleted(engagement);
                 };
 
-                StartCoroutine(Engage.Request(ddna, request, handler));
+                StartCoroutine(Engage.Request(ddna, engageCache, request, handler));
             } catch (Exception ex) {
                 Logger.LogWarning("Engagement request failed: "+ex.Message);
             }
@@ -376,9 +379,8 @@ namespace DeltaDNA {
 
         override internal void ClearPersistentData() {
             if (eventStore != null) eventStore.ClearAll();
+            if (engageCache != null) engageCache.Clear();
             if (ImageMessageStore != null) ImageMessageStore.Clear();
-
-            Engage.ClearCache();
         }
 
         internal override void ForgetMe() {

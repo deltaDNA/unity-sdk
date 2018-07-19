@@ -34,12 +34,19 @@ namespace DeltaDNA
 
         private ISmartAdsManager manager;
         private ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
+
+        private EngageCache engageCache;
         
         internal event Action<string> OnRewardedAdOpenedWithDecisionPoint;
 
         internal SmartAds() {
             DDNA.Instance.OnNewSession -= OnNewSession;
             DDNA.Instance.OnNewSession += OnNewSession;
+        }
+
+        internal SmartAds Config(EngageCache engageCache) {
+            this.engageCache = engageCache;
+            return this;
         }
         
         #region Public interface
@@ -339,7 +346,8 @@ namespace DeltaDNA
                     engageRequest.Flavour = flavour;
                     engageRequest.Parameters = parameters;
 
-                    StartCoroutine(Engage.Request(this, engageRequest, engageResponse));
+                    StartCoroutine(Engage.Request(
+                        this, engageCache, engageRequest, engageResponse));
                 }
             };
 

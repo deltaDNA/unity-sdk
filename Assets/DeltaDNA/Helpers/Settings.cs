@@ -64,6 +64,7 @@ namespace DeltaDNA
             #endif
 
             SessionTimeoutSeconds = 5 * 60;
+            EngageCacheExpirySeconds = 12 * 60 * 60;
         }
 
         /// <summary>
@@ -146,6 +147,12 @@ namespace DeltaDNA
         /// </summary>
         /// <value>The session timeout seconds.</value>
         public int SessionTimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Controls the amount if time, in seconds, before a cached engage
+        /// response is invalidated. A value of 0 disables the cache.
+        /// </summary>
+        public int EngageCacheExpirySeconds { get; set; }
 
         /// <summary>
         /// Controls user consent for advertiser tracking.

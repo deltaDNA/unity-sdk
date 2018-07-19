@@ -82,8 +82,12 @@ namespace DeltaDNA {
 
     internal class Engage {
 
-        internal static IEnumerator Request(MonoBehaviour caller, EngageRequest request, EngageResponse response)
-        {
+        internal static IEnumerator Request(
+            MonoBehaviour caller,
+            EngageCache cache,
+            EngageRequest request,
+            EngageResponse response) {
+
             string requestJSON = request.ToJSON();
             string url = DDNA.Instance.ResolveEngageURL(requestJSON);
 
@@ -93,20 +97,16 @@ namespace DeltaDNA {
             httpRequest.TimeoutSeconds = DDNA.Instance.Settings.HttpRequestEngageTimeoutSeconds;
             httpRequest.setHeader("Content-Type", "application/json");
 
-            System.Action<int, string, string> httpHandler = (statusCode, data, error) => {
-
-                string engagementKey = "DDSDK_ENGAGEMENT_" + request.DecisionPoint + "_" + request.Flavour;
+            Action<int, string, string> httpHandler = (statusCode, data, error) => {
                 if (error == null && statusCode >= 200 && statusCode < 300) {
-                    try {
-                        PlayerPrefs.SetString(engagementKey, data);
-                    } catch (Exception exception) {
-                        Logger.LogWarning("Unable to cache engagement: "+exception.Message);
-                    }
+                    cache.Put(request.DecisionPoint, request.Flavour, data);
                 } else {
                     Logger.LogDebug("Engagement failed with "+statusCode+" "+error);
-                    if (PlayerPrefs.HasKey(engagementKey)) {
+
+                    var cached = cache.Get(request.DecisionPoint, request.Flavour);
+                    if (cached != null) {
                         Logger.LogDebug("Using cached response");
-                        data = "{\"isCachedResponse\":true," + PlayerPrefs.GetString(engagementKey).Substring(1);
+                        data = "{\"isCachedResponse\":true," + cached.Substring(1);
                     } else {
                         data = "{}";
                     }
@@ -117,11 +117,5 @@ namespace DeltaDNA {
 
             yield return caller.StartCoroutine(Network.SendRequest(httpRequest, httpHandler));
         }
-
-        internal static void ClearCache()
-        {
-            // TODO record engage keys so they can be removed.
-        }
     }
-
 }
