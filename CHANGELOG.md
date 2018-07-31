@@ -1,6 +1,6 @@
 # Change Log
 
-## [x.y.z](https://github.com/deltaDNA/unity-sdk/releases/tag/x.y.z) (YYYY-MM-DD)
+## [4.10-beta.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.3) (2018-07-31)
 ### Changed
 - Engage responses will be evicted from cache after 12 hours (configurable).
 
