@@ -1,19 +1,14 @@
 # Change Log
 
-## [4.10-beta.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.3) (2018-07-31)
-### Changed
-- Engage responses will be evicted from cache after 12 hours (configurable).
-
-## [4.10-beta.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.2) (2018-07-18)
-### Changed
-- Included changes from 4.9.1 release.
-
-## [4.10-beta.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10-beta.1) (2018-07-04)
+## [4.10.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10.0) (2018-08-07)
 ### Added
 - Session configuration.
 - Event and decision point whitelisting.
 - Event-Triggered Campaign support.
 - Image message asset caching.
+
+### Changed
+- Engage responses will be evicted from cache after 12 hours (configurable).
 
 ## [4.9.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.9.1) (2018-07-18)
 ### Fixed
