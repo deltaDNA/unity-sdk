@@ -34,6 +34,7 @@ namespace DeltaDNA {
         internal const string PF_KEY_LAST_SESSION = "DDSDK_LAST_SESSION";
         internal const string PF_KEY_FORGET_ME = "DDSDK_FORGET_ME";
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
+        internal const string PF_KEY_ADVERTISING_ID = "DDSDK_ADVERTISING_ID";
 
         private static object _lock = new object();
 
@@ -372,6 +373,7 @@ namespace DeltaDNA {
             PlayerPrefs.DeleteKey(PF_KEY_LAST_SESSION);
             PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
             PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
+            PlayerPrefs.DeleteKey(PF_KEY_ADVERTISING_ID);
 
             delegated.ClearPersistentData();
 

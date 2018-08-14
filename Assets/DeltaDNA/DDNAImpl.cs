@@ -75,6 +75,15 @@ namespace DeltaDNA {
             smartAds.transform.parent = gameObject.transform;
 
             EngageFactory = new EngageFactory(this, smartAds);
+
+            Application.RequestAdvertisingIdentifierAsync(
+                (string advertisingId, bool trackingEnabled, string error) => {
+                    if (trackingEnabled) {
+                        PlayerPrefs.SetString(DDNA.PF_KEY_ADVERTISING_ID, advertisingId);
+                    }
+                }
+            );
+
             #else
             EngageFactory = new EngageFactory(this, null);
             #endif

@@ -113,6 +113,7 @@ namespace DeltaDNA {
                         .AddParam("eventParams", new Params()
                             .AddParam("platform", Platform)
                             .AddParam("sdkVersion", Settings.SDK_VERSION))
+                            .AddParam("ddnaAdvertisingId", PlayerPrefs.GetString(DDNA.PF_KEY_ADVERTISING_ID))
                         .AsDictionary());
             } catch (Exception e) {
                 Logger.LogWarning("Unable to generate JSON for 'ddnaForgetMe' event. " + e.Message);
