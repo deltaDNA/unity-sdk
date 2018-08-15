@@ -1,5 +1,9 @@
 # Change Log
 
+## [?](https://github.com/deltaDNA/unity-sdk/releases/tag/?) (YYYY-MM-DD)
+### Removed
+- MachineZone ads.
+
 ## [4.10.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.10.0) (2018-08-07)
 ### Added
 - Session configuration.
