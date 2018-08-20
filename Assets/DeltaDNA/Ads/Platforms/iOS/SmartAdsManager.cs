@@ -21,13 +21,15 @@ using System.Runtime.InteropServices;
 
 namespace DeltaDNA.Ads.iOS {
 
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
+
     internal class SmartAdsManager : ISmartAdsManager {
 
         #if UNITY_IOS && DDNA_SMARTADS
         #region Interface to native implementation
 
         [DllImport("__Internal")]
-        private static extern void _registerForAds(string decisionPoint, bool userConsent, bool ageRestricted);
+        private static extern void _registerForAds(string config, bool userConsent, bool ageRestricted);
 
         [DllImport("__Internal")]
         private static extern int _isInterstitialAdAllowed(string decisionPoint, string engageParams, bool checkTime);
@@ -60,9 +62,6 @@ namespace DeltaDNA.Ads.iOS {
         private static extern long _getDailyCount(string decisionPoint);
 
         [DllImport("__Internal")]
-        private static extern void _engageResponse(string id, string response, int statusCode, string error);
-
-        [DllImport("__Internal")]
         private static extern void _pause();
 
         [DllImport("__Internal")]
@@ -82,11 +81,16 @@ namespace DeltaDNA.Ads.iOS {
 
         #region Public interface
 
-        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted)
+        public void RegisterForAds(JSONObject config, bool userConsent, bool ageRestricted)
         {
             #if UNITY_IOS && DDNA_SMARTADS
             _setLoggingLevel((int)Logger.LogLevel);
-            _registerForAds(decisionPoint, userConsent, ageRestricted);
+            try {
+                _registerForAds(MiniJSON.Json.Serialize(config), userConsent, ageRestricted);
+            } catch (Exception e) {
+                Logger.LogDebug("Exception serialising session config: " + e.Message);
+            }
+            
             #endif
         }
 
@@ -187,13 +191,6 @@ namespace DeltaDNA.Ads.iOS {
             return _getDailyCount(decisionPoint);
             #else
             return 0;
-            #endif
-        }
-
-        public void EngageResponse(string id, string response, int statusCode, string error)
-        {
-            #if UNITY_IOS && DDNA_SMARTADS
-            _engageResponse(id, response, statusCode, error);
             #endif
         }
 

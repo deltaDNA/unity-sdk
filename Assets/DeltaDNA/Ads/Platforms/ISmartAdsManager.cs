@@ -17,10 +17,12 @@
 using System;
 
 namespace DeltaDNA.Ads {
+
+    using JSONObject = System.Collections.Generic.Dictionary<string, object>;
     
     internal interface ISmartAdsManager {
         
-        void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted);
+        void RegisterForAds(JSONObject config, bool userConsent, bool ageRestricted);
         
         bool IsInterstitialAdAllowed(Engagement engagement, bool checkTime);
         bool IsRewardedAdAllowed(Engagement engagement, bool checkTime);
@@ -35,8 +37,6 @@ namespace DeltaDNA.Ads {
         DateTime? GetLastShown(string decisionPoint);
         long GetSessionCount(string decisionPoint);
         long GetDailyCount(string decisionPoint);
-        
-        void EngageResponse(string id, string response, int statusCode, string error);
         
         void OnPause();
         void OnResume();

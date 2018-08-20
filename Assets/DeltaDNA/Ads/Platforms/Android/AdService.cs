@@ -15,34 +15,33 @@
 //
 
 using System;
+#if UNITY_ANDROID
+using System.Collections.Generic;
 #if DDNA_SMARTADS
 using UnityEngine;
-using System.Collections.Generic;
+#endif
 #endif
 
 namespace DeltaDNA.Ads.Android {
 
     #if UNITY_ANDROID
-    #if DDNA_SMARTADS
     using JSONObject = Dictionary<string, object>;
+    #if DDNA_SMARTADS
     #endif
 
     internal class AdService : ISmartAdsManager {
 
         #if DDNA_SMARTADS
-        private readonly IDictionary<string, AndroidJavaObject> engageListeners;
         private readonly AndroidJavaObject activity;
         private AndroidJavaObject adService;
         #endif
 
         internal AdService(SmartAds ads, string sdkVersion) {
             #if DDNA_SMARTADS
-            engageListeners = new Dictionary<string, AndroidJavaObject>();
-
             try {
                 activity = new AndroidJavaClass(Utils.UnityActivityClassName).GetStatic<AndroidJavaObject>("currentActivity");
                 adService = new AndroidJavaObject(Utils.AdServiceWrapperClassName).CallStatic<AndroidJavaObject>(
-                    "create", activity, new AdServiceListener(ads, engageListeners), sdkVersion);
+                    "create", activity, new AdServiceListener(ads), sdkVersion);
             } catch (AndroidJavaException exception) {
                 Logger.LogDebug("Exception creating Android AdService: "+exception.Message);
                 throw new Exception("Native Android SmartAds AAR not found.");
@@ -50,9 +49,14 @@ namespace DeltaDNA.Ads.Android {
             #endif
         }
 
-        public void RegisterForAds(string decisionPoint, bool userConsent, bool ageRestricted) {
+        public void RegisterForAds(JSONObject config, bool userConsent, bool ageRestricted) {
             #if DDNA_SMARTADS
-            adService.Call("registerForAds", decisionPoint, userConsent, ageRestricted);
+            adService.Call(
+                "configure",
+                new AndroidJavaObject(Utils.JSONObjectClassName, MiniJSON.Json.Serialize(config)),
+                config.ContainsKey("isCachedResponse") && (config["isCachedResponse"] as bool? ?? false),
+                userConsent,
+                ageRestricted);
             #endif
         }
         
@@ -164,38 +168,6 @@ namespace DeltaDNA.Ads.Android {
             return 0;
             #endif
         }
-        
-        public void EngageResponse(string id, string response, int statusCode, string error) {
-            #if DDNA_SMARTADS
-            // android sdk expects request listener callbacks on the main thread
-            #if UNITY_2017_1_OR_NEWER
-            activity.Call("runOnUiThread", new Runnable(() => {
-            #else
-            activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
-            #endif
-                AndroidJavaObject listener;
-                if (engageListeners.TryGetValue(id, out listener)) {
-                    JSONObject json = null;
-                    if (!string.IsNullOrEmpty(response)) {
-                        try {
-                            json = MiniJSON.Json.Deserialize(response) as JSONObject;
-                        } catch (Exception) { /* invalid json */ }
-                    }
-
-                    if (json == null
-                        || (statusCode < 200
-                            || statusCode >= 300
-                            && !json.ContainsKey("isCachedResponse"))) {
-                        listener.Call("onFailure", new AndroidJavaObject(Utils.ThrowableClassName, error));
-                    } else {
-                        listener.Call("onSuccess", new AndroidJavaObject(Utils.JSONObjectClassName, response));
-                    }
-
-                    engageListeners.Remove(id);
-                }
-            }));
-            #endif
-        }
 
         public void OnPause()
         {
@@ -238,21 +210,6 @@ namespace DeltaDNA.Ads.Android {
             }
             
             return parameters;
-        }
-        #endif
-        
-        #if DDNA_SMARTADS && UNITY_2017_1_OR_NEWER
-        private class Runnable : AndroidJavaProxy {
-
-            private readonly Action action;
-
-            internal Runnable(Action action) : base("java.lang.Runnable") {
-                this.action = action;
-            }
-
-            public void run() {
-                action();
-            }
         }
         #endif
     }

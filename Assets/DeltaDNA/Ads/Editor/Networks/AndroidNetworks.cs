@@ -34,9 +34,10 @@ namespace DeltaDNA.Ads.Editor {
         }
         
         private static readonly string[] REPOS = {
-            "http://deltadna.bintray.com/android"
+            "http://deltadna.bintray.com/android",
+            "http://corp-vm-artifactory/artifactory/deltadna-repo"
         };
-        private const string VERSION = "1.9.0";
+        private const string VERSION = "1.10.0-SNAPSHOT";
         private const string PLUGINS_PATH = "Assets/Plugins/Android";
         
         public AndroidNetworks() : base("android", "Android") {}
@@ -110,6 +111,10 @@ namespace DeltaDNA.Ads.Editor {
                             repos.Add(new XElement(
                                 "repository",
                                 "https://raw.githubusercontent.com/HyprMXMobile/Android-SDKs/master"));
+                        } else if (network.Equals("ironsource")) {
+                            repos.Add(new XElement(
+                                "repository",
+                                "https://dl.bintray.com/ironsource-mobile/android-sdk"));
                         } else if (network.Equals("mopub")) {
                             repos.Add(new XElement(
                                 "repository",

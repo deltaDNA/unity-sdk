@@ -23,11 +23,9 @@ namespace DeltaDNA.Ads.Android
     internal class AdServiceListener : AndroidJavaProxy {
 
         private SmartAds ads;
-        private readonly IDictionary<string, AndroidJavaObject> engageListeners;
 
-        internal AdServiceListener(SmartAds ads, IDictionary<string, AndroidJavaObject> engageListeners) : base(Utils.AdServiceListenerClassName) {
+        internal AdServiceListener(SmartAds ads) : base(Utils.AdServiceListenerClassName) {
             this.ads = ads;
-            this.engageListeners = engageListeners;
         }
 
         void onRegisteredForInterstitialAds() {
@@ -77,18 +75,6 @@ namespace DeltaDNA.Ads.Android
 
         void onRecordEvent(string eventName, string eventParamsJson) {
             ads.RecordEvent("{\"eventName\":\""+eventName+"\",\"parameters\":"+eventParamsJson+"}");
-        }
-
-        void onRequestEngagement(string decisionPoint, string flavour, string version, AndroidJavaObject listener) {
-            string id = System.Guid.NewGuid().ToString();
-            engageListeners.Add(id, listener);
-
-            ads.RequestEngagement(string.Format(
-                "{{\"decisionPoint\":\"{0}\",\"flavour\":\"{1}\",\"parameters\":{{\"adSdkVersion\":\"{2}\"}},\"id\":\"{3}\"}}",
-                decisionPoint,
-                flavour,
-                version,
-                id));
         }
 
         #if !UNITY_2017_1_OR_NEWER
