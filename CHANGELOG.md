@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.11.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.0) (2018-08-??)
+## [4.11.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.0) (2018-08-22)
 ### Added
 - Sends advertising id with Forget Me event when using SmartAds. 
 
