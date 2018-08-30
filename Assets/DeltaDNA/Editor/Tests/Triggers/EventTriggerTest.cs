@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#if !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
+#if !UNITY_4
 using NSubstitute;
 using NUnit.Framework;
 using System;
@@ -181,6 +181,8 @@ namespace DeltaDNA {
                 Is.False);
         }
 
+        #if !UNITY_5_4 // Unhandled Exception: Mono.CSharp.InternalErrorException: VerifyArgumentsCompat didn't find any problem with rejected candidate MethodBuilder
+
         [Test]
         public void EvaluationOfLogicalOperators() {
             Expect(Cond(Evnt("a"), true.B(), true.B(), "and".O()));
@@ -199,6 +201,8 @@ namespace DeltaDNA {
             Expect(Cond(Evnt("a", new object[] { "a", false }), "a".P(), false.B(), "or".O()),
                 Is.False);
         }
+
+        #endif
 
         [Test]
         public void EvaluationOfLogicalOperatorsAgainstIncompatibleTypes() {

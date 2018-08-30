@@ -107,10 +107,7 @@ namespace DeltaDNA {
         }
         
         public long RewardAmount {
-            get {
-                var parameters = EngageParams;
-                return (parameters != null) ? parameters["ddnaAdRewardAmount"] as long? ?? 0 : 0;
-            }
+            get { return EngageParams.GetOrDefault("ddnaAdRewardAmount", 0L); }
         }
         
         private void NotifyOnLoaded() {

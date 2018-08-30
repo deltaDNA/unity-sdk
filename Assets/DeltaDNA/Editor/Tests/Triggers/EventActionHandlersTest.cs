@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#if !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
+#if !UNITY_4
 using NSubstitute;
 using NUnit.Framework;
 using System;

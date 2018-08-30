@@ -54,10 +54,7 @@ namespace DeltaDNA
         }
         
         public long AdShowWaitSecs {
-            get {
-                var parameters = EngageParams;
-                return (parameters != null) ? parameters["ddnaAdShowWaitSecs"] as long? ?? 0 : 0;
-            }
+            get { return EngageParams.GetOrDefault("ddnaAdShowWaitSecs", 0L); }
         }
         
         public long SessionCount {
@@ -65,10 +62,7 @@ namespace DeltaDNA
         }
         
         public long SessionLimit {
-            get {
-                var parameters = EngageParams;
-                return (parameters != null) ? parameters["ddnaAdSessionCount"] as long? ?? 0 : 0;
-            }
+            get { return EngageParams.GetOrDefault("ddnaAdSessionCount", 0L); }
         }
         
         public long DailyCount {
@@ -76,10 +70,7 @@ namespace DeltaDNA
         }
         
         public long DailyLimit {
-            get {
-                var parameters = EngageParams;
-                return (parameters != null) ? parameters["ddnaAdDailyCount"] as long? ?? 0 : 0;
-            }
+            get { return EngageParams.GetOrDefault("ddnaAdDailyCount", 0L); }
         }
     }
 }

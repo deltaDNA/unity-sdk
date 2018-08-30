@@ -67,7 +67,7 @@ namespace DeltaDNA.Editor {
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
             scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
             
-            foldoutAnalytics = EditorGUILayout.Foldout(
+            foldoutAnalytics = CreateFoldout(
                 foldoutAnalytics,
                 "Analytics",
                 true,
@@ -127,7 +127,7 @@ namespace DeltaDNA.Editor {
             
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
             
-            foldoutNotifications = EditorGUILayout.Foldout(
+            foldoutNotifications = CreateFoldout(
                 foldoutNotifications,
                 "Android Notifications",
                 true,
@@ -168,7 +168,7 @@ namespace DeltaDNA.Editor {
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
             
             GUILayout.BeginHorizontal();
-            foldoutSmartAds = EditorGUILayout.Foldout(
+            foldoutSmartAds = CreateFoldout(
                 foldoutSmartAds,
                 "SmartAds",
                 true,
@@ -290,6 +290,19 @@ namespace DeltaDNA.Editor {
             if (AreSmartAdsInProject()) ads.Apply();
             
             Debug.Log("[DeltaDNA] Changes have been applied to XML configuration files, please commit the updates to version control");
+        }
+
+        private static bool CreateFoldout(
+            bool foldout,
+            string content,
+            bool toggleOnLabelClick,
+            GUIStyle style) {
+
+            #if UNITY_5_5_OR_NEWER
+            return EditorGUILayout.Foldout(foldout, content, toggleOnLabelClick, style);
+            #else
+            return EditorGUILayout.Foldout(foldout, content, style);
+            #endif
         }
         
         private static bool AreAndroidNotificationsInProject() {

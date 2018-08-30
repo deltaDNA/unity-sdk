@@ -14,12 +14,13 @@
 // limitations under the License.
 //
 
-#if !UNITY_4_5 && !UNITY_4_6 && !UNITY_4_7
+#if !UNITY_4
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace DeltaDNA {
 
-    public class UtilsTest {
+    public class UtilsTest : AssertionHelper {
 
         [Test]
         public void MissingUrlSchemasGetFixed() 
@@ -37,6 +38,15 @@ namespace DeltaDNA {
         public void HttpsUrlsStayUntouched() 
         {
             Assert.That(Utils.FixURL("https://collectURL"), Is.EqualTo("https://collectURL"));
+        }
+
+        [Test]
+        public void IDictionaryGetOrDefault() {
+            var dict = new Dictionary<string, object>() {{ "key", 1 }};
+
+            Expect(dict.GetOrDefault("key", 0), Is.EqualTo(1));
+            Expect(dict.GetOrDefault("key", "default"), Is.EqualTo("default"));
+            Expect(dict.GetOrDefault("missing", 0), Is.EqualTo(0));
         }
     }
 }
