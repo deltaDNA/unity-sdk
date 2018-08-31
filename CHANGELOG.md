@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.11.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.1) (YYYY-MM-DD)
+## [4.11.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.1) (2018-08-31)
 ### Fixed
 - Compatibility with Unity 5.4 and 5.5.
 
