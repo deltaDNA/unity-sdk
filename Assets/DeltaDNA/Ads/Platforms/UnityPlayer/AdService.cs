@@ -70,12 +70,12 @@ namespace DeltaDNA.Ads.UnityPlayer {
                 return;
             }
 
-            adMinimumInterval = (config.ContainsKey("adMinimumInterval"))
-                ? config["adMinimumInterval"] as int? ?? DEFAULT_AD_MINIMUM_INTERVAL
-                : DEFAULT_AD_MINIMUM_INTERVAL;
-            adMaxPerSession = (config.ContainsKey("adMaxPerSession"))
-                ? config["adMaxPerSession"] as int? ?? DEFAULT_AD_MAX_PER_SESSION
-                : DEFAULT_AD_MAX_PER_SESSION;
+            adMinimumInterval = config.GetOrDefault(
+                "adMinimumInterval",
+                DEFAULT_AD_MINIMUM_INTERVAL);
+            adMaxPerSession = config.GetOrDefault(
+                "adMaxPerSession",
+                DEFAULT_AD_MAX_PER_SESSION);
 
             if (!config.ContainsKey("adProviders")) {
                 SmartAds.Instance.DidFailToRegisterForInterstitialAds(

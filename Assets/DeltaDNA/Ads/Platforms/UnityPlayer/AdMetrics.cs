@@ -38,28 +38,25 @@ namespace DeltaDNA.Ads.UnityPlayer {
         internal DateTime? LastShown(string decisionPoint) {
             Validate(decisionPoint);
 
-            var key = decisionPoint + LAST_SHOWN;
-            return values.ContainsKey(key)
-                ? values[key] as DateTime? ?? null
-                : null;
+            return values.GetOrDefault(
+                decisionPoint + LAST_SHOWN,
+                (DateTime?) null);
         }
 
         internal long SessionCount(string decisionPoint) {
             Validate(decisionPoint);
 
-            var key = decisionPoint + SESSION_COUNT;
-            return values.ContainsKey(key)
-                ? values[key] as long? ?? 0
-                : 0;
+            return values.GetOrDefault(
+                decisionPoint + SESSION_COUNT,
+                0L);
         }
 
         internal long DailyCount(string decisionPoint) {
             Validate(decisionPoint);
 
-            var key = decisionPoint + DAILY_COUNT;
-            return values.ContainsKey(key)
-                ? values[key] as long? ?? 0
-                : 0;
+            return values.GetOrDefault(
+                decisionPoint + DAILY_COUNT,
+                0L);
         }
 
         internal void RecordAdShown(string decisionPoint, DateTime date) {

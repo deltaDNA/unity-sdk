@@ -50,24 +50,16 @@ namespace DeltaDNA {
                 ? json["response"] as JSONObject
                 : new JSONObject();
 
-            priority = json.ContainsKey("priority")
-                ? json["priority"] as long? ?? 0
-                : 0;
-            limit = json.ContainsKey("limit")
-                ? json["limit"] as long? ?? -1
-                : -1;
+            priority = json.GetOrDefault("priority", 0L);
+            limit = json.GetOrDefault("limit", -1L);
             condition = (json.ContainsKey("condition")
                 ? json["condition"] as List<object>
                 : new List<object>(0))
                 .Select(e => e as JSONObject)
                 .ToArray();
 
-            campaignId = json.ContainsKey("campaignID")
-                ? json["campaignID"] as long? ?? -1
-                : -1;
-            variantId = json.ContainsKey("variantID")
-                ? json["variantID"] as long? ?? -1
-                : -1;
+            campaignId = json.GetOrDefault("campaignID", -1L);
+            variantId = json.GetOrDefault("variantID", -1L);
 
         }
 

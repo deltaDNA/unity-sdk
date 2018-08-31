@@ -197,5 +197,12 @@ namespace DeltaDNA
             }
         }
 
+        #region Extenson Methods
+
+        public static T GetOrDefault<T, K>(this IDictionary<K, object> dict, K key, T def) {
+            return (dict != null && dict.ContainsKey(key) && dict[key] is T) ? (T) dict[key] : def;
+        }
+
+        #endregion
     }
 }
