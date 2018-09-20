@@ -3,6 +3,7 @@
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (YYYY-MM-DD)
 ### Fixed
 - Facebook ads dependency resolution on Android.
+- Missing Amazon, iPad, and iPhone identifiers for 2018 devices.
 
 ## [4.11.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.1) (2018-08-31)
 ### Fixed

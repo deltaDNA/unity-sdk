@@ -187,6 +187,7 @@ namespace DeltaDNA
             switch (name) {
 
                 // Apple
+                // https://www.theiphonewiki.com/wiki/Models
 
                 case "iPhone1,1": return @"iPhone 1G";
                 case "iPhone1,2": return @"iPhone 3G";
@@ -216,6 +217,10 @@ namespace DeltaDNA
                 case "iPhone10,5": return @"iPhone 8 Plus";
                 case "iPhone10,3": return @"iPhone X";
                 case "iPhone10,6": return @"iPhone X";
+                case "iPhone11,2": return @"iPhone XS";
+                case "iPhone11,4": return @"iPhone XS Max";
+                case "iPhone11,6": return @"iPhone XS Max";
+                case "iPhone11,8": return @"iPhone XR";
 
                 case "iPod1,1": return @"iPod Touch 1G";
                 case "iPod2,1": return @"iPod Touch 2G";
@@ -261,9 +266,12 @@ namespace DeltaDNA
                 case "iPad7,2": return @"iPad Pro 12.9 2G";
                 case "iPad7,3": return @"iPad Pro 10.5";
                 case "iPad7,4": return @"iPad Pro 10.5";
+                case "iPad7,5": return @"iPad 6G";
+                case "iPad7,6": return @"iPad 6G";
 
 
                 // Amazon
+                // https://developer.amazon.com/docs/fire-tablets/ft-device-and-feature-specifications.html
 
                 case "Amazon KFSAWA": return "Fire HDX 8.9 (4th Gen)";
                 case "Amazon KFASWI": return "Fire HD 7 (4th Gen)";
@@ -282,6 +290,7 @@ namespace DeltaDNA
                 case "Amazon KFDOWI": return "Fire HD 8 (2017)";
                 case "Amazon KFAUWI": return "Fire 7 (2017)";
                 case "Amazon KFSUWI": return "Fire HD 10 (2017)";
+                case "Amazon KFKAWI": return "Fire HD 8 (2018)";
 
                 default:
                     return Trim(name, 72);
