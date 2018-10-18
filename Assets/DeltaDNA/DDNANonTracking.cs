@@ -155,6 +155,7 @@ namespace DeltaDNA {
         #endregion
         #region Client Configuration
 
+        override internal string CrossGameUserID { get; set; }
         override internal string PushNotificationToken { get; set; }
         override internal string AndroidRegistrationID { get; set; }
 

@@ -19,16 +19,20 @@ using NSubstitute;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UnityEngine;
 
 namespace DeltaDNA {
 
     public sealed class EventActionTest {
 
         private DDNABase ddna;
+        private ActionStore store;
 
         [SetUp]
         public void PreTest() {
             ddna = Substitute.For<DDNABase>(null);
+            store = Substitute.For<ActionStore>(Settings.ACTIONS_STORAGE_PATH
+                .Replace("{persistent_path}", Application.persistentDataPath));
         }
 
         [Test]
@@ -41,7 +45,8 @@ namespace DeltaDNA {
             new EventAction(
                 e,
                 new ReadOnlyCollection<EventTrigger>(
-                    new List<EventTrigger>() { t2, t3, t1 }))
+                    new List<EventTrigger>() { t2, t3, t1 }),
+                store)
                 .Run();
 
             Received.InOrder(() => {
@@ -62,16 +67,17 @@ namespace DeltaDNA {
 
             new EventAction(
                 e,
-                new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }))
+                new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }),
+                store)
                 .Add(h1)
                 .Add(h2)
                 .Add(h3)
                 .Run();
 
             Received.InOrder(() => {
-                h1.Received().Handle(t);
-                h2.Received().Handle(t);
-                h3.Received().Handle(t);
+                h1.Received().Handle(t, store);
+                h2.Received().Handle(t, store);
+                h3.Received().Handle(t, store);
             });
         }
 
@@ -83,18 +89,19 @@ namespace DeltaDNA {
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
             t.Evaluate(e).Returns(true);
-            h1.Handle(t).Returns(false);
-            h2.Handle(t).Returns(true);
+            h1.Handle(t, store).Returns(false);
+            h2.Handle(t, store).Returns(true);
 
             new EventAction(
                 e,
-                new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }))
+                new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }),
+                store)
                 .Add(h1)
                 .Add(h2)
                 .Add(h3)
                 .Run();
 
-            h3.DidNotReceive().Handle(Arg.Any<EventTrigger>());
+            h3.DidNotReceive().Handle(Arg.Any<EventTrigger>(), store);
         }
     }
 }

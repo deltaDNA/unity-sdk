@@ -35,16 +35,19 @@ namespace DeltaDNA {
 
         private readonly GameEvent evnt;
         private readonly ReadOnlyCollection<EventTrigger> triggers;
+        private readonly ActionStore store;
 
         private readonly List<EventActionHandler> handlers =
             new List<EventActionHandler>();
 
         internal EventAction(
             GameEvent evnt,
-            ReadOnlyCollection<EventTrigger> triggers) {
+            ReadOnlyCollection<EventTrigger> triggers,
+            ActionStore store) {
 
             this.evnt = evnt;
             this.triggers = triggers;
+            this.store = store;
         }
 
         /// <summary>
@@ -67,14 +70,14 @@ namespace DeltaDNA {
             foreach (var trigger in triggers) {
                 if (trigger.Evaluate(evnt)) {
                     foreach (var handler in handlers) {
-                        if (handler.Handle(trigger)) return;
+                        if (handler.Handle(trigger, store)) return;
                     }
                 }
             }
         }
 
         internal static EventAction CreateEmpty(GameEvent evnt) {
-            return new EventAction(evnt, EMPTY_TRIGGERS);
+            return new EventAction(evnt, EMPTY_TRIGGERS, null);
         }
     }
 }

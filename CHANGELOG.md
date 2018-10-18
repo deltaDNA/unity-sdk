@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.0) (YYYY-MM-DD)
+### Added
+- Support for cross promotion.
+- Support for image message store action.
+
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (2018-09-20)
 ### Fixed
 - Facebook ads dependency resolution on Android.

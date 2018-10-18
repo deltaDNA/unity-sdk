@@ -13,6 +13,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
  * [Custom Events](#custom-events)
  * [Event Triggers](#event-triggers)
  * [Engage](#engage)
+ * [Cross Promotion](#cross-promotion)
 * [SmartAds](#smartads)
  * [Usage](#usage)
  * [Showing ads](#showing-ads)
@@ -124,6 +125,26 @@ DDNA.Instance.RequestEngagement(engagement, (response) => {
 }, (exception) => {
     Debug.Log("Engage reported an error: "+exception.Message);
 });
+```
+
+### Cross Promotion
+To register a user for cross promotion between multiple games the user needs to sign into a service which can provide unique user identification. Once the user has been signed in the ID can be set in the SDK:
+```csharp
+DDNA.Instance.CrossGameUserId = crossGameUserId;
+```
+On the next session the SDK will download a new configuration with cross promotion campaigns relevant to the user.
+
+When a cross promotion campaign with a store action has been acted on by the user, the SDK will return the store link for the currently set platform:
+```csharp
+DDNA.Instance
+    .RecordEvent("event")
+    .Add(new ImageMesageHandler(DDNA.Instance, imageMessage => {
+        imageMessage.OnStore += (args) => {
+            // act on store action with value 'args.ActionValue'
+        };
+        imageMessage.Show();
+    }))
+    .Run();
 ```
 
 ## SmartAds
