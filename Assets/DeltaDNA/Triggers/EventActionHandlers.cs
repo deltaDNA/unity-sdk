@@ -1,5 +1,5 @@
 ﻿//
-// Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
+// Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace DeltaDNA {
     /// </summary>
     public abstract class EventActionHandler {
 
-        internal abstract bool Handle(EventTrigger trigger);
+        internal abstract bool Handle(EventTrigger trigger, ActionStore store);
         internal abstract string Type();
     }
 
@@ -46,11 +46,15 @@ namespace DeltaDNA {
             this.callback = callback;
         }
 
-        internal override bool Handle(EventTrigger trigger) {
+        internal override bool Handle(EventTrigger trigger, ActionStore store) {
             if (trigger.GetAction() == Type()) {
                 var response = trigger.GetResponse();
+                var persistedParams = store.Get(trigger);
 
-                if (response.ContainsKey("parameters")) {
+                if (persistedParams != null) {
+                    store.Remove(trigger);
+                    callback(persistedParams);
+                } else if (response.ContainsKey("parameters")) {
                     callback((JSONObject) response["parameters"]);
                 } else {
                     callback(new JSONObject());
@@ -80,14 +84,26 @@ namespace DeltaDNA {
             this.callback = callback;
         }
 
-        internal override bool Handle(EventTrigger trigger) {
+        internal override bool Handle(EventTrigger trigger, ActionStore store) {
             if (trigger.GetAction() == Type()) {
+                // copy the json to avoid modifying original
+                var response = new JSONObject(trigger.GetResponse());
+                var persistedParams = store.Get(trigger);
+
+                if (persistedParams != null) {
+                    response["parameters"] = persistedParams;
+                }
+
                 var image = ImageMessage.Create(
                     ddna,
-                    new Engagement("dummy") { JSON = trigger.GetResponse() },
+                    new Engagement("dummy") { JSON = response },
                     null);
 
                 if (image != null && image.IsReady()) {
+                    if (persistedParams != null) {
+                        store.Remove(trigger);
+                    }
+
                     callback(image);
                     return true;
                 }
