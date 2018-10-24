@@ -423,7 +423,7 @@ namespace DeltaDNA {
             set {
                 if (String.IsNullOrEmpty(value)) {
                     Logger.LogWarning("CrossGameUserID cannot be null or empty");
-                } else if (value != CrossGameUserID) {
+                } else {
                     PlayerPrefs.SetString(DDNA.PF_KEY_CROSS_GAME_USER_ID, value);
 
                     if (started) {
