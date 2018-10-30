@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using UnityEditor;
 
@@ -150,7 +151,8 @@ namespace DeltaDNA.Ads.Editor {
                     }
                 }
                 
-                config.Save(CONFIG);
+                using (var w = XmlWriter.Create(CONFIG, new XmlWriterSettings { NewLineChars = "\n", Indent = true }) )
+                    config.WriteTo(w);
             }
         }
         
