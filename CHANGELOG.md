@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.11.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.3) (YYYY-MM-DD)
+### Fixed
+- Crash when performing Engage requests.
+
+
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (2018-09-20)
 ### Fixed
 - Facebook ads dependency resolution on Android.
