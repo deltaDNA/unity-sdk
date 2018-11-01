@@ -3,7 +3,7 @@
 ## [4.11.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.3) (YYYY-MM-DD)
 ### Fixed
 - Crash when performing Engage requests.
-
+- Invalid event schema for forget me events.
 
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (2018-09-20)
 ### Fixed
