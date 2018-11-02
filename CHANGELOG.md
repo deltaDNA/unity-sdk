@@ -4,6 +4,7 @@
 ### Fixed
 - Crash when performing Engage requests.
 - Invalid event schema for forget me events.
+- IsolatedStorageException errors when saving the Engage cache.
 
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (2018-09-20)
 ### Fixed

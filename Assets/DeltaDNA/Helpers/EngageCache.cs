@@ -38,7 +38,7 @@ namespace DeltaDNA {
             this.settings = settings;
 
             lock (LOCK) {
-                if (!Directory.Exists(location)) Directory.CreateDirectory(location);
+                CreateDirectory();
 
                 cache = Directory
                     .GetFiles(location)
@@ -98,6 +98,8 @@ namespace DeltaDNA {
 
         internal void Save() {
             lock (LOCK) {
+                CreateDirectory();
+
                 foreach (var item in cache) {
                     File.WriteAllText(location + item.Key, item.Value);
                 }
@@ -114,6 +116,10 @@ namespace DeltaDNA {
                 times.Clear();
                 Save();
             }
+        }
+
+        private void CreateDirectory() {
+            if (!Directory.Exists(location)) Directory.CreateDirectory(location);
         }
 
         private static string Key(string decisionPoint, string flavour) {
