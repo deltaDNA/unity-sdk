@@ -1,4 +1,7 @@
 # Change Log
+## [4.11.4] (https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.4) (YYYY-MM-DD)
+### Fixed
+- Missing fields in ddnaEventTriggeredAction event.
 
 ## [4.11.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.3) (2018-11-02)
 ### Fixed
