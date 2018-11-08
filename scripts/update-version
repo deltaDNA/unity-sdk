@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo "Old version not supplied as the first argument"
+  exit 1
+elif [ -z "$2" ]; then
+  echo "New version not supplied as the second argument"
+  exit 1
+fi
+
+sed -i "s/$1/$2/g" Assets/DeltaDNA/Helpers/Settings.cs
+
+echo "Have you updated the changelog?"
