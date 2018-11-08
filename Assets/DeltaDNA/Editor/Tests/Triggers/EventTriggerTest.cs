@@ -130,28 +130,75 @@ namespace DeltaDNA {
         }
 
         [Test]
-        public void SendsConversionEventWhenEvaluated() {
+        public void SendsConversionEventWhenEvaluated(){
+            var jsonObject = new JSONObject();
+            var responseJson = new JSONObject();
+            var eventParamJson = new JSONObject();
             var eventName = "a";
             var priority = 1L;
             var campaignId = 2L;
             var vaiantId = 3L;
-
-            new EventTrigger(
-                ddna,
-                0,
-                ("{  \"eventName\":\"" + eventName + "\"," +
-                    "\"priority\":" + priority + "," +
-                    "\"campaignID\":" + campaignId + "," +
-                    "\"variantID\":" + vaiantId + "}").Json())
-                    .Evaluate(new GameEvent(eventName));
-
+            var campaignName = "CAMPAIGN NAME HERE";
+            var variantName = "VARIANT NAME HERE";
+            
+            eventParamJson.Add("responseEngagementName", campaignName);
+            eventParamJson.Add("responseVariantName", variantName);
+            
+            responseJson.Add("eventParams", eventParamJson);
+            
+            jsonObject.Add("eventName", eventName);
+            jsonObject.Add("priority", priority);
+            jsonObject.Add("campaignID", campaignId);
+            jsonObject.Add("variantID", vaiantId);
+            jsonObject.Add("response", responseJson);
+        
+            
+            new EventTrigger(ddna,0,jsonObject)
+                .Evaluate(new GameEvent(eventName));
+            
             ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
                 e.Name == "ddnaEventTriggeredAction" &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignPriority") as long? == priority &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignID") as long? == campaignId &&
                 e.parameters.GetParam("ddnaEventTriggeredVariantID") as long? == vaiantId &&
                 e.parameters.GetParam("ddnaEventTriggeredActionType") as string == "gameParameters" &&
-                e.parameters.GetParam("ddnaEventTriggeredSessionCount") as int? == 1
+                e.parameters.GetParam("ddnaEventTriggeredCampaignName") as string == campaignName &&
+                e.parameters.GetParam("ddnaEventTriggeredVariantName") as string == variantName &&
+                e.parameters.GetParam("ddnaEventTriggeredSessionCount") as int? == 1 
+            ));
+        }
+        
+        [Test]
+        public void SendsConversionEventWhenEvaluatedWithoutOptionalParameters(){
+            var jsonObject = new JSONObject();
+            var responseJson = new JSONObject();
+            var eventParamJson = new JSONObject();
+            var eventName = "a";
+            var priority = 1L;
+            var campaignId = 2L;
+            var vaiantId = 3L;
+ 
+            responseJson.Add("eventParams", eventParamJson);
+            
+            jsonObject.Add("eventName", eventName);
+            jsonObject.Add("priority", priority);
+            jsonObject.Add("campaignID", campaignId);
+            jsonObject.Add("variantID", vaiantId);
+            jsonObject.Add("response", responseJson);
+        
+            
+            new EventTrigger(ddna,0,jsonObject)
+                .Evaluate(new GameEvent(eventName));
+            
+            ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
+                e.Name == "ddnaEventTriggeredAction" &&
+                e.parameters.GetParam("ddnaEventTriggeredCampaignPriority") as long? == priority &&
+                e.parameters.GetParam("ddnaEventTriggeredCampaignID") as long? == campaignId &&
+                e.parameters.GetParam("ddnaEventTriggeredVariantID") as long? == vaiantId &&
+                e.parameters.GetParam("ddnaEventTriggeredActionType") as string == "gameParameters" &&
+                e.parameters.GetParam("ddnaEventTriggeredSessionCount") as int? == 1 &&
+                ! e.parameters.AsDictionary().ContainsKey("ddnaEventTriggeredVariantName") &&
+                ! e.parameters.AsDictionary().ContainsKey("ddnaEventTriggeredCampaignName")
             ));
         }
 

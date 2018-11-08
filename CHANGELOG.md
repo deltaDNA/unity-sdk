@@ -5,6 +5,16 @@
 - Support for cross promotion.
 - Support for image message store action.
 
+## [4.11.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.4) (2018-11-07)
+### Fixed
+- Missing fields in ddnaEventTriggeredAction event.
+
+## [4.11.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.3) (2018-11-02)
+### Fixed
+- Crash when performing Engage requests.
+- Invalid event schema for forget me events.
+- IsolatedStorageException errors when saving the Engage cache.
+
 ## [4.11.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.2) (2018-09-20)
 ### Fixed
 - Facebook ads dependency resolution on Android.

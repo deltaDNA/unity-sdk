@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 rm -f deltadna-*.unitypackage
 
 # exporting in other than 5.6.5p1 creates backwards incompatible packages
@@ -11,7 +10,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Failed to find '/Applications/Unity Build' directory"
         echo "Make sure it exists and points to a 5.6.x version of Unity"
         exit 1
-    fi
+    fi    
+elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+     if [ -d "/opt/UnityBuild/Editor" ]; then
+        UNITY=/opt/UnityBuild/Editor/Unity
+     else
+        echo "Failed to find '/opt/UnityBuild/Editor' directory"
+        echo "Make sure it exists and points to a 5.6.x version of Unity"
+        exit 1
+     fi    
 elif [[ "$OSTYPE" == "msys" ]]; then
     echo "Exporting on Windows not supported due to incompatible line endings"
     exit 1

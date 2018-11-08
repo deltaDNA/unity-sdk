@@ -38,7 +38,7 @@ namespace DeltaDNA {
             this.settings = settings;
 
             lock (LOCK) {
-                if (!Directory.Exists(location)) Directory.CreateDirectory(location);
+                CreateDirectory();
 
                 cache = Directory
                     .GetFiles(location)
@@ -56,25 +56,41 @@ namespace DeltaDNA {
         }
 
         internal void Put(string decisionPoint, string flavour, string data) {
+            if (string.IsNullOrEmpty(decisionPoint)) {
+                Logger.LogWarning(
+                    "Failed inserting " + data + " into cache due to null or empty decision point");
+                return;
+            }
+
             var key = Key(decisionPoint, flavour);
 
-            cache[key] = data;
-            times[key] = DateTime.UtcNow;
+            lock (LOCK) {
+                cache[key] = data;
+                times[key] = DateTime.UtcNow;
+            }
         }
 
         internal string Get(string decisionPoint, string flavour) {
-            if (settings.EngageCacheExpirySeconds == 0) return null;
+            if (string.IsNullOrEmpty(decisionPoint)) {
+                Logger.LogWarning(
+                    "Failed retrieving from cache due to null or empty decision point");
+                return null;
+            } else if (settings.EngageCacheExpirySeconds == 0) {
+                return null;
+            }
 
             var key = Key(decisionPoint, flavour);
 
-            if (cache.ContainsKey(key)) {
-                var age = DateTime.UtcNow - times[key];
-                if (age.TotalSeconds < settings.EngageCacheExpirySeconds) {
-                    return cache[key];
-                }
+            lock (LOCK) {
+                if (cache.ContainsKey(key)) {
+                    var age = DateTime.UtcNow - times[key];
+                    if (age.TotalSeconds < settings.EngageCacheExpirySeconds) {
+                        return cache[key];
+                    }
 
-                cache.Remove(key);
-                times.Remove(key);
+                    cache.Remove(key);
+                    times.Remove(key);
+                }
             }
 
             return null;
@@ -82,6 +98,8 @@ namespace DeltaDNA {
 
         internal void Save() {
             lock (LOCK) {
+                CreateDirectory();
+
                 foreach (var item in cache) {
                     File.WriteAllText(location + item.Key, item.Value);
                 }
@@ -93,9 +111,15 @@ namespace DeltaDNA {
         }
 
         internal void Clear() {
-            cache.Clear();
-            times.Clear();
-            Save();
+            lock (LOCK) {
+                cache.Clear();
+                times.Clear();
+                Save();
+            }
+        }
+
+        private void CreateDirectory() {
+            if (!Directory.Exists(location)) Directory.CreateDirectory(location);
         }
 
         private static string Key(string decisionPoint, string flavour) {
