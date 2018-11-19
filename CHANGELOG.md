@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.11.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.5) (YYYY-MM-DD)
+## [4.11.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.5) (2018-11-19)
 ### Fixed
 - Occasional freeze when closing a Unity ad on iOS.
 
