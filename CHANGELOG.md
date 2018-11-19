@@ -1,6 +1,10 @@
 # Change Log
 
-## [4.11.4] (https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.4) (2018-11-07)
+## [4.11.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.5) (YYYY-MM-DD)
+### Fixed
+- Occasional freeze when closing a Unity ad on iOS.
+
+## [4.11.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.4) (2018-11-07)
 ### Fixed
 - Missing fields in ddnaEventTriggeredAction event.
 
