@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6) (YYYY-MM-DD)
+### Added
+- Support for removing iOS push notifications from build.
+
 ## [4.11.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.5) (2018-11-19)
 ### Fixed
 - Occasional freeze when closing a Unity ad on iOS.

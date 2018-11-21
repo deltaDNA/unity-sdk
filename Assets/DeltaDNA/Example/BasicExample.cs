@@ -37,6 +37,7 @@ public class BasicExample : MonoBehaviour {
         DDNA.Instance.SetLoggingLevel(Logger.Level.DEBUG);
 
         // Enable push notifications
+        #if !DDNA_IOS_PUSH_NOTIFICATIONS_REMOVED
         DDNA.Instance.IosNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an iOS push token: " + n);
         };
@@ -47,6 +48,7 @@ public class BasicExample : MonoBehaviour {
             Debug.Log("Launched with an iOS push notification: " + n);
         };
         DDNA.Instance.IosNotifications.RegisterForPushNotifications();
+        #endif
 
         DDNA.Instance.AndroidNotifications.OnDidRegisterForPushNotifications += (string n) => {
             Debug.Log("Got an Android registration token: " + n);
@@ -135,7 +137,7 @@ public class BasicExample : MonoBehaviour {
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
-            
+
         DDNA.Instance.EngageFactory.RequestGameParameters("gameLoaded", customParams, (gameParameters) => {
             popUpContent.text = MiniJSON.Json.Serialize(gameParameters);
         });
@@ -149,7 +151,7 @@ public class BasicExample : MonoBehaviour {
             .AddParam("userLevel", 4)
             .AddParam("experience", 1000)
             .AddParam("missionName", "Disco Volante");
-            
+
         DDNA.Instance.EngageFactory.RequestImageMessage("testImageMessage", customParams, (imageMessage) => {
 
             // Check we got an engagement with a valid image message.

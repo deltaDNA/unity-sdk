@@ -241,7 +241,7 @@ namespace DeltaDNA.Editor {
                 
                 GUILayout.Label("Additional", EditorStyles.boldLabel);
                 
-                EditorGUI.BeginDisabledGroup(!InitialisationHelper.IsDevelopment());
+                EditorGUI.BeginDisabledGroup(!Ads.Editor.InitialisationHelper.IsDevelopment());
                 ads.debugNotifications = GUILayout.Toggle(
                     ads.debugNotifications,
                     "Enable debug notifications in development builds");
