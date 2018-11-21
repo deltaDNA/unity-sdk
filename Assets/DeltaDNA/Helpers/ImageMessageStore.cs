@@ -42,10 +42,9 @@ namespace DeltaDNA {
         }
 
         #if UNITY_EDITOR
-        internal ImageMessageStore() {
-            parent = null;
-        }
+        internal ImageMessageStore() : this(null) {}
         #endif
+
 
         internal virtual bool Has(string url) {
             return Directory

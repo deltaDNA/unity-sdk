@@ -53,14 +53,14 @@ namespace DeltaDNA
                             _instance = singleton.AddComponent<T>();
                             singleton.name = typeof(T).ToString();
 
+                            #if UNITY_EDITOR
+                            if (Application.isPlaying) { // avoid test errors
+                            #endif
                             DontDestroyOnLoad(singleton);
+                            #if UNITY_EDITOR
+                            }
+                            #endif
 
-                            // Logger.LogDebug("[Singleton] An instance of " + typeof(T) +
-                            //           " is needed in the scene, so '" + singleton +
-                            //           "' was created with DontDestroyOnLoad.");
-                        } else {
-                            // Logger.LogDebug("[Singleton] Using instance already created: " +
-                            //           _instance.gameObject.name);
                         }
                     }
                     return _instance;
@@ -78,8 +78,14 @@ namespace DeltaDNA
         /// So, this was made to be sure we're not creating that buggy ghost object.
         /// </summary>
         public virtual void OnDestroy () {
-            // Logger.LogDebug("[Singleton] Destroying an instance of " + typeof(T));
+            #if UNITY_EDITOR
+            if (Application.isPlaying) { // avoid test errors
+            #endif
             applicationIsQuitting = true;
+            #if UNITY_EDITOR
+            }
+            #endif
+
         }
     }
 }

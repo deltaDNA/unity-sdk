@@ -15,13 +15,23 @@
 //
 
 #if !UNITY_4
-using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
 
 namespace DeltaDNA {
 
     public class ImageMessageTest {
+
+        private ImageMessageStore store;
+
+        [SetUp]
+        public void SetUp() {
+            store = new ImageMessageStore();
+        }
+
+        [TearDown]
+        public void TearDown() {
+            store.Clear();
+        }
 
         [Test]
         public void CreateWithNullEngagementReturnsNull()
