@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# best to run this in 5.6.x as that's the minimum we support
+UNITY=""
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    if [ -d "/Applications/Unity_Build" ]; then
+        UNITY=/Applications/Unity_Build/Unity.app/Contents/MacOS/Unity
+    else
+        echo "Failed to find '/Applications/Unity Build' directory"
+        echo "Make sure it exists and points to a 5.6.x version of Unity"
+        exit 1
+    fi
+elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+     if [ -d "/opt/UnityBuild/Editor" ]; then
+        UNITY=/opt/UnityBuild/Editor/Unity
+     else
+        echo "Failed to find '/opt/UnityBuild/Editor' directory"
+        echo "Make sure it exists and points to a 5.6.x version of Unity"
+        exit 1
+     fi
+elif [[ "$OSTYPE" == "msys" ]]; then
+    echo "Exporting on Windows not supported due to incompatible line endings"
+    exit 1
+    #UNITY=/c/Program\ Files/Unity/Editor/Unity.exe
+else
+    exit 1
+fi
+
+"$UNITY" \
+    -batchMode \
+    -nographics \
+    -projectPath $(pwd) \
+    -logFile ./unity-build.log \
+    -editorTestsResultFile ./unity-test-results.xml \
+    -runEditorTests
+RESULT=$?
+
+if [[ $RESULT == 0 ]]; then
+    echo "Tests succeeded"
+    exit 0
+elif [[ $RESULT == 1 ]]; then
+    echo "Tests failed"
+    exit 1
+else
+    echo "Failed running tests"
+    exit 1
+fi
