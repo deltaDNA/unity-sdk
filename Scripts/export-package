@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-rm -f deltadna-*.unitypackage
 
-# exporting in other than 5.6.5p1 creates backwards incompatible packages
+# exporting in other than 5.6.x creates backwards incompatible packages
 UNITY=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
     if [ -d "/Applications/Unity_Build" ]; then
@@ -27,6 +26,8 @@ else
     exit 1
 fi
 
+rm -f deltadna-*.unitypackage
+
 "$UNITY" \
     -batchMode \
     -quit \
@@ -38,8 +39,10 @@ fi
 if grep -q 'Exiting batchmode successfully now!' unity-build.log
 then
     echo "Exported packages successfully."
+    exit 0
 else
     grep 'Fatal error!' unity-build.log
     grep -m 1 "executeMethod class 'BuildScripts' could not be found." unity-build.log
     echo "Failed to export packages."
+    exit 1
 fi
