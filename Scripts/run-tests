@@ -19,9 +19,8 @@ elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         exit 1
      fi
 elif [[ "$OSTYPE" == "msys" ]]; then
-    echo "Exporting on Windows not supported due to incompatible line endings"
-    exit 1
-    #UNITY=/c/Program\ Files/Unity/Editor/Unity.exe
+    # windows does not support symlinks so hardcoded path it is
+    UNITY=/c/Program\ Files/Unity\ 5.6.5p3/Editor/Unity.exe
 else
     exit 1
 fi
