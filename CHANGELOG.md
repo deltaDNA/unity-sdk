@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6) (YYYY-MM-DD)
+## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
 ### Added
 - Support for removing iOS push notifications from build.
 
