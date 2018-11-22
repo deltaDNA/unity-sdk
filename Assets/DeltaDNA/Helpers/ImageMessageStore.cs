@@ -45,6 +45,7 @@ namespace DeltaDNA {
         internal ImageMessageStore() : this(null) {}
         #endif
 
+
         internal virtual bool Has(string url) {
             return Directory
                 .GetFiles(cache)

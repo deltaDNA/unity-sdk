@@ -38,9 +38,9 @@ if [[ $RESULT == 0 ]]; then
     echo "Tests succeeded"
     exit 0
 elif [[ $RESULT == 1 ]]; then
-    echo "Tests failed"
+    echo "Failed running tests"
     exit 1
 else
-    echo "Failed running tests"
+    echo "Tests failed"
     exit 1
 fi

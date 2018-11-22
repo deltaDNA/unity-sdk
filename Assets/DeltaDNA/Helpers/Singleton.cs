@@ -62,6 +62,7 @@ namespace DeltaDNA
                             #endif
                         }
                     }
+
                     return _instance;
                 }
             }

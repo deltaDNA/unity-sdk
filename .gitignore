@@ -16,6 +16,7 @@ iOS/**
 *.csproj
 *.userprefs
 *.unityproj
+*.unitypackage
 unity-build.log
 unity-test-results.xml
 ProjectSettings/*
