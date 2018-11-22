@@ -2,7 +2,7 @@
 
 ## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded directly from GitHub by clicking the filename and then view raw.  Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
