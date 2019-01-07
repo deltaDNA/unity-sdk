@@ -11,6 +11,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 * [Analytics](#analytics)
 * [Quick Start](#quick-start)
  * [Custom Events](#custom-events)
+ * [Tracking Revenue](#tracking-revenue)
  * [Event Triggers](#event-triggers)
  * [Engage](#engage)
  * [Cross Promotion](#cross-promotion)
@@ -66,6 +67,44 @@ var gameEvent = new GameEvent("myEvent")
 
 DDNA.Instance.RecordEvent(gameEvent);
 ```
+
+### Tracking Revenue
+
+Revenue and IAP data should be tracked on the `transaction` event. This event contains nested objects that allow for the tracking of both virtual and real currency spending. As detailed in the [ISO 4217 standard](https://en.wikipedia.org/wiki/ISO_4217#Active_codes "ISO 4217 standard"), not all real currencies have 2 minor units and thus require conversion into a common form. The `Product.ConvertCurrency()` method can be used to ensure the correct currency value is sent. 
+
+For example, to track a purchase made with 550 JP¥: 
+
+```csharp
+new Product().SetRealCurrency("JPY", Product.ConvertCurrency("JPY", 550)) // realCurrencyAmount: 550
+```
+
+And to track a $4.99 purchase: 
+
+```csharp
+new Product().SetRealCurrency("USD", Product.ConvertCurrency("USD", 4.99)) // realCurrencyAmount: 499
+```
+
+These will be converted automatically into a `convertedProductAmount` parameter that is used as a common currency for reporting. 
+
+Receipt validation can also be performed against purchases made via the Google Play Store on Android and the Apple App Store on iOS. 
+
+#### Android (Google Play Store) 
+
+To validate in-app purchases made through the Google Play Store the following parameters should be added to the `transaction` event:
+
+* `transactionServer` - the server for which the receipt should be validated against, in this case 'GOOGLE'
+* `transactionReceipt` - the purchase data as a string 
+* `transactionReceiptSignature` - the in-app data signature 
+
+#### iOS (Apple App Store)
+
+To validate in-app purchases made through the Apple App Store the following parameters should be added to the `transaction` event:
+
+* `transactionServer` - the server for which the receipt should be validated against, in this case 'APPLE'
+* `transactionReceipt` - the purchase data as a string not as nested JSON 
+* `transactionID` - the ID of the in-app purchase e.g 100000576198248
+
+When a `transaction` event is received with the above parameters, the receipt will be checked against the relevant store and the resulting event will be tagged with a `revenueValidated` parameter to allow for the filtering out of invalid revenue. 
 
 ### Event Triggers
 All `RecordEvent` methods return an `EventAction` instance on which `EventActionHandler`s can be registered through the `Add` method, for handling triggers which match the conditions setup on the Platform for Event-Triggered Campaigns. Once all the handlers have been registered `Run()` needs to be called in order for the event triggers to be evaluated and for a matching handler to be run. This happens on the client without any network use and as such it is instantaneous.
