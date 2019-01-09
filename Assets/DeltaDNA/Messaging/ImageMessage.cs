@@ -153,7 +153,6 @@ namespace DeltaDNA {
         }
 
         private void redraw(){
-            Logger.LogDebug("I am redrawing!");
             Object.Destroy(gameObject);
             gameObject = new GameObject(name, typeof(RectTransform));
             
