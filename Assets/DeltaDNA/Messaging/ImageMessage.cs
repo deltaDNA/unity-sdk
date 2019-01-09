@@ -16,9 +16,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
+using Object = UnityEngine.Object;
 
 namespace DeltaDNA {
 
@@ -102,6 +105,29 @@ namespace DeltaDNA {
             }
         }
 
+        public class StoreEventArgs : EventArgs {
+
+            public StoreEventArgs(
+                string platform, string id, string type, object value)
+                : base(id, type, "") {
+
+                JSONObject values = (JSONObject) value;
+                switch (platform) {
+                    case Platform.AMAZON:
+                        ActionValue = values.GetOrDefault("AMAZON", "");
+                        break;
+                    case Platform.ANDROID:
+                        ActionValue = values.GetOrDefault("ANDROID", "");
+                        break;
+                    case Platform.IOS:
+                    case Platform.IOS_TV:
+                        ActionValue = values.GetOrDefault("IOS", "");
+                        break;
+                }
+            }
+        }
+
+        private String name; 
         private ImageMessage(
             DDNA ddna,
             JSONObject configuration,
@@ -114,11 +140,28 @@ namespace DeltaDNA {
             gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(ddna, configuration);
+           
 
+            OrientationChange changer = gameObject.AddComponent<OrientationChange>();
+            changer.Init(redraw);
+
+            this.name = name;
             this.configuration = configuration;
             this.spriteMap = spriteMap;
             this.depth = depth;
             this.engagement = engagement;
+        }
+
+        private void redraw(){
+            Logger.LogDebug("I am redrawing!");
+            Object.Destroy(gameObject);
+            gameObject = new GameObject(name, typeof(RectTransform));
+            
+            OrientationChange changer = gameObject.AddComponent<OrientationChange>();
+            changer.Init(redraw);
+            SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
+            spriteMap.Build(ddna, configuration);
+            Show();
         }
 
         public static ImageMessage Create(Engagement engagement) {
@@ -226,6 +269,7 @@ namespace DeltaDNA {
                         shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
+                   
                     JSONObject layout = this.configuration["layout"] as JSONObject;
                     object orientation;
                     if (!layout.TryGetValue("landscape", out orientation) && !layout.TryGetValue("portrait", out orientation)) {

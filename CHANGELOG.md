@@ -4,6 +4,9 @@
 ### Added
 - Support for cross promotion.
 - Support for image message store action.
+### Fixed
+- Image messages not redrawing correctly on device re-orientation 
+
 
 ## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
 ### Added
