@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,8 +30,22 @@ namespace DeltaDNA {
 
         public event Action OnDidReceiveResources;
         public event Action<string> OnDidFailToReceiveResources;
+        /// <summary>
+        /// Will be invoked when the user selects an element set to dismiss the
+        /// image message.
+        /// </summary>
         public event Action<EventArgs> OnDismiss;
+        /// <summary>
+        /// Will be invoked when the user selects an element set to use an
+        /// action. The value is returned by <code>ActionValue</code>.
+        /// </summary>
         public event Action<EventArgs> OnAction;
+        /// <summary>
+        /// Will be invoked when the user selects an element set to use a store
+        /// action. The value appropriate for the current platform is returned
+        /// by <code>ActionValue</code>.
+        /// </summary>
+        public event Action<EventArgs> OnStore;
 
         private readonly DDNA ddna;
 
@@ -42,18 +57,29 @@ namespace DeltaDNA {
         private bool showing = false;
         private Engagement engagement;
 
-        public class EventArgs: System.EventArgs
-        {
-            public EventArgs(string id, string type, string value)
-            {
-                this.ID = id;
-                this.ActionType = type;
-                this.ActionValue = value;
+        public class EventArgs: System.EventArgs {
+
+            public EventArgs(string id, string type, string value) {
+                ID = id;
+                ActionType = type;
+                ActionValue = value;
             }
 
             public string ID { get; set; }
             public string ActionType { get; set; }
             public string ActionValue { get; set; }
+
+            internal static EventArgs Create(
+                string platform, string id, string type, object value) {
+
+                switch (type) {
+                    case "store":
+                        return new StoreEventArgs(platform, id, type, value);
+
+                    default:
+                        return new EventArgs(id, type, (string) value);
+                }
+            }
         }
 
         public class StoreEventArgs : EventArgs {
@@ -219,7 +245,6 @@ namespace DeltaDNA {
                         shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
-                   
                     JSONObject layout = this.configuration["layout"] as JSONObject;
                     object orientation;
                     if (!layout.TryGetValue("landscape", out orientation) && !layout.TryGetValue("portrait", out orientation)) {
@@ -368,14 +393,14 @@ namespace DeltaDNA {
                 actions.Add(() => {});
             }
 
-            protected void RegisterAction(JSONObject action, string id)
-            {
+            protected void RegisterAction(JSONObject action, string id) {
                 object typeObj, valueObj;
-                action.TryGetValue("value", out valueObj);
 
                 if (action.TryGetValue("type", out typeObj)) {
+                    action.TryGetValue("value", out valueObj);
 
-                    ImageMessage.EventArgs eventArgs = new ImageMessage.EventArgs(id, (string)typeObj, (string)valueObj);
+                    EventArgs eventArgs = EventArgs.Create(
+                        DDNA.Instance.Platform, id, (string) typeObj, valueObj);
 
                     GameEvent actionEvent = new GameEvent("imageMessageAction");
                     if (imageMessage.engagement.JSON.ContainsKey("eventParams")) {
@@ -390,9 +415,10 @@ namespace DeltaDNA {
                     }
 
                     actionEvent.AddParam("imActionName", id);
-                    actionEvent.AddParam("imActionType", (string)typeObj);
-                    if (!String.IsNullOrEmpty((string)valueObj) && (string)typeObj != "dismiss") {
-                        actionEvent.AddParam("imActionValue", (string)valueObj);
+                    actionEvent.AddParam("imActionType", (string) typeObj);
+                    if (!string.IsNullOrEmpty(eventArgs.ActionValue)
+                        && (string) typeObj != "dismiss") {
+                        actionEvent.AddParam("imActionValue", eventArgs.ActionValue);
                     }
 
                     switch ((string)typeObj) {
@@ -407,6 +433,7 @@ namespace DeltaDNA {
                                         imageMessage.OnAction(eventArgs);
                                     }
                                 }
+
                                 ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
@@ -418,8 +445,20 @@ namespace DeltaDNA {
                                     imageMessage.OnAction(eventArgs);
                                 }
                                 if (valueObj != null) {
-                                    Application.OpenURL((string)valueObj);
+                                    Application.OpenURL((string) valueObj);
                                 }
+
+                                ddna.RecordEvent(actionEvent);
+                                imageMessage.Close();
+                            });
+                            break;
+                        }
+                        case "store": {
+                            actions.Add(() => {
+                                if (imageMessage.OnStore != null) {
+                                    imageMessage.OnStore(eventArgs);
+                                }
+
                                 ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
                             });
@@ -430,8 +469,10 @@ namespace DeltaDNA {
                                 if (imageMessage.OnDismiss != null) {
                                     imageMessage.OnDismiss(eventArgs);
                                 }
+
                                 ddna.RecordEvent(actionEvent);
                                 imageMessage.Close();
+
                             });
                             break;
                         }
