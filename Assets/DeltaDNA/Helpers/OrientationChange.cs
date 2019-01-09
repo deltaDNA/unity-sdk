@@ -32,7 +32,6 @@ namespace DeltaDNA{
             orientation = Input.deviceOrientation;
 
             while (running){
-                Logger.LogDebug("Checking for change");
                 bool changed = false; 
                 if (resolution.x != Screen.width || resolution.y != Screen.height){
                     resolution = new Vector2(Screen.width, Screen.height);
@@ -43,15 +42,9 @@ namespace DeltaDNA{
                     changed = true;
                 }
 
-                if (changed){
-                    Logger.LogDebug("Change Detected");
-                }
-                else{
-                    Logger.LogDebug("No Change Detected");
-                }
                 if (changed && onChange != null) onChange();
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.05f);
             }
         }
 
