@@ -4,6 +4,8 @@
 ### Added
 - Support for cross promotion.
 - Support for image message store action.
+- Support for multiple Event-Triggered campaign actions from a single event. 
+
 
 ## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
 ### Added
