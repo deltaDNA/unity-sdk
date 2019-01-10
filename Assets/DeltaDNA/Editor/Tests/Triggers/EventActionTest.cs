@@ -41,6 +41,7 @@ namespace DeltaDNA {
             var t1 = Substitute.For<EventTrigger>();
             var t2 = Substitute.For<EventTrigger>();
             var t3 = Substitute.For<EventTrigger>();
+            var settings = Substitute.For<Settings>();
 
             new EventAction(
                 e,
@@ -63,6 +64,7 @@ namespace DeltaDNA {
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
+            var settings = Substitute.For<Settings>();
             t.Evaluate(e).Returns(true);
 
             new EventAction(
@@ -88,6 +90,7 @@ namespace DeltaDNA {
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
+            var settings = Substitute.For<Settings>();
             t.Evaluate(e).Returns(true);
             h1.Handle(t, store).Returns(false);
             h2.Handle(t, store).Returns(true);

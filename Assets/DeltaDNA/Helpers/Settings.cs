@@ -66,6 +66,7 @@ namespace DeltaDNA
 
             SessionTimeoutSeconds = 5 * 60;
             EngageCacheExpirySeconds = 12 * 60 * 60;
+            MultipleActionsForEventTriggerEnabled = false;
         }
 
         /// <summary>
@@ -165,8 +166,14 @@ namespace DeltaDNA
         /// <summary>
         /// Controls whether the current user should be age resitected (under 16).
         /// 
-        /// Changes to this valie will be applied on the next session.
+        /// Changes to this value will be applied on the next session.
         /// </summary>
         public bool AdvertiserGdprAgeRestrictedUser { get; set; }
+        
+        /// <summary>
+	    ///Controls whether multiple Event-Triggers can call the callback sequentially.
+	    /// 
+        /// </summary>
+        public bool MultipleActionsForEventTriggerEnabled { get; set; }
     }
 }
