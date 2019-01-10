@@ -12,6 +12,13 @@
 ### Fixed
 - Image messages not redrawing correctly on device re-orientation 
 
+### Fixed
+- Image messages not redrawing correctly on device re-orientation 
+
+## [4.11.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.7)
+### Fixed
+- Image messages not redrawing correctly on device re-orientation 
+
 ## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
 ### Added
 - Support for removing iOS push notifications from build.
