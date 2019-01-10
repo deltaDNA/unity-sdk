@@ -42,7 +42,7 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 
 ## Analytics
 
-Our analytics SDK is written entirely in Unity with no native code requirements.  Out of the box it runs on any platform that Unity supports.  The easiest way to get started is to download the `deltadna-sdk-*.unitypackage` from this repository, and import into your Unity project.
+Our analytics SDK is written entirely in Unity with no native code requirements.  Out of the box it runs on any platform that Unity supports.  The easiest way to get started is to download the unitypackage file and import into your Unity project.
 
 ## Quick Start
 
@@ -190,7 +190,7 @@ DDNA.Instance
 
 Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  We support iOS and Android platforms.
 
-Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the sdk, then speak to us.
+Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the SDK, then speak to us.
 
 ### Usage
 

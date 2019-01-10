@@ -1,11 +1,14 @@
 # Change Log
 
-## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12-0) (YYYY-MM-DD)
+## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12-0)
 ### Added
 - Support for cross promotion.
 - Support for image message store action.
 - Support for multiple Event-Triggered campaign actions from a single event. 
 
+
+### Fixed
+- Image messages not redrawing correctly on device re-orientation 
 
 ## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
 ### Added

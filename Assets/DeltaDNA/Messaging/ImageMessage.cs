@@ -16,9 +16,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace DeltaDNA {
 
@@ -102,6 +104,7 @@ namespace DeltaDNA {
             }
         }
 
+        private String name; 
         private ImageMessage(
             DDNA ddna,
             JSONObject configuration,
@@ -114,11 +117,27 @@ namespace DeltaDNA {
             gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(ddna, configuration);
+           
 
+            OrientationChange changer = gameObject.AddComponent<OrientationChange>();
+            changer.Init(redraw);
+
+            this.name = name;
             this.configuration = configuration;
             this.spriteMap = spriteMap;
             this.depth = depth;
             this.engagement = engagement;
+        }
+
+        private void redraw(){
+            Object.Destroy(gameObject);
+            gameObject = new GameObject(name, typeof(RectTransform));
+            
+            OrientationChange changer = gameObject.AddComponent<OrientationChange>();
+            changer.Init(redraw);
+            SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
+            spriteMap.Build(ddna, configuration);
+            Show();
         }
 
         public static ImageMessage Create(Engagement engagement) {
