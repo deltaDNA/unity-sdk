@@ -193,7 +193,7 @@ namespace DeltaDNA {
                 gameEvent as GameEvent,
                 eventTriggers.ContainsKey(gameEvent.Name)
                     ? eventTriggers[gameEvent.Name]
-                    : EventAction.EMPTY_TRIGGERS, Settings, actionStore);
+                    : EventAction.EMPTY_TRIGGERS, actionStore, Settings);
         }
 
         override internal EventAction RecordEvent(string eventName) {

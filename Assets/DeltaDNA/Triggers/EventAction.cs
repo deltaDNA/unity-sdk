@@ -43,9 +43,9 @@ namespace DeltaDNA {
 
         internal EventAction(
             GameEvent evnt,
-            ReadOnlyCollection<EventTrigger> triggers, 
-            Settings settings,
-            ActionStore store) {
+            ReadOnlyCollection<EventTrigger> triggers,
+            ActionStore store, 
+            Settings settings) {
 
             this.evnt = evnt;
             this.triggers = triggers;
@@ -75,7 +75,7 @@ namespace DeltaDNA {
                 if (trigger.Evaluate(evnt)) {
                     foreach (var handler in handlers) {
                         if (handledImageMessage && "imageMessage".Equals(trigger.GetAction())) break;
-                        if (handler.Handle(trigger)) {
+                        if (handler.Handle(trigger, store)) {
                             if (!settings.MultipleActionsForEventTriggerEnabled) return;
                             if ("imageMessage".Equals(trigger.GetAction())) handledImageMessage = true;
                             break;
@@ -87,7 +87,7 @@ namespace DeltaDNA {
         }
 
         internal static EventAction CreateEmpty(GameEvent evnt) {
-            return new EventAction(evnt, EMPTY_TRIGGERS, null);
+            return new EventAction(evnt, EMPTY_TRIGGERS, null, null);
         }
     }
 }

@@ -42,12 +42,13 @@ namespace DeltaDNA {
             var t2 = Substitute.For<EventTrigger>();
             var t3 = Substitute.For<EventTrigger>();
             var settings = Substitute.For<Settings>();
+            
 
             new EventAction(
                 e,
                 new ReadOnlyCollection<EventTrigger>(
                     new List<EventTrigger>() { t2, t3, t1 }),
-                store)
+                store, settings)
                 .Run();
 
             Received.InOrder(() => {
@@ -70,7 +71,7 @@ namespace DeltaDNA {
             new EventAction(
                 e,
                 new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }),
-                store)
+                store, settings)
                 .Add(h1)
                 .Add(h2)
                 .Add(h3)
@@ -97,8 +98,90 @@ namespace DeltaDNA {
 
             new EventAction(
                 e,
+                new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }), store, settings)
+                .Add(h1)
+                .Add(h2)
+                .Add(h3)
+                .Run();
+
+            h3.DidNotReceive().Handle(Arg.Any<EventTrigger>(), store);
+        }
+
+        [Test] public void EachActionIsHandledIfMultipleActionsForEventTriggerEnabled() {
+            var e = new GameEvent("event");
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var h1 = Substitute.For<EventActionHandler>();
+            var h2 = Substitute.For<EventActionHandler>();
+            var h3 = Substitute.For<EventActionHandler>();
+            var settings = Substitute.For<Settings>();
+            settings.MultipleActionsForEventTriggerEnabled = true;
+            t.Evaluate(e).Returns(true);
+            t2.Evaluate(e).Returns(true);
+            h1.Handle(t, store).ReturnsForAnyArgs(false);
+            h2.Handle(t, store).ReturnsForAnyArgs(true);
+            new EventAction(
+                    e,
+                    new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t, t2 }), store, settings)
+                .Add(h1)
+                .Add(h2)
+                .Add(h3)
+                .Run();
+
+            h1.Received(2).Handle(Arg.Any<EventTrigger>(), store);
+            h2.Received(2).Handle(Arg.Any<EventTrigger>(), store);
+            h3.DidNotReceive().Handle(Arg.Any<EventTrigger>(), store);       
+        }
+        
+        [Test] public void ImageMessagesAreHandledOnlyOnceIfIsHandledIfMultipleActionsForEventTriggerEnabled() {
+            var e = new GameEvent("event");
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var h1 = Substitute.For<EventActionHandler>();
+            var h2 = Substitute.For<EventActionHandler>();
+            var h3 = Substitute.For<EventActionHandler>();
+            var settings = Substitute.For<Settings>();
+            settings.MultipleActionsForEventTriggerEnabled = true;
+            t.GetAction().Returns("imageMessage");
+            t2.GetAction().Returns("imageMessage");
+            t.Evaluate(e).Returns(true);
+            t2.Evaluate(e).Returns(true);
+            h1.Handle(t, store).ReturnsForAnyArgs(false);
+            h2.Handle(t, store).ReturnsForAnyArgs(true);
+            new EventAction(
+                    e,
+                    new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t, t2 }), store, settings)
+                .Add(h1)
+                .Add(h2)
+                .Add(h3)
+                .Run();
+
+            h1.Received(1).Handle(t, store);
+            h2.Received(1).Handle(t, store);
+            h3.DidNotReceive().Handle(Arg.Any<EventTrigger>(), store);       
+            h1.DidNotReceive().Handle(t2, store);       
+            h2.DidNotReceive().Handle(t2, store);       
+        }
+        
+        [Test] public void ImageMessagesDoNotBlockSubsequentParameterActionsIfIsHandledIfMultipleActionsForEventTriggerEnabled() {
+            var e = new GameEvent("event");
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var h1 = Substitute.For<EventActionHandler>();
+            var h2 = Substitute.For<EventActionHandler>();
+            var h3 = Substitute.For<EventActionHandler>();
+            var settings = Substitute.For<Settings>();
+            settings.MultipleActionsForEventTriggerEnabled = true;
+            t.GetAction().Returns("imageMessage");
+            t2.GetAction().Returns("notImageAction");
+            t.Evaluate(e).Returns(true);
+            t2.Evaluate(e).Returns(true);
+            h1.Handle(t, store).ReturnsForAnyArgs(false);
+            h2.Handle(t, store).ReturnsForAnyArgs(true);
+            new EventAction(
+                e,
                 new ReadOnlyCollection<EventTrigger>(new List<EventTrigger>() { t }),
-                store)
+                store, settings)
                 .Add(h1)
                 .Add(h2)
                 .Add(h3)
