@@ -14,43 +14,11 @@
 // limitations under the License.
 //
 
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-
 namespace DeltaDNA.Ads.Editor {
     
-    internal sealed class DefineSymbolsHelper {
+    internal sealed class DefineSymbolsHelper : DeltaDNA.Editor.DefineSymbolsHelper {
         
         internal const string SMARTADS = "DDNA_SMARTADS";
         internal const string DEBUG_NOTIFICATIONS = "DDNA_DEBUG_NOTIFICATIONS";
-        
-        internal static void Add(string symbol) {
-            var symbols = GetSymbols();
-            if (!symbols.Remove(symbol)) {
-                symbols.Add(symbol);
-                SetSymbols(symbols);
-            }
-        }
-        
-        internal static void Remove(string symbol) {
-            var symbols = GetSymbols();
-            if (symbols.Remove(symbol)) {
-                SetSymbols(symbols);
-            }
-        }
-        
-        private static List<string> GetSymbols() {
-            return PlayerSettings
-                .GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup)
-                .Split(';')
-                .ToList();
-        }
-        
-        private static void SetSymbols(List<string> symbols) {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                EditorUserBuildSettings.selectedBuildTargetGroup,
-                string.Join(";", symbols.ToArray()));
-        }
     }
 }

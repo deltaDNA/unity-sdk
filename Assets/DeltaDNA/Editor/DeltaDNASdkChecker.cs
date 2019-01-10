@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 
-using DeltaDNA.Ads.Editor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -60,11 +59,11 @@ namespace DeltaDNA.Editor {
                         Severity.ERROR));
                 }
                 
-                if (InitialisationHelper.IsDevelopment() && config.environmentKey == 1) {
+                if (Ads.Editor.InitialisationHelper.IsDevelopment() && config.environmentKey == 1) {
                     problems.Add(DDNATuple.New(
                         "[Analytics] Using live environment key for a development build.",
                         Severity.WARNING));
-                } else if (!InitialisationHelper.IsDevelopment() && config.environmentKey == 0) {
+                } else if (!Ads.Editor.InitialisationHelper.IsDevelopment() && config.environmentKey == 0) {
                     problems.Add(DDNATuple.New(
                         "[Analytics] Using dev environment key for a live build.",
                         Severity.WARNING));

@@ -276,6 +276,11 @@ To support iOS push notifications you need to call `IosNotifications.RegisterFor
 
 We record if your game was started by the player clicking on a push notification.  However to make this work properly the `DDNA` game object has to be loaded early on in the scene which the game launches with.  This can be achieved by adding a delegate to `OnDidLaunchWithPushNotification` in the `Awake` method of a game object that manages the SDK.
 
+To remove push notification support for iOS the following files will need to be removed from the project:
+* `Assets/DeltaDNA/Notifications/IosNotifications.cs`
+* `Assets/DeltaDNA/Editor/iOS/EnableNotificationsPostProcessBuild.cs`
+After the deletion of these two files iOS push notifications will no longer be enabled for the project and the APIs will not be available. Please note that when updating the SDK these files will be re-imported back into the project.
+
 ### SmartAds on iOS
 
 We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries via Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
@@ -364,7 +369,7 @@ If SmartAds is imported into the project then the *Minimum API Level* needs to b
 ## Forgetting a User (GDPR)
 If a user no longer wishes to be tracked and would like to be forgotten the `ForgetMe()` API can be used. This will stop the SDK from sending/receiving any further information to/from the Platform, as well as initiating a data deletion request on behalf of the user. The SDK will continue to work as it normally would, without any additional work required.
 
-If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality. 
+If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality.
 
 ## Migrations
 

@@ -102,9 +102,9 @@ namespace DeltaDNA {
                     cache.Put(request.DecisionPoint, request.Flavour, data);
                 } else {
                     Logger.LogDebug("Engagement failed with "+statusCode+" "+error);
-
+                    var isClientError = statusCode >= 400 && statusCode < 500;
                     var cached = cache.Get(request.DecisionPoint, request.Flavour);
-                    if (cached != null) {
+                    if (cached != null && ! isClientError) {
                         Logger.LogDebug("Using cached response");
                         data = "{\"isCachedResponse\":true," + cached.Substring(1);
                     } else {

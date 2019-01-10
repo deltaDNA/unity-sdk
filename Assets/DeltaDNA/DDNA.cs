@@ -91,9 +91,11 @@ namespace DeltaDNA {
                 }
 
                 // attach additional behaviours as children of this gameObject
+                #if !DDNA_IOS_PUSH_NOTIFICATIONS_REMOVED
                 GameObject iosNotificationsObject = new GameObject();
                 IosNotifications = iosNotificationsObject.AddComponent<IosNotifications>();
                 iosNotificationsObject.transform.parent = gameObject.transform;
+                #endif
 
                 GameObject androidNotificationsObject = new GameObject();
                 AndroidNotifications = androidNotificationsObject.AddComponent<AndroidNotifications>();
@@ -208,7 +210,7 @@ namespace DeltaDNA {
                 delegated.StartSDK(newPlayer);
             }
         }
-        
+
         /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
         /// generate a new user id if this is the first run.
@@ -453,10 +455,12 @@ namespace DeltaDNA {
         /// </summary>
         public AndroidNotifications AndroidNotifications { get; private set; }
 
+        #if !DDNA_IOS_PUSH_NOTIFICATIONS_REMOVED
         /// <summary>
         /// Helper for iOS push notifications.
         /// </summary>
         public IosNotifications IosNotifications { get; private set; }
+        #endif
 
         /// <summary>
         /// The EngageFactory helps with using the Engage service.

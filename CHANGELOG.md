@@ -1,9 +1,16 @@
 # Change Log
 
-## [4.12-beta-1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12-beta-1) (2018-11-08)
+## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12-0) (YYYY-MM-DD)
 ### Added
 - Support for cross promotion.
 - Support for image message store action.
+
+## [4.11.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.6)
+### Added
+- Support for removing iOS push notifications from build.
+
+### Fixed
+- Engage requests resulting in client error responses will no longer use the Engage cache.
 
 ## [4.11.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.11.5) (2018-11-19)
 ### Fixed
