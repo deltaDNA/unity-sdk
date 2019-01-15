@@ -29,12 +29,14 @@ namespace DeltaDNA {
     /// </summary>
     public class DDNA : Singleton<DDNA> {
 
-        private const string PF_KEY_USER_ID = "DDSDK_USER_ID";
+        internal const string PF_KEY_USER_ID = "DDSDK_USER_ID";
         internal const string PF_KEY_FIRST_SESSION = "DDSDK_FIRST_SESSION";
         internal const string PF_KEY_LAST_SESSION = "DDSDK_LAST_SESSION";
+        internal const string PF_KEY_CROSS_GAME_USER_ID = "DDSDK_CROSS_GAME_USER_ID";
+        internal const string PF_KEY_ADVERTISING_ID = "DDSDK_ADVERTISING_ID";
         internal const string PF_KEY_FORGET_ME = "DDSDK_FORGET_ME";
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
-        internal const string PF_KEY_ADVERTISING_ID = "DDSDK_ADVERTISING_ID";
+        internal const string PF_KEY_ACTIONS_SALT = "DDSDK_ACTIONS_SALT";
 
         private static object _lock = new object();
 
@@ -79,7 +81,7 @@ namespace DeltaDNA {
             #endif
         }
 
-        void Awake() {
+        internal void Awake() {
             lock (_lock) {
                 if (PlayerPrefs.HasKey(PF_KEY_FORGET_ME)
                     || PlayerPrefs.HasKey(PF_KEY_FORGOTTEN)) {
@@ -192,13 +194,17 @@ namespace DeltaDNA {
                     ClientVersion = config.clientVersion;
                 }
 
-                if (newPlayer && delegated is DDNANonTracking) {
+                if (newPlayer) {
                     PlayerPrefs.DeleteKey(PF_KEY_FIRST_SESSION);
                     PlayerPrefs.DeleteKey(PF_KEY_LAST_SESSION);
-                    PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
-                    PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
+                    PlayerPrefs.DeleteKey(PF_KEY_CROSS_GAME_USER_ID);
 
-                    delegated = new DDNAImpl(this);
+                    if (delegated is DDNANonTracking) {
+                        PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
+                        PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
+
+                        delegated = new DDNAImpl(this);
+                    }
                 }
 
                 delegated.StartSDK(newPlayer);
@@ -373,9 +379,11 @@ namespace DeltaDNA {
             PlayerPrefs.DeleteKey(PF_KEY_USER_ID);
             PlayerPrefs.DeleteKey(PF_KEY_FIRST_SESSION);
             PlayerPrefs.DeleteKey(PF_KEY_LAST_SESSION);
+            PlayerPrefs.DeleteKey(PF_KEY_CROSS_GAME_USER_ID);
+            PlayerPrefs.DeleteKey(PF_KEY_ADVERTISING_ID);
             PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
             PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
-            PlayerPrefs.DeleteKey(PF_KEY_ADVERTISING_ID);
+            PlayerPrefs.DeleteKey(PF_KEY_ACTIONS_SALT);
 
             delegated.ClearPersistentData();
 
@@ -542,6 +550,15 @@ namespace DeltaDNA {
         /// this value, make sure to set it before calling <see cref="Start"/>.
         /// </summary>
         public string Platform { get; set; }
+
+        /// <summary>
+        /// The cross game user ID to be used for cross promotion. May be <code>null</code>
+        /// or empty if not set.
+        /// </summary>
+        public string CrossGameUserID {
+            get { return delegated.CrossGameUserID; }
+            set { delegated.CrossGameUserID = value; }
+        }
 
         /// <summary>
         /// The Android registration ID that is associated with this device if it's running

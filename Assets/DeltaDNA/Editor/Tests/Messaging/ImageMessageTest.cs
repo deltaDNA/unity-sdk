@@ -16,10 +16,20 @@
 
 #if !UNITY_4
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace DeltaDNA {
 
-    public class ImageMessageTest {
+    using JSONObject = Dictionary<string, object>;
+
+    public class ImageMessageTest : AssertionHelper {
+
+
+        private readonly JSONObject STORE_ACTION_VALUE = new JSONObject() {
+            { "AMAZON", "a" },
+            { "ANDROID", "b" },
+            { "IOS", "c" }
+        };
 
         private ImageMessageStore store;
 
@@ -91,7 +101,6 @@ namespace DeltaDNA {
         }
 
         [Test]
-        [Ignore("Failing for unknown reason, fixed in next feature release")]
         public void CreateWithValidEngagement()
         {
             var engagement = new Engagement("testDecisionPoint");
@@ -109,6 +118,47 @@ namespace DeltaDNA {
 
             Assert.IsNotNull(imageMessage.Parameters);
             Assert.AreEqual(imageMessage.Parameters, new System.Collections.Generic.Dictionary<string, object>() {{"rewardName", "wrench"}});
+        }
+
+        [Test]
+        public void EventArgsCreateEventArgsBasedOnType() {
+            Expect(
+                ImageMessage.EventArgs.Create("platform", "id", "store", STORE_ACTION_VALUE),
+                Is.InstanceOf<ImageMessage.StoreEventArgs>());
+            Expect(
+                ImageMessage.EventArgs.Create("platform", "id", "action", "action_value"),
+                Is.InstanceOf<ImageMessage.EventArgs>());
+            Expect(
+                ImageMessage.EventArgs.Create("platform", "id", "link", "action_link"),
+                Is.InstanceOf<ImageMessage.EventArgs>());
+        }
+
+        [Test]
+        public void EventArgsStoreIdAndTypeAndValue() {
+            var uut = new ImageMessage.EventArgs("id", "type", "value");
+            Expect(uut.ID, Is.EqualTo("id"));
+            Expect(uut.ActionType, Is.EqualTo("type"));
+            Expect(uut.ActionValue, Is.EqualTo("value"));
+        }
+
+        [Test]
+        public void StoreEventArgsExtractValueAccordingToPlatform() {
+            Expect(new ImageMessage.StoreEventArgs(
+                Platform.PC_CLIENT, "id", "store", STORE_ACTION_VALUE).ActionValue,
+                Is.EqualTo(""));
+
+            Expect(new ImageMessage.StoreEventArgs(
+                Platform.AMAZON, "id", "store", STORE_ACTION_VALUE).ActionValue,
+                Is.EqualTo("a"));
+            Expect(new ImageMessage.StoreEventArgs(
+                Platform.ANDROID, "id", "store", STORE_ACTION_VALUE).ActionValue,
+                Is.EqualTo("b"));
+            Expect(new ImageMessage.StoreEventArgs(
+                Platform.IOS, "id", "store", STORE_ACTION_VALUE).ActionValue,
+                Is.EqualTo("c"));
+            Expect(new ImageMessage.StoreEventArgs(
+                Platform.IOS_TV, "id", "store", STORE_ACTION_VALUE).ActionValue,
+                Is.EqualTo("c"));
         }
     }
 }

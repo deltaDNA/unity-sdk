@@ -42,3 +42,7 @@ Icon7
 Assets/VSCode*
 .vscode/
 .vs/
+
+# IDEA
+.idea/
+

@@ -93,6 +93,7 @@ namespace DeltaDNA {
         #endregion
         #region Client Configuration
 
+        internal abstract string CrossGameUserID { get; set; }
         internal abstract string AndroidRegistrationID { get; set; }
         internal abstract string PushNotificationToken { get; set; }
 

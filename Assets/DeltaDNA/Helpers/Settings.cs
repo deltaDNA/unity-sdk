@@ -18,12 +18,13 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.11.6";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.12.0";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
         internal static readonly string EVENT_STORAGE_PATH = "{persistent_path}/ddsdk/events/";
         internal static readonly string ENGAGE_STORAGE_PATH = "{persistent_path}/ddsdk/engage/";
+        internal static readonly string ACTIONS_STORAGE_PATH = "{persistent_path}/ddsdk/actions/";
         internal static readonly string LEGACY_SETTINGS_STORAGE_PATH = "{persistent_path}/GASettings.ini";
         internal static readonly string EVENT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.fff";
         internal static readonly string USERID_URL_PATTERN = "{host}/uuid";
@@ -65,6 +66,7 @@ namespace DeltaDNA
 
             SessionTimeoutSeconds = 5 * 60;
             EngageCacheExpirySeconds = 12 * 60 * 60;
+            MultipleActionsForEventTriggerEnabled = false;
         }
 
         /// <summary>
@@ -164,8 +166,14 @@ namespace DeltaDNA
         /// <summary>
         /// Controls whether the current user should be age resitected (under 16).
         /// 
-        /// Changes to this valie will be applied on the next session.
+        /// Changes to this value will be applied on the next session.
         /// </summary>
         public bool AdvertiserGdprAgeRestrictedUser { get; set; }
+        
+        /// <summary>
+	    ///Controls whether multiple Event-Triggers can call the callback sequentially.
+	    /// 
+        /// </summary>
+        public bool MultipleActionsForEventTriggerEnabled { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace DeltaDNA {
 
         private readonly EventStore eventStore = null;
         private readonly EngageCache engageCache = null;
+        private readonly ActionStore actionStore = null;
 
         private bool started = false;
         private bool uploading = false;
@@ -52,7 +53,8 @@ namespace DeltaDNA {
         internal DDNAImpl(DDNA ddna) : base(ddna) {
             string eventStorePath = null;
             if (Settings.UseEventStore) {
-                eventStorePath = Settings.EVENT_STORAGE_PATH.Replace("{persistent_path}", Application.persistentDataPath);
+                eventStorePath = Settings.EVENT_STORAGE_PATH
+                    .Replace("{persistent_path}", Application.persistentDataPath);
                 if (!Utils.IsDirectoryWritable(eventStorePath)) {
                     Logger.LogWarning("Event store path unwritable, event caching disabled.");
                     Settings.UseEventStore = false;
@@ -67,6 +69,8 @@ namespace DeltaDNA {
                 eventStore = new EventStore(eventStorePath);
             }
             engageCache = new EngageCache(Settings);
+            actionStore = new ActionStore(Settings.ACTIONS_STORAGE_PATH
+                .Replace("{persistent_path}", Application.persistentDataPath));
             ImageMessageStore = new ImageMessageStore(ddna);
 
             #if DDNA_SMARTADS
@@ -117,6 +121,12 @@ namespace DeltaDNA {
 
         override internal void StartSDK(bool newPlayer) {
             started = true;
+
+            if (newPlayer) {
+                engageCache.Clear();
+                actionStore.Clear();
+            }
+
             NewSession();
 
             if (launchNotificationEvent != null) {
@@ -183,7 +193,7 @@ namespace DeltaDNA {
                 gameEvent as GameEvent,
                 eventTriggers.ContainsKey(gameEvent.Name)
                     ? eventTriggers[gameEvent.Name]
-                    : EventAction.EMPTY_TRIGGERS);
+                    : EventAction.EMPTY_TRIGGERS, actionStore, Settings);
         }
 
         override internal EventAction RecordEvent(string eventName) {
@@ -389,6 +399,7 @@ namespace DeltaDNA {
         override internal void ClearPersistentData() {
             if (eventStore != null) eventStore.ClearAll();
             if (engageCache != null) engageCache.Clear();
+            if (actionStore != null) actionStore.Clear();
             if (ImageMessageStore != null) ImageMessageStore.Clear();
         }
 
@@ -405,6 +416,23 @@ namespace DeltaDNA {
         #endregion
         #region Client Configuration
 
+        override internal string CrossGameUserID {
+            get { return PlayerPrefs.GetString(DDNA.PF_KEY_CROSS_GAME_USER_ID, null); }
+
+            set {
+                if (String.IsNullOrEmpty(value)) {
+                    Logger.LogWarning("CrossGameUserID cannot be null or empty");
+                } else {
+                    PlayerPrefs.SetString(DDNA.PF_KEY_CROSS_GAME_USER_ID, value);
+
+                    if (started) {
+                        RecordEvent(new GameEvent("ddnaRegisterCrossGameUserID")
+                            .AddParam("ddnaCrossGameUserID", value));
+                    } // else send with gameStarted event
+                }
+            }
+        }
+
         override internal string AndroidRegistrationID {
             get { return androidRegistrationId; }
             set {
@@ -414,7 +442,7 @@ namespace DeltaDNA {
 
                     if (started) {
                         RecordEvent(notificationServicesEvent);
-                    } // else send with clientDevice event
+                    } // else send with gameStarted event
                     androidRegistrationId = value;
                 }
             }
@@ -429,7 +457,7 @@ namespace DeltaDNA {
 
                     if (started) {
                         RecordEvent(notificationServicesEvent);
-                    } // else send with clientDevice event
+                    } // else send with gameStarted event
                     pushNotificationToken = value;
                 }
             }
@@ -538,6 +566,10 @@ namespace DeltaDNA {
                     .AddParam("clientVersion", this.ClientVersion)
                     .AddParam("userLocale", ClientInfo.Locale);
 
+                if (!string.IsNullOrEmpty(CrossGameUserID)) {
+                    gameStartedEvent.AddParam("ddnaCrossGameUserID", CrossGameUserID);
+                }
+
                 if (!String.IsNullOrEmpty(this.PushNotificationToken)) {
                     gameStartedEvent.AddParam("pushNotificationToken", this.PushNotificationToken);
                 }
@@ -597,7 +629,17 @@ namespace DeltaDNA {
                     (parameters as JSONObject).TryGetValue("triggers", out triggers);
                     if (triggers != null && triggers is List<object>) {
                         eventTriggers = (triggers as List<object>)
-                            .Select((e, i) => new EventTrigger(this, i, e as JSONObject))
+                            .Select((e, i) => {
+                                var t = new EventTrigger(this, i, e as JSONObject);
+
+                                // save persistent actions
+                                var p = t.GetResponse().GetOrDefault("parameters", new JSONObject());
+                                if (p.GetOrDefault("ddnaIsPersistent", false)) {
+                                    actionStore.Put(t, p);
+                                }
+
+                                return t;
+                            })
                             .GroupBy(e => e.GetEventName())
                             .ToDictionary(e => e.Key, e => {
                                 var list = e.ToList();

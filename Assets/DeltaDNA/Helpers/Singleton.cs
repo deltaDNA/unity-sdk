@@ -60,9 +60,9 @@ namespace DeltaDNA
                             #if UNITY_EDITOR
                             }
                             #endif
-
                         }
                     }
+
                     return _instance;
                 }
             }
@@ -85,7 +85,6 @@ namespace DeltaDNA
             #if UNITY_EDITOR
             }
             #endif
-
         }
     }
 }

@@ -35,16 +35,22 @@ namespace DeltaDNA {
 
         private readonly GameEvent evnt;
         private readonly ReadOnlyCollection<EventTrigger> triggers;
+        private readonly Settings settings;
+        private readonly ActionStore store;
 
         private readonly List<EventActionHandler> handlers =
             new List<EventActionHandler>();
 
         internal EventAction(
             GameEvent evnt,
-            ReadOnlyCollection<EventTrigger> triggers) {
+            ReadOnlyCollection<EventTrigger> triggers,
+            ActionStore store, 
+            Settings settings) {
 
             this.evnt = evnt;
             this.triggers = triggers;
+            this.settings = settings;
+            this.store = store;
         }
 
         /// <summary>
@@ -63,18 +69,25 @@ namespace DeltaDNA {
         /// Evaluates the registered handlers against the event and triggers
         /// associated for the event.
         /// </summary>
-        public void Run() {
+        public void Run(){
+            bool handledImageMessage = false;
             foreach (var trigger in triggers) {
                 if (trigger.Evaluate(evnt)) {
                     foreach (var handler in handlers) {
-                        if (handler.Handle(trigger)) return;
+                        if (handledImageMessage && "imageMessage".Equals(trigger.GetAction())) break;
+                        if (handler.Handle(trigger, store)) {
+                            if (!settings.MultipleActionsForEventTriggerEnabled) return;
+                            if ("imageMessage".Equals(trigger.GetAction())) handledImageMessage = true;
+                            break;
+                        }
+
                     }
                 }
             }
         }
 
         internal static EventAction CreateEmpty(GameEvent evnt) {
-            return new EventAction(evnt, EMPTY_TRIGGERS);
+            return new EventAction(evnt, EMPTY_TRIGGERS, null, null);
         }
     }
 }

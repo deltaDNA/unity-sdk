@@ -90,6 +90,10 @@ namespace DeltaDNA {
             return response;
         }
 
+        internal virtual long GetCampaignId() {
+            return campaignId;
+        }
+
         internal virtual bool Evaluate(GameEvent evnt) {
             if (limit != -1 && runs >= limit) return false;
             if (evnt.Name != eventName) return false;
