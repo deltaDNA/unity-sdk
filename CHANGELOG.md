@@ -1,6 +1,6 @@
 # Change Log
 
-## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12-0)
+## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.0)
 ### Added
 - Support for cross promotion.
 - Support for image message store action.
