@@ -1,5 +1,10 @@
 # Change Log
 
+## [4.12.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.1)
+### Fixed 
+Issue with certain event-trigger criteria failing to evaluate correctly.
+
+
 ## [4.12.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.0)
 ### Added
 - Support for cross promotion.

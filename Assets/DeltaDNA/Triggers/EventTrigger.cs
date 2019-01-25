@@ -103,6 +103,7 @@ namespace DeltaDNA {
             foreach (var token in condition) {
                 if (token.ContainsKey("o")) {
                     string op = (string) token["o"];
+                    op = op.ToLower();
                     object right = stack.Pop();
                     object left = stack.Pop();
 
