@@ -367,6 +367,8 @@ namespace DeltaDNA
             return Trim(
                 new AndroidJavaObject("android.os.Build").GetStatic<string>("MANUFACTURER"),
                 72);
+            #elif UNITY_IOS && !UNITY_EDITOR
+            return "Apple";
             #else
             return null;
             #endif
