@@ -146,7 +146,7 @@ namespace DeltaDNA {
             if (started) {
                 Logger.LogInfo("Stopping DDNA SDK");
 
-                RecordEvent("gameEnded");
+                RecordEvent("gameEnded").Run();
                 CancelInvoke();
                 Upload();
 
