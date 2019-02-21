@@ -1,4 +1,4 @@
-﻿//
+﻿﻿//
 // Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,9 +71,16 @@ namespace DeltaDNA {
         /// </summary>
         public void Run(){
             bool handledImageMessage = false;
+            List<EventActionHandler> handlersWithDefaults = new List<EventActionHandler>(handlers);
+            if (settings.DefaultGameParameterHandler != null){
+                handlersWithDefaults.Add(settings.DefaultGameParameterHandler);
+            }
+            if (settings.DefaultImageMessageHandler != null){
+                handlersWithDefaults.Add(settings.DefaultImageMessageHandler);
+            }
             foreach (var trigger in triggers) {
                 if (trigger.Evaluate(evnt)) {
-                    foreach (var handler in handlers) {
+                    foreach (var handler in handlersWithDefaults) {
                         if (handledImageMessage && "imageMessage".Equals(trigger.GetAction())) break;
                         if (handler.Handle(trigger, store)) {
                             if (!settings.MultipleActionsForEventTriggerEnabled) return;
