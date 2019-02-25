@@ -434,7 +434,7 @@ namespace DeltaDNA {
                                     }
                                 }
 
-                                ddna.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent).Run(); 
                                 imageMessage.Close();
                             });
                             break;
@@ -448,7 +448,7 @@ namespace DeltaDNA {
                                     Application.OpenURL((string) valueObj);
                                 }
 
-                                ddna.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent).Run();
                                 imageMessage.Close();
                             });
                             break;
@@ -459,7 +459,7 @@ namespace DeltaDNA {
                                     imageMessage.OnStore(eventArgs);
                                 }
 
-                                ddna.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent).Run();
                                 imageMessage.Close();
                             });
                             break;
@@ -470,7 +470,7 @@ namespace DeltaDNA {
                                     imageMessage.OnDismiss(eventArgs);
                                 }
 
-                                ddna.RecordEvent(actionEvent);
+                                ddna.RecordEvent(actionEvent).Run();
                                 imageMessage.Close();
 
                             });

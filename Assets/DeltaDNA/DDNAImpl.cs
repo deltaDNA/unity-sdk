@@ -333,7 +333,7 @@ namespace DeltaDNA {
             }
 
             if (this.started) {
-                this.RecordEvent(notificationEvent);
+                RecordEvent(notificationEvent).Run();
             } else {
                 this.launchNotificationEvent = notificationEvent;
             }

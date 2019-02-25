@@ -227,7 +227,7 @@ namespace DeltaDNA {
                     eventTriggeredActionEvent.AddParam("ddnaEventTriggeredVariantName", variantName);
                 }
 
-                ddna.RecordEvent(eventTriggeredActionEvent);
+                ddna.RecordEvent(eventTriggeredActionEvent).Run();
 
             }
             return result;
