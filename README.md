@@ -120,6 +120,24 @@ RecordEvent(new GameEvent("missionStarted").AddParam("missionLevel", 1))
     .Run();
 ```
 
+In Addition to the above mechanism, default handlers can be specified. These will be used every time `Run()` is called on an EventAction, after any handlers which have been registered via the `Add` method.
+These should be Specified before the SDK is started so they can be used to handle internal events such as `newPlayer` and `gameStarted` but they must be registered after the SDK is initialized. 
+You can specify these handlers like so: 
+
+```csharp 
+        DDNA.Instance.Settings.DefaultImageMessageHandler =
+            new ImageMessageHandler(DDNA.Instance, imageMessage =>{
+                // the image message is already prepared so it will show instantly
+                imageMessage.Show();
+            });
+        DDNA.Instance.Settings.DefaultGameParameterHandler = new GameParametersHandler(gameParameters =>{
+            // do something with the game parameters
+        });
+```
+
+
+ 
+
 ### Engage
 
 Change the behaviour of the game with an `Engagement`.  For example:
