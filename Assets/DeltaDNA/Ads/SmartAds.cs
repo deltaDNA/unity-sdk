@@ -306,7 +306,7 @@ namespace DeltaDNA
                     var eventParameters = obj["parameters"] as JSONObject;
 
                     if (obj != null) {
-                        DDNA.Instance.RecordEvent(eventName, eventParameters);
+                        DDNA.Instance.RecordEvent(eventName, eventParameters).Run();
                     }
 
                 } catch (Exception exception) {

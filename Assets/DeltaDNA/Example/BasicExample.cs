@@ -64,6 +64,17 @@ public class BasicExample : MonoBehaviour {
         };
         DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
 
+        //Register default handlers for event triggered campaigns. These will be candidates for handling ANY Event-Triggered Campaigns. 
+        //Any handlers added to RegisterEvent() calls with the .Add method will be evaluated before these default handlers. 
+        DDNA.Instance.Settings.DefaultImageMessageHandler =
+            new ImageMessageHandler(DDNA.Instance, imageMessage =>{
+                // the image message is already prepared so it will show instantly
+                imageMessage.Show();
+            });
+        DDNA.Instance.Settings.DefaultGameParameterHandler = new GameParametersHandler(gameParameters =>{
+            // do something with the game parameters
+            Logger.LogInfo("Received game parameters from event trigger: " + gameParameters);
+        });
         // Start the SDK. We recommend using the configuration UI for setting your game's
         // keys and calling StartSDK() or StartSDK(userID) instead.
         DDNA.Instance.StartSDK(new Configuration() {
@@ -105,14 +116,6 @@ public class BasicExample : MonoBehaviour {
 
         DDNA.Instance
                 .RecordEvent(gameEvent)
-                .Add(new GameParametersHandler(gameParameters => {
-                    // do something with the game parameters
-                    Logger.LogInfo("Received game parameters from event trigger: " + gameParameters);
-                }))
-                .Add(new ImageMessageHandler(DDNA.Instance, imageMessage => {
-                    // the image message is already prepared so it will show instantly
-                    imageMessage.Show();
-                }))
                 .Run();
     }
 

@@ -175,5 +175,9 @@ namespace DeltaDNA
 	    /// 
         /// </summary>
         public bool MultipleActionsForEventTriggerEnabled { get; set; }
+        
+        public GameParametersHandler DefaultGameParameterHandler { get; set; }
+        
+        public ImageMessageHandler DefaultImageMessageHandler { get; set;  }
     }
 }

@@ -50,6 +50,9 @@ namespace DeltaDNA {
         private ReadOnlyCollection<string> cacheImages =
             new ReadOnlyCollection<string>(new List<string>());
 
+        private bool hasSentDefaultEvents = false;
+        private bool newPlayer;
+
         internal DDNAImpl(DDNA ddna) : base(ddna) {
             string eventStorePath = null;
             if (Settings.UseEventStore) {
@@ -121,20 +124,14 @@ namespace DeltaDNA {
 
         override internal void StartSDK(bool newPlayer) {
             started = true;
-
+            this.newPlayer = newPlayer;
             if (newPlayer) {
                 engageCache.Clear();
                 actionStore.Clear();
+                hasSentDefaultEvents = false;
             }
 
             NewSession();
-
-            if (launchNotificationEvent != null) {
-                RecordEvent(launchNotificationEvent);
-                launchNotificationEvent = null;
-            }
-
-            TriggerDefaultEvents(newPlayer);
 
             // setup automated event uploads
             if (Settings.BackgroundEventUpload && !IsInvoking("Upload")) {
@@ -149,11 +146,13 @@ namespace DeltaDNA {
             if (started) {
                 Logger.LogInfo("Stopping DDNA SDK");
 
-                RecordEvent("gameEnded");
+                RecordEvent("gameEnded").Run();
                 CancelInvoke();
                 Upload();
 
                 started = false;
+                newPlayer = false;
+                hasSentDefaultEvents = false;
             } else {
                 Logger.LogDebug("SDK not running");
             }
@@ -334,7 +333,7 @@ namespace DeltaDNA {
             }
 
             if (this.started) {
-                this.RecordEvent(notificationEvent);
+                RecordEvent(notificationEvent).Run();
             } else {
                 this.launchNotificationEvent = notificationEvent;
             }
@@ -546,6 +545,11 @@ namespace DeltaDNA {
 
         private void TriggerDefaultEvents(bool newPlayer)
         {
+            if (launchNotificationEvent != null) {
+                RecordEvent(launchNotificationEvent).Run();
+                launchNotificationEvent = null;
+            }
+            if (hasSentDefaultEvents) return; 
             if (Settings.OnFirstRunSendNewPlayerEvent && newPlayer)
             {
                 Logger.LogDebug("Sending 'newPlayer' event");
@@ -555,7 +559,7 @@ namespace DeltaDNA {
                     newPlayerEvent.AddParam("userCountry", ClientInfo.CountryCode);
                 }
 
-                RecordEvent(newPlayerEvent);
+                RecordEvent(newPlayerEvent).Run();
             }
 
             if (Settings.OnInitSendGameStartedEvent)
@@ -578,7 +582,7 @@ namespace DeltaDNA {
                     gameStartedEvent.AddParam("androidRegistrationID", this.AndroidRegistrationID);
                 }
 
-                RecordEvent(gameStartedEvent);
+                RecordEvent(gameStartedEvent).Run();
             }
 
             if (Settings.OnInitSendClientDeviceEvent)
@@ -598,8 +602,10 @@ namespace DeltaDNA {
                     clientDeviceEvent.AddParam("manufacturer", ClientInfo.Manufacturer);
                 }
 
-                RecordEvent(clientDeviceEvent);
+                RecordEvent(clientDeviceEvent).Run();
             }
+
+            hasSentDefaultEvents = true;
         }
 
         private void HandleSessionConfigurationCallback(JSONObject response) {
@@ -675,6 +681,7 @@ namespace DeltaDNA {
                 Logger.LogWarning("Session configuration failed");
                 ddna.NotifyOnSessionConfigurationFailed();
             }
+            TriggerDefaultEvents(newPlayer);
         }
 
         #endregion
