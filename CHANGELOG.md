@@ -1,5 +1,12 @@
 # Change Log
 
+## [4.12.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.2)
+### Added 
+- Support for specifying default event-triggered action handlers.
+### Fixed 
+- Event-Triggered Campaigns will now correctly trigger off internal events.
+
+
 ## [4.12.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.1)
 ### Fixed 
 Issue with certain event-trigger criteria failing to evaluate correctly.
