@@ -72,12 +72,16 @@ namespace DeltaDNA {
         public void Run(){
             bool handledImageMessage = false;
             List<EventActionHandler> handlersWithDefaults = new List<EventActionHandler>(handlers);
-            if (settings.DefaultGameParameterHandler != null){
-                handlersWithDefaults.Add(settings.DefaultGameParameterHandler);
-            }
-            if (settings.DefaultImageMessageHandler != null){
-                handlersWithDefaults.Add(settings.DefaultImageMessageHandler);
-            }
+            
+            if (settings != null) {
+				if (settings.DefaultGameParameterHandler != null){
+	                handlersWithDefaults.Add(settings.DefaultGameParameterHandler);
+	            }
+	            if (settings.DefaultImageMessageHandler != null){
+	                handlersWithDefaults.Add(settings.DefaultImageMessageHandler);
+	            }
+			}
+            
             foreach (var trigger in triggers) {
                 if (trigger.Evaluate(evnt)) {
                     foreach (var handler in handlersWithDefaults) {
