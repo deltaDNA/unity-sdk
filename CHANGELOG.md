@@ -3,6 +3,7 @@
 ## [4.12.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.3)
 ### Fixed 
 - Evaluating non-whitelisted events for Event-Triggered Campaigns no longer fails.
+- When building for iOS, ClientDevice will now return the correct Manufacturer.
 
 ## [4.12.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.2)
 ### Added 
