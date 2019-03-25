@@ -34,7 +34,7 @@ namespace DeltaDNA {
         private readonly IDictionary<string, string> cache;
         private readonly IDictionary<string, DateTime> times;
 
-        internal EngageCache(Settings settings) {
+        internal EngageCache(Settings settings){
             this.settings = settings;
 
             lock (LOCK) {
@@ -82,8 +82,13 @@ namespace DeltaDNA {
             var key = Key(decisionPoint, flavour);
 
             lock (LOCK) {
-                if (cache.ContainsKey(key)) {
-                    var age = DateTime.UtcNow - times[key];
+                if (cache.ContainsKey(key)){
+                    var age = TimeSpan.Zero;
+                    if (times.ContainsKey(key)){
+                       age = DateTime.UtcNow - times[key];
+                    } else {
+                        times[key] = DateTime.UtcNow;
+                    }
                     if (age.TotalSeconds < settings.EngageCacheExpirySeconds) {
                         return cache[key];
                     }

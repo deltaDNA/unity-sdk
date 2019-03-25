@@ -65,7 +65,7 @@ public class BasicExample : MonoBehaviour {
         DDNA.Instance.AndroidNotifications.RegisterForPushNotifications();
 
         //Register default handlers for event triggered campaigns. These will be candidates for handling ANY Event-Triggered Campaigns. 
-        //Any handlers added to RegisterEvent() calls with the .Add method will be evaluated before these default handlers. 
+        //Any handlers added to RecordEvent() calls with the .Add method will be evaluated before these default handlers. 
         DDNA.Instance.Settings.DefaultImageMessageHandler =
             new ImageMessageHandler(DDNA.Instance, imageMessage =>{
                 // the image message is already prepared so it will show instantly
