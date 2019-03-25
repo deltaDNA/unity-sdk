@@ -34,6 +34,12 @@ namespace DeltaDNA {
             store = Substitute.For<ActionStore>(Settings.ACTIONS_STORAGE_PATH
                 .Replace("{persistent_path}", Application.persistentDataPath));
         }
+        
+        [Test]
+        public void EmptyEventActionsRunWithoutError() {
+            var e = new GameEvent("event");
+            EventAction.CreateEmpty(e).Run();
+        }
 
         [Test]
         public void TriggersAreEvaluatedInOrder() {
