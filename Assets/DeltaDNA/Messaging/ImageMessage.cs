@@ -137,6 +137,7 @@ namespace DeltaDNA {
             changer.Init(redraw);
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(ddna, configuration);
+            this.spriteMap = spriteMap;
             Show();
         }
 
