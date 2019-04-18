@@ -58,7 +58,7 @@ namespace DeltaDNA {
                 .GetFiles(cache)
                 .Where(e => GetName(e).Equals(GetName(url)))
                 .Select(e => {
-                    var texture = new Texture2D(2, 2);
+                    var texture = new Texture2D(2, 2, TextureFormat.ARGB32, false);
                     return texture.LoadImage(File.ReadAllBytes(e)) ? texture : null;
                 })
                 .FirstOrDefault();

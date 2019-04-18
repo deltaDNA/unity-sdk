@@ -324,7 +324,7 @@ namespace DeltaDNA {
                 }
             }
 
-            public Texture Background {
+            public Sprite Background {
                 get {
                     try {
                         JSONObject background = this.configuration["background"] as JSONObject;
@@ -340,9 +340,9 @@ namespace DeltaDNA {
                 }
             }
 
-            public List<Texture> Buttons {
+            public List<Sprite> Buttons {
                 get {
-                    List<Texture> textures = new List<Texture>();
+                    List<Sprite> textures = new List<Sprite>();
                     if (this.configuration.ContainsKey("buttons")) {
                         try {
                             var buttons = this.configuration["buttons"] as List<object>;
@@ -361,16 +361,13 @@ namespace DeltaDNA {
                 }
             }
 
-            public Texture2D GetSubRegion(int x, int y, int width, int height)
+            public Sprite GetSubRegion(int x, int y, int width, int height)
             {
-                Color[] pixels = texture.GetPixels(x, texture.height-y-height, width, height);
-                Texture2D result = new Texture2D(width, height, texture.format, false);
-                result.SetPixels(pixels);
-                result.Apply();
-                return result;
+                Rect rect = new Rect( x, texture.height - y - height, width, height );
+                return Sprite.Create( texture, rect, new Vector2( 0.5f, 0.5f ), 100 );
             }
 
-            public Texture2D GetSubRegion(Rect rect)
+            public Sprite GetSubRegion(Rect rect)
             {
                 return GetSubRegion(
                     Mathf.FloorToInt(rect.x),
@@ -570,16 +567,16 @@ namespace DeltaDNA {
         private class BackgroundLayer : Layer
         {
 
-            private Texture texture;
+            private Sprite sprite;
             private Rect position;
             private float scale;
 
-            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Sprite sprite, int depth)
             {
                 this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
-                this.texture = texture;
+                this.sprite = sprite;
                 this.depth = depth;
 
                 object backgroundObj;
@@ -615,7 +612,7 @@ namespace DeltaDNA {
             public float Scale { get { return this.scale; }}
 
             void Start() {
-                if (texture) {
+                if (sprite) {
                     var obj = new GameObject("Background", typeof(RectTransform));
                     PositionObject(obj, position);
 
@@ -625,18 +622,16 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         if (actions.Count > 0) actions[0].Invoke();
                     });
-                    obj.GetComponent<Image>().sprite = Sprite.Create(
-                        texture as Texture2D,
-                        new Rect(0, 0, texture.width, texture.height),
-                        new Vector2(0.5f, 0.5f));
+                    obj.GetComponent<Image>().sprite = sprite;
                 }
             }
 
             private Rect RenderAsCover(JSONObject rules)
             {
-                this.scale = Math.Max((float)Screen.width / (float)this.texture.width, (float)Screen.height / (float)this.texture.height);
-                float width = this.texture.width * this.scale;
-                float height = this.texture.height * this.scale;
+                Rect rect = sprite.rect;
+                scale = Math.Max(Screen.width / rect.width, Screen.height / rect.height);
+                float width = rect.width * scale;
+                float height = rect.height * scale;
 
                 float top = Screen.height / 2.0f - height / 2.0f;   // default "center"
                 float left = Screen.width / 2.0f - width / 2.0f;
@@ -685,7 +680,8 @@ namespace DeltaDNA {
                     rc = GetConstraintPixels((string)r, Screen.width);
                 }
 
-                float ws = ((float)Screen.width - lc - rc) / (float)this.texture.width;
+                Rect rect = sprite.rect;
+                float ws = ((float)Screen.width - lc - rc) / rect.width;
 
                 if (rules.TryGetValue("top", out t)) {
                     tc = GetConstraintPixels((string)t, Screen.height);
@@ -694,11 +690,11 @@ namespace DeltaDNA {
                     bc = GetConstraintPixels((string)b, Screen.height);
                 }
 
-                float hs = ((float)Screen.height - tc - bc) / (float)this.texture.height;
+                float hs = ((float)Screen.height - tc - bc) / rect.height;
 
                 this.scale = Math.Min(ws, hs);
-                float width = this.texture.width * this.scale;
-                float height = this.texture.height * this.scale;
+                float width = rect.width * this.scale;
+                float height = rect.height * this.scale;
 
                 float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc;    // default "center"
                 float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc;     // default "center"
@@ -758,10 +754,10 @@ namespace DeltaDNA {
 
         private class ButtonsLayer : Layer
         {
-            private List<Texture> textures = new List<Texture>();
+            private List<Sprite> textures = new List<Sprite>();
             private List<Rect> positions = new List<Rect>();
 
-            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Sprite> textures, BackgroundLayer content, int depth)
             {
                 this.ddna = ddna;
                 this.parent = parent;
@@ -781,7 +777,8 @@ namespace DeltaDNA {
                         if (button.TryGetValue("y", out y)) {
                             top = (int)((long)y) * content.Scale + content.Position.yMin;
                         }
-                        this.positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
+                        var rect = textures[i].rect;
+                        this.positions.Add(new Rect(left, top, rect.width * content.Scale, rect.height * content.Scale));
 
                         object actionObj;
                         if (button.TryGetValue("action", out actionObj)) {
@@ -807,10 +804,7 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         action.Invoke();
                     });
-                    obj.GetComponent<Image>().sprite = Sprite.Create(
-                        textures[i] as Texture2D,
-                        new Rect(0, 0, textures[i].width, textures[i].height),
-                        new Vector2(0.5f, 0.5f));
+                    obj.GetComponent<Image>().sprite = textures[i];
                 }
             }
         }
