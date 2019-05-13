@@ -236,9 +236,10 @@ namespace DeltaDNA {
                         spriteMap.LoadResource(e => {});
                     }
 
-                    gameObject.AddComponent<Canvas>();
+                    var canvas = gameObject.AddComponent<Canvas>();
                     gameObject.AddComponent<GraphicRaycaster>();
-                    gameObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+                    canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+	                 canvas.sortingOrder = 999999;
 
                     if (this.configuration.ContainsKey("shim")) {
                         ShimLayer shimLayer = gameObject.AddComponent<ShimLayer>();
