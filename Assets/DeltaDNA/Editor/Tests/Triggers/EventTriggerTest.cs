@@ -40,7 +40,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"eventName\":\"name\",\"response\":{\"a\":1}}".Json());
+                "{\"eventName\":\"name\",\"response\":{\"a\":1}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetEventName(), Is.EqualTo("name"));
             Expect(uut.GetResponse(), Is.EqualTo("{\"a\":1}".Json()));
@@ -51,7 +52,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{}".Json());
+                "{}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetEventName(), Is.EqualTo(""));
             Expect(uut.GetResponse(), Is.EqualTo("{}".Json()));
@@ -62,7 +64,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"response\":{\"image\":{}}}".Json());
+                "{\"response\":{\"image\":{}}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetAction(), Is.EqualTo("gameParameters"));
         }
@@ -72,16 +75,17 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"response\":{\"image\":{\"a\":1}}}".Json());
+                "{\"response\":{\"image\":{\"a\":1}}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetAction(), Is.EqualTo("imageMessage"));
         }
 
         [Test]
         public void TriggersAreOrderedBasedOnPriorities() {
-            var top = new EventTrigger(ddna, 0, "{\"priority\":2}".Json());
-            var middle = new EventTrigger(ddna, 0, "{\"priority\":1}".Json());
-            var bottom = new EventTrigger(ddna, 0, "{\"priority\":0}".Json());
+            var top = new EventTrigger(ddna, 0, "{\"priority\":2}".Json(), new ExecutionCountManager());
+            var middle = new EventTrigger(ddna, 0, "{\"priority\":1}".Json(), new ExecutionCountManager());
+            var bottom = new EventTrigger(ddna, 0, "{\"priority\":0}".Json(), new ExecutionCountManager());
             var expected = new List<EventTrigger>() { top, middle, bottom };
 
             var actual = new List<EventTrigger>() { middle, bottom, top };
@@ -92,9 +96,9 @@ namespace DeltaDNA {
 
         [Test]
         public void TriggersAreOrderedBasedOnIndicesIfPrioritiesAreSame() {
-            var top = new EventTrigger(ddna, 0, "{\"priority\":0}".Json());
-            var middle = new EventTrigger(ddna, 1, "{\"priority\":0}".Json());
-            var bottom = new EventTrigger(ddna, 2, "{\"priority\":0}".Json());
+            var top = new EventTrigger(ddna, 0, "{\"priority\":0}".Json(), new ExecutionCountManager());
+            var middle = new EventTrigger(ddna, 1, "{\"priority\":0}".Json(), new ExecutionCountManager());
+            var bottom = new EventTrigger(ddna, 2, "{\"priority\":0}".Json(), new ExecutionCountManager());
             var expected = new List<EventTrigger>() { top, middle, bottom };
 
             var actual = new List<EventTrigger>() { middle, bottom, top };
@@ -105,7 +109,7 @@ namespace DeltaDNA {
 
         [Test]
         public void IsEvaluatedIndefinitelyByDefault() {
-            var uut = new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json());
+            var uut = new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager());
             var evnt = new GameEvent("a");
 
             for (int i = 0; i < 10; i++) { Expect(uut.Evaluate(evnt)); }
@@ -117,7 +121,7 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                ("{\"eventName\":\"a\",\"limit\":" + limit + "}").Json());
+                ("{\"eventName\":\"a\",\"limit\":" + limit + "}").Json(), new ExecutionCountManager());
             var evnt = new GameEvent("a");
 
             for (var i = 0; i <= limit; i++) {
@@ -153,7 +157,7 @@ namespace DeltaDNA {
             jsonObject.Add("response", responseJson);
         
             
-            new EventTrigger(ddna,0,jsonObject)
+            new EventTrigger(ddna,0,jsonObject, new ExecutionCountManager())
                 .Evaluate(new GameEvent(eventName));
             
             ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
@@ -187,7 +191,7 @@ namespace DeltaDNA {
             jsonObject.Add("response", responseJson);
         
             
-            new EventTrigger(ddna,0,jsonObject)
+            new EventTrigger(ddna,0,jsonObject, new ExecutionCountManager())
                 .Evaluate(new GameEvent(eventName));
             
             ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
@@ -204,7 +208,7 @@ namespace DeltaDNA {
 
         [Test]
         public void DoesNotSendAConversionEventWhenEvaluationFails() {
-            new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json())
+            new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager())
                 .Evaluate(new GameEvent("b"));
 
             ddna.DidNotReceive();
@@ -212,7 +216,7 @@ namespace DeltaDNA {
 
         [Test]
         public void EvaluationFailsAgainstEventWithDifferentName() {
-            Expect(new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json())
+            Expect(new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager())
                 .Evaluate(new GameEvent("b")),
                 Is.False);
         }
@@ -486,16 +490,79 @@ namespace DeltaDNA {
                 Is.False);
         }
 
-        private bool Cond(GameEvent evnt, params JSONObject[] values) {
+        [Test]
+        public void EvaluationFailsWhenExecutionsLessThanRequirements(){
+
+            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+            Expect(Cond(limitations,
+                Evnt(
+                    "a",
+                    new object[] { "a", 10, "b", 5, "c", "c", "d", true }),
+                "c".P(), "c".S(), "equal to".O()),Is.False);
+            
+        }
+        
+        [Test]
+        public void EvaluationSucceedsWhenExecutionsEqualToRequirements(){
+
+            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+            
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+            
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                    evnt ,
+                    "c".P(), "c".S(), "equal to".O());
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            
+        }
+
+        [Test]
+        public void EvaluationSucceedsWithExecutionsEqualToRequirementsWithSessionLimitsBetweenSessions(){
+            //Session 1
+            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt,
+                "c".P(), "c".S(), "equal to".O());
+            
+            
+        }
+
+        private bool Cond(GameEvent evnt, params JSONObject[] values){
+            return Cond( new JSONObject(), evnt,  values);
+        }
+        
+        private bool Cond(JSONObject limitations, GameEvent evnt, params JSONObject[] values) {
+             // convert to exact representation as from backend
+             return getEventTrigger(limitations, evnt, values).Evaluate(evnt);
+        }
+
+        private EventTrigger getEventTrigger(JSONObject limitations, GameEvent evnt, params JSONObject[] values){
+            Random random = new Random();
+            long campaignId = random.Next();
+            
             return new EventTrigger(
                 ddna,
                 0,
-                new JSONObject() {
-                    { "eventName", evnt.Name },
-                    { "condition", values }}
-                .Json().Json()) // convert to exact representation as from backend
-                .Evaluate(evnt);
+                new JSONObject{
+                    {"eventName", evnt.Name},
+                    {"condition", values},
+                    {"campaignLimitsConfig", limitations},
+                    {"campaignID", campaignId}
+                }.Json().Json(),
+                new ExecutionCountManager());
         }
+
 
         private static GameEvent Evnt(string name = "a", params object[] values) {
             var evnt = new GameEvent(name);
