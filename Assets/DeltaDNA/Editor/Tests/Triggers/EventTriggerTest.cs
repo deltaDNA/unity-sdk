@@ -493,7 +493,9 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationFailsWhenExecutionsLessThanRequirements(){
 
-            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+            JSONObject limitations = new JSONObject{
+                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
+            };
             Expect(Cond(limitations,
                 Evnt(
                     "a",
@@ -505,7 +507,9 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsWhenExecutionsEqualToRequirements(){
 
-            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+            JSONObject limitations = new JSONObject{
+                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
+            };
             
             GameEvent evnt = Evnt(
                 "a",
@@ -524,9 +528,11 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsWithExecutionsEqualToRequirementsWithSessionLimitsBetweenSessions(){
             //Session 1
-            JSONObject limitations = new JSONObject{{"executionsRequired", 2}};
+            JSONObject limitations = new JSONObject{
+                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
+            };
 
-            GameEvent evnt = Evnt(
+        GameEvent evnt = Evnt(
                 "a",
                 new object[]{"a", 10, "b", 5, "c", "c", "d", true});
 

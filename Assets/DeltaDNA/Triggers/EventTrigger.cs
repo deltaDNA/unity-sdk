@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using NUnit.Compatibility;
 using NUnit.Framework.Constraints;
 using UnityEngine;
 
@@ -319,9 +318,13 @@ namespace DeltaDNA {
         public static List<TriggerLimitation> parse(JSONObject campaignLimitsConfig, ExecutionCountManager executionCountManager, long campaignId) {
             List<TriggerLimitation> limitations = new List<TriggerLimitation>();
 
-            if (campaignLimitsConfig.ContainsKey("executionsRequired")) {
-                long executionsRequired = campaignLimitsConfig.GetOrDefault("executionsRequired", 0L);
-                limitations.Add(new ExecutionCountTriggerLimitation(executionsRequired, executionCountManager, campaignId));
+            if (campaignLimitsConfig.ContainsKey("showConditions")){
+                JSONObject showConditions = campaignLimitsConfig.GetOrDefault("showConditions", new JSONObject());
+                if (showConditions.ContainsKey("executionsRequired")){
+                    long executionsRequired = showConditions.GetOrDefault("executionsRequired", 0L);
+                    limitations.Add(new ExecutionCountTriggerLimitation(executionsRequired, executionCountManager,
+                        campaignId));
+                }
             }
 
             return limitations;

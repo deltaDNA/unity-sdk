@@ -313,6 +313,7 @@ namespace DeltaDNA {
                     URL,
                     t => {
                         texture = t;
+                        Destroy(t);
                         callback(null);
                     },
                     callback));
@@ -320,7 +321,7 @@ namespace DeltaDNA {
 
             public Texture Texture {
                 get {
-                    return this.texture;
+                    return texture;
                 }
             }
 
@@ -351,7 +352,7 @@ namespace DeltaDNA {
                                 int y = (int)((long)((JSONObject)button)["y"]);
                                 int w = (int)((long)((JSONObject)button)["width"]);
                                 int h = (int)((long)((JSONObject)button)["height"]);
-                                textures.Add(this.GetSubRegion(x, y, w, h));
+                                textures.Add(GetSubRegion(x, y, w, h));
                             }
                         } catch (KeyNotFoundException exception) {
                             Logger.LogError("Invalid format, button not found: "+exception.Message);
