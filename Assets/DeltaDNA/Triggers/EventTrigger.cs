@@ -219,12 +219,21 @@ namespace DeltaDNA {
             }
             
             if (limit != -1 && runs >= limit) return false;
+
+            // Default to true if no conditions exist
+            bool triggerConditionsReached = campaignTriggerConditions.Count == 0;
             
+            // Only one condition needs to be true to flip conditions to true
             this.executionCountManager.incrementExecutionCount(this.campaignId);
             foreach (TriggerLimitation campaignTriggerCondition in campaignTriggerConditions){
-                if (!campaignTriggerCondition.CanExecute()){
-                    return false;
+                if (campaignTriggerCondition.CanExecute()){
+                    triggerConditionsReached = true;
                 }
+            }
+
+            // If none reached return false
+            if (!triggerConditionsReached){
+                return false;
             }
 
             var result = stack.Count == 0 || (stack.Pop() as bool? ?? false);
@@ -314,7 +323,7 @@ namespace DeltaDNA {
             };
     }
 
-    internal class TriggerLimitationParser{
+    internal class TriggerLimitationParser {
 
         private readonly JSONObject campaignLimitsConfig;
         private readonly long campaignId;
@@ -329,15 +338,27 @@ namespace DeltaDNA {
             List<TriggerLimitation> limitations = new List<TriggerLimitation>();
 
             if (campaignLimitsConfig.ContainsKey("showConditions")){
-                JSONObject showConditions = campaignLimitsConfig.GetOrDefault("showConditions", new JSONObject());
-                if (showConditions.ContainsKey("executionsRequired")){
-                    long executionsRequired = showConditions.GetOrDefault("executionsRequired", 0L);
-                    limitations.Add(new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, campaignId));
+                JSONObject[] showConditions = (campaignLimitsConfig["showConditions"] as List<object>).Select(e => e as JSONObject).ToArray();
+                foreach (var showCondition in showConditions){
+                    TriggerLimitation limitation = parseCondition(showCondition, executionCountManager);
+                    if (limitation != null){
+                        limitations.Add(limitation);
+                    }
                 }
             }
 
             return limitations;
         }
+
+        public TriggerLimitation parseCondition(JSONObject showCondition, ExecutionCountManager executionCountManager){
+            if (showCondition.ContainsKey("executionsRequired")){
+                long executionsRequired = showCondition.GetOrDefault("executionsRequired", 0L);
+                return new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, campaignId);
+            }
+
+            return null;
+        }
+        
 
     }
 

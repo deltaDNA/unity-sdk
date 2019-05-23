@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+
+using Random = System.Random;
 #if !UNITY_4
 using NSubstitute;
 using NUnit.Framework;
@@ -21,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using DeltaDNA.MiniJSON;
+using UnityEngine;
 
 namespace DeltaDNA {
 
@@ -492,24 +496,27 @@ namespace DeltaDNA {
 
         [Test]
         public void EvaluationFailsWhenExecutionsLessThanRequirements(){
+            JSONObject limitations = getLimitations(                
+                new JSONObject{{"executionsRequired", 2}});
 
-            JSONObject limitations = new JSONObject{
-                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
-            };
-            Expect(Cond(limitations,
-                Evnt(
-                    "a",
-                    new object[] { "a", 10, "b", 5, "c", "c", "d", true }),
-                "c".P(), "c".S(), "equal to".O()),Is.False);
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+            
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+            
+            
+            Expect(trigger.Evaluate(evnt),Is.False);
             
         }
         
         [Test]
         public void EvaluationSucceedsWhenExecutionsEqualToRequirements(){
-
-            JSONObject limitations = new JSONObject{
-                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
-            };
+            JSONObject limitations = getLimitations(                
+                new JSONObject{{"executionsRequired", 2}});
             
             GameEvent evnt = Evnt(
                 "a",
@@ -528,11 +535,27 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsWithExecutionsEqualToRequirementsWithSessionLimitsBetweenSessions(){
             //Session 1
-            JSONObject limitations = new JSONObject{
-                {"showConditions", new JSONObject{{"executionsRequired", 2}}}
-            };
+            JSONObject limitations = getLimitations(                
+                new JSONObject{{"executionsRequired", 2}});
 
-        GameEvent evnt = Evnt(
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt,
+                "c".P(), "c".S(), "equal to".O());
+        }
+        
+        [Test]
+        public void EvaluationSucceedsWithMultipleExecutionConditions(){
+            //Session 1
+            JSONObject limitations = getLimitations(                
+                new JSONObject{{"executionsRequired", 2}},
+                new JSONObject{{"executionsRequired", 4}});
+
+            GameEvent evnt = Evnt(
                 "a",
                 new object[]{"a", 10, "b", 5, "c", "c", "d", true});
 
@@ -541,7 +564,10 @@ namespace DeltaDNA {
                 evnt,
                 "c".P(), "c".S(), "equal to".O());
             
-            
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
         }
 
         private bool Cond(GameEvent evnt, params JSONObject[] values){
@@ -553,10 +579,16 @@ namespace DeltaDNA {
              return getEventTrigger(limitations, evnt, values).Evaluate(evnt);
         }
 
+        private JSONObject getLimitations(params JSONObject[] showConditions){
+            return new JSONObject{
+                {"showConditions", showConditions}
+            };
+        }
+
         private EventTrigger getEventTrigger(JSONObject limitations, GameEvent evnt, params JSONObject[] values){
             Random random = new Random();
             long campaignId = random.Next();
-            
+
             return new EventTrigger(
                 ddna,
                 0,
