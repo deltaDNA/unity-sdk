@@ -44,7 +44,7 @@ namespace DeltaDNA {
         private readonly string campaignName;
         private readonly string variantName;
 
-        private readonly List<TriggerLimitation> campaignTriggerLimits;
+        private readonly List<TriggerLimitation> campaignTriggerConditions;
         private readonly ExecutionCountManager executionCountManager;
 
         private int runs;
@@ -77,7 +77,8 @@ namespace DeltaDNA {
             variantName =  eventParams.GetOrDefault<string, string>("responseVariantName", null);
 
             JSONObject campaignLimitsConfig = json.GetOrDefault("campaignLimitsConfig", new JSONObject());
-            this.campaignTriggerLimits = TriggerLimitationParser.parse(campaignLimitsConfig, executionCountManager, campaignId);
+            TriggerLimitationParser parser = new TriggerLimitationParser(campaignLimitsConfig, campaignId);
+            this.campaignTriggerConditions = parser.parseConditions(executionCountManager);
 
         }
 
@@ -220,8 +221,8 @@ namespace DeltaDNA {
             if (limit != -1 && runs >= limit) return false;
             
             this.executionCountManager.incrementExecutionCount(this.campaignId);
-            foreach (TriggerLimitation campaignTriggerLimit in campaignTriggerLimits){
-                if (!campaignTriggerLimit.CanExecute()){
+            foreach (TriggerLimitation campaignTriggerCondition in campaignTriggerConditions){
+                if (!campaignTriggerCondition.CanExecute()){
                     return false;
                 }
             }
@@ -313,17 +314,25 @@ namespace DeltaDNA {
             };
     }
 
-    internal class TriggerLimitationParser {
+    internal class TriggerLimitationParser{
 
-        public static List<TriggerLimitation> parse(JSONObject campaignLimitsConfig, ExecutionCountManager executionCountManager, long campaignId) {
+        private readonly JSONObject campaignLimitsConfig;
+        private readonly long campaignId;
+
+       public  TriggerLimitationParser(JSONObject campaignLimitsConfig, long campaignId){
+            this.campaignLimitsConfig = campaignLimitsConfig;
+            this.campaignId = campaignId;
+        }
+        
+
+        public List<TriggerLimitation> parseConditions(ExecutionCountManager executionCountManager) {
             List<TriggerLimitation> limitations = new List<TriggerLimitation>();
 
             if (campaignLimitsConfig.ContainsKey("showConditions")){
                 JSONObject showConditions = campaignLimitsConfig.GetOrDefault("showConditions", new JSONObject());
                 if (showConditions.ContainsKey("executionsRequired")){
                     long executionsRequired = showConditions.GetOrDefault("executionsRequired", 0L);
-                    limitations.Add(new ExecutionCountTriggerLimitation(executionsRequired, executionCountManager,
-                        campaignId));
+                    limitations.Add(new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, campaignId));
                 }
             }
 
@@ -338,13 +347,13 @@ namespace DeltaDNA {
 
     }
 
-    internal class ExecutionCountTriggerLimitation : TriggerLimitation {
+    internal class ExecutionCountTriggerCondition : TriggerLimitation {
 
         private readonly long executionsRequired;
         private readonly ExecutionCountManager executionCountManager;
         private readonly long campaignId;
 
-        public ExecutionCountTriggerLimitation(long executionsRequired, ExecutionCountManager executionCountManager, long campaignId) {
+        public ExecutionCountTriggerCondition(long executionsRequired, ExecutionCountManager executionCountManager, long campaignId) {
             this.executionsRequired = executionsRequired;
             this.executionCountManager = executionCountManager;
             this.campaignId = campaignId;
