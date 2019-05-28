@@ -351,11 +351,16 @@ namespace DeltaDNA {
         }
 
         public TriggerLimitation parseCondition(JSONObject showCondition, ExecutionCountManager executionCountManager){
-            if (showCondition.ContainsKey("executionsRequired")){
-                long executionsRequired = showCondition.GetOrDefault("executionsRequired", 0L);
+            if (showCondition.ContainsKey("executionsRequiredCount")){
+                long executionsRequired = showCondition.GetOrDefault("executionsRequiredCount", 0L);
                 return new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, campaignId);
             }
-
+            
+            if (showCondition.ContainsKey("executionsRepeat")){
+                long executionsRepeat = showCondition.GetOrDefault("executionsRepeat", 1L);
+                return new RepeatExecutionTriggerCondition(executionsRepeat, executionCountManager, campaignId);
+            }
+            
             return null;
         }
         
@@ -368,21 +373,47 @@ namespace DeltaDNA {
 
     }
 
-    internal class ExecutionCountTriggerCondition : TriggerLimitation {
-
-        private readonly long executionsRequired;
-        private readonly ExecutionCountManager executionCountManager;
-        private readonly long campaignId;
-
-        public ExecutionCountTriggerCondition(long executionsRequired, ExecutionCountManager executionCountManager, long campaignId) {
-            this.executionsRequired = executionsRequired;
+    internal abstract class ExecutionCountBasedTriggerCondition : TriggerLimitation{
+        protected readonly ExecutionCountManager executionCountManager;
+        protected readonly long campaignId;
+        
+        protected ExecutionCountBasedTriggerCondition(ExecutionCountManager executionCountManager, long campaignId) {
             this.executionCountManager = executionCountManager;
             this.campaignId = campaignId;
         }
 
-        public override bool CanExecute() {
-            return executionsRequired == executionCountManager.GetOrDefault(campaignId, 0L);
+        protected long getCurrentExecutionCount(){
+            return executionCountManager.GetOrDefault(campaignId, 0L);
         }
+        
+    }
+
+    internal class ExecutionCountTriggerCondition : ExecutionCountBasedTriggerCondition {
+
+        private readonly long executionsRequired;
+
+        public ExecutionCountTriggerCondition(long executionsRequired, ExecutionCountManager executionCountManager, long campaignId) : base(executionCountManager,  campaignId){
+            this.executionsRequired = executionsRequired;
+        }
+
+        public override bool CanExecute() {
+            return executionsRequired == getCurrentExecutionCount();
+        }
+    }
+
+    internal class RepeatExecutionTriggerCondition : ExecutionCountBasedTriggerCondition{
+        
+        private readonly long executionsRepeatInterval;
+
+        public RepeatExecutionTriggerCondition(long executionsRepeatInterval, ExecutionCountManager executionCountManager, long campaignId) : base(executionCountManager,  campaignId){
+            this.executionsRepeatInterval = executionsRepeatInterval;
+        }
+        
+        public override bool CanExecute(){
+            long currentExecutions = getCurrentExecutionCount();
+            return currentExecutions != 0 && currentExecutions % executionsRepeatInterval == 0 ;
+        }
+        
     }
 
     internal class ExecutionCountManager : SimpleDataStore<long, long>{
