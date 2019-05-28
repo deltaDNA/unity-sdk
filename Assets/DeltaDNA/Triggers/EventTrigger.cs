@@ -17,6 +17,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using NUnit.Framework.Constraints;
+using UnityEngine;
 
 namespace DeltaDNA {
 
@@ -39,13 +42,17 @@ namespace DeltaDNA {
 
         
         private readonly string campaignName;
-        private readonly string variantName; 
+        private readonly string variantName;
+
+        private readonly List<TriggerLimitation> campaignTriggerConditions;
+        private readonly ExecutionCountManager executionCountManager;
 
         private int runs;
 
-        internal EventTrigger(DDNABase ddna, int index, JSONObject json) {
+        internal EventTrigger(DDNABase ddna, int index, JSONObject json, ExecutionCountManager executionCountManager) {
             this.ddna = ddna;
             this.index = index;
+            this.executionCountManager = executionCountManager;
 
             eventName = json.ContainsKey("eventName")
                 ? json["eventName"] as string
@@ -68,6 +75,10 @@ namespace DeltaDNA {
 
             campaignName = eventParams.GetOrDefault<string, string>("responseEngagementName", null);
             variantName =  eventParams.GetOrDefault<string, string>("responseVariantName", null);
+
+            JSONObject campaignLimitsConfig = json.GetOrDefault("campaignLimitsConfig", new JSONObject());
+            TriggerLimitationParser parser = new TriggerLimitationParser(campaignLimitsConfig, campaignId);
+            this.campaignTriggerConditions = parser.parseConditions(executionCountManager);
 
         }
 
@@ -95,7 +106,6 @@ namespace DeltaDNA {
         }
 
         internal virtual bool Evaluate(GameEvent evnt) {
-            if (limit != -1 && runs >= limit) return false;
             if (evnt.Name != eventName) return false;
 
             var parameters = evnt.parameters.AsDictionary();
@@ -207,6 +217,24 @@ namespace DeltaDNA {
                     stack.Push(token);
                 }
             }
+            
+            if (limit != -1 && runs >= limit) return false;
+
+            // Default to true if no conditions exist
+            bool triggerConditionsReached = campaignTriggerConditions.Count == 0;
+            
+            // Only one condition needs to be true to flip conditions to true
+            this.executionCountManager.incrementExecutionCount(this.campaignId);
+            foreach (TriggerLimitation campaignTriggerCondition in campaignTriggerConditions){
+                if (campaignTriggerCondition.CanExecute()){
+                    triggerConditionsReached = true;
+                }
+            }
+
+            // If none reached return false
+            if (!triggerConditionsReached){
+                return false;
+            }
 
             var result = stack.Count == 0 || (stack.Pop() as bool? ?? false);
             if (result) {
@@ -243,7 +271,7 @@ namespace DeltaDNA {
         }
 
         #if UNITY_EDITOR
-        internal EventTrigger() : this(null, 0, new JSONObject()) {}
+        internal EventTrigger() : this(null, 0, new JSONObject(), null) {}
         #endif
 
         private static readonly Dictionary<string, Func<bool, bool, bool>> BOOLS =
@@ -293,5 +321,93 @@ namespace DeltaDNA {
                 { "less than", delegate(DateTime left, DateTime right) { return left < right; } },
                 { "less than eq", delegate(DateTime left, DateTime right) { return left <= right; } }
             };
+    }
+
+    internal class TriggerLimitationParser {
+
+        private readonly JSONObject campaignLimitsConfig;
+        private readonly long campaignId;
+
+       public  TriggerLimitationParser(JSONObject campaignLimitsConfig, long campaignId){
+            this.campaignLimitsConfig = campaignLimitsConfig;
+            this.campaignId = campaignId;
+        }
+        
+
+        public List<TriggerLimitation> parseConditions(ExecutionCountManager executionCountManager) {
+            List<TriggerLimitation> limitations = new List<TriggerLimitation>();
+
+            if (campaignLimitsConfig.ContainsKey("showConditions")){
+                JSONObject[] showConditions = (campaignLimitsConfig["showConditions"] as List<object>).Select(e => e as JSONObject).ToArray();
+                foreach (var showCondition in showConditions){
+                    TriggerLimitation limitation = parseCondition(showCondition, executionCountManager);
+                    if (limitation != null){
+                        limitations.Add(limitation);
+                    }
+                }
+            }
+
+            return limitations;
+        }
+
+        public TriggerLimitation parseCondition(JSONObject showCondition, ExecutionCountManager executionCountManager){
+            if (showCondition.ContainsKey("executionsRequired")){
+                long executionsRequired = showCondition.GetOrDefault("executionsRequired", 0L);
+                return new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, campaignId);
+            }
+
+            return null;
+        }
+        
+
+    }
+
+    internal abstract class TriggerLimitation {
+
+        public abstract Boolean CanExecute();
+
+    }
+
+    internal class ExecutionCountTriggerCondition : TriggerLimitation {
+
+        private readonly long executionsRequired;
+        private readonly ExecutionCountManager executionCountManager;
+        private readonly long campaignId;
+
+        public ExecutionCountTriggerCondition(long executionsRequired, ExecutionCountManager executionCountManager, long campaignId) {
+            this.executionsRequired = executionsRequired;
+            this.executionCountManager = executionCountManager;
+            this.campaignId = campaignId;
+        }
+
+        public override bool CanExecute() {
+            return executionsRequired == executionCountManager.GetOrDefault(campaignId, 0L);
+        }
+    }
+
+    internal class ExecutionCountManager : SimpleDataStore<long, long>{
+        public ExecutionCountManager(): base("eventTrigger", "counts") {
+            
+        }
+        protected override long parseKey(string key){
+            return long.Parse(key);
+        }
+
+        protected override long parseValue(string value){
+           return parseKey(value);
+        }
+
+        protected override string createLine(long key, long value){
+           return "" + key + getKeyValueSeparator() + value;
+        }
+        
+        public long getExecutionCount(long campaignId){
+            return GetOrDefault(campaignId, 0L);
+        }
+
+        public void incrementExecutionCount(long campaignId){
+            Put(campaignId, GetOrDefault(campaignId, 0)+1);
+        }
+
     }
 }

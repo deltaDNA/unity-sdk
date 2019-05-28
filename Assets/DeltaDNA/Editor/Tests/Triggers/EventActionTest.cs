@@ -67,7 +67,7 @@ namespace DeltaDNA {
         [Test]
         public void HandlersAreRunInOrderOfAddition() {
             var e = new GameEvent("event");
-            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
@@ -93,7 +93,7 @@ namespace DeltaDNA {
         [Test]
         public void HandlersAreRunUntilOneHandlesTheAction() {
             var e = new GameEvent("event");
-            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
@@ -115,8 +115,8 @@ namespace DeltaDNA {
 
         [Test] public void EachActionIsHandledIfMultipleActionsForEventTriggerEnabled() {
             var e = new GameEvent("event");
-            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
-            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
@@ -141,8 +141,8 @@ namespace DeltaDNA {
         
         [Test] public void ImageMessagesAreHandledOnlyOnceIfIsHandledIfMultipleActionsForEventTriggerEnabled() {
             var e = new GameEvent("event");
-            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
-            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();
@@ -171,8 +171,8 @@ namespace DeltaDNA {
         
         [Test] public void ImageMessagesDoNotBlockSubsequentParameterActionsIfIsHandledIfMultipleActionsForEventTriggerEnabled() {
             var e = new GameEvent("event");
-            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
-            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json());
+            var t = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
+            var t2 = Substitute.For<EventTrigger>(ddna, 0, "{\"eventName\":\"name\"}".Json(), null);
             var h1 = Substitute.For<EventActionHandler>();
             var h2 = Substitute.For<EventActionHandler>();
             var h3 = Substitute.For<EventActionHandler>();

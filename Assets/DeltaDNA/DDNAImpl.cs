@@ -634,9 +634,11 @@ namespace DeltaDNA {
                     object triggers = null;
                     (parameters as JSONObject).TryGetValue("triggers", out triggers);
                     if (triggers != null && triggers is List<object>) {
+                        ExecutionCountManager executionCountManager = new ExecutionCountManager();
+                        
                         eventTriggers = (triggers as List<object>)
                             .Select((e, i) => {
-                                var t = new EventTrigger(this, i, e as JSONObject);
+                                var t = new EventTrigger(this, i, e as JSONObject, executionCountManager);
 
                                 // save persistent actions
                                 var p = t.GetResponse().GetOrDefault("parameters", new JSONObject());
