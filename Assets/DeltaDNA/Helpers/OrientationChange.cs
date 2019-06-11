@@ -49,6 +49,7 @@ namespace DeltaDNA{
         }
 
         void OnDestroy(){
+            onChange = null;
             running = false;
         }
 

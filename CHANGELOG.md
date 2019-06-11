@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.12.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.4)
+### Fixed 
+- Memory issues with image messages
+
 ## [4.12.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.3)
 ### Fixed 
 - Evaluating non-whitelisted events for Event-Triggered Campaigns no longer fails. Thanks [JayArrrgh](https://github.com/JayArrrgh) for your contribution!
