@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+
+using Random = System.Random;
 #if !UNITY_4
 using NSubstitute;
 using NUnit.Framework;
@@ -21,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using DeltaDNA.MiniJSON;
+using UnityEngine;
 
 namespace DeltaDNA {
 
@@ -40,7 +44,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"eventName\":\"name\",\"response\":{\"a\":1}}".Json());
+                "{\"eventName\":\"name\",\"response\":{\"a\":1}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetEventName(), Is.EqualTo("name"));
             Expect(uut.GetResponse(), Is.EqualTo("{\"a\":1}".Json()));
@@ -51,7 +56,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{}".Json());
+                "{}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetEventName(), Is.EqualTo(""));
             Expect(uut.GetResponse(), Is.EqualTo("{}".Json()));
@@ -62,7 +68,8 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"response\":{\"image\":{}}}".Json());
+                "{\"response\":{\"image\":{}}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetAction(), Is.EqualTo("gameParameters"));
         }
@@ -72,16 +79,17 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                "{\"response\":{\"image\":{\"a\":1}}}".Json());
+                "{\"response\":{\"image\":{\"a\":1}}}".Json(),
+                new ExecutionCountManager());
 
             Expect(uut.GetAction(), Is.EqualTo("imageMessage"));
         }
 
         [Test]
         public void TriggersAreOrderedBasedOnPriorities() {
-            var top = new EventTrigger(ddna, 0, "{\"priority\":2}".Json());
-            var middle = new EventTrigger(ddna, 0, "{\"priority\":1}".Json());
-            var bottom = new EventTrigger(ddna, 0, "{\"priority\":0}".Json());
+            var top = new EventTrigger(ddna, 0, "{\"priority\":2}".Json(), new ExecutionCountManager());
+            var middle = new EventTrigger(ddna, 0, "{\"priority\":1}".Json(), new ExecutionCountManager());
+            var bottom = new EventTrigger(ddna, 0, "{\"priority\":0}".Json(), new ExecutionCountManager());
             var expected = new List<EventTrigger>() { top, middle, bottom };
 
             var actual = new List<EventTrigger>() { middle, bottom, top };
@@ -92,9 +100,9 @@ namespace DeltaDNA {
 
         [Test]
         public void TriggersAreOrderedBasedOnIndicesIfPrioritiesAreSame() {
-            var top = new EventTrigger(ddna, 0, "{\"priority\":0}".Json());
-            var middle = new EventTrigger(ddna, 1, "{\"priority\":0}".Json());
-            var bottom = new EventTrigger(ddna, 2, "{\"priority\":0}".Json());
+            var top = new EventTrigger(ddna, 0, "{\"priority\":0}".Json(), new ExecutionCountManager());
+            var middle = new EventTrigger(ddna, 1, "{\"priority\":0}".Json(), new ExecutionCountManager());
+            var bottom = new EventTrigger(ddna, 2, "{\"priority\":0}".Json(), new ExecutionCountManager());
             var expected = new List<EventTrigger>() { top, middle, bottom };
 
             var actual = new List<EventTrigger>() { middle, bottom, top };
@@ -105,7 +113,7 @@ namespace DeltaDNA {
 
         [Test]
         public void IsEvaluatedIndefinitelyByDefault() {
-            var uut = new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json());
+            var uut = new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager());
             var evnt = new GameEvent("a");
 
             for (int i = 0; i < 10; i++) { Expect(uut.Evaluate(evnt)); }
@@ -117,7 +125,7 @@ namespace DeltaDNA {
             var uut = new EventTrigger(
                 ddna,
                 0,
-                ("{\"eventName\":\"a\",\"limit\":" + limit + "}").Json());
+                ("{\"eventName\":\"a\",\"limit\":" + limit + "}").Json(), new ExecutionCountManager());
             var evnt = new GameEvent("a");
 
             for (var i = 0; i <= limit; i++) {
@@ -140,23 +148,23 @@ namespace DeltaDNA {
             var vaiantId = 3L;
             var campaignName = "CAMPAIGN NAME HERE";
             var variantName = "VARIANT NAME HERE";
-            
+
             eventParamJson.Add("responseEngagementName", campaignName);
             eventParamJson.Add("responseVariantName", variantName);
-            
+
             responseJson.Add("eventParams", eventParamJson);
-            
+
             jsonObject.Add("eventName", eventName);
             jsonObject.Add("priority", priority);
             jsonObject.Add("campaignID", campaignId);
             jsonObject.Add("variantID", vaiantId);
             jsonObject.Add("response", responseJson);
-        
-            
-            new EventTrigger(ddna,0,jsonObject)
+
+
+            new EventTrigger(ddna,0,jsonObject, new ExecutionCountManager())
                 .Evaluate(new GameEvent(eventName));
-            
-            ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
+
+            ddna.Received().RecordEvent(Arg.Is<GameEvent>(e =>
                 e.Name == "ddnaEventTriggeredAction" &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignPriority") as long? == priority &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignID") as long? == campaignId &&
@@ -164,10 +172,10 @@ namespace DeltaDNA {
                 e.parameters.GetParam("ddnaEventTriggeredActionType") as string == "gameParameters" &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignName") as string == campaignName &&
                 e.parameters.GetParam("ddnaEventTriggeredVariantName") as string == variantName &&
-                e.parameters.GetParam("ddnaEventTriggeredSessionCount") as int? == 1 
+                e.parameters.GetParam("ddnaEventTriggeredSessionCount") as int? == 1
             ));
         }
-        
+
         [Test]
         public void SendsConversionEventWhenEvaluatedWithoutOptionalParameters(){
             var jsonObject = new JSONObject();
@@ -177,20 +185,20 @@ namespace DeltaDNA {
             var priority = 1L;
             var campaignId = 2L;
             var vaiantId = 3L;
- 
+
             responseJson.Add("eventParams", eventParamJson);
-            
+
             jsonObject.Add("eventName", eventName);
             jsonObject.Add("priority", priority);
             jsonObject.Add("campaignID", campaignId);
             jsonObject.Add("variantID", vaiantId);
             jsonObject.Add("response", responseJson);
-        
-            
-            new EventTrigger(ddna,0,jsonObject)
+
+
+            new EventTrigger(ddna,0,jsonObject, new ExecutionCountManager())
                 .Evaluate(new GameEvent(eventName));
-            
-            ddna.Received().RecordEvent(Arg.Is<GameEvent>(e => 
+
+            ddna.Received().RecordEvent(Arg.Is<GameEvent>(e =>
                 e.Name == "ddnaEventTriggeredAction" &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignPriority") as long? == priority &&
                 e.parameters.GetParam("ddnaEventTriggeredCampaignID") as long? == campaignId &&
@@ -204,7 +212,7 @@ namespace DeltaDNA {
 
         [Test]
         public void DoesNotSendAConversionEventWhenEvaluationFails() {
-            new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json())
+            new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager())
                 .Evaluate(new GameEvent("b"));
 
             ddna.DidNotReceive();
@@ -212,7 +220,7 @@ namespace DeltaDNA {
 
         [Test]
         public void EvaluationFailsAgainstEventWithDifferentName() {
-            Expect(new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json())
+            Expect(new EventTrigger(ddna, 0, "{\"eventName\":\"a\"}".Json(), new ExecutionCountManager())
                 .Evaluate(new GameEvent("b")),
                 Is.False);
         }
@@ -413,7 +421,7 @@ namespace DeltaDNA {
             Expect(Cond(Evnt("a", new object[] { "a", "b" }), "a".P(), "b".S(), "less than eq".O()),
                 Is.False);
         }
-    
+
         [Test]
         public void EvaluationOfStringComparisonOperators() {
             Expect(Cond(Evnt("a", new object[] { "a", "b" }), "a".P(), "b".S(), "equal to".O()));
@@ -451,7 +459,7 @@ namespace DeltaDNA {
             Expect(Cond(Evnt("a", new object[] { "a", "HeLlO wOrLd" }), "a".P(), "HeLlO".S(), "ends with ic".O()),
                 Is.False);
         }
-    
+
         [Test]
         public void EvaluationOfComplexExpressions() {
             Expect(Cond(
@@ -460,7 +468,7 @@ namespace DeltaDNA {
                     new object[] { "a", 10, "b", 5, "c", "c", "d", true }),
                 "c".P(), "c".S(), "equal to".O(), "a".P(), 15.I(), "less than".O(), "and".O(), "b".P(), 15.I(), "greater than eq".O(), "and".O(), "d".P(), true.B(), "equal to".O(), "or".O()));
         }
-    
+
         [Test]
         public void EvaluationDisambiguatesBetweenStringsAndTimestamps() {
             Expect(Cond(
@@ -469,7 +477,7 @@ namespace DeltaDNA {
                     new object[] { "a", "value", "b", DateTime.ParseExact("1970-01-01 00:00:00.000", Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture) }),
                 "a".P(), "value".S(), "not equal to".O(), "b".P(), new JSONObject() {{ "t", "1971-01-01T00:00:00.000+0000" }}, "less than".O(), "or".O()));
         }
-    
+
         [Test]
         public void EvaluationFailsOnMissingParameters() {
             Expect(Cond(
@@ -477,7 +485,7 @@ namespace DeltaDNA {
                 "b".P(), 5.I(), "equal to".O()),
                 Is.False);
         }
-    
+
         [Test]
         public void EvaluationFailsOnMismatchedParameterTypes() {
             Expect(Cond(
@@ -486,16 +494,287 @@ namespace DeltaDNA {
                 Is.False);
         }
 
-        private bool Cond(GameEvent evnt, params JSONObject[] values) {
+        [Test]
+        public void EvaluationFailsWhenExecutionsLessThanRequirements(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRequiredCount", 2}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+
+        }
+
+        [Test]
+        public void EvaluationSucceedsWhenExecutionsEqualToRequirements(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRequiredCount", 2}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                    evnt ,
+                    "c".P(), "c".S(), "equal to".O());
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+
+        }
+
+        [Test]
+        public void EvaluationSucceedsWithMultipleExecutionConditions(){
+            //Session 1
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRequiredCount", 2}},
+                new JSONObject{{"executionsRequiredCount", 4}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt,
+                "c".P(), "c".S(), "equal to".O());
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+        }
+
+        [Test]
+        public void EvaluationFailsWhenExecutionsLessThanRepeatCount(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 3}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.False);
+        }
+
+        [Test]
+        public void EvaluationSucceedsOnRepeatedExecutions(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 2}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt), Is.True);
+        }
+
+        [Test]
+        public void EvaluationSucceedsOnRepeatedExecutionsWithMultipleCriteria(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 4}},
+                new JSONObject{{"executionsRepeat", 3}}
+            );
+
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+            // succeed on 3, 4, 6, 8, and 9
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 1 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 2 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 3 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 4 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 5 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 6 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 7 should not trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 8 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 9 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 10 should not trigger");
+        }
+
+        [Test]
+        public void EvaluationSucceedsOnRepeatedExecutionsAndRequiredExecutions(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 4}},
+                new JSONObject{{"executionsRequiredCount", 3}},
+                new JSONObject{{"executionsRequiredCount", 7}}
+            );
+
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+            // succeed on 3, 4, 7, and 8
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 1 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 2 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 3 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 4 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 5 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 6 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 7 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 8 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 9 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 10 should not trigger");
+        }
+
+        [Test]
+        public void EvaluationFailsOnRepeatedExecutionsAboveLimit(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}});
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.True);
+            Expect(trigger.Evaluate(evnt),Is.False);
+            Expect(trigger.Evaluate(evnt),Is.False);
+        }
+
+        [Test]
+        public void EvaluationSucceedsOnMultipleExecutionsWithLimits(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}},
+                new JSONObject{{"executionsRepeat", 3},{"executionsLimit", 3}},
+                new JSONObject{{"executionsRepeat", 7},{"executionsLimit", 1}}
+                );
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 1 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 2 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 3 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 4 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 5 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 6 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 7 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.False, "Execution 8 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 9 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 10 should not trigger");
+        }
+
+        [Test]
+        public void EvaluationSucceedsOnMultipleExecutionRequirementsAndRepeatsWithLimits(){
+            JSONObject limitations = getLimitations(
+                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}},
+                new JSONObject{{"executionsRepeat", 3},{"executionsLimit", 1}},
+                new JSONObject{{"executionsRepeat", 5}},
+                new JSONObject{{"executionsRequiredCount", 7}},
+                new JSONObject{{"executionsRequiredCount", 11}}
+            );
+
+            GameEvent evnt = Evnt(
+                "a",
+                new object[]{"a", 10, "b", 5, "c", "c", "d", true});
+
+            EventTrigger trigger = getEventTrigger(
+                limitations,
+                evnt ,
+                "c".P(), "c".S(), "equal to".O());
+
+
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 1 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 2 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 3 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.True, "Execution 4 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 5 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 6 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 7 should trigger");
+            Expect(trigger.Evaluate(evnt), Is.False, "Execution 8 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 9 should not trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 10 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.True, "Execution 11 should trigger");
+            Expect(trigger.Evaluate(evnt),Is.False, "Execution 12 should not trigger");
+        }
+
+        private bool Cond(GameEvent evnt, params JSONObject[] values){
+            return Cond( new JSONObject(), evnt,  values);
+        }
+
+        private bool Cond(JSONObject limitations, GameEvent evnt, params JSONObject[] values) {
+             // convert to exact representation as from backend
+             return getEventTrigger(limitations, evnt, values).Evaluate(evnt);
+        }
+
+        private JSONObject getLimitations(params JSONObject[] showConditions){
+            return new JSONObject{
+                {"showConditions", showConditions}
+            };
+        }
+
+        private EventTrigger getEventTrigger(JSONObject limitations, GameEvent evnt, params JSONObject[] values){
+            Random random = new Random();
+            long campaignId = random.Next();
+            long variantId = random.Next();
+
             return new EventTrigger(
                 ddna,
                 0,
-                new JSONObject() {
-                    { "eventName", evnt.Name },
-                    { "condition", values }}
-                .Json().Json()) // convert to exact representation as from backend
-                .Evaluate(evnt);
+                new JSONObject{
+                    {"eventName", evnt.Name},
+                    {"condition", values},
+                    {"campaignLimitsConfig", limitations},
+                    {"campaignID", campaignId},
+                    {"variantID", variantId}
+                }.Json().Json(),
+                new ExecutionCountManager());
         }
+
 
         private static GameEvent Evnt(string name = "a", params object[] values) {
             var evnt = new GameEvent(name);

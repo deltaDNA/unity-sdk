@@ -15,10 +15,12 @@
 //
 
 #if !UNITY_4
+using System;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+
 
 namespace DeltaDNA.Editor {
 
@@ -45,8 +47,7 @@ namespace DeltaDNA.Editor {
         [Test]
         public void SymbolAdded() {
             DefineSymbolsHelper.Add(A);
-
-            Expect(GetSymbols, Contains(A));
+           Expect(GetSymbols(), Contains(A));
         }
 
         [Test]
@@ -54,8 +55,8 @@ namespace DeltaDNA.Editor {
             DefineSymbolsHelper.Add(A);
             DefineSymbolsHelper.Add(B);
 
-            Expect(GetSymbols, Contains(A));
-            Expect(GetSymbols, Contains(B));
+            Expect(GetSymbols(), Contains(A));
+            Expect(GetSymbols(), Contains(B));
         }
 
         [Test]
@@ -63,7 +64,7 @@ namespace DeltaDNA.Editor {
             DefineSymbolsHelper.Add(A);
             DefineSymbolsHelper.Remove(A);
 
-            Expect(GetSymbols, !Contains(A));
+            Expect(GetSymbols(), !Contains(A));
         }
 
         [Test]
@@ -72,8 +73,8 @@ namespace DeltaDNA.Editor {
             DefineSymbolsHelper.Add(B);
             DefineSymbolsHelper.Remove(A);
 
-            Expect(GetSymbols, !Contains(A));
-            Expect(GetSymbols, Contains(B));
+            Expect(GetSymbols(), !Contains(A));
+            Expect(GetSymbols(), Contains(B));
         }
 
         private static List<string> GetSymbols() {

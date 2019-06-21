@@ -31,6 +31,7 @@ namespace DeltaDNA {
         private readonly EventStore eventStore = null;
         private readonly EngageCache engageCache = null;
         private readonly ActionStore actionStore = null;
+        private readonly ExecutionCountManager executionCountManager = null;
 
         private bool started = false;
         private bool uploading = false;
@@ -75,6 +76,7 @@ namespace DeltaDNA {
             actionStore = new ActionStore(Settings.ACTIONS_STORAGE_PATH
                 .Replace("{persistent_path}", Application.persistentDataPath));
             ImageMessageStore = new ImageMessageStore(ddna);
+            executionCountManager = new ExecutionCountManager();
 
             #if DDNA_SMARTADS
             // initialise SmartAds so it can register for events
@@ -400,6 +402,7 @@ namespace DeltaDNA {
             if (engageCache != null) engageCache.Clear();
             if (actionStore != null) actionStore.Clear();
             if (ImageMessageStore != null) ImageMessageStore.Clear();
+            if (executionCountManager != null) executionCountManager.Clear();
         }
 
         internal override void ForgetMe() {
@@ -636,7 +639,7 @@ namespace DeltaDNA {
                     if (triggers != null && triggers is List<object>) {
                         eventTriggers = (triggers as List<object>)
                             .Select((e, i) => {
-                                var t = new EventTrigger(this, i, e as JSONObject);
+                                var t = new EventTrigger(this, i, e as JSONObject, executionCountManager);
 
                                 // save persistent actions
                                 var p = t.GetResponse().GetOrDefault("parameters", new JSONObject());
