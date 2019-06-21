@@ -17,6 +17,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace DeltaDNA {
 
@@ -73,7 +75,7 @@ namespace DeltaDNA {
             campaignName = eventParams.GetOrDefault<string, string>("responseEngagementName", null);
             variantName = eventParams.GetOrDefault<string, string>("responseVariantName", null);
 
-            JSONObject campaignLimitsConfig = json.GetOrDefault("campaignLimitsConfig", new JSONObject());
+            JSONObject campaignLimitsConfig = json.GetOrDefault("campaignExecutionConfig", new JSONObject());
             TriggerConditionParser parser = new TriggerConditionParser(campaignLimitsConfig, variantId);
             this.campaignTriggerConditions = parser.parseConditions(executionCountManager);
 
