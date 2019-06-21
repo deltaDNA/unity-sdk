@@ -1,5 +1,9 @@
 # Change Log
 
+## [4.12.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.5)
+### Added 
+- Support for future improved show conditions on event-triggered campaigns
+
 ## [4.12.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.4)
 ### Fixed 
 - Memory issues with image messages
