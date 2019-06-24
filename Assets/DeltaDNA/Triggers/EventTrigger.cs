@@ -241,26 +241,28 @@ namespace DeltaDNA {
                 }
             }
 
-            if (limit != -1 && runs >= limit) return false;
 
-            // Default to true if no conditions exist
-            bool triggerConditionsReached = campaignTriggerConditions.Count == 0;
-
-            // Only one condition needs to be true to flip conditions to true
-            this.executionCountManager.incrementExecutionCount(this.variantId);
-            foreach (TriggerCondition campaignTriggerCondition in campaignTriggerConditions){
-                if (campaignTriggerCondition.CanExecute()){
-                    triggerConditionsReached = true;
-                }
-            }
-
-            // If none reached return false
-            if (!triggerConditionsReached){
-                return false;
-            }
-
+            
             var result = stack.Count == 0 || (stack.Pop() as bool? ?? false);
             if (result){
+            
+                // Default to true if no conditions exist
+                bool triggerConditionsReached = campaignTriggerConditions.Count == 0;
+
+                // Only one condition needs to be true to flip conditions to true
+                this.executionCountManager.incrementExecutionCount(this.variantId);
+                foreach (TriggerCondition campaignTriggerCondition in campaignTriggerConditions){
+                    if (campaignTriggerCondition.CanExecute()){
+                        triggerConditionsReached = true;
+                    }
+                }
+
+                // If none reached return false
+                if (!triggerConditionsReached){
+                    return false;
+                }
+                if (limit != -1 && runs >= limit) return false;
+                
                 runs++;
                 var eventTriggeredActionEvent = new GameEvent("ddnaEventTriggeredAction")
                     .AddParam("ddnaEventTriggeredCampaignID", campaignId)

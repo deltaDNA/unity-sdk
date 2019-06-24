@@ -1,4 +1,7 @@
 # Change Log
+## [4.12.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.6)
+### Fixed 
+- Bug in event triggered campaign logic for handling new show conditions.
 
 ## [4.12.5](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.5)
 ### Added 
