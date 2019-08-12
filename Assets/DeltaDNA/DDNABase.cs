@@ -69,7 +69,7 @@ namespace DeltaDNA {
 
         internal abstract void ClearPersistentData();
         internal abstract void ForgetMe();
-
+        internal abstract void StopTrackingMe();
         internal ImageMessageStore ImageMessageStore { get; set; }
         internal EngageFactory EngageFactory { get; set; }
 

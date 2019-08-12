@@ -153,6 +153,21 @@ namespace DeltaDNA {
                 }));
         }
 
+        internal override void StopTrackingMe()
+        {
+            if (PlayerPrefs.HasKey(DDNA.PF_KEY_FORGOTTEN)) {
+                Logger.LogDebug("Already forgotten user " + UserID);
+                return;
+            }
+            if (PlayerPrefs.HasKey(DDNA.PF_KEY_STOP_TRACKING_ME)) {
+                Logger.LogDebug("Already stopped tracking user " + UserID);
+                return;
+            }
+            
+            Logger.LogDebug(" Stopped Tracking " + UserID);
+            PlayerPrefs.SetInt(DDNA.PF_KEY_STOP_TRACKING_ME, 1);
+        }
+
         #endregion
         #region Properties
 
