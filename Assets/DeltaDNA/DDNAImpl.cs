@@ -409,6 +409,11 @@ namespace DeltaDNA {
             if (HasStarted) StopSDK();
         }
 
+        internal override void StopTrackingMe()
+        {
+            if (HasStarted) StopSDK();
+        }
+
         #endregion
         #region Properties
 

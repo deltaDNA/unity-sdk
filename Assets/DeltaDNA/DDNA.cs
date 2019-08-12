@@ -35,6 +35,7 @@ namespace DeltaDNA {
         internal const string PF_KEY_CROSS_GAME_USER_ID = "DDSDK_CROSS_GAME_USER_ID";
         internal const string PF_KEY_ADVERTISING_ID = "DDSDK_ADVERTISING_ID";
         internal const string PF_KEY_FORGET_ME = "DDSDK_FORGET_ME";
+        internal const string PF_KEY_STOP_TRACKING_ME = "DDSKD_STOP_TRACKING_ME";
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
         internal const string PF_KEY_ACTIONS_SALT = "DDSDK_ACTIONS_SALT";
 
@@ -84,7 +85,9 @@ namespace DeltaDNA {
         internal void Awake() {
             lock (_lock) {
                 if (PlayerPrefs.HasKey(PF_KEY_FORGET_ME)
-                    || PlayerPrefs.HasKey(PF_KEY_FORGOTTEN)) {
+                    || PlayerPrefs.HasKey(PF_KEY_FORGOTTEN)
+                    || PlayerPrefs.HasKey(PF_KEY_STOP_TRACKING_ME)
+                    ) {
                     delegated = new DDNANonTracking(this);
                 } else {
                     delegated = new DDNAImpl(this);
@@ -202,6 +205,7 @@ namespace DeltaDNA {
                     if (delegated is DDNANonTracking) {
                         PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
                         PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
+                        PlayerPrefs.DeleteKey(PF_KEY_STOP_TRACKING_ME);
 
                         delegated = new DDNAImpl(this);
                     }
@@ -383,6 +387,7 @@ namespace DeltaDNA {
             PlayerPrefs.DeleteKey(PF_KEY_ADVERTISING_ID);
             PlayerPrefs.DeleteKey(PF_KEY_FORGET_ME);
             PlayerPrefs.DeleteKey(PF_KEY_FORGOTTEN);
+            PlayerPrefs.DeleteKey(PF_KEY_STOP_TRACKING_ME);
             PlayerPrefs.DeleteKey(PF_KEY_ACTIONS_SALT);
 
             delegated.ClearPersistentData();
@@ -412,6 +417,19 @@ namespace DeltaDNA {
                     delegated = new DDNANonTracking(this);
                     if (started) delegated.StartSDK(false);
                     delegated.ForgetMe();
+                }
+            }
+        }
+        
+        public void StopTrackingMe() {
+            lock (_lock) {
+                if (!PlayerPrefs.HasKey(PF_KEY_STOP_TRACKING_ME)) {
+                    var started = HasStarted;
+                    delegated.StopTrackingMe();
+
+                    delegated = new DDNANonTracking(this);
+                    if (started) delegated.StartSDK(false);
+                    delegated.StopTrackingMe();
                 }
             }
         }
