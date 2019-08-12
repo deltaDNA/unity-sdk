@@ -86,7 +86,8 @@ namespace DeltaDNA {
             MonoBehaviour caller,
             EngageCache cache,
             EngageRequest request,
-            EngageResponse response) {
+            EngageResponse response, 
+            bool useConfigurationTimeout = false) {
 
             string requestJSON = request.ToJSON();
             string url = DDNA.Instance.ResolveEngageURL(requestJSON);
@@ -94,7 +95,7 @@ namespace DeltaDNA {
             HttpRequest httpRequest = new HttpRequest(url);
             httpRequest.HTTPMethod = HttpRequest.HTTPMethodType.POST;
             httpRequest.HTTPBody = requestJSON;
-            httpRequest.TimeoutSeconds = DDNA.Instance.Settings.HttpRequestEngageTimeoutSeconds;
+            httpRequest.TimeoutSeconds = useConfigurationTimeout ? DDNA.Instance.Settings.HttpRequestConfigurationTimeoutSeconds : DDNA.Instance.Settings.HttpRequestEngageTimeoutSeconds;
             httpRequest.setHeader("Content-Type", "application/json");
 
             Action<int, string, string> httpHandler = (statusCode, data, error) => {

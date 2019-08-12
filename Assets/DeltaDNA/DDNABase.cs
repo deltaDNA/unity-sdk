@@ -117,7 +117,7 @@ namespace DeltaDNA {
         }
 
         protected void NewSession() {
-            ddna.NewSession();
+          ddna.NewSession();
         }
 
         internal void UseCollectTimestamp(bool useCollect) {
