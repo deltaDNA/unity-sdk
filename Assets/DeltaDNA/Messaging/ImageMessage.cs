@@ -104,7 +104,9 @@ namespace DeltaDNA {
             }
         }
 
-        private String name; 
+        private String name;
+        private OrientationChange changeListener;
+
         private ImageMessage(
             DDNA ddna,
             JSONObject configuration,
@@ -127,16 +129,24 @@ namespace DeltaDNA {
             this.spriteMap = spriteMap;
             this.depth = depth;
             this.engagement = engagement;
+            changeListener = changer;
         }
 
         private void redraw(){
             Object.Destroy(gameObject);
+            Object.Destroy(this.spriteMap);
+            Object.Destroy(changeListener);
             gameObject = new GameObject(name, typeof(RectTransform));
+            
+            
             
             OrientationChange changer = gameObject.AddComponent<OrientationChange>();
             changer.Init(redraw);
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(ddna, configuration);
+            
+            this.spriteMap = spriteMap;
+            changeListener = changer;
             Show();
         }
 
@@ -245,17 +255,17 @@ namespace DeltaDNA {
                         shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
-                    JSONObject layout = this.configuration["layout"] as JSONObject;
+                    JSONObject layout = configuration["layout"] as JSONObject;
                     object orientation;
                     if (!layout.TryGetValue("landscape", out orientation) && !layout.TryGetValue("portrait", out orientation)) {
                         throw new KeyNotFoundException("Layout missing orientation key.");
                     }
 
                     BackgroundLayer backgroundLayer = gameObject.AddComponent<BackgroundLayer>();
-                    backgroundLayer.Build(ddna, gameObject, this, orientation as JSONObject, this.spriteMap.Background, this.depth-1);
+                    backgroundLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Background, depth-1);
 
                     ButtonsLayer buttonLayer = gameObject.AddComponent<ButtonsLayer>();
-                    buttonLayer.Build(ddna, gameObject, this, orientation as JSONObject, this.spriteMap.Buttons, backgroundLayer, this.depth-2);
+                    buttonLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Buttons, backgroundLayer, depth-2);
 
                     showing = true;
                 } catch (KeyNotFoundException exception) {
@@ -312,6 +322,7 @@ namespace DeltaDNA {
                 StartCoroutine(store.Get(
                     URL,
                     t => {
+                        Destroy(texture);
                         texture = t;
                         Destroy(t);
                         callback(null);
@@ -378,6 +389,10 @@ namespace DeltaDNA {
                     Mathf.FloorToInt(rect.y),
                     Mathf.FloorToInt(rect.width),
                     Mathf.FloorToInt(rect.height));
+            }
+
+            private void OnDestroy(){
+                Destroy(texture);
             }
         }
 
@@ -506,6 +521,7 @@ namespace DeltaDNA {
         {
             private Texture2D texture;
             private readonly byte dimmedMaskAlpha = 128;
+            private Sprite sprite;
 
             public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject config, int depth)
             {
@@ -534,9 +550,9 @@ namespace DeltaDNA {
                         }
                     }
                     if (show) {
-                        this.texture = new Texture2D(1, 1);
-                        this.texture.SetPixels32(colours);
-                        this.texture.Apply();
+                        texture = new Texture2D(1, 1);
+                        texture.SetPixels32(colours);
+                        texture.Apply();
                     }
                 }
 
@@ -560,11 +576,17 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         if (actions.Count > 0) actions[0].Invoke();
                     });
-                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                    sprite = Sprite.Create(
                         texture as Texture2D,
                         new Rect(0, 0, texture.width, texture.height),
                         new Vector2(0.5f, 0.5f));
+                    obj.GetComponent<Image>().sprite = sprite;
                 }
+            }
+
+            private void OnDestroy(){
+                Destroy(sprite);
+                Destroy(texture);
             }
         }
 
@@ -574,6 +596,7 @@ namespace DeltaDNA {
             private Texture texture;
             private Rect position;
             private float scale;
+            private Sprite sprite;
 
             public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
             {
@@ -610,6 +633,7 @@ namespace DeltaDNA {
                     RegisterAction();
                 }
             }
+            
 
             public Rect Position { get { return this.position; }}
 
@@ -626,10 +650,11 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         if (actions.Count > 0) actions[0].Invoke();
                     });
-                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                    sprite = Sprite.Create(
                         texture as Texture2D,
                         new Rect(0, 0, texture.width, texture.height),
                         new Vector2(0.5f, 0.5f));
+                    obj.GetComponent<Image>().sprite = sprite;
                 }
             }
 
@@ -755,12 +780,18 @@ namespace DeltaDNA {
                 }
                 return val;
             }
+
+            private void OnDestroy(){
+                Destroy(sprite);
+                Destroy(texture);
+            }
         }
 
         private class ButtonsLayer : Layer
         {
             private List<Texture> textures = new List<Texture>();
             private List<Rect> positions = new List<Rect>();
+            private Sprite sprite;
 
             public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
             {
@@ -808,10 +839,18 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         action.Invoke();
                     });
-                    obj.GetComponent<Image>().sprite = Sprite.Create(
+                    sprite = Sprite.Create(
                         textures[i] as Texture2D,
                         new Rect(0, 0, textures[i].width, textures[i].height),
                         new Vector2(0.5f, 0.5f));
+                    obj.GetComponent<Image>().sprite = sprite;
+                }
+            }
+
+            private void OnDestroy(){
+                Destroy(sprite);
+                foreach (var t in textures){
+                    Destroy(t);
                 }
             }
         }

@@ -497,7 +497,7 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationFailsWhenExecutionsLessThanRequirements(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRequiredCount", 2}});
+                new JSONObject{{"executionsRequiredCount", "2"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -516,7 +516,7 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsWhenExecutionsEqualToRequirements(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRequiredCount", 2}});
+                new JSONObject{{"executionsRequiredCount", "2"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -536,8 +536,8 @@ namespace DeltaDNA {
         public void EvaluationSucceedsWithMultipleExecutionConditions(){
             //Session 1
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRequiredCount", 2}},
-                new JSONObject{{"executionsRequiredCount", 4}});
+                new JSONObject{{"executionsRequiredCount", "2"}},
+                new JSONObject{{"executionsRequiredCount", "4"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -557,7 +557,7 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationFailsWhenExecutionsLessThanRepeatCount(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 3}});
+                new JSONObject{{"executionsRepeat", "3"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -576,7 +576,7 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsOnRepeatedExecutions(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 2}});
+                new JSONObject{{"executionsRepeat", "2"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -597,8 +597,8 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsOnRepeatedExecutionsWithMultipleCriteria(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 4}},
-                new JSONObject{{"executionsRepeat", 3}}
+                new JSONObject{{"executionsRepeat", "4"}},
+                new JSONObject{{"executionsRepeat", "3"}}
             );
 
 
@@ -627,9 +627,9 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsOnRepeatedExecutionsAndRequiredExecutions(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 4}},
-                new JSONObject{{"executionsRequiredCount", 3}},
-                new JSONObject{{"executionsRequiredCount", 7}}
+                new JSONObject{{"executionsRepeat", "4"}},
+                new JSONObject{{"executionsRequiredCount", "3"}},
+                new JSONObject{{"executionsRequiredCount", "7"}}
             );
 
 
@@ -658,7 +658,7 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationFailsOnRepeatedExecutionsAboveLimit(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}});
+                new JSONObject{{"executionsRepeat", "2"},{"executionsRepeatLimit", "2"}});
 
             GameEvent evnt = Evnt(
                 "a",
@@ -681,9 +681,9 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsOnMultipleExecutionsWithLimits(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}},
-                new JSONObject{{"executionsRepeat", 3},{"executionsLimit", 3}},
-                new JSONObject{{"executionsRepeat", 7},{"executionsLimit", 1}}
+                new JSONObject{{"executionsRepeat", "2"},{"executionsRepeatLimit", "2"}},
+                new JSONObject{{"executionsRepeat", "3"},{"executionsRepeatLimit", "3"}},
+                new JSONObject{{"executionsRepeat", "7"},{"executionsRepeatLimit", "1"}}
                 );
 
             GameEvent evnt = Evnt(
@@ -711,11 +711,11 @@ namespace DeltaDNA {
         [Test]
         public void EvaluationSucceedsOnMultipleExecutionRequirementsAndRepeatsWithLimits(){
             JSONObject limitations = getLimitations(
-                new JSONObject{{"executionsRepeat", 2},{"executionsLimit", 2}},
-                new JSONObject{{"executionsRepeat", 3},{"executionsLimit", 1}},
-                new JSONObject{{"executionsRepeat", 5}},
-                new JSONObject{{"executionsRequiredCount", 7}},
-                new JSONObject{{"executionsRequiredCount", 11}}
+                new JSONObject{{"executionsRepeat", "2"},{"executionsRepeatLimit", "2"}},
+                new JSONObject{{"executionsRepeat", "3"},{"executionsRepeatLimit", "1"}},
+                new JSONObject{{"executionsRepeat", "5"}},
+                new JSONObject{{"executionsRequiredCount", "7"}},
+                new JSONObject{{"executionsRequiredCount", "11"}}
             );
 
             GameEvent evnt = Evnt(
@@ -768,7 +768,7 @@ namespace DeltaDNA {
                 new JSONObject{
                     {"eventName", evnt.Name},
                     {"condition", values},
-                    {"campaignLimitsConfig", limitations},
+                    {"campaignExecutionConfig", limitations},
                     {"campaignID", campaignId},
                     {"variantID", variantId}
                 }.Json().Json(),

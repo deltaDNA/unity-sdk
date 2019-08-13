@@ -34,17 +34,17 @@ namespace DeltaDNA{
         
         public TriggerCondition parseCondition(JSONObject showCondition, ExecutionCountManager executionCountManager){
             if (showCondition.ContainsKey("executionsRequiredCount")){
-                long executionsRequired = showCondition.GetOrDefault("executionsRequiredCount", 0L);
+                long executionsRequired = long.Parse(showCondition.GetOrDefault("executionsRequiredCount", "0"));
                 return new ExecutionCountTriggerCondition(executionsRequired, executionCountManager, variantId);
             }
             
             if (showCondition.ContainsKey("executionsRepeat")){
-                long executionsRepeat = showCondition.GetOrDefault("executionsRepeat", 1L);
+                long executionsRepeat = long.Parse(showCondition.GetOrDefault("executionsRepeat", "1"));
                 var limit = new ExecutionRepeatTriggerCondition(executionsRepeat, executionCountManager, variantId);
 
-                if (showCondition.ContainsKey("executionsLimit")){
-                    long executionsLimit = showCondition.GetOrDefault("executionsLimit", -1L);
-                    limit.setExecutionLimit(executionsLimit);
+                if (showCondition.ContainsKey("executionsRepeatLimit")){
+                    long executionsRepeatLimit = long.Parse(showCondition.GetOrDefault("executionsRepeatLimit", "-1"));
+                    limit.setExecutionLimit(executionsRepeatLimit);
                 }
                 
                 return limit;
