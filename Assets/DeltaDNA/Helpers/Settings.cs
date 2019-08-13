@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.12.6";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.12.7";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -57,6 +57,9 @@ namespace DeltaDNA
             BackgroundEventUpload = true;   // send events automatically by default
             BackgroundEventUploadStartDelaySeconds = 0;
             BackgroundEventUploadRepeatRateSeconds = 60;
+            HttpRequestConfigurationTimeoutSeconds = 30;
+            HttpRequestConfigurationMaxRetries = 5;
+            HttpRequestConfigurationRetryBackoffFactorSeconds = 5;
 
             #if UNITY_WEBPLAYER || UNITY_WEBGL
             UseEventStore = false;
@@ -179,5 +182,8 @@ namespace DeltaDNA
         public GameParametersHandler DefaultGameParameterHandler { get; set; }
         
         public ImageMessageHandler DefaultImageMessageHandler { get; set;  }
+        public int HttpRequestConfigurationTimeoutSeconds { get; set; }
+        public int HttpRequestConfigurationMaxRetries { get; set; }
+        public int HttpRequestConfigurationRetryBackoffFactorSeconds { get; set; }
     }
 }
