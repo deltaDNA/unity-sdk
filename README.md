@@ -389,7 +389,7 @@ If a user no longer wishes to be tracked and would like to be forgotten the `For
 If a user only wants to stop sending new data, consenting to keep already collected data in our system, the `StopTrackingMe()` method can be used instead. This will function the same as `ForgetMe()`, except the data deletion request will not be sent, thus any data associated with that user will remain on the platform. It is possible to initiate a `ForgetMe()` request after the `StopTrackingMe()` request if requested by the user.
 
 If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality.
-
+ 
 ## Migrations
 
 ### Version 4.2
