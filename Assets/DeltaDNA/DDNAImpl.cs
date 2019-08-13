@@ -53,6 +53,7 @@ namespace DeltaDNA {
 
         private bool hasSentDefaultEvents = false;
         private bool newPlayer;
+        private int retryAttempts = 0; 
 
         internal DDNAImpl(DDNA ddna) : base(ddna) {
             string eventStorePath = null;
@@ -109,6 +110,7 @@ namespace DeltaDNA {
                 var backgroundSeconds = (DateTime.UtcNow - lastActive).TotalSeconds;
                 if (backgroundSeconds > Settings.SessionTimeoutSeconds) {
                     lastActive = DateTime.MinValue;
+                    retryAttempts = 0; 
                     NewSession();
                 }
             }
@@ -133,6 +135,7 @@ namespace DeltaDNA {
                 hasSentDefaultEvents = false;
             }
 
+            retryAttempts = 0;
             NewSession();
 
             // setup automated event uploads
@@ -155,6 +158,7 @@ namespace DeltaDNA {
                 started = false;
                 newPlayer = false;
                 hasSentDefaultEvents = false;
+                retryAttempts = 0; 
             } else {
                 Logger.LogDebug("SDK not running");
             }
@@ -247,7 +251,7 @@ namespace DeltaDNA {
                     callback(responseJSON);
                 };
 
-                StartCoroutine(Engage.Request(ddna, engageCache, request, handler));
+                StartCoroutine(Engage.Request(ddna, engageCache, request, handler, "config".Equals(request.DecisionPoint) && "internal".Equals(request.Flavour)));
             } catch (Exception ex) {
                 Logger.LogWarning("Engagement request failed: "+ex.Message);
             }
@@ -286,7 +290,7 @@ namespace DeltaDNA {
                     onCompleted(engagement);
                 };
 
-                StartCoroutine(Engage.Request(ddna, engageCache, request, handler));
+                StartCoroutine(Engage.Request(ddna, engageCache, request, handler, "config".Equals(request.DecisionPoint) && "internal".Equals(request.Flavour)));
             } catch (Exception ex) {
                 Logger.LogWarning("Engagement request failed: "+ex.Message);
             }
@@ -406,6 +410,11 @@ namespace DeltaDNA {
         }
 
         internal override void ForgetMe() {
+            if (HasStarted) StopSDK();
+        }
+
+        internal override void StopTrackingMe()
+        {
             if (HasStarted) StopSDK();
         }
 
@@ -683,8 +692,28 @@ namespace DeltaDNA {
             } else {
                 Logger.LogWarning("Session configuration failed");
                 ddna.NotifyOnSessionConfigurationFailed();
+                HandleSessionConfigurationRetry();
             }
             TriggerDefaultEvents(newPlayer);
+        }
+
+        private void HandleSessionConfigurationRetry()
+        {
+            if (retryAttempts < Settings.HttpRequestConfigurationMaxRetries)
+            {
+                var currentRetry = retryAttempts + 1;
+                int timeToWait = (int) Math.Pow(2, retryAttempts) *
+                                 Settings.HttpRequestConfigurationRetryBackoffFactorSeconds;
+                Logger.LogWarning("Scheduling retry of configuration request " + currentRetry + " of " + Settings.HttpRequestConfigurationMaxRetries + " in " + timeToWait + " seconds ");
+                StartCoroutine(DoSessionConfigurationRetry(timeToWait));
+                retryAttempts++;
+            }
+        }
+
+        private IEnumerator DoSessionConfigurationRetry(int delay)
+        {
+            yield return new WaitForSeconds(delay);
+            RequestSessionConfiguration();
         }
 
         #endregion

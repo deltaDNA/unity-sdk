@@ -66,7 +66,8 @@ namespace DeltaDNA {
             PlayerPrefs.SetInt(DDNA.PF_KEY_ADVERTISING_ID, 5);
             PlayerPrefs.SetInt(DDNA.PF_KEY_FORGET_ME, 6);
             PlayerPrefs.SetInt(DDNA.PF_KEY_FORGOTTEN, 7);
-            PlayerPrefs.SetInt(DDNA.PF_KEY_ACTIONS_SALT, 8);
+            PlayerPrefs.SetInt(DDNA.PF_KEY_STOP_TRACKING_ME, 8);
+            PlayerPrefs.SetInt(DDNA.PF_KEY_ACTIONS_SALT, 9);
 
             uut.ClearPersistentData();
 
@@ -77,6 +78,7 @@ namespace DeltaDNA {
             Expect(PlayerPrefs.HasKey(DDNA.PF_KEY_ADVERTISING_ID), Is.False);
             Expect(PlayerPrefs.HasKey(DDNA.PF_KEY_FORGET_ME), Is.False);
             Expect(PlayerPrefs.HasKey(DDNA.PF_KEY_FORGOTTEN), Is.False);
+            Expect(PlayerPrefs.HasKey(DDNA.PF_KEY_STOP_TRACKING_ME), Is.False);
             Expect(PlayerPrefs.HasKey(DDNA.PF_KEY_ACTIONS_SALT), Is.False);
         }
     }

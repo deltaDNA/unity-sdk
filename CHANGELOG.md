@@ -1,4 +1,9 @@
 # Change Log
+## [4.12.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7)
+### Added 
+- Automatic Session Configuration retry mechanism to better deal with network related failures.
+- New `StopTrackingMe` method to stop sending analytics events on request
+
 ## [4.12.6](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.6)
 ### Fixed 
 - Bug in event triggered campaign logic for handling new show conditions.
