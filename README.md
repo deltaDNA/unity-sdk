@@ -386,6 +386,7 @@ If SmartAds is imported into the project then the *Minimum API Level* needs to b
 
 ## Forgetting a User (GDPR)
 If a user no longer wishes to be tracked and would like to be forgotten the `ForgetMe()` API can be used. This will stop the SDK from sending/receiving any further information to/from the Platform, as well as initiating a data deletion request on behalf of the user. The SDK will continue to work as it normally would, without any additional work required.
+If a user only wants to stop sending new data, consenting to keep already collected data in our system, the `StopTrackingMe()` method can be used instead. This will function the same as `ForgetMe()`, except the data deletion request will not be sent, thus any data associated with that user will remain on the platform. It is possible to initiate a `ForgetMe()` request after the `StopTrackingMe()` request if requested by the user.
 
 If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality.
 
