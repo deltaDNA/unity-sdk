@@ -160,7 +160,7 @@ namespace DeltaDNA {
             #endif // UNITY_5_6_OR_NEWER
 
         }
-
+        #if ! UNITY_2017_2_OR_NEWER && UNITY_5_6_OR_NEWER && !UNITY_5_6_0 && !UNITY_5_6_1
         private static int ReadStatusCode(WWW www)
         {
             // 1) Best case there is a STATUS header which says something like 200 OK
@@ -194,6 +194,7 @@ namespace DeltaDNA {
 
             return statusCode;
         }
+        #endif
 
 
     }

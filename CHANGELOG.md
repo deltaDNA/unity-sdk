@@ -1,4 +1,8 @@
 # Change Log
+## [4.12.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7.1)
+### Fixed 
+- Compilation issues with WWW classes on certain versions of unity
+
 ## [4.12.7](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7)
 ### Added 
 - Automatic Session Configuration retry mechanism to better deal with network related failures.
