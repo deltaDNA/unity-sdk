@@ -28,7 +28,7 @@ namespace DeltaDNA {
     internal class ImageMessageStore {
 
         private readonly string cache = Application.temporaryCachePath + "/deltadna/image_messages/";
-
+    
         private readonly MonoBehaviour parent;
 
         internal ImageMessageStore(MonoBehaviour parent) {
@@ -94,7 +94,8 @@ namespace DeltaDNA {
             var downloaded = 0;
             string error = null;
             var downloading = 0;
-            var maxConcurrent = 5; 
+            var userMaxConcurrent = DDNA.Instance.Settings.MaxConcurrentImageCacheFetches;
+            var maxConcurrent = userMaxConcurrent > 0 ? userMaxConcurrent : 5; 
             foreach (var url in urls) {
                 var name = GetName(url);
                 if (IsFull()){
