@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ namespace DeltaDNA {
     internal class ImageMessageStore {
 
         private readonly string cache = Application.temporaryCachePath + "/deltadna/image_messages/";
-
+    
         private readonly MonoBehaviour parent;
 
         internal ImageMessageStore(MonoBehaviour parent) {
@@ -85,19 +85,35 @@ namespace DeltaDNA {
                 onSuccess();
                 yield break;
             }
-            
+
+            if (IsFull()){
+                Logger.LogInfo("Not attempting image pre-fetch - cache is already full");
+                onSuccess();
+                yield break;
+            }
             var downloaded = 0;
             string error = null;
+            var downloading = 0;
+            var userMaxConcurrent = DDNA.Instance.Settings.MaxConcurrentImageCacheFetches;
+            var maxConcurrent = userMaxConcurrent > 0 ? userMaxConcurrent : 5; 
             foreach (var url in urls) {
                 var name = GetName(url);
-                if (!File.Exists(cache + name)) {
+                if (IsFull()){
+                    Logger.LogWarning("Did not attempt to download image message - Image Message cache is full");
+                    downloaded++;
+                } else if (!File.Exists(cache + name)){
+                    yield return new WaitUntil(() => downloading <= maxConcurrent);
+                    downloading++;
                     parent.StartCoroutine(Fetch(
                         url,
                         t => {
                             File.WriteAllBytes(cache + name, t.EncodeToPNG());
                             downloaded++;
+                            downloading--;
                         },
-                        e => { error = e; }));
+                        e => { error = e;
+                            downloading--;
+                        }));
                 } else {
                     downloaded++;
                 }
@@ -149,6 +165,20 @@ namespace DeltaDNA {
 
         private static string GetName(string url) {
             return new Uri(url).Segments.Last();
+        }
+
+        private bool IsFull(){
+            string[] cachedFiles =  Directory.GetFiles(cache);
+            //Convert Limit to bytes
+            long limit = DDNA.Instance.Settings.ImageCacheLimitMB * 1048576;
+            long currentSize = 0;
+            foreach (string name in cachedFiles)
+            {
+                FileInfo info = new FileInfo(name);
+                currentSize += info.Length;
+                if (currentSize >= limit) return true;
+            }
+            return false;
         }
     }
 }
