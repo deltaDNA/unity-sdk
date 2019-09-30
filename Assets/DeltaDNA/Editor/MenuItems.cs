@@ -1,4 +1,5 @@
-﻿//
+﻿
+//
 // Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,10 +39,17 @@ namespace DeltaDNA.Editor {
         public static void ConfigureSdk() {
             WindowHelper.Show<ConfigurationWindow>("Configuration");
         }
-        
-        [MenuItem(MENU_PATH + "/Run Health Check", priority = 2)]
+     
+        #if UNITY_2017_1_OR_NEWER
+        [MenuItem(MENU_PATH + "/Event Definitions...", priority = 2)]
+        public static void EventDefinitions() {
+            WindowHelper.Show<EventsWindow>("Events");
+        }
+        #endif
+        [MenuItem(MENU_PATH + "/Run Health Check", priority = 3)]
         public static void CheckSdk() {
             SdkChecker.Run();
         }
+        
     }
 }
