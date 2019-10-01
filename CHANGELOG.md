@@ -1,4 +1,15 @@
 # Change Log
+## [4.12.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.8)
+### Added
+- Ability to view event and parameter definitions for your game in-editor (see README for more details).
+- More configuration options for image message caching on startup
+    - A limit (in MB) can now be configured for the cache
+    - A limit can be placed on the number of images to fetch concurrently,
+      addressing issues some customers have encountered with attempting to cache a large number of images.
+        - See `Assets/DeltaDNA/Helpers/Settings.cs` for more documentation
+###Fixed
+- Updated iOS Push Notifications for iOS 13 and Xcode 11 compatibility.         
+
 ## [4.12.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7.1)
 ### Fixed 
 - Compilation issues with WWW classes on certain versions of unity

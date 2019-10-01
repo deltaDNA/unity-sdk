@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.12.7.1";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.12.8";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -69,6 +69,8 @@ namespace DeltaDNA
 
             SessionTimeoutSeconds = 5 * 60;
             EngageCacheExpirySeconds = 12 * 60 * 60;
+            ImageCacheLimitMB = 50;
+            MaxConcurrentImageCacheFetches = 3;
             MultipleActionsForEventTriggerEnabled = false;
         }
 
@@ -158,6 +160,20 @@ namespace DeltaDNA
         /// response is invalidated. A value of 0 disables the cache.
         /// </summary>
         public int EngageCacheExpirySeconds { get; set; }
+        
+        /// <summary>
+        /// Specifies the size, in MB, of the Image Message Cache.
+        /// This is not an exact limit, but once this limit has been exceeded,
+        /// no more caching will be attempted. 
+        /// </summary>
+        public int ImageCacheLimitMB { get; set; }
+        
+        /// <summary>
+        /// Specifies the maximum number of concurrent images to fetch when populating the cache.
+        /// High values of this, combined with a lot of large image messages on the environment might lead to instability.
+        /// Low values of this might lead to delays in showing image messages very early on in the game. 
+        /// </summary>
+        public int MaxConcurrentImageCacheFetches { get; set; }
 
         /// <summary>
         /// Controls user consent for advertiser tracking.

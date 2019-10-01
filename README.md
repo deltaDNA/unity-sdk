@@ -10,34 +10,36 @@ The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is 
 
 * [Analytics](#analytics)
 * [Quick Start](#quick-start)
- * [Custom Events](#custom-events)
- * [Tracking Revenue](#tracking-revenue)
- * [Event Triggers](#event-triggers)
- * [Engage](#engage)
- * [Cross Promotion](#cross-promotion)
+    * [Custom Events](#custom-events)
+    * [Tracking Revenue](#tracking-revenue)
+    * [Event Triggers](#event-triggers)
+    * [Engage](#engage)
+    * [Cross Promotion](#cross-promotion)
 * [SmartAds](#smartads)
- * [Usage](#usage)
- * [Showing ads](#showing-ads)
- * [Events](#events)
- * [User Consent for Tracking and Age Restriction (GDPR)](#user-consent-for-tracking-and-age-restriction-(gdpr))
- * [Diagnostics](#diagnostics)
+    * [Usage](#usage)
+    * [Showing ads](#showing-ads)
+    * [Events](#events)
+    * [User Consent for Tracking and Age Restriction (GDPR)](#user-consent-for-tracking-and-age-restriction-(gdpr))
+    * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
- * [Push Notifications](#push-notifications)
- * [SmartAds on iOS](#smartads-on-ios)
- * [Unity 4.7 iOS](#unity-4.7-ios)
+    * [Push Notifications](#push-notifications)
+    * [SmartAds on iOS](#smartads-on-ios)
+    * [Unity 4.7 iOS](#unity-4.7-ios)
 * [Android Integration](#android-integration)
- * [Amazon](#amazon)
- * [Push Notifications](#push-notifications)
- * [SmartAds on Android](#smartads-on-android)
- * [Permissions](#permissions)
- * [Unity 4.7 Android](#unity-4.7-android)
+    * [Amazon](#amazon)
+    * [Push Notifications](#push-notifications)
+    * [SmartAds on Android](#smartads-on-android)
+    * [Permissions](#permissions)
+    * [Unity 4.7 Android](#unity-4.7-android)
 * [Forgetting a User (GDPR)](#forgetting-a-user-(gdpr))
 * [Migrations](#migrations)
- * [4.2](#version-42)
- * [4.3](#version-43)
- * [4.7](#version-47)
- * [4.8](#version-48)
- * [4.10](#version-410)
+    * [4.2](#version-42)
+    * [4.3](#version-43)
+    * [4.7](#version-47)
+    * [4.8](#version-48)
+    * [4.10](#version-410)
+* [Editor Integration](#editor-integration) 
+    * [Viewing events and parameters in the Editor](#viewing-game-parameters-and-events-in-the-unity-editor)
 * [License](#license)
 
 ## Analytics
@@ -427,6 +429,17 @@ We have added a UI for configuring push notifications on Android, which can be a
 We highly recommend removing any entries previously added for DeltaDNA notifications from the *AndroidManifest.xml* file in *Assets/Plugins/Android* as they may conflict with the Firebase implementation. If you never added anything else to the manifest file then you can probably remove it altogether. For more details on which XML attributes to remove take a look [here](https://github.com/deltaDNA/android-sdk/blob/master/docs/migrations/4.3.md#manifest). In addition you will also be able to remove the *string* resource from *Assets/Plugins/Android/res/values* which contains your application's Sender ID.
 
 If you no longer wish to use notifications then remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* and *Assets/DeltaDNA/Plugins/Android* folders from your project.
+
+## Editor Integration
+### Viewing game parameters and events in the Unity editor
+
+ ## Editor Integration
+### Viewing event schema in the Unity editor
+Your event schema can be viewed without leaving the Unity editor! In order to use this feature, you will need to set up an API key in the deltaDNA platform . Please see [here](https://docs.deltadna.com/introduction-to-the-platform-api/) for details on how to do this. 
+
+Once the API key has been configured, it can be entered in the Unity editor under "DeltaDNA" -> "Event Definitions...". Once entered, you can select the environment that you'd like to see the event schema for.
+
+The settings for this feature are stored in `ddna_api_configuation.xml` - please commit this file to source control after you have set your API Key through that menu.
 
 ## License
 

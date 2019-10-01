@@ -110,14 +110,21 @@ static NSDictionary *_remoteNotification = nil;
 
 + (void)unityDidRegisterForRemoteNotifications:(NSNotification *)notification
 {
-    NSObject *userInfo = [notification userInfo];
-    if (userInfo != nil) {
-        NSString *deviceToken = [userInfo description];
-        deviceToken = [deviceToken stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-        deviceToken = [deviceToken stringByReplacingOccurrencesOfString:@" " withString:@""];
-        UnitySendMessage("DeltaDNA.IosNotifications", "DidRegisterForPushNotifications",
-            [deviceToken UTF8String]);
-    }
+   NSObject *userInfo = [notification userInfo];
+   if (userInfo != nil) {
+ 
+     NSData *data = (NSData *) userInfo;
+     NSUInteger length = data.length;
+     
+     if (length > 0){
+       const unsigned char *buffer = data.bytes;
+       NSMutableString *tokenString = [NSMutableString stringWithCapacity:(length * 2)];
+       for (int i = 0; i < length; ++i) {
+         [tokenString appendFormat:@"%02x", buffer[i]];
+       }
+       UnitySendMessage("DeltaDNA.IosNotifications", "DidRegisterForPushNotifications", [tokenString UTF8String]);
+     }
+   }
 }
 
 + (void)unityDidFailToRegisterForRemoteNotifications:(NSNotification *)notification
