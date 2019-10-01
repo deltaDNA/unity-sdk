@@ -433,9 +433,13 @@ If you no longer wish to use notifications then remove the *Assets/Plugins/Andro
 ## Editor Integration
 ### Viewing game parameters and events in the Unity editor
 
-We have added a way to view your events and parameters without leaving the editor. This view can be found under "DeltaDNA" -> "Event Definitions..." in the title bar. 
-In order to use this feature, you will need to set up an API Key in the platform. Please see [here](https://docs.deltadna.com/introduction-to-the-platform-api/) for instructions on how to do this. 
-The settings for this feature are stored in `ddna_api_configuation.xml` - please commit this file to source control after you have set your API Key through that menu. 
+ ## Editor Integration
+### Viewing event schema in the Unity editor
+Your event schema can be viewed without leaving the Unity editor! In order to use this feature, you will need to set up an API key in the deltaDNA platform . Please see [here](https://docs.deltadna.com/introduction-to-the-platform-api/) for details on how to do this. 
+
+Once the API key has been configured, it can be entered in the Unity editor under "DeltaDNA" -> "Event Definitions...". Once entered, you can select the environment that you'd like to see the event schema for.
+
+The settings for this feature are stored in `ddna_api_configuation.xml` - please commit this file to source control after you have set your API Key through that menu.
 
 ## License
 
