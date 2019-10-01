@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
-  <androidPackages>
-  </androidPackages>
-  <iosPods>
-  </iosPods>
+  <androidPackages></androidPackages>
+  <iosPods></iosPods>
 </dependencies>

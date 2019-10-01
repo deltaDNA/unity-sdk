@@ -7,6 +7,8 @@
     - A limit can be placed on the number of images to fetch concurrently,
       addressing issues some customers have encountered with attempting to cache a large number of images.
         - See `Assets/DeltaDNA/Helpers/Settings.cs` for more documentation
+###Fixed
+- Updated iOS Push Notifications for iOS 13 and Xcode 11 compatibility.         
 
 ## [4.12.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7.1)
 ### Fixed 
