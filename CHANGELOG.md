@@ -1,4 +1,12 @@
 # Change Log
+## [4.12.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.8)
+### Added 
+- Ability to view event and parameter definitions for your game in-editor. See the README for more details on accessing and using this. 
+- More configuration options for image message caching on startup
+    - A limit (in MB) can now be configured for the cache. 
+    - A limit can be placed on the number of images to fetch concurrently, addressing issues some customers have encoutered with a large amount of images to be cached on their games. 
+    
+
 ## [4.12.7.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.7.1)
 ### Fixed 
 - Compilation issues with WWW classes on certain versions of unity
