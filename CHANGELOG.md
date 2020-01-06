@@ -6,7 +6,9 @@
     - Memory usage improvements
     - Cleaned up image message cache mechanism
 - Missing Apple and Amazon device name mappings
-- Issue with automatic event uploads not registering       
+- Issue with automatic event uploads not registering    
+    
+      
 
 ## [4.12.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.8)
 ### Added

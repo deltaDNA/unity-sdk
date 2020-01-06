@@ -22,24 +22,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace DeltaDNA {
-
+namespace DeltaDNA{
     using JSONObject = Dictionary<string, object>;
 
-    public class ImageMessage {
-
+    public class ImageMessage{
         public event Action OnDidReceiveResources;
         public event Action<string> OnDidFailToReceiveResources;
+
         /// <summary>
         /// Will be invoked when the user selects an element set to dismiss the
         /// image message.
         /// </summary>
         public event Action<EventArgs> OnDismiss;
+
         /// <summary>
         /// Will be invoked when the user selects an element set to use an
         /// action. The value is returned by <code>ActionValue</code>.
         /// </summary>
         public event Action<EventArgs> OnAction;
+
         /// <summary>
         /// Will be invoked when the user selects an element set to use a store
         /// action. The value appropriate for the current platform is returned
@@ -57,22 +58,20 @@ namespace DeltaDNA {
         private bool showing = false;
         private Engagement engagement;
 
-        public class EventArgs: System.EventArgs {
-
-            public EventArgs(string id, string type, string value) {
+        public class EventArgs : System.EventArgs{
+            public EventArgs(string id, string type, string value){
                 ID = id;
                 ActionType = type;
                 ActionValue = value;
             }
 
-            public string ID { get; set; }
-            public string ActionType { get; set; }
-            public string ActionValue { get; set; }
+            public string ID{ get; set; }
+            public string ActionType{ get; set; }
+            public string ActionValue{ get; set; }
 
             internal static EventArgs Create(
-                string platform, string id, string type, object value) {
-
-                switch (type) {
+                string platform, string id, string type, object value){
+                switch (type){
                     case "store":
                         return new StoreEventArgs(platform, id, type, value);
 
@@ -82,14 +81,12 @@ namespace DeltaDNA {
             }
         }
 
-        public class StoreEventArgs : EventArgs {
-
+        public class StoreEventArgs : EventArgs{
             public StoreEventArgs(
                 string platform, string id, string type, object value)
-                : base(id, type, "") {
-
+                : base(id, type, ""){
                 JSONObject values = (JSONObject) value;
-                switch (platform) {
+                switch (platform){
                     case Platform.AMAZON:
                         ActionValue = values.GetOrDefault("AMAZON", "");
                         break;
@@ -112,14 +109,13 @@ namespace DeltaDNA {
             JSONObject configuration,
             string name,
             int depth,
-            Engagement engagement) {
-
+            Engagement engagement){
             this.ddna = ddna;
 
             gameObject = new GameObject(name, typeof(RectTransform));
             SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
             spriteMap.Build(ddna, configuration);
-           
+
 
             OrientationChange changer = gameObject.AddComponent<OrientationChange>();
             changer.Init(redraw);
@@ -133,67 +129,57 @@ namespace DeltaDNA {
         }
 
         private void redraw(){
-            Object.Destroy(gameObject);
-            Object.Destroy(this.spriteMap);
-            Object.Destroy(changeListener);
-            gameObject = new GameObject(name, typeof(RectTransform));
+            gameObject.GetComponent<BackgroundLayer>().Resize();
+            gameObject.GetComponent<ButtonsLayer>().Resize();
             
-            
-            
-            OrientationChange changer = gameObject.AddComponent<OrientationChange>();
-            changer.Init(redraw);
-            SpriteMap spriteMap = gameObject.AddComponent<SpriteMap>();
-            spriteMap.Build(ddna, configuration);
-            
-            this.spriteMap = spriteMap;
-            changeListener = changer;
-            Show();
         }
 
-        public static ImageMessage Create(Engagement engagement) {
+        public static ImageMessage Create(Engagement engagement){
             return Create(DDNA.Instance, engagement, null);
         }
 
-        public static ImageMessage Create(Engagement engagement, JSONObject options) {
+        public static ImageMessage Create(Engagement engagement, JSONObject options){
             return Create(DDNA.Instance, engagement, options);
         }
 
-        public static ImageMessage Create(DDNA ddna, Engagement engagement, JSONObject options) {
+        public static ImageMessage Create(DDNA ddna, Engagement engagement, JSONObject options){
             if (engagement == null || engagement.JSON == null || !engagement.JSON.ContainsKey("image")) return null;
 
             string name = "DeltaDNA Image Message";
             int depth = 0;
 
-            if (options != null) {
-                if (options.ContainsKey("name")) {
+            if (options != null){
+                if (options.ContainsKey("name")){
                     name = options["name"] as string;
                 }
-                if (options.ContainsKey("depth")) {
-                    depth = (int)options["depth"];
+
+                if (options.ContainsKey("depth")){
+                    depth = (int) options["depth"];
                 }
             }
 
             ImageMessage imageMessage = null;
 
-            try {
+            try{
                 var configuration = engagement.JSON["image"] as JSONObject;
-                if (ValidConfiguration(configuration)) {
+                if (ValidConfiguration(configuration)){
                     imageMessage = new ImageMessage(ddna, configuration, name, depth, engagement);
-                    if (engagement.JSON.ContainsKey("parameters")) {
+                    if (engagement.JSON.ContainsKey("parameters")){
                         imageMessage.Parameters = engagement.JSON["parameters"] as JSONObject;
                     }
-                } else {
+                }
+                else{
                     Logger.LogWarning("Invalid image message configuration.");
                 }
-            } catch (Exception exception) {
-                Logger.LogWarning("Failed to create image message: "+exception.Message);
+            }
+            catch (Exception exception){
+                Logger.LogWarning("Failed to create image message: " + exception.Message);
             }
 
             return imageMessage;
         }
 
-        private static bool ValidConfiguration(JSONObject c)
-        {
+        private static bool ValidConfiguration(JSONObject c){
             if (!c.ContainsKey("url") ||
                 !c.ContainsKey("height") ||
                 !c.ContainsKey("width") ||
@@ -211,17 +197,19 @@ namespace DeltaDNA {
             return true;
         }
 
-        public void FetchResources() {
-            if (IsReady()) {
+        public void FetchResources(){
+            if (IsReady()){
                 if (OnDidReceiveResources != null) OnDidReceiveResources();
-            } else {
+            }
+            else{
                 spriteMap.LoadResource((error) => {
-                    if (error == null) {
-                        if (OnDidReceiveResources != null) {
+                    if (error == null){
+                        if (OnDidReceiveResources != null){
                             OnDidReceiveResources();
                         }
-                    } else {
-                        if (OnDidFailToReceiveResources != null) {
+                    }
+                    else{
+                        if (OnDidFailToReceiveResources != null){
                             OnDidFailToReceiveResources(error);
                         }
                     }
@@ -229,161 +217,160 @@ namespace DeltaDNA {
             }
         }
 
-        public bool IsReady() {
+        public bool IsReady(){
             return ddna.GetImageMessageStore().Has(spriteMap.URL);
         }
 
-        public void Show() {
-            if (IsReady()) {
-                try {
-                    if (spriteMap.Texture == null) {
+        public void Show(){
+            if (IsReady()){
+                try{
+                    if (spriteMap.Texture == null){
                         /*
                          * This is a workaround for when we're showing for an
                          * event trigger, as the instance didn't go through the
                          * FetchResources() call to load the texture we need to
                          * do it now.
                          */
-                        spriteMap.LoadResource(e => {});
+                        spriteMap.LoadResource(e => { });
                     }
 
                     gameObject.AddComponent<Canvas>();
                     gameObject.AddComponent<GraphicRaycaster>();
                     gameObject.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
 
-                    if (this.configuration.ContainsKey("shim")) {
+
+                    if (this.configuration.ContainsKey("shim")){
                         ShimLayer shimLayer = gameObject.AddComponent<ShimLayer>();
                         shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
 
                     JSONObject layout = configuration["layout"] as JSONObject;
                     object orientation;
-                    if (!layout.TryGetValue("landscape", out orientation) && !layout.TryGetValue("portrait", out orientation)) {
+                    if (!layout.TryGetValue("landscape", out orientation) &&
+                        !layout.TryGetValue("portrait", out orientation)){
                         throw new KeyNotFoundException("Layout missing orientation key.");
                     }
 
                     BackgroundLayer backgroundLayer = gameObject.AddComponent<BackgroundLayer>();
-                    backgroundLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Background, depth-1);
+                    backgroundLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Background,
+                        depth - 1);
 
                     ButtonsLayer buttonLayer = gameObject.AddComponent<ButtonsLayer>();
-                    buttonLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Buttons, backgroundLayer, depth-2);
+                    buttonLayer.Build(ddna, gameObject, this, orientation as JSONObject, spriteMap.Buttons,
+                        backgroundLayer, depth - 2);
 
                     showing = true;
-                } catch (KeyNotFoundException exception) {
-                    Logger.LogWarning("Failed to show image message, invalid format: "+exception.Message);
-                } catch (Exception exception) {
-                    Logger.LogWarning("Failed to show image message: "+exception.Message);
+                }
+                catch (KeyNotFoundException exception){
+                    Logger.LogWarning("Failed to show image message, invalid format: " + exception.Message);
+                }
+                catch (Exception exception){
+                    Logger.LogWarning("Failed to show image message: " + exception.Message);
                 }
             }
         }
 
-        public bool IsShowing() {
+        public bool IsShowing(){
             return this.showing;
         }
 
-        public void Close() {
-            if (showing) {
+        public void Close(){
+            if (showing){
                 UnityEngine.Object.Destroy(gameObject);
                 showing = false;
             }
         }
 
-        public JSONObject Parameters { get; private set; }
+        public JSONObject Parameters{ get; private set; }
 
-        private class SpriteMap : MonoBehaviour
-        {
+        private class SpriteMap : MonoBehaviour{
             private ImageMessageStore store;
             private JSONObject configuration;
             private Texture2D texture;
 
-            public string URL { get; private set; }
-            public int Width { get; private set; }
-            public int Height { get; private set; }
+            public string URL{ get; private set; }
+            public int Width{ get; private set; }
+            public int Height{ get; private set; }
 
-            public void Build(DDNA ddna, JSONObject configuration)
-            {
+            public void Build(DDNA ddna, JSONObject configuration){
                 store = ddna.GetImageMessageStore();
 
-                try {
-                    this.URL = configuration["url"] as string;
-                    this.Width = (int)((long)configuration["width"]);
-                    this.Height = (int)((long)configuration["height"]);
+                try{
+                    URL = configuration["url"] as string;
+                    Width = (int) ((long) configuration["width"]);
+                    Height = (int) ((long) configuration["height"]);
                     this.configuration = configuration["spritemap"] as JSONObject;
-
-                } catch (KeyNotFoundException exception) {
-                    Logger.LogError("Invalid format: "+exception.Message);
+                }
+                catch (KeyNotFoundException exception){
+                    Logger.LogError("Invalid format: " + exception.Message);
                 }
             }
 
-            public void LoadResource(Action<string> callback)
-            {
+            public void LoadResource(Action<string> callback){
                 #if !UNITY_2017_1_OR_NEWER
-                texture = new Texture2D(this.Width, this.Height);
+                texture = new Texture2D(this.Width, this.Height, TextureFormat.ARGB32, false);
                 #endif
                 StartCoroutine(store.Get(
                     URL,
                     t => {
                         Destroy(texture);
                         texture = t;
-                        Destroy(t);
                         callback(null);
                     },
                     callback));
             }
 
-            public Texture Texture {
-                get {
-                    return texture;
-                }
+            public Texture Texture{
+                get{ return texture; }
             }
 
-            public Texture Background {
-                get {
-                    try {
+            public Sprite Background{
+                get{
+                    try{
                         JSONObject background = this.configuration["background"] as JSONObject;
-                        int x = (int)((long)background["x"]);
-                        int y = (int)((long)background["y"]);
-                        int w = (int)((long)background["width"]);
-                        int h = (int)((long)background["height"]);
-                        return this.GetSubRegion(x, y, w, h);
-                    } catch (KeyNotFoundException exception) {
-                        Logger.LogError("Invalid format, background not found: "+exception.Message);
+                        int x = (int) ((long) background["x"]);
+                        int y = (int) ((long) background["y"]);
+                        int w = (int) ((long) background["width"]);
+                        int h = (int) ((long) background["height"]);
+                        return GetSubRegion(x, y, w, h);
                     }
+                    catch (KeyNotFoundException exception){
+                        Logger.LogError("Invalid format, background not found: " + exception.Message);
+                    }
+
                     return null;
                 }
             }
 
-            public List<Texture> Buttons {
-                get {
-                    List<Texture> textures = new List<Texture>();
-                    if (this.configuration.ContainsKey("buttons")) {
-                        try {
-                            var buttons = this.configuration["buttons"] as List<object>;
-                            foreach (var button in buttons) {
-                                int x = (int)((long)((JSONObject)button)["x"]);
-                                int y = (int)((long)((JSONObject)button)["y"]);
-                                int w = (int)((long)((JSONObject)button)["width"]);
-                                int h = (int)((long)((JSONObject)button)["height"]);
-                                textures.Add(GetSubRegion(x, y, w, h));
+            public List<Sprite> Buttons{
+                get{
+                    List<Sprite> sprites = new List<Sprite>();
+                    if (configuration.ContainsKey("buttons")){
+                        try{
+                            var buttons = configuration["buttons"] as List<object>;
+                            foreach (var button in buttons){
+                                int x = (int) ((long) ((JSONObject) button)["x"]);
+                                int y = (int) ((long) ((JSONObject) button)["y"]);
+                                int w = (int) ((long) ((JSONObject) button)["width"]);
+                                int h = (int) ((long) ((JSONObject) button)["height"]);
+                                sprites.Add(GetSubRegion(x, y, w, h));
                             }
-                        } catch (KeyNotFoundException exception) {
-                            Logger.LogError("Invalid format, button not found: "+exception.Message);
+                        }
+                        catch (KeyNotFoundException exception){
+                            Logger.LogError("Invalid format, button not found: " + exception.Message);
                         }
                     }
-                    return textures;
+
+                    return sprites;
                 }
             }
 
-            public Texture2D GetSubRegion(int x, int y, int width, int height)
-            {
-                Color[] pixels = texture.GetPixels(x, texture.height-y-height, width, height);
-                Texture2D result = new Texture2D(width, height, texture.format, false);
-                result.SetPixels(pixels);
-                result.Apply();
-                return result;
+            public Sprite GetSubRegion(int x, int y, int width, int height){
+                Rect rect = new Rect( x, texture.height - y - height, width, height );
+                return Sprite.Create( texture, rect, new Vector2( 0.5f, 0.5f ), 100 );
             }
 
-            public Texture2D GetSubRegion(Rect rect)
-            {
+            public Sprite GetSubRegion(Rect rect){
                 return GetSubRegion(
                     Mathf.FloorToInt(rect.x),
                     Mathf.FloorToInt(rect.y),
@@ -396,30 +383,28 @@ namespace DeltaDNA {
             }
         }
 
-        private class Layer : MonoBehaviour {
-
+        private class Layer : MonoBehaviour{
             protected DDNA ddna;
             protected GameObject parent;
             protected ImageMessage imageMessage;
             protected List<Action> actions = new List<Action>();
             protected int depth = 0;
 
-            protected void RegisterAction()
-            {
-                actions.Add(() => {});
+            protected void RegisterAction(){
+                actions.Add(() => { });
             }
 
-            protected void RegisterAction(JSONObject action, string id) {
+            protected void RegisterAction(JSONObject action, string id){
                 object typeObj, valueObj;
 
-                if (action.TryGetValue("type", out typeObj)) {
+                if (action.TryGetValue("type", out typeObj)){
                     action.TryGetValue("value", out valueObj);
 
                     EventArgs eventArgs = EventArgs.Create(
                         DDNA.Instance.Platform, id, (string) typeObj, valueObj);
 
                     GameEvent actionEvent = new GameEvent("imageMessageAction");
-                    if (imageMessage.engagement.JSON.ContainsKey("eventParams")) {
+                    if (imageMessage.engagement.JSON.ContainsKey("eventParams")){
                         var eventParams = imageMessage.engagement.JSON["eventParams"] as Dictionary<string, object>;
                         actionEvent.AddParam("responseDecisionpointName", eventParams["responseDecisionpointName"]);
                         actionEvent.AddParam("responseEngagementID", eventParams["responseEngagementID"]);
@@ -433,34 +418,35 @@ namespace DeltaDNA {
                     actionEvent.AddParam("imActionName", id);
                     actionEvent.AddParam("imActionType", (string) typeObj);
                     if (!string.IsNullOrEmpty(eventArgs.ActionValue)
-                        && (string) typeObj != "dismiss") {
+                        && (string) typeObj != "dismiss"){
                         actionEvent.AddParam("imActionValue", eventArgs.ActionValue);
                     }
 
-                    switch ((string)typeObj) {
-                        case "none": {
-                            actions.Add(() => {});
+                    switch ((string) typeObj){
+                        case "none":{
+                            actions.Add(() => { });
                             break;
                         }
-                        case "action": {
+                        case "action":{
                             actions.Add(() => {
-                                if (valueObj != null) {
-                                    if (imageMessage.OnAction != null) {
+                                if (valueObj != null){
+                                    if (imageMessage.OnAction != null){
                                         imageMessage.OnAction(eventArgs);
                                     }
                                 }
 
-                                ddna.RecordEvent(actionEvent).Run(); 
+                                ddna.RecordEvent(actionEvent).Run();
                                 imageMessage.Close();
                             });
                             break;
                         }
-                        case "link": {
+                        case "link":{
                             actions.Add(() => {
-                                if (imageMessage.OnAction != null) {
+                                if (imageMessage.OnAction != null){
                                     imageMessage.OnAction(eventArgs);
                                 }
-                                if (valueObj != null) {
+
+                                if (valueObj != null){
                                     Application.OpenURL((string) valueObj);
                                 }
 
@@ -469,9 +455,9 @@ namespace DeltaDNA {
                             });
                             break;
                         }
-                        case "store": {
+                        case "store":{
                             actions.Add(() => {
-                                if (imageMessage.OnStore != null) {
+                                if (imageMessage.OnStore != null){
                                     imageMessage.OnStore(eventArgs);
                                 }
 
@@ -480,15 +466,15 @@ namespace DeltaDNA {
                             });
                             break;
                         }
-                        default : { // "dismiss"
+                        default:{
+                            // "dismiss"
                             actions.Add(() => {
-                                if (imageMessage.OnDismiss != null) {
+                                if (imageMessage.OnDismiss != null){
                                     imageMessage.OnDismiss(eventArgs);
                                 }
 
                                 ddna.RecordEvent(actionEvent).Run();
                                 imageMessage.Close();
-
                             });
                             break;
                         }
@@ -496,7 +482,7 @@ namespace DeltaDNA {
                 }
             }
 
-            protected void PositionObject(GameObject obj, Rect position) {
+            protected void PositionObject(GameObject obj, Rect position){
                 obj.transform.SetParent(parent.transform);
 
                 var widthRatio = 1 / (float) Screen.width;
@@ -517,56 +503,55 @@ namespace DeltaDNA {
             }
         }
 
-        private class ShimLayer : Layer
-        {
+        private class ShimLayer : Layer{
             private Texture2D texture;
             private readonly byte dimmedMaskAlpha = 128;
             private Sprite sprite;
 
-            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject config, int depth)
-            {
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject config, int depth){
                 this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;
 
                 object mask;
-                if (config.TryGetValue("mask", out mask)) {
+                if (config.TryGetValue("mask", out mask)){
                     bool show = true;
                     Color32[] colours = new Color32[1];
-                    switch ((string)mask)
-                    {
-                        case "dimmed": {
+                    switch ((string) mask){
+                        case "dimmed":{
                             colours[0] = new Color32(0, 0, 0, this.dimmedMaskAlpha);
                             break;
                         }
-                        case "clear": {
+                        case "clear":{
                             colours[0] = new Color32(0, 0, 0, 0);
                             break;
                         }
-                        default: {  // "none"
+                        default:{
+                            // "none"
                             show = false;
                             break;
                         }
                     }
-                    if (show) {
-                        texture = new Texture2D(1, 1);
+
+                    if (show){
+                        texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
                         texture.SetPixels32(colours);
                         texture.Apply();
                     }
                 }
 
                 object actionObj;
-                if (config.TryGetValue("action", out actionObj)) {
-                    RegisterAction((JSONObject)actionObj, "shim");
+                if (config.TryGetValue("action", out actionObj)){
+                    RegisterAction((JSONObject) actionObj, "shim");
                 }
-                else {
+                else{
                     RegisterAction();
                 }
             }
 
-            void Start() {
-                if (texture) {
+            void Start(){
+                if (texture){
                     var obj = new GameObject("Shim", typeof(RectTransform));
                     PositionObject(obj, new Rect(0, 0, Screen.width, Screen.height));
 
@@ -590,59 +575,80 @@ namespace DeltaDNA {
             }
         }
 
-        private class BackgroundLayer : Layer
-        {
-
-            private Texture texture;
+        private class BackgroundLayer : Layer{
             private Rect position;
             private float scale;
             private Sprite sprite;
+            private JSONObject layout;
+            private GameObject obj;
 
-            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Texture texture, int depth)
-            {
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject layout, Sprite sprite,
+                int depth){
                 this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
-                this.texture = texture;
+                this.sprite = sprite;
                 this.depth = depth;
+                this.layout = layout;
 
                 object backgroundObj;
-                if (layout.TryGetValue("background", out backgroundObj)) {
+                if (layout.TryGetValue("background", out backgroundObj)){
                     var background = backgroundObj as JSONObject;
 
                     object actionObj;
-                    if ((background).TryGetValue("action", out actionObj)) {
-                        RegisterAction((JSONObject)actionObj, "background");
+                    if ((background).TryGetValue("action", out actionObj)){
+                        RegisterAction((JSONObject) actionObj, "background");
                     }
-                    else {
+                    else{
                         RegisterAction();
                     }
 
-                    object rulesObj;
-                    if (background.TryGetValue("cover", out rulesObj)) {
-                        this.position = RenderAsCover((JSONObject)rulesObj);
-                    }
-                    else if (background.TryGetValue("contain", out rulesObj)) {
-                        this.position = RenderAsContain((JSONObject)rulesObj);
-                    }
-                    else {
-                        Logger.LogError("Invalid layout");
-                    }
+                    CalculatePosition();
                 }
-                else {
+                else{
                     RegisterAction();
                 }
             }
-            
 
-            public Rect Position { get { return this.position; }}
+            private void CalculatePosition(){
+                object backgroundObj;
+                if (layout.TryGetValue("background", out backgroundObj)){
+                    var background = backgroundObj as JSONObject;
+                    object rulesObj;
+                    if (background.TryGetValue("cover", out rulesObj)){
+                        position = RenderAsCover((JSONObject) rulesObj);
+                    }
+                    else if (background.TryGetValue("contain", out rulesObj)){
+                        position = RenderAsContain((JSONObject) rulesObj);
+                    }
+                    else{
+                        Logger.LogError("Invalid layout");
+                    }
+                }
+            }
 
-            public float Scale { get { return this.scale; }}
-
-            void Start() {
-                if (texture) {
-                    var obj = new GameObject("Background", typeof(RectTransform));
+            private void UpdatePosition(){
                     PositionObject(obj, position);
+            }
+
+            public void Resize(){
+                CalculatePosition();
+                UpdatePosition();
+            }
+
+
+            public Rect Position{
+                get{ return this.position; }
+            }
+
+            public float Scale{
+                get{ return this.scale; }
+            }
+
+            void Start(){
+                if (sprite){
+                    obj = new GameObject("Background", typeof(RectTransform));
+                    UpdatePosition();
 
                     obj.AddComponent<Button>();
                     obj.AddComponent<Image>();
@@ -650,47 +656,41 @@ namespace DeltaDNA {
                     obj.GetComponent<Button>().onClick.AddListener(() => {
                         if (actions.Count > 0) actions[0].Invoke();
                     });
-                    sprite = Sprite.Create(
-                        texture as Texture2D,
-                        new Rect(0, 0, texture.width, texture.height),
-                        new Vector2(0.5f, 0.5f));
                     obj.GetComponent<Image>().sprite = sprite;
                 }
             }
 
-            private Rect RenderAsCover(JSONObject rules)
-            {
-                this.scale = Math.Max((float)Screen.width / (float)this.texture.width, (float)Screen.height / (float)this.texture.height);
-                float width = this.texture.width * this.scale;
-                float height = this.texture.height * this.scale;
+            private Rect RenderAsCover(JSONObject rules){
+                var spriteRect = sprite.rect;
+                this.scale = Math.Max((float) Screen.width / (float) spriteRect.width,
+                    (float) Screen.height / (float) spriteRect.height);
+                float width = spriteRect.width * this.scale;
+                float height = spriteRect.height * this.scale;
 
-                float top = Screen.height / 2.0f - height / 2.0f;   // default "center"
+                float top = Screen.height / 2.0f - height / 2.0f; // default "center"
                 float left = Screen.width / 2.0f - width / 2.0f;
                 object valign;
-                if (rules.TryGetValue("valign", out valign))
-                {
-                    switch ((string)valign)
-                    {
-                        case "top": {
+                if (rules.TryGetValue("valign", out valign)){
+                    switch ((string) valign){
+                        case "top":{
                             top = 0;
                             break;
                         }
-                        case "bottom": {
+                        case "bottom":{
                             top = Screen.height - height;
                             break;
                         }
                     }
                 }
+
                 object halign;
-                if (rules.TryGetValue("halign", out halign))
-                {
-                    switch ((string)halign)
-                    {
-                        case "left": {
+                if (rules.TryGetValue("halign", out halign)){
+                    switch ((string) halign){
+                        case "left":{
                             left = 0;
                             break;
                         }
-                        case "right": {
+                        case "right":{
                             left = Screen.width - width;
                             break;
                         }
@@ -700,60 +700,59 @@ namespace DeltaDNA {
                 return new Rect(left, top, width, height);
             }
 
-            private Rect RenderAsContain(JSONObject rules)
-            {
+            private Rect RenderAsContain(JSONObject rules){
+                var spriteRect = sprite.rect;
                 float lc = 0, rc = 0, tc = 0, bc = 0;
                 object l, r, t, b;
-                if (rules.TryGetValue("left", out l)) {
-                    lc = GetConstraintPixels((string)l, Screen.width);
-                }
-                if (rules.TryGetValue("right", out r)) {
-                    rc = GetConstraintPixels((string)r, Screen.width);
+                if (rules.TryGetValue("left", out l)){
+                    lc = GetConstraintPixels((string) l, Screen.width);
                 }
 
-                float ws = ((float)Screen.width - lc - rc) / (float)this.texture.width;
-
-                if (rules.TryGetValue("top", out t)) {
-                    tc = GetConstraintPixels((string)t, Screen.height);
-                }
-                if (rules.TryGetValue("bottom", out b)) {
-                    bc = GetConstraintPixels((string)b, Screen.height);
+                if (rules.TryGetValue("right", out r)){
+                    rc = GetConstraintPixels((string) r, Screen.width);
                 }
 
-                float hs = ((float)Screen.height - tc - bc) / (float)this.texture.height;
+                float ws = ((float) Screen.width - lc - rc) / (float) spriteRect.width;
+
+                if (rules.TryGetValue("top", out t)){
+                    tc = GetConstraintPixels((string) t, Screen.height);
+                }
+
+                if (rules.TryGetValue("bottom", out b)){
+                    bc = GetConstraintPixels((string) b, Screen.height);
+                }
+
+                float hs = ((float) Screen.height - tc - bc) / (float) spriteRect.height;
 
                 this.scale = Math.Min(ws, hs);
-                float width = this.texture.width * this.scale;
-                float height = this.texture.height * this.scale;
+                float width = spriteRect.width * this.scale;
+                float height = spriteRect.height * this.scale;
 
-                float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc;    // default "center"
-                float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc;     // default "center"
+                float top = ((Screen.height - tc - bc) / 2.0f - height / 2.0f) + tc; // default "center"
+                float left = ((Screen.width - lc - rc) / 2.0f - width / 2.0f) + lc; // default "center"
 
                 object valign;
-                if (rules.TryGetValue("valign", out valign))
-                {
-                    switch ((string)valign)
-                    {
-                        case "top": {
+                if (rules.TryGetValue("valign", out valign)){
+                    switch ((string) valign){
+                        case "top":{
                             top = tc;
                             break;
                         }
-                        case "bottom": {
+                        case "bottom":{
                             top = Screen.height - height - bc;
                             break;
                         }
                     }
                 }
+
                 object halign;
-                if (rules.TryGetValue("halign", out halign))
-                {
-                    switch ((string)halign)
-                    {
-                        case "left": {
+                if (rules.TryGetValue("halign", out halign)){
+                    switch ((string) halign){
+                        case "left":{
                             left = lc;
                             break;
                         }
-                        case "right": {
+                        case "right":{
                             left = Screen.width - width - rc;
                             break;
                         }
@@ -763,94 +762,113 @@ namespace DeltaDNA {
                 return new Rect(left, top, width, height);
             }
 
-            private float GetConstraintPixels(string constraint, float edge)
-            {
+            private float GetConstraintPixels(string constraint, float edge){
                 float val = 0;
                 Regex rgx = new Regex(@"(\d+)(px|%)", RegexOptions.IgnoreCase);
                 var match = rgx.Match(constraint);
-                if (match != null && match.Success) {
+                if (match != null && match.Success){
                     var groups = match.Groups;
-                    if (float.TryParse(groups[1].Value, out val)) {
-                        if (groups[2].Value == "%") {
+                    if (float.TryParse(groups[1].Value, out val)){
+                        if (groups[2].Value == "%"){
                             return edge * val / 100.0f;
-                        } else {
-                        return val;
+                        }
+                        else{
+                            return val;
                         }
                     }
                 }
+
                 return val;
             }
 
             private void OnDestroy(){
                 Destroy(sprite);
-                Destroy(texture);
             }
         }
 
-        private class ButtonsLayer : Layer
-        {
-            private List<Texture> textures = new List<Texture>();
+        private class ButtonsLayer : Layer{
+            private List<Sprite> sprites = new List<Sprite>();
             private List<Rect> positions = new List<Rect>();
-            private Sprite sprite;
+            private BackgroundLayer content;
+            private JSONObject orientation;
+            private List<GameObject> buttonObjects = new List<GameObject>();
 
-            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation, List<Texture> textures, BackgroundLayer content, int depth)
-            {
+            public void Build(DDNA ddna, GameObject parent, ImageMessage imageMessage, JSONObject orientation,
+                List<Sprite> sprites, BackgroundLayer content, int depth){
                 this.ddna = ddna;
                 this.parent = parent;
                 this.imageMessage = imageMessage;
                 this.depth = depth;
+                this.orientation = orientation;
+                this.content = content;
+                this.sprites = sprites;
 
                 object buttonsObj;
-                if (orientation.TryGetValue("buttons", out buttonsObj)) {
-                    var buttons = buttonsObj as List<object>;
-                    for (int i = 0; i < buttons.Count; ++i) {
-                        var button = buttons[i] as JSONObject;
-                        float left = 0, top = 0;
-                        object x, y;
-                        if (button.TryGetValue("x", out x)) {
-                            left = (int)((long)x) * content.Scale + content.Position.xMin;
-                        }
-                        if (button.TryGetValue("y", out y)) {
-                            top = (int)((long)y) * content.Scale + content.Position.yMin;
-                        }
-                        this.positions.Add(new Rect(left, top, textures[i].width * content.Scale, textures[i].height * content.Scale));
-
-                        object actionObj;
-                        if (button.TryGetValue("action", out actionObj)) {
-                            RegisterAction((JSONObject)actionObj, "button"+(i+1));
-                        }
-                        else {
-                            RegisterAction();
-                        }
-                    }
-                    this.textures = textures;
+                if (orientation.TryGetValue("buttons", out buttonsObj)){
+                    UpdatePositions(true);
                 }
             }
 
-            void Start() {
-                for (int i = 0; i < textures.Count; ++i) {
+
+            public void Resize(){
+                UpdatePositions();
+                for (int i = 0; i < sprites.Count; i++){
+                    PositionObject(buttonObjects[i], positions[i]);
+                }
+            }
+
+            private void UpdatePositions(bool shouldRegisterActions = false){
+                object buttonsObj;
+                if (orientation.TryGetValue("buttons", out buttonsObj)){
+                    positions = new List<Rect>();
+                    var buttons = buttonsObj as List<object>;
+                    for (int i = 0; i < buttons.Count; ++i){
+                        var button = buttons[i] as JSONObject;
+                        float left = 0, top = 0;
+                        object x, y;
+                        if (button.TryGetValue("x", out x)){
+                            left = (int) ((long) x) * content.Scale + content.Position.xMin;
+                        }
+
+                        if (button.TryGetValue("y", out y)){
+                            top = (int) ((long) y) * content.Scale + content.Position.yMin;
+                        }
+
+                        positions.Add(new Rect(left, top, sprites[i].rect.width * content.Scale,
+                            sprites[i].rect.height * content.Scale));
+                        if (shouldRegisterActions){
+                            object actionObj;
+                            if (button.TryGetValue("action", out actionObj)){
+                                RegisterAction((JSONObject) actionObj, "button" + (i + 1));
+                            }
+                            else{
+                                RegisterAction();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            void Start(){
+                for (int i = 0; i < sprites.Count; ++i){
                     var obj = new GameObject("Button", typeof(RectTransform));
+                    buttonObjects.Add(obj);
                     PositionObject(obj, positions[i]);
 
                     obj.AddComponent<Button>();
                     obj.AddComponent<Image>();
 
                     var action = actions[i];
-                    obj.GetComponent<Button>().onClick.AddListener(() => {
-                        action.Invoke();
-                    });
-                    sprite = Sprite.Create(
-                        textures[i] as Texture2D,
-                        new Rect(0, 0, textures[i].width, textures[i].height),
-                        new Vector2(0.5f, 0.5f));
-                    obj.GetComponent<Image>().sprite = sprite;
+                    obj.GetComponent<Button>().onClick.AddListener(() => { action.Invoke(); });
+
+                    obj.GetComponent<Image>().sprite = sprites[i];
                 }
             }
 
             private void OnDestroy(){
-                Destroy(sprite);
-                foreach (var t in textures){
-                    Destroy(t);
+                foreach (var s in sprites){
+                    Destroy(s);
                 }
             }
         }

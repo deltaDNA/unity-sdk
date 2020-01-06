@@ -47,36 +47,32 @@ namespace DeltaDNA {
 
 
         internal virtual bool Has(string url) {
-            return Directory
-                .GetFiles(cache)
-                .Where(e => GetName(e).Equals(GetName(url)))
-                .Count() > 0;
+            return File.Exists(cache + GetName(url));
         }
 
         internal Texture2D Get(string url) {
-            return Directory
-                .GetFiles(cache)
-                .Where(e => GetName(e).Equals(GetName(url)))
-                .Select(e => {
-                    var texture = new Texture2D(2, 2);
-                    return texture.LoadImage(File.ReadAllBytes(e)) ? texture : null;
-                })
-                .FirstOrDefault();
+            var texture = new Texture2D(2, 2, TextureFormat.ARGB32, false) {name = "ImageMessageStore"};
+            return texture.LoadImage(File.ReadAllBytes(cache + GetName(url))) ? texture : null;
         }
 
-        internal IEnumerator Get(string url, Action<Texture2D> onSuccess, Action<string> onError) {
-            var texture = Get(url);
-            if (texture != null) {
-                onSuccess(texture);
-                yield break;
-            } else {
+        internal IEnumerator Get(string url, Action<Texture2D> onSuccess, Action<string> onError){
+            if (Has(url)){
+                var texture = Get(url);
+                if (texture != null){
+                    onSuccess(texture);
+                    yield break;
+                }
+            }
+            else{
                 yield return Fetch(
-                        url,
-                        t => {
-                            File.WriteAllBytes(cache + GetName(url), t.EncodeToPNG());
-                            onSuccess(t);
-                        },
-                        onError);
+                    url,
+                    fileTempPath => {
+                        var filePath = cache + GetName(url);
+                        File.Move(fileTempPath, filePath);
+                        var tex = new Texture2D(2, 2){name = "ImageMessageStore"};
+                        onSuccess(tex.LoadImage(File.ReadAllBytes(filePath)) ? tex : null);
+                    },
+                    onError);
             }
         }
 
@@ -107,7 +103,9 @@ namespace DeltaDNA {
                     parent.StartCoroutine(Fetch(
                         url,
                         t => {
-                            File.WriteAllBytes(cache + name, t.EncodeToPNG());
+                          
+                            var filePath = cache + GetName(url);
+                            File.Move(t,  filePath );
                             downloaded++;
                             downloading--;
                         },
@@ -134,28 +132,29 @@ namespace DeltaDNA {
             if (Directory.Exists(cache)) Directory.Delete(cache, true);
         }
 
-        private IEnumerator Fetch(string url, Action<Texture2D> onSuccess, Action<string> onError) {
+        private IEnumerator Fetch(string url, Action<string> onSuccess, Action<string> onError) {
+            bool success = true;
+            var filePathTmp = Path.ChangeExtension(cache + GetName(url), ".tmp");
             #if UNITY_2017_1_OR_NEWER
-            using (var www = UnityWebRequestTexture.GetTexture(url)) {
-                #if UNITY_2017_2_OR_NEWER
+            using (var downloadHandler = new DownloadHandlerFile(filePathTmp))
+            using (var www = new UnityWebRequest(url)) {
+                downloadHandler.removeFileOnAbort = true;
+                www.downloadHandler = downloadHandler;
                 yield return www.SendWebRequest();
-                #else
-                yield return www.Send();
-                #endif
-
                 if (www.isNetworkError || www.isHttpError) {
                     Logger.LogWarning("Failed to load resource " + url + " " + www.error);
                     onError(www.error);
                 } else {
-                    onSuccess(DownloadHandlerTexture.GetContent(www));
+                    onSuccess(filePathTmp);
                 }
             }
             #else
             WWW www = new WWW(url);
             yield return www;
 
-            if (www.error == null) {
-                onSuccess(www.texture);
+            if (www.error == null){
+                File.WriteAllBytes(filePathTmp, www.texture.EncodeToPNG());
+                onSuccess(filePathTmp);
             } else {
                 Logger.LogWarning("Failed to load resource " + url + " " + www.error);
                 onError(www.error);

@@ -126,7 +126,7 @@ namespace DeltaDNA {
         #endregion
         #region Client Interface
 
-        override internal void StartSDK(bool newPlayer) {
+        override internal void StartSDK(bool newPlayer){
             started = true;
             this.newPlayer = newPlayer;
             if (newPlayer) {
@@ -139,7 +139,7 @@ namespace DeltaDNA {
             NewSession();
 
             // setup automated event uploads
-            if (Settings.BackgroundEventUpload && !IsInvoking("Upload")) {
+            if (Settings.BackgroundEventUpload) {
                 InvokeRepeating(
                     "Upload",
                     Settings.BackgroundEventUploadStartDelaySeconds,
@@ -373,6 +373,7 @@ namespace DeltaDNA {
         }
 
         override internal void Upload() {
+            
             if (!started) {
                 Logger.LogError("You must first start the SDK via the StartSDK method.");
                 return;
