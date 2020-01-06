@@ -51,7 +51,7 @@ namespace DeltaDNA {
         }
 
         internal Texture2D Get(string url) {
-            var texture = new Texture2D(2, 2) {name = "ImageMessageStore"};
+            var texture = new Texture2D(2, 2, TextureFormat.ARGB32, false) {name = "ImageMessageStore"};
             return texture.LoadImage(File.ReadAllBytes(cache + GetName(url))) ? texture : null;
         }
 
