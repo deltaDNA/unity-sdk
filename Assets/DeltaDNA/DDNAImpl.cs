@@ -512,7 +512,6 @@ namespace DeltaDNA {
                 }
             } finally {
                 uploading = false;
-                hasUploaded = true;
             }
         }
 
