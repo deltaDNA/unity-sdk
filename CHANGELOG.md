@@ -1,4 +1,15 @@
 # Change Log
+## [4.12.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.9)
+### Fixed
+- Optimizations in image messages
+    - Image messages now redraw more gracefully
+    - Memory usage improvements - Thanks [JayArrrgh](https://github.com/JayArrrgh) for your contribution!
+    - Cleaned up image message cache mechanism
+- Missing Apple and Amazon device name mappings
+- Issue with automatic event uploads not registering    
+    
+      
+
 ## [4.12.8](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.8)
 ### Added
 - Ability to view event and parameter definitions for your game in-editor (see README for more details).
