@@ -3,7 +3,7 @@
 ### Fixed
 - Optimizations in image messages
     - Image messages now redraw more gracefully
-    - Memory usage improvements - Thanks [JayArrrgh](https://github.com/JayArrrgh) for your contribution!
+    - Memory usage improvements
     - Cleaned up image message cache mechanism
 - Missing Apple and Amazon device name mappings
 - Issue with automatic event uploads not registering    
