@@ -1,5 +1,5 @@
 # Change Log
-## [4.12.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.9)
+## [4.12.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.9) (2020-01-06)
 ### Fixed
 - Optimizations in image messages
     - Image messages now redraw more gracefully
