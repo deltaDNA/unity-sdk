@@ -238,12 +238,19 @@ namespace DeltaDNA {
         public void StartSDK(string envKey, string collectURL, string engageURL, string userID) {
             StartSDK(userID);
         }
-
+        
         /// <summary>
         /// Changes the session ID for the current User.
         /// </summary>
         public void NewSession() {
             string sessionID = GenerateSessionID();
+            NewSession(sessionID);
+        }
+
+        /// <summary>
+        /// Changes the session ID for the current User.
+        /// </summary>
+        public void NewSession(string sessionID) {
             Logger.LogInfo("Starting new session "+sessionID);
             SessionID = sessionID;
 
