@@ -88,9 +88,10 @@ namespace DeltaDNA {
                         if (handledImageMessage && "imageMessage".Equals(trigger.GetAction())) break;
                         if (handler.Handle(trigger, store)) {
                             if (!settings.MultipleActionsForEventTriggerEnabled) return;
-                            if (!settings.MultipleActionsForImageMessagesEnabled && "imageMessage".Equals(trigger.GetAction())) handledImageMessage = true;
+                            if ("imageMessage".Equals(trigger.GetAction())) handledImageMessage = true;
                             break;
                         }
+
                     }
                 }
             }

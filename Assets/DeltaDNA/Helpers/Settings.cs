@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v4.12.10";
+        internal static readonly string SDK_VERSION = "Unity SDK v4.12.9";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -72,7 +72,6 @@ namespace DeltaDNA
             ImageCacheLimitMB = 50;
             MaxConcurrentImageCacheFetches = 3;
             MultipleActionsForEventTriggerEnabled = false;
-            MultipleActionsForImageMessagesEnabled = false;
         }
 
         /// <summary>
@@ -184,7 +183,7 @@ namespace DeltaDNA
         public bool AdvertiserGdprUserConsent { get; set; }
 
         /// <summary>
-        /// Controls whether the current user should be age restricted (under 16).
+        /// Controls whether the current user should be age resitected (under 16).
         /// 
         /// Changes to this value will be applied on the next session.
         /// </summary>
@@ -195,11 +194,6 @@ namespace DeltaDNA
 	    /// 
         /// </summary>
         public bool MultipleActionsForEventTriggerEnabled { get; set; }
-        
-        /// <summary>
-        /// Controls whether multiple actions for Image Message is enabled.
-        /// </summary>
-        public bool MultipleActionsForImageMessagesEnabled { get; set; }
         
         public GameParametersHandler DefaultGameParameterHandler { get; set; }
         

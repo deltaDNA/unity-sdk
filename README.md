@@ -1,12 +1,10 @@
 ![deltaDNA logo](https://deltadna.com/wp-content/uploads/2015/06/deltadna_www@1x.png)
 
-## deltaDNA Unity SDK
+## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for the deltaDNA SDK. The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
-deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
-
-The analytics SDK is supported in both Unity 4, Unity 5 and onwards
+The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
 
 ## Contents
 
@@ -17,12 +15,20 @@ The analytics SDK is supported in both Unity 4, Unity 5 and onwards
     * [Event Triggers](#event-triggers)
     * [Engage](#engage)
     * [Cross Promotion](#cross-promotion)
+* [SmartAds](#smartads)
+    * [Usage](#usage)
+    * [Showing ads](#showing-ads)
+    * [Events](#events)
+    * [User Consent for Tracking and Age Restriction (GDPR)](#user-consent-for-tracking-and-age-restriction-(gdpr))
+    * [Diagnostics](#diagnostics)
 * [iOS Integration](#ios-integration)
     * [Push Notifications](#push-notifications)
+    * [SmartAds on iOS](#smartads-on-ios)
     * [Unity 4.7 iOS](#unity-4.7-ios)
 * [Android Integration](#android-integration)
     * [Amazon](#amazon)
     * [Push Notifications](#push-notifications)
+    * [SmartAds on Android](#smartads-on-android)
     * [Permissions](#permissions)
     * [Unity 4.7 Android](#unity-4.7-android)
 * [Forgetting a User (GDPR)](#forgetting-a-user-(gdpr))
@@ -199,6 +205,81 @@ DDNA.Instance
     }))
     .Run();
 ```
+
+## SmartAds
+
+Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  We support iOS and Android platforms.
+
+Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the SDK, then speak to us.
+
+### Usage
+
+The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNA\Example`.  The `SmartAdsExample` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled when the Analytics SDK is started.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
+
+If everything went well the SmartAds service will start fetching ads in the background.  The `DDNASmartAds` class provides the following delegates to report if the service was successfully configured:
+
+* `OnDidRegisterForInterstitialAds` - Called when interstitial ads have been successfully configured.
+* `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads can't be configured for some reason.
+* `OnDidRegisterForRewardedAds` - Called when rewarded ads have successfully been configured.
+* `OnDidFailToRegisterForRewardedAds` - Called when rewarded ads can't be configured for some reason.
+
+### Showing ads
+
+The simplest way to showing an interstitial ad is by creating an instance of `InterstitialAd` and calling `Show()`. The result should be null-checked after `Create()` is called as the creation may fail if the time or session limits have been exceeded.
+```csharp
+InterstitialAd ad = InterstitialAd.Create();
+if (ad != null) {
+    ad.Show();
+}
+```
+Rewarded ads are created in a similar way, but with the `RewardedAd` class instead.
+
+Ads can be controlled via Engage by using the `EngageFactory` and calling one of the `RequestInterstitialAd` or `RequestRewardedAd` methods. Unlike with an `ImageMessage` the factory will always return a non-null ad object in the callback.  The `isReady` method returns true if the ad is ready to show, this checks that an ad has loaded from the network and the Engage rules are satisfied.
+```csharp
+DDNA.Instance.EngageFactory.RequestInterstitialAd(
+    "showInterstitial",
+    (ad) => { /* do something with the ad */});
+```
+
+Alternatively, if more control over the possible Engage responses is needed, Engage checked ads can be created by performing an Engage request and then creating an `InterstitialAd` or `RewardedAd` instance from the returned `Engagement`.  The following example shows how to handle Engage returning an ad or an image message.
+```csharp
+Engagement engagement = new Engagement("showAdOrImageMessage")
+DDNA.Instance.RequestEngagement(
+    engagement,
+    (response) => {
+        RewardedAd ad = RewardedAd.Create(engagement);
+        ImageMessage image = ImageMessage.Create(engagement);
+
+        if (image != null) {
+            // code for showing the Image Message
+        } else if (ad != null) {
+            ad.Show();
+        }
+    });
+```
+
+Checkout the included example project for more details.
+
+### Events
+
+Callbacks can be added to the following events to be notified when an ad has opened or closed.
+* `OnDidRegisterForInterstitialAds` - Called when you have successfully enabled interstitial ads for your game.
+* `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads are unavailable for some reason.  A string parameter reports a possible error.
+* `OnDidRegisterForRewardedAds` - Called when you have successfully enabled rewarded ads for your game.
+* `OnDidFailToRegisterForRewardedAds` - Called if rewarded ads are unavailable for some reason.  A string parameter reports a possible error.
+
+The `InterstitialAd` class supports the following event callbacks:
+* `OnInterstitialAdOpened` - Called when an ad is opened.
+* `OnInterstitialAdFailedToOpen` - Called when an ad fails to show.
+* `OnInterstitialAdClosed` - Called when an ad is closed.
+
+The `RewardedAd` class supports the following event callbacks:
+* `OnRewardedAdLoaded` - Called when an ad is loaded.
+* `OnRewardedAdExpired` - Called when an ad has expired due to another ad being currently shown.
+* `OnRewardedAdOpened` - Called when an ad is opened.
+* `OnRewardedAdFailedToOpen` - Called when an ad fails to show.
+* `OnRewardedAdClosed` - Called when an ad is closed. A boolean parameter indicates if the user had watched enough of the ad to be rewarded.
+
 ### User Consent for Tracking and Age Restriction (GDPR)
 
 By default user consent is not given for advertising user tracking and the user is assumed to not be age restricted (16 and over). These settings can be changed through the `Settings` class by calling `DDNA.Instance.Settings` and changing the advertising properties. Changes to either of the values while SmartAds is running will take effect during the next session.
@@ -219,6 +300,16 @@ To remove push notification support for iOS the following files will need to be 
 * `Assets/DeltaDNA/Notifications/IosNotifications.cs`
 * `Assets/DeltaDNA/Editor/iOS/EnableNotificationsPostProcessBuild.cs`
 After the deletion of these two files iOS push notifications will no longer be enabled for the project and the APIs will not be available. Please note that when updating the SDK these files will be re-imported back into the project.
+
+### SmartAds on iOS
+
+We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries via Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
+
+__The ad networks require a minimum target version of 9. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
+
+To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
+
+If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
 ### Unity 4.7 iOS
 
@@ -249,6 +340,12 @@ If your application is setup using the Google Cloud Console you can find instruc
 The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
 If you no longer wish to use push notifications on Android then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folder and *Assets/DeltaDNA/Editor/Android/Dependencies.xml* from the project to decrease the number of methods and the APK size of your game.
+
+### SmartAds on Android
+
+If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
+
+The libraries will be downloaded when *Apply* is selected in the configuration UI or by selecting *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
 
 ### MultiDex; Working Around Android's 65k Method Limit
 1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.
