@@ -1,4 +1,8 @@
 # Change Log
+## [4.12.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.10) (2020-05-28)
+### Added
+- Add the ability to allow image message display simultaneously by changing MultipleActionsForImageMessagesEnabled in Settings
+
 ## [4.12.9](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.9) (2020-01-06)
 ### Fixed
 - Optimizations in image messages
