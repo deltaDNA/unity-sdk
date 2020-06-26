@@ -2,9 +2,11 @@
 
 ## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for both the analytics and SmartAds SDKs.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains sources for both the analytics SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
-The analytics SDK is supported in both Unity 4 and Unity 5, whereas SmartAds is only supported in Unity 5.
+deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
+
+The analytics SDK is supported in both Unity 4, Unity 5, 201x and 2020.
 
 ## Contents
 
@@ -205,88 +207,6 @@ DDNA.Instance
     }))
     .Run();
 ```
-
-## SmartAds
-
-Integrating SmartAds into your Unity project requires native code extensions which we supply separately.  More information on how to access our SmartAds platform is [here](http://docs.deltadna.com/advanced-integration/smart-ads/).  We support iOS and Android platforms.
-
-Most ad networks will start showing ads without additional setup, but the branded networks (HyprMX, LoopMe and ThirdPresence) and Facebook require additional work.  If you're just starting out, pick some of the automatic ones first to familiarise yourself with the SDK, then speak to us.
-
-### Usage
-
-The quickest way to learn how to use SmartAds is to checkout out the example scene in `Assets\DeltaDNA\Example`.  The `SmartAdsExample` class shows how to use both interstitial and rewarded ads.  Support for SmartAds is enabled when the Analytics SDK is started.  The `DDNASmartAds` class defines a number of events which you can register callbacks with to be notified when an ad has opened or closed.
-
-If everything went well the SmartAds service will start fetching ads in the background.  The `DDNASmartAds` class provides the following delegates to report if the service was successfully configured:
-
-* `OnDidRegisterForInterstitialAds` - Called when interstitial ads have been successfully configured.
-* `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads can't be configured for some reason.
-* `OnDidRegisterForRewardedAds` - Called when rewarded ads have successfully been configured.
-* `OnDidFailToRegisterForRewardedAds` - Called when rewarded ads can't be configured for some reason.
-
-### Showing ads
-
-The simplest way to showing an interstitial ad is by creating an instance of `InterstitialAd` and calling `Show()`. The result should be null-checked after `Create()` is called as the creation may fail if the time or session limits have been exceeded.
-```csharp
-InterstitialAd ad = InterstitialAd.Create();
-if (ad != null) {
-    ad.Show();
-}
-```
-Rewarded ads are created in a similar way, but with the `RewardedAd` class instead.
-
-Ads can be controlled via Engage by using the `EngageFactory` and calling one of the `RequestInterstitialAd` or `RequestRewardedAd` methods. Unlike with an `ImageMessage` the factory will always return a non-null ad object in the callback.  The `isReady` method returns true if the ad is ready to show, this checks that an ad has loaded from the network and the Engage rules are satisfied.
-```csharp
-DDNA.Instance.EngageFactory.RequestInterstitialAd(
-    "showInterstitial",
-    (ad) => { /* do something with the ad */});
-```
-
-Alternatively, if more control over the possible Engage responses is needed, Engage checked ads can be created by performing an Engage request and then creating an `InterstitialAd` or `RewardedAd` instance from the returned `Engagement`.  The following example shows how to handle Engage returning an ad or an image message.
-```csharp
-Engagement engagement = new Engagement("showAdOrImageMessage")
-DDNA.Instance.RequestEngagement(
-    engagement,
-    (response) => {
-        RewardedAd ad = RewardedAd.Create(engagement);
-        ImageMessage image = ImageMessage.Create(engagement);
-
-        if (image != null) {
-            // code for showing the Image Message
-        } else if (ad != null) {
-            ad.Show();
-        }
-    });
-```
-
-Checkout the included example project for more details.
-
-### Events
-
-Callbacks can be added to the following events to be notified when an ad has opened or closed.
-* `OnDidRegisterForInterstitialAds` - Called when you have successfully enabled interstitial ads for your game.
-* `OnDidFailToRegisterForInterstitialAds` - Called if interstitial ads are unavailable for some reason.  A string parameter reports a possible error.
-* `OnDidRegisterForRewardedAds` - Called when you have successfully enabled rewarded ads for your game.
-* `OnDidFailToRegisterForRewardedAds` - Called if rewarded ads are unavailable for some reason.  A string parameter reports a possible error.
-
-The `InterstitialAd` class supports the following event callbacks:
-* `OnInterstitialAdOpened` - Called when an ad is opened.
-* `OnInterstitialAdFailedToOpen` - Called when an ad fails to show.
-* `OnInterstitialAdClosed` - Called when an ad is closed.
-
-The `RewardedAd` class supports the following event callbacks:
-* `OnRewardedAdLoaded` - Called when an ad is loaded.
-* `OnRewardedAdExpired` - Called when an ad has expired due to another ad being currently shown.
-* `OnRewardedAdOpened` - Called when an ad is opened.
-* `OnRewardedAdFailedToOpen` - Called when an ad fails to show.
-* `OnRewardedAdClosed` - Called when an ad is closed. A boolean parameter indicates if the user had watched enough of the ad to be rewarded.
-
-### User Consent for Tracking and Age Restriction (GDPR)
-
-By default user consent is not given for advertising user tracking and the user is assumed to not be age restricted (16 and over). These settings can be changed through the `Settings` class by calling `DDNA.Instance.Settings` and changing the advertising properties. Changes to either of the values while SmartAds is running will take effect during the next session.
-
-### Diagnostics
-
-More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the configuration UI, accessible from *DeltaDNA -> Configure* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
 
 ## iOS Integration
 
