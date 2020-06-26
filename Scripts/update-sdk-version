@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+echo "Update SDK version in Settings.cs from v$1 to v$2"
+
+if [ -z "$1" ]; then
+  echo "Old version not supplied as the first argument"
+  exit 1
+elif [ -z "$2" ]; then
+  echo "New version not supplied as the second argument"
+  exit 1
+fi
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' "s/$1/$2/g" Assets/DeltaDNA/Helpers/Settings.cs
+else
+  sed -i "s/$1/$2/g" Assets/DeltaDNA/Helpers/Settings.cs
+fi
+
+echo "Have you updated the CHANGELOG.md?"

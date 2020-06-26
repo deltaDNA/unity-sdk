@@ -1,12 +1,12 @@
 ![deltaDNA logo](https://deltadna.com/wp-content/uploads/2015/06/deltadna_www@1x.png)
 
-## deltaDNA Unity SDK
+## deltaDNA Analytics and SmartAds Unity SDK
 
-The repository contains the sources for the deltaDNA SDK. The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains sources for both the analytics SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
 
-The analytics SDK is supported in both Unity 4, Unity 5 and onwards
+The analytics SDK is supported in both Unity 4, Unity 5, 201x and 2020.
 
 ## Contents
 
@@ -199,13 +199,6 @@ DDNA.Instance
     }))
     .Run();
 ```
-### User Consent for Tracking and Age Restriction (GDPR)
-
-By default user consent is not given for advertising user tracking and the user is assumed to not be age restricted (16 and over). These settings can be changed through the `Settings` class by calling `DDNA.Instance.Settings` and changing the advertising properties. Changes to either of the values while SmartAds is running will take effect during the next session.
-
-### Diagnostics
-
-More details on what ads are being loaded and shown can be turned on by enabling debug notifications from the configuration UI, accessible from *DeltaDNA -> Configure* in the Unity Editor.  Please note that this option is only available in development mode and should never be used for production builds.  On iOS a minimum build target of iOS 10 is required.
 
 ## iOS Integration
 
