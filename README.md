@@ -1,8 +1,8 @@
 ![deltaDNA logo](https://deltadna.com/wp-content/uploads/2015/06/deltadna_www@1x.png)
 
-## deltaDNA Analytics and SmartAds Unity SDK
+## deltaDNA Unity SDK
 
-The repository contains sources for both the analytics SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains sources for the deltaDNA Unity SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
 
@@ -304,8 +304,6 @@ When using an older version of Unity, such as 4.7, the following steps need to b
 4. Point the Unity Editor to use the newly installed Android SDK Tools.
 5. In the Unity Editor set the *Minimum API Level* to *15*.
 
-If SmartAds is imported into the project then the *Minimum API Level* needs to be set to *16* and LoopMe needs to be removed from the ad networks. Additional networks may need to be deselected in order to workaround Android's dex limit when using Unity's older build chain.
-
 ## Forgetting a User (GDPR)
 If a user no longer wishes to be tracked and would like to be forgotten the `ForgetMe()` API can be used. This will stop the SDK from sending/receiving any further information to/from the Platform, as well as initiating a data deletion request on behalf of the user. The SDK will continue to work as it normally would, without any additional work required.
 If a user only wants to stop sending new data, consenting to keep already collected data in our system, the `StopTrackingMe()` method can be used instead. This will function the same as `ForgetMe()`, except the data deletion request will not be sent, thus any data associated with that user will remain on the platform. It is possible to initiate a `ForgetMe()` request after the `StopTrackingMe()` request if requested by the user.
@@ -313,11 +311,6 @@ If a user only wants to stop sending new data, consenting to keep already collec
 If the game supports changing of users then calling `StartSdk(userID)` with a new user ID or `ClearPersistentData()` will restore the previous SDK functionality.
  
 ## Migrations
-
-### Version 4.2
-Configuring which networks should be used for SmartAds has been changed by adding menu items to the Unity Editor, which removes some of the error-prone manual steps. For Android there's no longer the need to have Python installed or set the Android SDK directory in order to download the library dependencies, as the menu item for this task will take care of the steps. If you make changes to the selected networks you will need to commit the changes made to the build.gradle and/or Podfile to your version control, in order for the rest of your team to use the changes.
-
-Since we've had to change how the SmartAds networks are defined you may need to look over the selected networks in case you had previously removed any of them for your project.
 
 ### Version 4.3
 Between version 4.2 and version 4.3 we updated our push notifications to use Firebase (play-services-*-10.2).  This requires changing the way push notification integration works.  To better manage the Android dependencies we now use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver).  This allows other plugins to also specify dependencies on the Firebase/Play-Services libraries and the Unity Jar Resolver will work out which library to use, hopefully reducing duplicate library errors at build time.
@@ -328,9 +321,6 @@ Between version 4.2 and version 4.3 we updated our push notifications to use Fir
 ### Version 4.8
 * *Assets/DeltaDNA* and *Assets/DeltaDNAAds* should be deleted before importing the new SDK to avoid class conflicts and retaining unused files in the project.
 * *DDNA.StartSDK()* methods which take the environment key, Collect, and Engage URLs have been deprecated in favour of configuring these through the UI accessed from the Editor menu under *DeltaDNA -> Configure* and a simpler *DDNA.StartSDK()* method.
-* SmartAds needs to be enabled from the configuration UI.
-* *DDNASmartAds.RegisterForAds()* has been deprecated and will now be called as part of starting the Analytics SDK.
-* Methods for checking if ads are available and showing them from the `SmartAds` instance have been removed in favour of using the `InterstitialAd` and `RewardedAd` objects. See [here](#showing-ads) for more details.
 
 ### Version 4.10
 * `RecordEvent` methods have been changed to return an `EventAction` object, which can be used for Event-Triggered Campaigns. This means that chaining calls on the `DDNA` SDK instance after calling `RecordEvent` is no longer supported.
@@ -341,7 +331,6 @@ You can run a health check once you've upgraded the SDK to identify mistakes rel
 #### Android Dependencies
 After importing the new DeltaDNA SDK package into your project make sure to remove the old *deltadna-sdk-notifications* AAR file from *Assets/DeltaDNA/Plugins/Android*. You also need to remove any *play-services* and *support* AAR and JAR libraries in that location as they will cause conflicts with the libraries downloaded by the Unity Jar Resolver.
 
-As with any SDK update you should update the Android SmartAds libraries from *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*.
 
 #### Android Notifications
 We have added a UI for configuring push notifications on Android, which can be accessed from the menu of the Unity Editor under *DeltaDNA -> Configure*. You will need to fill in the Application and Sender IDs from the Firebase Console for your application if you'd like to use notifications or have been using them with a previous version of our SDK.
