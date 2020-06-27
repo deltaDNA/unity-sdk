@@ -215,15 +215,6 @@ To remove push notification support for iOS the following files will need to be 
 * `Assets/DeltaDNA/Editor/iOS/EnableNotificationsPostProcessBuild.cs`
 After the deletion of these two files iOS push notifications will no longer be enabled for the project and the APIs will not be available. Please note that when updating the SDK these files will be re-imported back into the project.
 
-### SmartAds on iOS
-
-We use [CocoaPods](https://cocoapods.org/) to install our SmartAds library plus the 3rd party ad network libraries via Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The plugin runs `pod install` when a project is being built to download the dependencies and create the *Unity-iPhone.xcworkspace*. ~~You will need to open the workspace file since Unity doesn't know about this. Clicking *Build and Run* is therefore not supported.~~ The latest versions (5.6) will open and build the workspace if it exists so clicking *Build and Run* works fine.
-
-__The ad networks require a minimum target version of 9. If a lower version is used cocoapods will fail and no xcworkspace file will be generated.__
-
-To select which ad networks should be included in the game select *DeltaDNA* from the Unity menu bar, navigate to *SmartAds -> Select Networks*, which will open a tab with the settings. The ad networks can now be selected or deselected, and clicking *Apply* will persist the changes.
-
-If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
 
 ### Unity 4.7 iOS
 
@@ -254,12 +245,6 @@ If your application is setup using the Google Cloud Console you can find instruc
 The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
 If you no longer wish to use push notifications on Android then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folder and *Assets/DeltaDNA/Editor/Android/Dependencies.xml* from the project to decrease the number of methods and the APK size of your game.
-
-### SmartAds on Android
-
-If you make changes to the enabled networks the changes to the `Dependencies.xml` file should be committed to version control.
-
-The libraries will be downloaded when *Apply* is selected in the configuration UI or by selecting *Assets -> Play Services Resolver -> Android Resolver -> Force Resolve*. We recommend doing this after updating the DeltaDNA SDK, or after pulling changes from version control. The SDK will try to detect when the downloaded libraries are stale and log a warning in the Editor console.
 
 ### MultiDex; Working Around Android's 65k Method Limit
 1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.
