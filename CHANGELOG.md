@@ -1,4 +1,9 @@
 # Change Log
+## [4.13.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.0)
+### Fixed
+- Updated Android Notification libraries to fix compatibility issues.
+    - Please add the newly-required `Firebase API Key` and `Firebase Project ID` values from your firebase console to the deltaDNA editor window when updating to this version.
+
 ## [4.12.10](https://github.com/deltaDNA/unity-sdk/releases/tag/4.12.10) (2020-05-28)
 ### Added
 - Add the ability to allow image message display simultaneously by changing MultipleActionsForImageMessagesEnabled in Settings

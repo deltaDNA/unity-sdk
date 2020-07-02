@@ -37,7 +37,7 @@ namespace DeltaDNA.Editor {
         private GUIStyle styleFoldout;
         private bool foldoutAnalytics = true;
         private bool foldoutNotifications = true;
-        private bool foldoutSmartAds = true;
+        private bool foldoutSmartAds = false;
         private Vector2 scrollPosition;
         
         // config
@@ -146,6 +146,16 @@ namespace DeltaDNA.Editor {
                             "Sender ID",
                             "Enter the Sender ID for your application in the Firebase Console"),
                         notifications.senderId);
+                    notifications.projectId = EditorGUILayout.TextField(
+                        new GUIContent(
+                            "Project ID",
+                            "Enter the Project ID for your application in the Firebase Console"),
+                        notifications.projectId);
+                    notifications.apiKey = EditorGUILayout.TextField(
+                        new GUIContent(
+                            "Firebase API Key",
+                            "Enter the API Key for your application in the Firebase Console"),
+                        notifications.apiKey);
                     notifications.listenerService = EditorGUILayout.TextField(
                         new GUIContent(
                             "Listener Service",
@@ -163,91 +173,6 @@ namespace DeltaDNA.Editor {
                             "The title should be the string literal that you would like to appear in the notification, or a localisable string resource from the 'res/values' folder such as '@string/resource_name'"),
                         notifications.notificationTitle);
                 }
-            }
-            
-            GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
-            
-            GUILayout.BeginHorizontal();
-            foldoutSmartAds = CreateFoldout(
-                foldoutSmartAds,
-                "SmartAds",
-                true,
-                styleFoldout);
-            GUILayout.FlexibleSpace();
-            ads.On = GUILayout.Toggle(ads.On, "Enabled");
-            GUILayout.EndHorizontal();
-            if (foldoutSmartAds) {
-                GUILayout.Label("Networks", EditorStyles.boldLabel);
-                
-                EditorGUI.BeginDisabledGroup(!ads.On);
-                
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(
-                    "Name",
-                    EditorStyles.boldLabel,
-                    GUILayout.Width(WindowHelper.WIDTH_LABEL));
-                
-                foreach (var handler in ads.handlers) {
-                    GUILayout.Label(
-                        handler.platformVisible,
-                        EditorStyles.boldLabel,
-                        GUILayout.Width(WindowHelper.WIDTH_TOGGLE));
-                }
-                GUILayout.EndHorizontal();
-                
-                GUILayout.BeginVertical();
-                foreach (IDictionary<string, object> network in ads.networks) {
-                    GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(0.5f));
-                    
-                    GUILayout.BeginHorizontal();
-                    
-                    var name = network[AdsConfigurator.NAME] as string;
-                    var hint = network[AdsConfigurator.INTEGRATION] as string != "manual"
-                        ? "Network works out of the box, "
-                        : "Contact support@deltadna.com for setup details, ";
-                    
-                    var types = network[AdsConfigurator.TYPE] as IList<object>;
-                    if (types.Contains("interstitial") && types.Contains("rewarded")) {
-                        hint += "supports interstitial and rewarded ads";
-                    } else if (types.Contains("interstitial")) {
-                        hint += "supports interstitial ads";
-                    } else {
-                        hint += "supports rewarded ads";
-                    }
-                    
-                    GUILayout.Label(
-                        new GUIContent(name, hint),
-                        GUILayout.Width(WindowHelper.WIDTH_LABEL));
-                    
-                    foreach (var handler in ads.handlers) {
-                        var value = network[handler.platform] as string;
-                        if (value == null) {
-                            // empty label to fill the space
-                            GUILayout.Label("", GUILayout.Width(WindowHelper.WIDTH_TOGGLE));
-                            continue;
-                        }
-                        
-                        ads.enabled[handler][value] = GUILayout.Toggle(
-                            ads.enabled[handler].ContainsKey(value)
-                                ? ads.enabled[handler][value]
-                                : true,
-                            new GUIContent("", name + " for " + handler.platformVisible),
-                            GUILayout.Width(WindowHelper.WIDTH_TOGGLE));
-                    }
-                    
-                    GUILayout.EndHorizontal();
-                }
-                GUILayout.EndVertical();
-                
-                GUILayout.Label("Additional", EditorStyles.boldLabel);
-                
-                EditorGUI.BeginDisabledGroup(!Ads.Editor.InitialisationHelper.IsDevelopment());
-                ads.debugNotifications = GUILayout.Toggle(
-                    ads.debugNotifications,
-                    "Enable debug notifications in development builds");
-                EditorGUI.EndDisabledGroup();
-                
-                EditorGUI.EndDisabledGroup();
             }
             
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
