@@ -36,12 +36,16 @@ namespace DeltaDNA.Editor {
 
         internal const string ATTR_APP_ID = "ddna_application_id";
         internal const string ATTR_SENDER_ID = "ddna_sender_id";
+        internal const string ATTR_PROJECT_ID = "ddna_fcm_project_id";
+        internal const string ATTR_FCM_API_KEY = "ddna_fcm_api_key";
         internal const string ATTR_ICON = "ddna_notification_icon";
         internal const string ATTR_TITLE = "ddna_notification_title";
         private const string DEFAULT_LISTENER_SERVICE = "com.deltadna.android.sdk.notifications.NotificationListenerService";
 
         internal string appId = "";
         internal string senderId = "";
+        internal string projectId = "";
+        internal string apiKey = "";
         internal string listenerService = "";
         internal string notificationIcon = "";
         internal string notificationTitle = "";
@@ -189,11 +193,86 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_SENDER_ID)
                     .Remove();
             }
+            
+            var projectIdPresent = false;
+            if (!string.IsNullOrEmpty(projectId)) {
+                projectIdPresent = true;
+
+                notificationsResources.Add(new XElement(
+                    "string",
+                    new object[] {
+                        new XAttribute("name", ATTR_PROJECT_ID),
+                        projectId
+                    }));
+
+                var element = manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_PROJECT_ID)
+                    .FirstOrDefault();
+                if (element != null) {
+                    element.Attribute(NAMESPACE_ANDROID + "resource").Value = "@string/" + ATTR_PROJECT_ID;
+                } else {
+                    manifest
+                        .Descendants("application")
+                        .First()
+                        .Add(new XElement(
+                            "meta-data",
+                            new object[] {
+                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_PROJECT_ID),
+                                new XAttribute(NAMESPACE_ANDROID + "resource", "@string/" + ATTR_PROJECT_ID)}));
+                }
+            } else {
+                notificationsResources
+                    .Elements()
+                    .Where(e => e.Attribute("name").Value == ATTR_PROJECT_ID)
+                    .Remove();
+                manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_PROJECT_ID)
+                    .Remove();
+            }
+            var fcmApiKeyPresent = false;
+            if (!string.IsNullOrEmpty(apiKey)) {
+                fcmApiKeyPresent = true;
+
+                notificationsResources.Add(new XElement(
+                    "string",
+                    new object[] {
+                        new XAttribute("name", ATTR_FCM_API_KEY),
+                        apiKey
+                    }));
+
+                var element = manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_FCM_API_KEY)
+                    .FirstOrDefault();
+                if (element != null) {
+                    element.Attribute(NAMESPACE_ANDROID + "resource").Value = "@string/" + ATTR_FCM_API_KEY;
+                } else {
+                    manifest
+                        .Descendants("application")
+                        .First()
+                        .Add(new XElement(
+                            "meta-data",
+                            new object[] {
+                                new XAttribute(NAMESPACE_ANDROID + "name", ATTR_FCM_API_KEY),
+                                new XAttribute(NAMESPACE_ANDROID + "resource", "@string/" + ATTR_FCM_API_KEY)}));
+                }
+            } else {
+                notificationsResources
+                    .Elements()
+                    .Where(e => e.Attribute("name").Value == ATTR_FCM_API_KEY)
+                    .Remove();
+                manifest
+                    .Descendants("meta-data")
+                    .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_FCM_API_KEY)
+                    .Remove();
+            }
 
             notifications.Save(NOTIFICATIONS_XML_PATH);
 
             if (!string.IsNullOrEmpty(listenerService)
-                && appIdPresent && senderIdPresent) {
+                && appIdPresent && senderIdPresent && projectIdPresent && appIdPresent) {
                 var service = manifest.Descendants("service").First();
                 service.Attribute(NAMESPACE_ANDROID + "name").Value = listenerService;
                 service.Attribute(NAMESPACE_ANDROID + "enabled").Value = "true";
