@@ -1,5 +1,8 @@
 # Change Log
 ## [4.13.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.0)
+### Added
+- Support for Android Rich Push Notifications
+- Instructions for adding support for Rich Push Notifications in Unity iOS Projects
 ### Fixed
 - Updated Android Notification libraries to fix compatibility issues.
     - Please add the newly-required `Firebase API Key` and `Firebase Project ID` values from your firebase console to the deltaDNA editor window when updating to this version.
