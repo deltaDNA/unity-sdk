@@ -64,11 +64,21 @@ namespace DeltaDNA.Editor {
                             case ATTR_SENDER_ID:
                                 senderId = e.Value;
                                 break;
+                            
+                            case ATTR_PROJECT_ID:
+                                projectId = e.Value;
+                                break;
+                            
+                            case ATTR_FCM_API_KEY:
+                                apiKey = e.Value;
+                                break;
                         }
                     });
             } else {
                 appId = "";
                 senderId = "";
+                projectId = "";
+                apiKey = "";
             }
 
             if (File.Exists(MANIFEST_XML_PATH)) {

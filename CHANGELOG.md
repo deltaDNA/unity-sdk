@@ -1,4 +1,8 @@
 # Change Log
+## [4.13.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.1)
+### Fixed
+- Issues with FCM values not persisting properly on editor reload
+
 ## [4.13.0](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.0)
 ### Added
 - Support for Android Rich Push Notifications
