@@ -107,12 +107,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-unity.txt'**USER_PROGUARD**
 
             **SIGNCONFIG**
+            **PACKAGING_OPTIONS**
+            **SPLITS**
+            **BUILT_APK_LOCATION**
         }
-
-        **PACKAGING_OPTIONS**
-        **SPLITS**
-        **BUILT_APK_LOCATION**
     }
+    **PACKAGING_OPTIONS**
+    **SPLITS**
+    **BUILT_APK_LOCATION**
+    
 
     **SPLITS_VERSION_CODE**
     **SOURCE_BUILD_SETUP**
