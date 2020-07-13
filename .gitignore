@@ -46,3 +46,8 @@ Assets/VSCode*
 # IDEA
 .idea/
 
+# Unity
+*.meta
+*.log
+*.json
+.editorconfig
