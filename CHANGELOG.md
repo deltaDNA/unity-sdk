@@ -1,4 +1,9 @@
 # Change Log
+## [4.13.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.2)
+### Fixed
+- Issues with resolving dependencies for Android notifications
+
+
 ## [4.13.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.1)
 ### Fixed
 - Issues with FCM values not persisting properly on editor reload
