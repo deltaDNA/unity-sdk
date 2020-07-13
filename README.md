@@ -211,107 +211,17 @@ We record if your game was started by the player clicking on a push notification
 To remove push notification support for iOS the following files will need to be removed from the project:
 * `Assets/DeltaDNA/Notifications/IosNotifications.cs`
 * `Assets/DeltaDNA/Editor/iOS/EnableNotificationsPostProcessBuild.cs`
+  
 After the deletion of these two files iOS push notifications will no longer be enabled for the project and the APIs will not be available. Please note that when updating the SDK these files will be re-imported back into the project.
 
 ### Supporting Rich Push Notifications (iOS10+)
 
-The DeltaDNA service allows you to send notifications with additional content such as images to take advantage of the Rich Push functionality that is available from iOS 10 onwards.  To leverage this capability you will need to take the following steps.
+The DeltaDNA service allows you to send notifications with additional content such as images to take advantage of the Rich Push functionality that is available from iOS 10 onwards.  To leverage this capability you will need to take the following steps. (Note that iOS rich push notification functionality is only supported in Unity Editor version 2018.4 or higher)
 
-#### 1. Create the iOS XCode Project
-Within the Unity Editor goto File -> Build Settings..., choose iOS, and click Build. You will be asked for the name of a folder where Unity will generate your XCode project.
+1. Open the DeltaDNA configuration panel, and enable iOS rich push notifications.
+2. Add a custom bundle identifier for the extension. By default this will be set to your main app identifier appended with `.NotificationService`, for example `com.unity3d.deltaDNA.example.NotificationService`.
 
-![Unity Build Settings Image](images/unityBuildSettings.png)
-
-#### 2. Open your new XCode Project
-Now come out of Unity and open the generated project within XCode.
-
-#### 3. Add a new Notification Service Extension
-In XCode, select File -> New -> Target..., select Notification Service Extension and click Next.
-
-![Choose Target Template Image](images/chooseTargetTemplate.png)
-
-Now verify the options for your new target.  You will probably only need to worry about the name.  A good name would be {AppName}NotificationExtension.  Click Finish.
-
-![Choose Target Options Image](images/xcodeTargetOptions.png)
-
-#### 4. Add the code.
-You will now have a new folder in your XCode project with the name of the new service extension you created.  Within that folder you will have 2 files; NotificationService.h and NotificationService.m
-
-Open up the NotificationService.m class and replace the entire contents of the file with the following code:
-
-```objc
-
-#import "NotificationService.h"
-
-@interface NotificationService ()
-
-@property (nonatomic, strong) void (^contentHandler)(UNNotificationContent *contentToDeliver);
-@property (nonatomic, strong) UNMutableNotificationContent *bestAttemptContent;
-
-@end
-
-@implementation NotificationService
-
-- (void)didReceiveNotificationRequest:(UNNotificationRequest *)request withContentHandler:(void (^)(UNNotificationContent * _Nonnull))contentHandler {
-    self.contentHandler = contentHandler;
-    self.bestAttemptContent = [request.content mutableCopy];
-    
-    NSDictionary *userInfo = [request.content.userInfo objectForKey:@"aps"];
-    NSString *imageUrl = [userInfo objectForKey:@"imageUrl"];
-    
-    if (imageUrl == nil) {
-        [self contentComplete];
-        return;
-    }
-    
-    [self loadAttachmentForUrlString:imageUrl completionHandler:^(UNNotificationAttachment *attachment) {
-        if (attachment) {
-            self.bestAttemptContent.attachments = [NSArray arrayWithObject:attachment];
-        }
-        [self contentComplete];
-    }];
-}
-
--(void)contentComplete {
-    self.contentHandler(self.bestAttemptContent);
-}
-
-- (void)serviceExtensionTimeWillExpire {
-    [self contentComplete];
-}
-
--(void)loadAttachmentForUrlString:(NSString *)urlString completionHandler:(void(^)(UNNotificationAttachment *))completionHandler {
-    
-    __block UNNotificationAttachment *attachment = nil;
-    NSString *fileExt = [@"." stringByAppendingString:[urlString pathExtension]];
-    NSURL *attachmentUrl = [NSURL URLWithString:urlString];
-    
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    
-    [[session downloadTaskWithURL:attachmentUrl
-                completionHandler:^(NSURL *temporaryFileLocation, NSURLResponse *response, NSError *error) {
-        if (error != nil) {
-            NSLog(@"%@", error.localizedDescription);
-        } else {
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSURL *localUrl = [NSURL fileURLWithPath:[temporaryFileLocation.path stringByAppendingString:fileExt]];
-            [fileManager moveItemAtURL:temporaryFileLocation toURL:localUrl error:&error];
-            
-            NSError *attachmentError = nil;
-            attachment = [UNNotificationAttachment attachmentWithIdentifier:@"" URL:localUrl options:nil error:&attachmentError];
-            if (attachmentError) {
-                NSLog(@"%@", attachmentError.localizedDescription);
-            }
-        }
-        completionHandler(attachment);
-    }] resume];
-}
-
-@end
-
-```
-#### 5. Build
-Build and deploy your Unity iOS game as usual.
+![DeltaDNA Unity Editor configuration](images/ios_delta_dna_configuration.png)
 
 ### Unity 4.7 iOS
 
