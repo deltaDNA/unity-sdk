@@ -37,7 +37,7 @@ namespace DeltaDNA.Editor
             PBXProject proj = new PBXProject();
             string projPath = PBXProject.GetPBXProjectPath(buildPath);
             proj.ReadFromFile(projPath);
-            string target = GetTargetGUID(proj);
+            string target = GetTargetGuid(proj);
             
             string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup ( EditorUserBuildSettings.selectedBuildTargetGroup );
             List<string> allDefines = definesString.Split ( ';' ).Where(i => i.Length > 0).Select(i => string.Format("{0}=1", i)).ToList ();
@@ -47,9 +47,9 @@ namespace DeltaDNA.Editor
             proj.WriteToFile(projPath);
         }
 
-        private static string GetTargetGUID(PBXProject project)
+        private static string GetTargetGuid(PBXProject project)
         {
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2019_3_OR_NEWER
             return project.GetUnityMainTargetGuid();
 #else
             return project.TargetGuidByName("Unity-iPhone");
