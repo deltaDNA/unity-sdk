@@ -42,7 +42,7 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         PBXProject project = new PBXProject();
         project.ReadFromFile(xcodeProjectPath);
 
-        string guidOfInitialTarget = project.GetUnityMainTargetGuid();
+        string guidOfInitialTarget = GetTargetGuid(project);
 
         string pathToInfoPlist = Path.Combine(buildOutputPath, PATH_TO_INFO_PLIST_INSIDE_TARGET);
         PlistDocument mainProjectInfoPlist = new PlistDocument();
@@ -123,6 +123,15 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         }
 
         project.WriteToFile(xcodeProjectPath);
+    }
+
+    private static string GetTargetGuid(PBXProject project)
+    {
+#if UNITY_2019_3_OR_NEWER
+            return project.GetUnityMainTargetGuid();
+#else
+        return project.TargetGuidByName("Unity-iPhone");
+#endif
     }
 
     private static PlistDocument LoadPlistFromPath(string path)
