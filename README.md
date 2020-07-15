@@ -223,6 +223,11 @@ The DeltaDNA service allows you to send notifications with additional content su
 
 ![DeltaDNA Unity Editor configuration](images/ios_delta_dna_configuration.png)
 
+3. Build the iOS project. 
+4. If you are using Unity editor 2018.4 - 2019.2, you will also need to change the Xcode build system within Xcode (File -> Project Settings -> Build System) to be the legacy build system. This is done automatically for Unity editor versions 2019.3 or higher.
+
+![Xcode Build System Change](images/ios_build_system_change.png)
+
 ### Unity 4.7 iOS
 
 Although no longer officially supported the sdk will build with Unity 4.7.2, but you will need to make a couple of manual changes:
