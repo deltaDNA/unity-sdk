@@ -189,7 +189,7 @@ namespace DeltaDNA.Editor
             {
 #if UNITY_2019_3_OR_NEWER
                 DrawIOSRichPushNotificationSettings();
-#elif UNITY_2018_4_OR_NEWER
+#elif UNITY_2018_4_OR_NEWER || UNITY_2019_1 || UNITY_2019_2
                 EditorGUILayout.HelpBox("In order to support iOS Rich Push Notifications in this version of Unity, you must change the build system in the built XCode project to 'legacy' (File -> Project Settings -> Build System). This is done automatically in 2019.3 or newer.", MessageType.Warning);
                 DrawIOSRichPushNotificationSettings();
 #else
