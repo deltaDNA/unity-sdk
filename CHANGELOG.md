@@ -1,8 +1,11 @@
 # Change Log
+## [4.13.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.3)
+### Added
+- Unity Editor (2018.4+) support for iOS Rich Push Notifications
+
 ## [4.13.2](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.2)
 ### Fixed
 - Issues with resolving dependencies for Android notifications
-
 
 ## [4.13.1](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.1)
 ### Fixed

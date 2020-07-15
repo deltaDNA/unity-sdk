@@ -15,14 +15,14 @@
 //
 
 using DeltaDNA.Ads.Editor;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-namespace DeltaDNA.Editor {
+namespace DeltaDNA.Editor
+{
     public sealed class ConfigurationWindow : EditorWindow {
         
         internal const string CONFIG = "Assets/DeltaDNA/Resources/ddna_configuration.xml";
@@ -30,13 +30,14 @@ namespace DeltaDNA.Editor {
         private readonly XmlSerializer analyticsSerialiser = new XmlSerializer(
             typeof(Configuration),
             new XmlRootAttribute("configuration"));
-        
+
         // UI
         
         private Texture logo;
         private GUIStyle styleFoldout;
         private bool foldoutAnalytics = true;
-        private bool foldoutNotifications = true;
+        private bool foldoutAndroidNotifications = true;
+        private bool foldoutiOSNotifications = true;
         private bool foldoutSmartAds = false;
         private Vector2 scrollPosition;
         
@@ -44,6 +45,7 @@ namespace DeltaDNA.Editor {
         
         private Configuration analytics;
         private NotificationsConfigurator notifications;
+        private iOSConfiguration iOS;
         private AdsConfigurator ads;
         
         void OnEnable() {
@@ -127,12 +129,12 @@ namespace DeltaDNA.Editor {
             
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
             
-            foldoutNotifications = CreateFoldout(
-                foldoutNotifications,
+            foldoutAndroidNotifications = CreateFoldout(
+                foldoutAndroidNotifications,
                 "Android Notifications",
                 true,
                 styleFoldout);
-            if (foldoutNotifications) {
+            if (foldoutAndroidNotifications) {
                 if (!AreAndroidNotificationsInProject()) {
                     GUILayout.Label("Configuration not available due to notification dependencies not present in project.");
                 } else {
@@ -176,7 +178,27 @@ namespace DeltaDNA.Editor {
             }
             
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
-            
+
+
+            foldoutiOSNotifications = CreateFoldout(
+                foldoutiOSNotifications,
+                "iOS Rich Push Notifications",
+                true,
+                styleFoldout);
+            if (foldoutiOSNotifications)
+            {
+#if UNITY_2019_3_OR_NEWER
+                DrawIOSRichPushNotificationSettings();
+#elif UNITY_2018_4_OR_NEWER || UNITY_2019_1 || UNITY_2019_2
+                EditorGUILayout.HelpBox("In order to support iOS Rich Push Notifications in this version of Unity, you must change the build system in the built XCode project to 'legacy' (File -> Project Settings -> Build System). This is done automatically in 2019.3 or newer.", MessageType.Warning);
+                DrawIOSRichPushNotificationSettings();
+#else
+                EditorGUILayout.HelpBox("iOS rich push notifications can only be used in Unity 2018.4 or newer; 2019.3 or newer is recommended.", MessageType.Warning);
+#endif
+            }
+
+            GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
+
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             if (GUILayout.Button(
@@ -185,6 +207,25 @@ namespace DeltaDNA.Editor {
             GUILayout.EndHorizontal();
             
             EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawIOSRichPushNotificationSettings()
+        {
+            EditorGUI.BeginChangeCheck();
+            iOS.enableRichPushNotifications = EditorGUILayout.Toggle(
+                    new GUIContent(
+                        "Enable",
+                        "Tick this to enable rich push notifications in the iOS app"),
+                    iOS.enableRichPushNotifications);
+            iOS.pushNotificationServiceExtensionIdentifier = EditorGUILayout.TextField(
+                new GUIContent(
+                        "Extension Identifier",
+                        "This is the bundle identifier that will be given to the push notification service extension that is added to the XCode project"),
+                    iOS.pushNotificationServiceExtensionIdentifier);
+            if (EditorGUI.EndChangeCheck())
+            {
+                iOS.Dirty = true;
+            }
         }
         
         private void Load() {
@@ -197,7 +238,8 @@ namespace DeltaDNA.Editor {
             } else {
                 analytics = new Configuration();
             }
-            
+
+            iOS = iOSConfiguration.Load();
             notifications = new NotificationsConfigurator();
             ads = new AdsConfigurator();
         }
@@ -210,7 +252,8 @@ namespace DeltaDNA.Editor {
                     File.WriteAllText(CONFIG, stringWriter.ToString());
                 }
             }
-            
+
+            if (iOS.Dirty) iOS.Save();
             if (AreAndroidNotificationsInProject()) notifications.Apply();
             if (AreSmartAdsInProject()) ads.Apply();
             
@@ -223,11 +266,11 @@ namespace DeltaDNA.Editor {
             bool toggleOnLabelClick,
             GUIStyle style) {
 
-            #if UNITY_5_5_OR_NEWER
+#if UNITY_5_5_OR_NEWER
             return EditorGUILayout.Foldout(foldout, content, toggleOnLabelClick, style);
-            #else
+#else
             return EditorGUILayout.Foldout(foldout, content, style);
-            #endif
+#endif
         }
         
         private static bool AreAndroidNotificationsInProject() {
