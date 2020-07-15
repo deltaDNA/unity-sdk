@@ -28,7 +28,7 @@ namespace DeltaDNA.Editor
 {
     public sealed class AddDefineSymbolsToXcodeProject : ScriptableObject
     {
-        #if UNITY_IOS
+#if UNITY_IOS
         private const int BUILD_ORDER_ADD_DEFINES = 0; // after the UnityJarResolver runs pod install
 
         [PostProcessBuild(BUILD_ORDER_ADD_DEFINES)]
@@ -37,7 +37,7 @@ namespace DeltaDNA.Editor
             PBXProject proj = new PBXProject();
             string projPath = PBXProject.GetPBXProjectPath(buildPath);
             proj.ReadFromFile(projPath);
-            string target = proj.TargetGuidByName("Unity-iPhone");
+            string target = GetTargetGuid(proj);
             
             string definesString = PlayerSettings.GetScriptingDefineSymbolsForGroup ( EditorUserBuildSettings.selectedBuildTargetGroup );
             List<string> allDefines = definesString.Split ( ';' ).Where(i => i.Length > 0).Select(i => string.Format("{0}=1", i)).ToList ();
@@ -46,6 +46,15 @@ namespace DeltaDNA.Editor
             proj.UpdateBuildProperty(target, "GCC_PREPROCESSOR_DEFINITIONS", allDefines, new string [] {});
             proj.WriteToFile(projPath);
         }
-        #endif
+
+        private static string GetTargetGuid(PBXProject project)
+        {
+#if UNITY_2019_3_OR_NEWER
+            return project.GetUnityMainTargetGuid();
+#else
+            return project.TargetGuidByName("Unity-iPhone");
+#endif
+        }
+#endif
     }
 } // namespace DeltaDNA.Editor
