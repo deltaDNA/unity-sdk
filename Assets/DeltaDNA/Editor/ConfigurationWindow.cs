@@ -187,24 +187,13 @@ namespace DeltaDNA.Editor
                 styleFoldout);
             if (foldoutiOSNotifications)
             {
-#if UNITY_2018_4_OR_NEWER
-                EditorGUI.BeginChangeCheck();
-                iOS.enableRichPushNotifications = EditorGUILayout.Toggle(
-                        new GUIContent(
-                            "Enable",
-                            "Tick this to enable rich push notifications in the iOS app"),
-                        iOS.enableRichPushNotifications);
-                iOS.pushNotificationServiceExtensionIdentifier = EditorGUILayout.TextField(
-                    new GUIContent(
-                            "Extension Identifier",
-                            "This is the bundle identifier that will be given to the push notification service extension that is added to the XCode project"),
-                        iOS.pushNotificationServiceExtensionIdentifier);
-                if (EditorGUI.EndChangeCheck())
-                {
-                    iOS.Dirty = true;
-                }
+#if UNITY_2019_3_OR_NEWER
+                DrawIOSRichPushNotificationSettings();
+#elif UNITY_2018_4_OR_NEWER
+                EditorGUILayout.HelpBox("In order to support iOS Rich Push Notifications in this version of Unity, you must change the build system in the built XCode project to 'legacy' (File -> Project Settings -> Build System). This is done automatically in 2019.3 or newer.", MessageType.Warning);
+                DrawIOSRichPushNotificationSettings();
 #else
-                EditorGUILayout.HelpBox("iOS rich push notifications can only be used in Unity 2018.4 or newer.", MessageType.Warning);
+                EditorGUILayout.HelpBox("iOS rich push notifications can only be used in Unity 2018.4 or newer; 2019.3 or newer is recommended.", MessageType.Warning);
 #endif
             }
 
@@ -218,6 +207,25 @@ namespace DeltaDNA.Editor
             GUILayout.EndHorizontal();
             
             EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawIOSRichPushNotificationSettings()
+        {
+            EditorGUI.BeginChangeCheck();
+            iOS.enableRichPushNotifications = EditorGUILayout.Toggle(
+                    new GUIContent(
+                        "Enable",
+                        "Tick this to enable rich push notifications in the iOS app"),
+                    iOS.enableRichPushNotifications);
+            iOS.pushNotificationServiceExtensionIdentifier = EditorGUILayout.TextField(
+                new GUIContent(
+                        "Extension Identifier",
+                        "This is the bundle identifier that will be given to the push notification service extension that is added to the XCode project"),
+                    iOS.pushNotificationServiceExtensionIdentifier);
+            if (EditorGUI.EndChangeCheck())
+            {
+                iOS.Dirty = true;
+            }
         }
         
         private void Load() {
