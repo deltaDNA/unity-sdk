@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-#if (UNITY_IOS && UNITY_2018_4_OR_NEWER)
+#if UNITY_IOS && (UNITY_2018_4_OR_NEWER || UNITY_2019_1 || UNITY_2019_2)
 using System;
 using System.IO;
 using DeltaDNA.Editor;
