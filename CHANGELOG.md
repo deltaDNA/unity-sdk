@@ -1,4 +1,8 @@
 # Change Log
+## [4.14.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.4)
+### Fixed
+- Issue where Image Messages could appear behind game UI in Unity 2020
+
 ## [4.13.3](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.3)
 ### Added
 - Unity Editor (2018.4+) support for iOS Rich Push Notifications
