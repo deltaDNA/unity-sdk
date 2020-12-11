@@ -2,11 +2,14 @@
 
 ## deltaDNA Unity SDK
 
-The repository contains sources for the deltaDNA Unity SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+We are currently in the process of migrating the deltaDNA SDK to the Unity Package Manager. Until that process is completed, the Releases hosted here (from version 5.0.0 and up) will no longer match the source code in this repository. The repository contains sources for the deltaDNA Unity SDK up to version 4.13.4, the final release of major version 4. 
+
+The latest version of the analytics SDK is supported in Unity 2018.4 and newer.
+
+ The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
 
-The analytics SDK is supported in both Unity 4, Unity 5, 201x and 2020.
 
 ## Contents
 
