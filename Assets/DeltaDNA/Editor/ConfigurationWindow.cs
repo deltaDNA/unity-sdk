@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) 2018 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,18 @@
 // limitations under the License.
 //
 
-using DeltaDNA.Ads.Editor;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.WSA;
+using Application = UnityEngine.Application;
 
 namespace DeltaDNA.Editor
 {
     public sealed class ConfigurationWindow : EditorWindow {
-        
-        internal const string CONFIG = "Assets/DeltaDNA/Resources/ddna_configuration.xml";
-        
-        private readonly XmlSerializer analyticsSerialiser = new XmlSerializer(
-            typeof(Configuration),
-            new XmlRootAttribute("configuration"));
 
         // UI
         
@@ -38,31 +34,32 @@ namespace DeltaDNA.Editor
         private bool foldoutAnalytics = true;
         private bool foldoutAndroidNotifications = true;
         private bool foldoutiOSNotifications = true;
-        private bool foldoutSmartAds = false;
         private Vector2 scrollPosition;
         
         // config
         
-        private Configuration analytics;
         private NotificationsConfigurator notifications;
         private iOSConfiguration iOS;
-        private AdsConfigurator ads;
         
         void OnEnable() {
             titleContent = new GUIContent(
                 "Configuration",
-                AssetDatabase.LoadAssetAtPath<Texture>("Assets/DeltaDNA/Editor/Resources/Logo_16.png"));
+                AssetDatabase.LoadAssetAtPath<Texture>(WindowHelper.FindFile("Editor/Resources/Logo_16.png")));
             
             Load();
         }
+
+
         
         void OnGUI() {
             // workaround for OnEnable weirdness when initialising values
-            if (logo == null) logo = AssetDatabase.LoadAssetAtPath<Texture>("Assets/DeltaDNA/Editor/Resources/Logo.png");
+            if (logo == null) logo = AssetDatabase.LoadAssetAtPath<Texture>(WindowHelper.FindFile("Editor/Resources/Logo.png"));
             if (styleFoldout == null) styleFoldout = new GUIStyle(EditorStyles.foldout) {
                 fontStyle = FontStyle.Bold,
                 fontSize = 12
             };
+
+            SerializedObject cfg = GetSerializedConfig();
             
             GUILayout.Label(logo, GUILayout.ExpandWidth(false));
             
@@ -74,61 +71,83 @@ namespace DeltaDNA.Editor
                 "Analytics",
                 true,
                 styleFoldout);
-            if (foldoutAnalytics) {
+            if (foldoutAnalytics) 
+            {
                 GUILayout.Label("Required", EditorStyles.boldLabel);
                 
-                analytics.environmentKeyDev = EditorGUILayout.TextField(
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("environmentKeyDev"),
                     new GUIContent(
                         "Environment key (dev)",
-                        "Enter your game's development environment key"),
-                    analytics.environmentKeyDev);
-                analytics.environmentKeyLive = EditorGUILayout.TextField(
+                        "Enter your game's development environment key"));
+
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("environmentKeyLive"),
                     new GUIContent(
                         "Environment key (live)",
-                        "Enter your game's live environment key"),
-                    analytics.environmentKeyLive);
-                analytics.environmentKey = EditorGUILayout.Popup(
+                        "Enter your game's live environment key"));
+
+                SerializedProperty env_key = cfg.FindProperty("environmentKey");
+
+                env_key.intValue = EditorGUILayout.Popup(
+
                     new GUIContent(
                         "Selected key",
                         "Select which environment key to use for the build"),
-                    analytics.environmentKey,
+                    env_key.intValue,
                     new GUIContent[] {
                         new GUIContent("Development"),
                         new GUIContent("Live")});
-                analytics.collectUrl = EditorGUILayout.TextField(
+                
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("collectUrl"),
                     new GUIContent(
                         "Collect URL",
-                        "Enter your game's collect URL"),
-                    analytics.collectUrl);
-                analytics.engageUrl = EditorGUILayout.TextField(
+                        "Enter your game's collect URL"));
+
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("engageUrl"),
                     new GUIContent(
                         "Engage URL",
-                        "Enter your game's engage URL"),
-                    analytics.engageUrl);
+                        "Enter your game's engage URL"));
+
+
                 
                 GUILayout.Label("Optional", EditorStyles.boldLabel);
                 
-                analytics.hashSecret = EditorGUILayout.TextField(
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("hashSecret"),
                     new GUIContent(
                         "Hash secret",
-                        "Enter your game's hash secret if hashing is enabled"),
-                    analytics.hashSecret);
-                EditorGUI.BeginDisabledGroup(analytics.useApplicationVersion);
-                analytics.clientVersion = EditorGUILayout.TextField(
+                        "Enter your game's hash secret if hashing is enabled"));
+
+                EditorGUI.BeginDisabledGroup(cfg.FindProperty("useApplicationVersion").boolValue);
+
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("clientVersion"),
                     new GUIContent(
                         "Client version",
-                        "Enter your game's version or use the Editor value by enabling the checkbox below"),
-                    analytics.clientVersion);
+                        "Enter your game's version or use the Editor value by enabling the checkbox below"));
+
                 EditorGUI.EndDisabledGroup();
-                analytics.useApplicationVersion = GUILayout.Toggle(
-                    analytics.useApplicationVersion,
+
+                EditorGUILayout.PropertyField(
+                    cfg.FindProperty("useApplicationVersion"),
                     new GUIContent(
                         "Use application version",
                         "Check to use the application/bundle version as set in the Editor"));
+
+                if (cfg.hasModifiedProperties)
+                {
+                    cfg.ApplyModifiedProperties();
+                    AssetDatabase.SaveAssets();
+                }
             }
             
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
             
+            EditorGUI.BeginChangeCheck();
+
             foldoutAndroidNotifications = CreateFoldout(
                 foldoutAndroidNotifications,
                 "Android Notifications",
@@ -174,9 +193,22 @@ namespace DeltaDNA.Editor
                             "Notification Title",
                             "The title should be the string literal that you would like to appear in the notification, or a localisable string resource from the 'res/values' folder such as '@string/resource_name'"),
                         notifications.notificationTitle);
+                    
+                    if (GUILayout.Button("Apply Android Notification Settings"))
+                    {
+                        ApplyAndroidNotificationSettings();
+                    }
                 }
             }
             
+            if (EditorGUI.EndChangeCheck())
+            {
+                if (AreAndroidNotificationsInProject()) {
+                    notifications.Apply();
+                    Debug.Log("[DeltaDNA] Changes have been applied to XML configuration files, please commit the updates to version control");
+                }
+            }
+
             GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
 
 
@@ -196,15 +228,6 @@ namespace DeltaDNA.Editor
                 EditorGUILayout.HelpBox("iOS rich push notifications can only be used in Unity 2018.4 or newer; 2019.3 or newer is recommended.", MessageType.Warning);
 #endif
             }
-
-            GUILayout.Space(WindowHelper.HEIGHT_SEPARATOR);
-
-            GUILayout.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            if (GUILayout.Button(
-                "Apply",
-                GUILayout.Width(WindowHelper.WIDTH_BUTTON))) Apply();
-            GUILayout.EndHorizontal();
             
             EditorGUILayout.EndScrollView();
         }
@@ -224,40 +247,14 @@ namespace DeltaDNA.Editor
                     iOS.pushNotificationServiceExtensionIdentifier);
             if (EditorGUI.EndChangeCheck())
             {
-                iOS.Dirty = true;
+                iOS.Save();
+                Debug.Log("[DeltaDNA] Changes have been applied to XML configuration files, please commit the updates to version control");
             }
         }
         
         private void Load() {
-            if (File.Exists(CONFIG)) {
-                using (var stringReader = new StringReader(File.ReadAllText(CONFIG))) {
-                    using (var xmlReader = XmlReader.Create(stringReader)) {
-                        analytics = analyticsSerialiser.Deserialize(xmlReader) as Configuration;
-                    }
-                }
-            } else {
-                analytics = new Configuration();
-            }
-
             iOS = iOSConfiguration.Load();
             notifications = new NotificationsConfigurator();
-            ads = new AdsConfigurator();
-        }
-        
-        private void Apply() {
-            using (var stringWriter = new StringWriter()) {
-                using (XmlWriter xmlWriter = XmlWriter.Create(
-                    stringWriter, new XmlWriterSettings() { Indent = true })) {
-                    analyticsSerialiser.Serialize(xmlWriter, analytics);
-                    File.WriteAllText(CONFIG, stringWriter.ToString());
-                }
-            }
-
-            if (iOS.Dirty) iOS.Save();
-            if (AreAndroidNotificationsInProject()) notifications.Apply();
-            if (AreSmartAdsInProject()) ads.Apply();
-            
-            Debug.Log("[DeltaDNA] Changes have been applied to XML configuration files, please commit the updates to version control");
         }
 
         private static bool CreateFoldout(
@@ -273,12 +270,119 @@ namespace DeltaDNA.Editor
 #endif
         }
         
-        private static bool AreAndroidNotificationsInProject() {
-            return Directory.Exists("Assets/Plugins/Android/deltadna-sdk-unity-notifications");
+        private static bool AreAndroidNotificationsInProject() 
+        {
+            return Directory.Exists(NotificationsConfigurator.NOTIFICATION_PATH);
+        }
+
+        private SerializedObject GetSerializedConfig()
+        {
+            Configuration cfg = AssetDatabase.LoadAssetAtPath<Configuration>(Configuration.FULL_ASSET_PATH);
+
+            if (cfg != null)
+            {
+                return new SerializedObject(cfg);
+            }
+
+            // If we couldn't load the asset we should create a new instance.
+            cfg = ScriptableObject.CreateInstance<Configuration>();
+
+            if (!AssetDatabase.IsValidFolder(Configuration.ASSET_DIRECTORY))
+            {
+                AssetDatabase.CreateFolder(Configuration.RESOURCES_CONTAINER, Configuration.RESOURCES_DIRECTORY);
+            }
+            AssetDatabase.CreateAsset(cfg, Configuration.FULL_ASSET_PATH);
+            AssetDatabase.SaveAssets();
+
+            return new SerializedObject(cfg);
         }
         
-        private static bool AreSmartAdsInProject() {
-            return Directory.Exists("Assets/DeltaDNA/Ads");
+        private void ApplyAndroidNotificationSettings()
+        {
+            // Ensure that all fields are filled in
+            if (
+                String.IsNullOrEmpty(notifications.apiKey)
+                || String.IsNullOrEmpty(notifications.appId)
+                || String.IsNullOrEmpty(notifications.projectId)
+                || String.IsNullOrEmpty(notifications.senderId)
+            )
+            {
+                Debug.LogError(
+                    "Some required information for Android notifications is missing from the deltaDNA configuration. " +
+                    "Please check these values are present: Application ID, Project ID, Sender ID and Firebase API Key." +
+                    "The notifications configuration has not been saved."
+                );
+                return;
+            }
+
+            try
+            {
+                CopyAndroidNotificationFolder();
+                // Inform the user that the plugin has been correctly configured in their assets folder
+                Debug.Log(
+                    "deltaDNA Android notification setup complete. The configured plugin has been updated in your Assets/Plugins/Android folder"
+                );
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to update the android notification configuration, changes have not been saved.");
+                Debug.LogError(e.Message);
+                Debug.LogError(e.StackTrace);
+            }
+            
+        }
+
+        private void CopyAndroidNotificationFolder()
+        {
+            string pluginFolder = NotificationsConfigurator.NOTIFICATION_PATH;
+            string pluginTargetPath = $"Plugins/Android/{NotificationsConfigurator.PLUGIN_FOLDER_NAME}.androidlib";
+            string assetPath = $"Assets/{pluginTargetPath}";
+            string targetFolder = $"{Application.dataPath}/{pluginTargetPath}";
+
+            AssetDatabase.DeleteAsset(assetPath);
+            if (Directory.Exists(targetFolder))
+            {
+                Directory.Delete(targetFolder, true);
+            }
+            DirectoryCopy(pluginFolder, targetFolder);
+            AssetDatabase.ImportAsset(assetPath);
+        }
+
+        // Adapted from https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories
+        // as there was no inbuilt method to copy a directory recursively.
+        private static void DirectoryCopy(string sourceDirName, string destDirName)
+        {
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+            
+            Directory.CreateDirectory(destDirName);        
+
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                if (file.Extension.EndsWith("meta"))
+                {
+                    continue;
+                }
+                string tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+            
+            foreach (DirectoryInfo subdir in dirs)
+            {
+                string tempPath = Path.Combine(destDirName, subdir.Name);
+                DirectoryCopy(subdir.FullName, tempPath);
+            }
         }
     }
+    
+
 }

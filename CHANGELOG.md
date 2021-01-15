@@ -1,4 +1,33 @@
 # Change Log
+## [5.0.1](https://github.com/deltaDNA/unity-sdk/releases/tag/5.0.1)
+
+### Fixed
+- Various warnings and errors resolved.
+- Android notifications credentials will now be correctly passed to the built project (note that you may need to reconfigure android notifications in the deltaDNA control panel when upgrading to v5)
+- Included missing parameters at SDK start-up to enable use of Session Parameters for campaign segmentation.
+
+## [5.0.0] - 2020-09-11
+
+NOTE: Some files have been moved in this release. If you have trouble uprading, please delete your existing version of the SDK and reinstall cleanly.
+
+### Changed
+- Package structure has been adjusted so that all relevant files are contained by the deltaDNA folder for convenience and to support assembly definitions
+- SDK configuration is now stored in a ScriptableObject (Assets/Resources/ddna_configuration.asset) instead of an XML file
+
+### Added
+- Events Manager for simple event and parameter creation
+- Automatic 'heartbeat' event that is recorded every 60 seconds to ensure sessions are tracked more accurately
+- Automatic starting of new session if game is paused (e.g. mobile app sent to background) for more than 5 minutes
+- Automatic recording of gameEnded event with 'paused' state when game is paused
+- Automatic recording of gameEnded event with 'stopped' state when game is exited (NOTE: this will not be uploaded until the game is started again later)
+- Assembly Definition files for deltaDNA and deltaDNA.Editor assemblies
+
+### Fixed
+- Errors when attempting to build for Android API level greater than 28
+
+### Removed
+- Obsolete SmartAds files
+
 ## [4.13.4](https://github.com/deltaDNA/unity-sdk/releases/tag/4.13.4)
 ### Fixed
 - Issue where Image Messages could appear behind game UI in Unity 2020

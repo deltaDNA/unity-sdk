@@ -14,6 +14,9 @@
 // limitations under the License.
 //
 
+using System;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -50,6 +53,66 @@ namespace DeltaDNA.Editor {
                     true)
                     .Show();
             }
+        }
+
+        internal static string FindFile(string searchPattern)
+        {
+            // Search for file in these folders.
+            var searchFolders = new[] {
+                "Packages/com.unity.deltadna.sdk",
+                "Packages/com.unity.accelerate",
+                "Assets",
+                "Assets/DeltaDNA"
+	    };
+            string adaptersInfoPath = "";
+            foreach (var folder in searchFolders)
+            {
+                try
+                {
+                    adaptersInfoPath = Directory.GetFiles(folder, searchPattern,
+                        SearchOption.AllDirectories).FirstOrDefault();
+                    if (adaptersInfoPath != null)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return adaptersInfoPath;
+        }
+
+        internal static string FindDir(string searchPattern)
+        {
+            // Search for file in these folders.
+            var searchFolders = new[] {
+                "Packages/com.unity.deltadna.sdk",
+                "Packages/com.unity.accelerate",
+                "Assets",
+                "Assets/DeltaDNA"
+	    };
+            string adaptersInfoPath = "";
+            foreach (var folder in searchFolders)
+            {
+                try
+                {
+                    adaptersInfoPath = Directory.GetDirectories(folder, searchPattern,
+                        SearchOption.AllDirectories).FirstOrDefault();
+                    if (adaptersInfoPath != null)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return adaptersInfoPath;
         }
     }
 }
