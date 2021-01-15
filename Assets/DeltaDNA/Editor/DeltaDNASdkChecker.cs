@@ -32,16 +32,9 @@ namespace DeltaDNA.Editor {
         }
 
         protected override void PerformCheck(IList<DDNATuple<string, Severity>> problems) {
-            if (File.Exists(ConfigurationWindow.CONFIG)) {
-                Configuration config;
-                using (var stringReader = new StringReader(File.ReadAllText(ConfigurationWindow.CONFIG))) {
-                    using (var xmlReader = XmlReader.Create(stringReader)) {
-                        config = new XmlSerializer(
-                            typeof(Configuration), new XmlRootAttribute("configuration"))
-                            .Deserialize(xmlReader) as Configuration;
-                    }
-                }
-                
+             if (File.Exists(Configuration.FULL_ASSET_PATH)) {
+                Configuration config = Configuration.GetAssetInstance();   
+
                 if (string.IsNullOrEmpty(config.environmentKeyDev)
                     && string.IsNullOrEmpty(config.environmentKeyLive)) {
                     problems.Add(DDNATuple.New(
@@ -57,16 +50,6 @@ namespace DeltaDNA.Editor {
                     problems.Add(DDNATuple.New(
                         "[Analytics] Engage URL has not been configured.",
                         Severity.ERROR));
-                }
-                
-                if (Ads.Editor.InitialisationHelper.IsDevelopment() && config.environmentKey == 1) {
-                    problems.Add(DDNATuple.New(
-                        "[Analytics] Using live environment key for a development build.",
-                        Severity.WARNING));
-                } else if (!Ads.Editor.InitialisationHelper.IsDevelopment() && config.environmentKey == 0) {
-                    problems.Add(DDNATuple.New(
-                        "[Analytics] Using dev environment key for a live build.",
-                        Severity.WARNING));
                 }
                 
                 if (string.IsNullOrEmpty(config.clientVersion) && !config.useApplicationVersion) {

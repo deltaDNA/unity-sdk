@@ -1,0 +1,16 @@
+{
+    "name": "Unity.DeltaDNA.SDK.Editor",
+    "references": [
+        "Unity.DeltaDNA.SDK"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

@@ -58,7 +58,7 @@ namespace DeltaDNA.Editor{
         void OnEnable() {
             titleContent = new GUIContent(
                 "Events",
-                AssetDatabase.LoadAssetAtPath<Texture>("Assets/DeltaDNA/Editor/Resources/Logo_16.png"));
+                AssetDatabase.LoadAssetAtPath<Texture>("Packages/com.unity.deltadna.sdk/Editor/Resources/Logo_16.png"));
             
             Load();
         }
@@ -156,7 +156,11 @@ namespace DeltaDNA.Editor{
 
         private void CheckEventsRequest(){
             if (pending_events_request == null || !pending_events_request.isDone) return;
+#if UNITY_2020_2_OR_NEWER
+            if (pending_events_request.webRequest.result == UnityWebRequest.Result.ConnectionError) {
+#else
             if (pending_events_request.webRequest.isNetworkError){
+#endif
                 Debug.LogError(pending_events_request.webRequest.responseCode == 400
                     ? "Invalid API Credentials"
                     : "Something went wrong when trying to retrieve events. Please try again later.");
@@ -208,7 +212,11 @@ namespace DeltaDNA.Editor{
 
         private void CheckEnvironmentRequest(){
             if (pending_environment_request == null || !pending_environment_request.isDone) return;
+#if UNITY_2020_2_OR_NEWER
+            if (pending_environment_request.webRequest.result == UnityWebRequest.Result.ConnectionError) {
+#else
             if (pending_environment_request.webRequest.isNetworkError){
+#endif
                 Debug.LogError(pending_environment_request.webRequest.responseCode == 400
                     ? "Invalid API Credentials"
                     : "Something went wrong when trying to retrieve API key. Please try again later.");
@@ -240,7 +248,12 @@ namespace DeltaDNA.Editor{
 
         private void CheckTokenRequest(){
             if (pending_request == null || !pending_request.isDone) return;
+#if UNITY_2020_2_OR_NEWER
+            if (pending_request.webRequest.result == UnityWebRequest.Result.ConnectionError)
+            {
+#else
             if (pending_request.webRequest.isNetworkError){
+#endif
                 Debug.LogError(pending_request.webRequest.responseCode == 400
                     ? "Invalid API Credentials"
                     : "Something went wrong when trying to retrieve API key. Please try again later.");
@@ -343,6 +356,15 @@ namespace DeltaDNA.Editor{
         
         
         private void Apply() {
+            if (!Directory.Exists("Assets/DeltaDNA/"))
+            {
+                Directory.CreateDirectory("Assets/DeltaDNA/");
+            }
+            if (!Directory.Exists("Assets/DeltaDNA/Resources/"))
+            {
+                Directory.CreateDirectory("Assets/DeltaDNA/Resources/");
+            }
+
             using (var stringWriter = new StringWriter()) {
                 using (XmlWriter xmlWriter = XmlWriter.Create(
                     stringWriter, new XmlWriterSettings() { Indent = true })) {

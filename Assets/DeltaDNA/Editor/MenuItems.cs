@@ -45,6 +45,12 @@ namespace DeltaDNA.Editor {
         public static void EventDefinitions() {
             WindowHelper.Show<EventsWindow>("Events");
         }
+
+        [MenuItem(MENU_PATH + "/" + EventsManagerWindow.WINDOW_TITLE, priority = 3)]
+        public static void EventManager()
+        {
+            WindowHelper.Show<EventsManagerWindow>(EventsManagerWindow.WINDOW_TITLE);
+        }
         #endif
         [MenuItem(MENU_PATH + "/Run Health Check", priority = 3)]
         public static void CheckSdk() {

@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) 2017 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,10 @@ namespace DeltaDNA.Editor {
             new NotificationsConfigurator().Apply();
         }
 
-        private const string PATH = "Assets/Plugins/Android/deltadna-sdk-unity-notifications";
-        internal const string NOTIFICATIONS_XML_PATH = PATH + "/res/values/values.xml";
-        internal const string MANIFEST_XML_PATH = PATH + "/AndroidManifest.xml";
+        internal static readonly string PLUGIN_FOLDER_NAME = "deltadna-sdk-unity-notifications";
+        internal static readonly string NOTIFICATION_PATH = Path.GetFullPath(WindowHelper.FindDir($"Runtime/Plugins/Android/{PLUGIN_FOLDER_NAME}"));
+        internal static readonly string NOTIFICATIONS_XML_PATH = NOTIFICATION_PATH + "/res/values/values.xml";
+        internal static readonly string MANIFEST_XML_PATH = NOTIFICATION_PATH + "/AndroidManifest.xml";
         internal static XNamespace NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
 
         internal const string ATTR_APP_ID = "ddna_application_id";
@@ -114,7 +115,7 @@ namespace DeltaDNA.Editor {
         }
         
         internal void Apply() {
-            if (!Directory.Exists(PATH)) return;
+            if (!Directory.Exists(NOTIFICATION_PATH)) return;
 
             if (!File.Exists(NOTIFICATIONS_XML_PATH)) {
                 Directory.CreateDirectory(NOTIFICATIONS_XML_PATH.Substring(
@@ -241,9 +242,9 @@ namespace DeltaDNA.Editor {
                     .Where(e => e.Attribute(NAMESPACE_ANDROID + "name").Value == ATTR_PROJECT_ID)
                     .Remove();
             }
-            var fcmApiKeyPresent = false;
+            //var fcmApiKeyPresent = false;
             if (!string.IsNullOrEmpty(apiKey)) {
-                fcmApiKeyPresent = true;
+                //fcmApiKeyPresent = true;
 
                 notificationsResources.Add(new XElement(
                     "string",
