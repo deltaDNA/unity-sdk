@@ -60,10 +60,18 @@ namespace DeltaDNA
         {
             UnityWebRequest request = ((UnityWebRequestAsyncOperation)asyncOperation).webRequest;
 
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (request.isHttpError || request.isNetworkError)
+#endif
             {
                 Debug.LogError("Failed to create event: " + request.error);
+#if UNITY_2020_2_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError)
+#else
                 if (!request.isNetworkError)
+#endif
                 {
                     Debug.LogError(request.downloadHandler.text);
                 }
@@ -100,7 +108,11 @@ namespace DeltaDNA
         {
             UnityWebRequest request = ((UnityWebRequestAsyncOperation)asyncOperation).webRequest;
 
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (request.isHttpError || request.isNetworkError)
+#endif
             {
                 Debug.Log("Failed to add parameter: " + request.error);
             }
@@ -127,7 +139,11 @@ namespace DeltaDNA
         {
             UnityWebRequest request = ((UnityWebRequestAsyncOperation)asyncOperation).webRequest;
 
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (request.isHttpError || request.isNetworkError)
+#endif
             {
                 Debug.Log("Failed to remove parameter: " + request.error);
             }
@@ -154,7 +170,11 @@ namespace DeltaDNA
         {
             UnityWebRequest request = ((UnityWebRequestAsyncOperation)asyncOperation).webRequest;
 
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (request.isHttpError || request.isNetworkError)
+#endif
             {
                 Debug.Log("Failed to publish event: " + request.error);
             }

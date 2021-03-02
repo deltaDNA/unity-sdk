@@ -1,4 +1,4 @@
-﻿//
+//
 // Copyright (c) 2016 deltaDNA Ltd. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ namespace DeltaDNA {
 
 public class BasicExample : MonoBehaviour {
 
+#pragma warning disable 649
     [SerializeField]
     private Transform cubeObj;
     [SerializeField]
@@ -30,6 +31,7 @@ public class BasicExample : MonoBehaviour {
     private Text popUpContent;
     [SerializeField]
     private Text popUpTitle;
+#pragma warning restore 649
 
     // Use this for initialization
     void Start () {
@@ -75,15 +77,19 @@ public class BasicExample : MonoBehaviour {
             // do something with the game parameters
             Debug.Log("Received game parameters from event trigger: " + gameParameters);
         });
-        // Start the SDK. We recommend using the configuration UI for setting your game's
-        // keys and calling StartSDK() or StartSDK(userID) instead.
-        DDNA.Instance.StartSDK(new Configuration() {
-            environmentKeyDev = "76410301326725846610230818914037",
+
+        // To use your own configuration, fill in the DDNA config UI in the Unity editor 
+        // and use DDNA.Instance.StartSDK() below.
+        DDNA.Instance.StartSDK(new Configuration()
+        {
+            environmentKeyDev = "48380028118965502444250662515743",
             environmentKey = 0,
-            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
-            engageUrl = "https://engage2470ntysd.deltadna.net",
+            collectUrl = "https://collect16056nwdmf.deltadna.net/collect/api",
+            engageUrl = "https://engage16056nwdmf.deltadna.net",
             useApplicationVersion = true
         });
+        
+        Debug.LogWarning("DeltaDNA has started with a default configuration. To use your own config, edit the BasicExample script.");
     }
 
     void FixedUpdate() {
@@ -191,27 +197,33 @@ public class BasicExample : MonoBehaviour {
     }
 
     public void OnStartSDKBtn_Clicked() {
-        // Start the SDK. We recommend using the configuration UI for setting your game's
-        // keys and calling StartSDK() or StartSDK(userID) instead.
-        DDNA.Instance.StartSDK(new Configuration() {
-            environmentKeyDev = "76410301326725846610230818914037",
+        // To use your own configuration, fill in the DDNA config UI in the Unity editor 
+        // and use DDNA.Instance.StartSDK() below.
+        DDNA.Instance.StartSDK(new Configuration()
+        {
+            environmentKeyDev = "48380028118965502444250662515743",
             environmentKey = 0,
-            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
-            engageUrl = "https://engage2470ntysd.deltadna.net",
+            collectUrl = "https://collect16056nwdmf.deltadna.net/collect/api",
+            engageUrl = "https://engage16056nwdmf.deltadna.net",
             useApplicationVersion = true
         });
+        
+        Debug.LogWarning("DeltaDNA has started with a default configuration. To use your own config, edit the BasicExample script.");
     }
 
     public void OnStartSDKNewUserBtn_Clicked() {
-        // Start the SDK. We recommend using the configuration UI for setting your game's
-        // keys and calling StartSDK() or StartSDK(userID) instead.
-        DDNA.Instance.StartSDK(new Configuration() {
-            environmentKeyDev = "76410301326725846610230818914037",
+        // To use your own configuration, fill in the DDNA config UI in the Unity editor 
+        // and use DDNA.Instance.StartSDK() below.
+        DDNA.Instance.StartSDK(new Configuration()
+        {
+            environmentKeyDev = "48380028118965502444250662515743",
             environmentKey = 0,
-            collectUrl = "https://collect2470ntysd.deltadna.net/collect/api",
-            engageUrl = "https://engage2470ntysd.deltadna.net",
+            collectUrl = "https://collect16056nwdmf.deltadna.net/collect/api",
+            engageUrl = "https://engage16056nwdmf.deltadna.net",
             useApplicationVersion = true
         }, System.Guid.NewGuid().ToString());
+        
+        Debug.LogWarning("DeltaDNA has started with a default configuration. To use your own config, edit the BasicExample script.");
     }
 
     public void OnStopSDKBtn_Clicked() {

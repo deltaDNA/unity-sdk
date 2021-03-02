@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <dependencies>
   <androidPackages>
-    <androidPackage spec="com.deltadna.android:deltadna-sdk-notifications:4.12.0">
+    <androidPackage spec="com.deltadna.android:deltadna-sdk-notifications:4.13.4">
       <repositories>
         <repository>https://deltadna.bintray.com/android</repository>
       </repositories>

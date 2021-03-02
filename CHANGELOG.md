@@ -1,4 +1,11 @@
 # Change Log
+## [5.0.2] - 2021-02-18
+
+### Fixed
+- BasicExample scene has been reinstated inside the Samples folder.
+- Android dependency has been updated to work the latest version of the Android SDK (4.13.4).
+- Fixed an issue where device locales were not correctly identified.
+
 ## [5.0.1](https://github.com/deltaDNA/unity-sdk/releases/tag/5.0.1)
 
 ### Fixed

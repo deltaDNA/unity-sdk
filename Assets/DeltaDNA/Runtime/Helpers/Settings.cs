@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        internal static readonly string SDK_VERSION = "Unity SDK v5.0.1";
+        internal static readonly string SDK_VERSION = "Unity SDK v5.0.2";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
