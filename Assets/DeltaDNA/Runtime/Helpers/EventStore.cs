@@ -172,8 +172,39 @@ namespace DeltaDNA
             {
                 if (_initialised)
                 {
-                    _infs.Flush();
-                    _outfs.Flush();
+                    // Convert to MemoryStream if there's issues writing the data to disk
+                    // IOException: Disk full. Path /storage/emulated/0/Android/data/[BUNDLE_ID]/files/ddsdk/events/B
+                    //   at System.IO.FileStream.FlushBuffer ()
+                    //   at DeltaDNA.EventStore.FlushBuffers ()
+                    //   at DeltaDNA.DDNAImpl.OnApplicationPause (System.Boolean pauseStatus)
+                    try {
+                        _infs.Flush();
+                    } catch (Exception ex) {
+                        Logger.LogError("Unable to flush \"in\" buffer, converting to MemoryStream: " + ex);
+                        try {
+                            _infs.Dispose();
+                        } catch {
+                        } finally {
+                            _infs = new MemoryStream();
+                        }
+                    }
+
+                    // Convert to MemoryStream if there's issues writing the data to disk
+                    // IOException: Disk full. Path /storage/emulated/0/Android/data/[BUNDLE_ID]/files/ddsdk/events/B
+                    //   at System.IO.FileStream.FlushBuffer ()
+                    //   at DeltaDNA.EventStore.FlushBuffers ()
+                    //   at DeltaDNA.DDNAImpl.OnApplicationPause (System.Boolean pauseStatus)
+                    try {
+                        _outfs.Flush();
+                    } catch (Exception ex) {
+                        Logger.LogError("Unable to flush \"out\" buffer, converting to MemoryStream: " + ex);
+                        try {
+                            _outfs.Dispose();
+                        } catch {
+                        } finally {
+                            _outfs = new MemoryStream();
+                        }
+                    }
                 }
             }
         }
@@ -304,8 +335,32 @@ namespace DeltaDNA
 
         public static void SwapStreams(ref Stream sin, ref Stream sout)
         {
-            // Close off our write stream
-            sin.Flush();
+            // Convert to MemoryStream if there's issues writing the data to disk
+            // UnauthorizedAccessException: Access to the path "/storage/emulated/0/Android/data/[BUNDLE_ID]/files/ddsdk/events/B" is denied.
+            //   at System.IO.FileStream.FlushBuffer ()
+            //   at DeltaDNA.EventStore.SwapStreams (System.IO.Stream& sin, System.IO.Stream& sout)
+            //   at DeltaDNA.EventStore.Swap ()
+            //   at DeltaDNA.DDNAImpl+<UploadCoroutine>d__47.MoveNext ()
+            //   at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress)
+            //
+            // IOException: Disk full. Path /storage/emulated/0/Android/data/[BUNDLE_ID]/files/ddsdk/events/B
+            //   at System.IO.FileStream.FlushBuffer ()
+            //   at DeltaDNA.EventStore.SwapStreams (System.IO.Stream& sin, System.IO.Stream& sout)
+            //   at DeltaDNA.EventStore.Swap ()
+            //   at DeltaDNA.DDNAImpl+<UploadCoroutine>d__47.MoveNext ()
+            //   at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress)
+            try {
+                // Close off our write stream
+                sin.Flush();
+            } catch (Exception ex) {
+                Logger.LogError("Unable to flush to disk: " + ex);
+                try {
+                    sin.Dispose();
+                } catch {
+                } finally {
+                    sin = new MemoryStream();
+                }
+            }
             // Swap the file handles
             Stream tmp = sin;
             sin = sout;

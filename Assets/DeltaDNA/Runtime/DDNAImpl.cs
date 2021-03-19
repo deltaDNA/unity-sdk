@@ -341,18 +341,31 @@ namespace DeltaDNA {
         override internal void RequestSessionConfiguration() {
             Logger.LogDebug("Requesting session configuration");
 
-            var firstSession = PlayerPrefs.HasKey(DDNA.PF_KEY_FIRST_SESSION)
-                ? DateTime.ParseExact(
-                    PlayerPrefs.GetString(DDNA.PF_KEY_FIRST_SESSION),
-                    Settings.EVENT_TIMESTAMP_FORMAT,
-                    CultureInfo.InvariantCulture)
-                : (DateTime?) null;
-            var lastSession = PlayerPrefs.HasKey(DDNA.PF_KEY_LAST_SESSION)
-                ? DateTime.ParseExact(
-                    PlayerPrefs.GetString(DDNA.PF_KEY_LAST_SESSION),
-                    Settings.EVENT_TIMESTAMP_FORMAT,
-                    CultureInfo.InvariantCulture)
-                : (DateTime?) null;
+            // The session key is becoming invalid somehow.  An empty string in PlayerPrefs would do that...
+            // FormatException: String was not recognized as a valid DateTime.
+            //   at System.DateTimeParse.ParseExact (System.String s, System.String format, System.Globalization.DateTimeFormatInfo dtfi, System.Globalization.DateTimeStyles style)
+            //   at DeltaDNA.DDNAImpl.RequestSessionConfiguration ()
+            //   at DeltaDNA.DDNA.NewSession ()
+            //   at DeltaDNA.DDNAImpl.StartSDK (System.Boolean newPlayer)
+            //   at DeltaDNA.DDNA.StartSDK (DeltaDNA.Configuration config, System.String userID)
+            DateTime? firstSession = null, lastSession = null;
+
+            try {
+                firstSession = PlayerPrefs.HasKey(DDNA.PF_KEY_FIRST_SESSION)
+                    ? DateTime.ParseExact(
+                        PlayerPrefs.GetString(DDNA.PF_KEY_FIRST_SESSION),
+                        Settings.EVENT_TIMESTAMP_FORMAT,
+                        CultureInfo.InvariantCulture)
+                    : (DateTime?)null;
+                lastSession = PlayerPrefs.HasKey(DDNA.PF_KEY_LAST_SESSION)
+                    ? DateTime.ParseExact(
+                        PlayerPrefs.GetString(DDNA.PF_KEY_LAST_SESSION),
+                        Settings.EVENT_TIMESTAMP_FORMAT,
+                        CultureInfo.InvariantCulture)
+                    : (DateTime?)null;
+            } catch (Exception ex) {
+                Logger.LogError("Unable to parse session times: " + ex);
+            }
 
             Engagement engagement = new Engagement("config") { Flavour = "internal" };
             engagement.AddParam("timeSinceFirstSession", firstSession != null

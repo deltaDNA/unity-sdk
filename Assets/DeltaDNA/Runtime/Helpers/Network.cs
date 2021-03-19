@@ -82,6 +82,24 @@ namespace DeltaDNA {
             www.downloadHandler = new DownloadHandlerBuffer();
             if (request.HTTPMethod == HttpRequest.HTTPMethodType.POST)
             {
+                // If the request body is null then the request is going to fail on Encoding.UTF8.GetBytes().  This will be
+                // null if EngageRequest.ToJSON fails.  1001 is an error code used further down.
+                // ArgumentNullException: String reference not set to an instance of a String.Parameter name: s
+                //   at System.Text.Encoding.GetBytes (System.String s)
+                //   at DeltaDNA.Network+<SendRequest>d__3.MoveNext ()
+                //   at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress)
+                //   at DeltaDNA.Engage+<Request>d__0.MoveNext ()
+                //   at UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress)
+                //   at DeltaDNA.DDNAImpl.RequestEngagement (DeltaDNA.Engagement engagement, System.Action`1[T] callback)
+                //   at DeltaDNA.DDNAImpl.RequestSessionConfiguration ()
+                //   at DeltaDNA.DDNA.NewSession ()
+                //   at DeltaDNA.DDNAImpl.StartSDK (System.Boolean newPlayer)
+                //   at DeltaDNA.DDNA.StartSDK (DeltaDNA.Configuration config, System.String userID)
+                if (request.HTTPBody == null) {
+                    completionHandler?.Invoke(1001, null, "Invalid HTTPBody");
+                    yield break;
+                }
+
                 www.method = UnityWebRequest.kHttpVerbPOST;
                 foreach (var entry in request.getHeaders())
                 {

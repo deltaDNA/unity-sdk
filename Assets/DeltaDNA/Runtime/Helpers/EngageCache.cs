@@ -38,18 +38,51 @@ namespace DeltaDNA {
             this.settings = settings;
 
             lock (LOCK) {
-                CreateDirectory();
+                // Handle the case where the disk is full or can't be written to
+                // IOException: Disk full. Path /var/mobile/Containers/Data/Application/[HASH]/Library/Caches/deltadna
+                //   at System.IO.Directory.CreateDirectoriesInternal (System.String path)
+                //   at System.IO.Directory.CreateDirectoriesInternal (System.String path)
+                //   at DeltaDNA.EngageCache..ctor (DeltaDNA.Settings settings)
+                //   at DeltaDNA.DDNAImpl..ctor (DeltaDNA.DDNA ddna)
+                //   at DeltaDNA.DDNA.Awake ()
+                //   at UnityEngine.GameObject.AddComponent[T] ()
+                //   at DeltaDNA.Singleton`1[T].get_Instance ()
+                try {
+                    CreateDirectory();
+                } catch (Exception ex) {
+                    Logger.LogWarning("Unable to create directory " + location + ": " + ex);
+                    cache = new Dictionary<string, string>();
+                    times = new Dictionary<string, DateTime>();
+                    return;
+                }
 
-                cache = Directory
-                    .GetFiles(location)
-                    .ToDictionary(e => Path.GetFileName(e), e => File.ReadAllText(e));
-                if (File.Exists(location + TIMES)) {
-                    times = File
-                        .ReadAllLines(location + TIMES)
-                        .ToDictionary(
-                            e => e.Split(' ')[0],
-                            e => new DateTime(Convert.ToInt64(e.Split(' ')[1])));
-                } else {
+                // Handle the case where cached data is not in the expected format for some reason
+                // IndexOutOfRangeException: Index was outside the bounds of the array.
+                //   at DeltaDNA.EngageCache+<>c.<.ctor>b__6_3 (System.String e)
+                //   at System.Func`2[T,TResult].Invoke (T arg)
+                //   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] keySelector, System.Func`2[T,TResult] elementSelector, System.Collections.Generic.IEqualityComparer`1[T] comparer)
+                //   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] keySelector, System.Func`2[T,TResult] elementSelector)
+                //   at DeltaDNA.EngageCache..ctor (DeltaDNA.Settings settings)
+                //   at DeltaDNA.DDNAImpl..ctor (DeltaDNA.DDNA ddna)
+                //   at DeltaDNA.DDNA.Awake ()
+                //   at UnityEngine.GameObject.AddComponent[T] ()
+                //   at DeltaDNA.Singleton`1[T].get_Instance ()
+                try {
+                    cache = Directory
+                        .GetFiles(location)
+                        .ToDictionary(e => Path.GetFileName(e), e => File.ReadAllText(e));
+                    if (File.Exists(location + TIMES)) {
+                        times = File
+                            .ReadAllLines(location + TIMES)
+                            .ToDictionary(
+                                e => e.Split(' ')[0],
+                                e => new DateTime(Convert.ToInt64(e.Split(' ')[1])));
+                    } else {
+                        times = new Dictionary<string, DateTime>();
+                    }
+                } catch (Exception ex) {
+                    Logger.LogError("Unable to deserialize cache: " + ex);
+                    cache = new Dictionary<string, string>();
                     times = new Dictionary<string, DateTime>();
                 }
             }
@@ -103,15 +136,48 @@ namespace DeltaDNA {
 
         internal void Save() {
             lock (LOCK) {
-                CreateDirectory();
-
-                foreach (var item in cache) {
-                    File.WriteAllText(location + item.Key, item.Value);
+                // Handle the case where the disk is full or can't be written to
+                // IOException: Disk full. Path /storage/emulated/0/Android/data/[BUNDLE_ID]/cache/deltadna
+                //   at System.IO.Directory.CreateDirectoriesInternal (System.String path)
+                //   at System.IO.Directory.CreateDirectoriesInternal (System.String path)
+                //   at DeltaDNA.EngageCache.Save ()
+                //   at DeltaDNA.DDNAImpl.OnApplicationPause (System.Boolean pauseStatus)
+                try {
+                    CreateDirectory();
+                } catch (Exception ex) {
+                    Logger.LogError("Unable to create directory " + location + ": " + ex);
+                    return;
                 }
 
-                File.WriteAllLines(
-                    location + TIMES,
-                    times.Select(e => e.Key + ' ' + e.Value.Ticks).ToArray());
+                // Handle the case where the disk is full or can't be written to
+                // IOException: Disk full. Path /var/mobile/Containers/Data/Application/[HASH]/Library/Caches/deltadna/engagements/times
+                //   at System.IO.FileStream.FlushBuffer ()
+                //   at System.IO.StreamWriter.Dispose (System.Boolean disposing)
+                //   at System.IO.TextWriter.Dispose ()
+                //   at System.IO.File.WriteAllLines (System.String path, System.String[] contents)
+                //   at DeltaDNA.EngageCache.Save ()
+                //   at DeltaDNA.DDNAImpl.OnApplicationPause (System.Boolean pauseStatus)
+                //
+                // IOException: Disk full. Path /storage/emulated/0/Android/data/[BUNDLE_ID]/cache/deltadna/engagements/times
+                //   at System.IO.FileStream.FlushBuffer ()
+                //   at System.IO.FileStream.Dispose (System.Boolean disposing)
+                //   at System.IO.Stream.Close ()
+                //   at System.IO.StreamWriter.Dispose (System.Boolean disposing)
+                //   at System.IO.TextWriter.Dispose ()
+                //   at System.IO.File.WriteAllText (System.String path, System.String contents, System.Text.Encoding encoding)
+                //   at DeltaDNA.EngageCache.Save ()
+                //   at DeltaDNA.DDNAImpl.OnApplicationPause (System.Boolean pauseStatus)
+                try {
+                    foreach (var item in cache) {
+                        File.WriteAllText(location + item.Key, item.Value);
+                    }
+
+                    File.WriteAllLines(
+                        location + TIMES,
+                        times.Select(e => e.Key + ' ' + e.Value.Ticks).ToArray());
+                } catch (Exception ex) {
+                    Logger.LogError("Unable to write cache: " + ex);
+                }
             }
         }
 
