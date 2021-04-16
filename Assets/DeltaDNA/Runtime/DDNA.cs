@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
@@ -266,11 +267,11 @@ namespace DeltaDNA
             if (!PlayerPrefs.HasKey(PF_KEY_FIRST_SESSION)) {
                 PlayerPrefs.SetString(
                     PF_KEY_FIRST_SESSION,
-                    DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT));
+                    DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture));
             }
             PlayerPrefs.SetString(
                 PF_KEY_LAST_SESSION,
-                DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT));
+                DateTime.UtcNow.ToString(Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture));
 
             if (OnNewSession != null) OnNewSession();
         }

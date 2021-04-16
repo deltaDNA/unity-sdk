@@ -60,7 +60,7 @@ namespace DeltaDNA {
 
                 if (!String.IsNullOrEmpty(ClientInfo.Locale))
                 {
-                    this.Parameters.Add("locale", ClientInfo.Locale);
+                    request.Add("locale", ClientInfo.Locale);
                 }
 
                 if (this.Parameters.Count > 0)

@@ -338,21 +338,40 @@ namespace DeltaDNA {
             }
         }
 
+        private DateTime? RetrieveSessionDate(String playerPrefsKey)
+        {
+            if (PlayerPrefs.HasKey(playerPrefsKey))
+            {
+                string dateString = PlayerPrefs.GetString(DDNA.PF_KEY_FIRST_SESSION);
+                try
+                {
+                    return DateTime.ParseExact(dateString, Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                    // The date was not previously saved using the invariant culture, try again with the current culture.
+                    try
+                    {
+                        return DateTime.ParseExact(dateString, Settings.EVENT_TIMESTAMP_FORMAT, CultureInfo.CurrentCulture);
+                    }
+                    catch (FormatException)
+                    {
+                        // The date is in some format we can't possibly know.
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         override internal void RequestSessionConfiguration() {
             Logger.LogDebug("Requesting session configuration");
 
-            var firstSession = PlayerPrefs.HasKey(DDNA.PF_KEY_FIRST_SESSION)
-                ? DateTime.ParseExact(
-                    PlayerPrefs.GetString(DDNA.PF_KEY_FIRST_SESSION),
-                    Settings.EVENT_TIMESTAMP_FORMAT,
-                    CultureInfo.InvariantCulture)
-                : (DateTime?) null;
-            var lastSession = PlayerPrefs.HasKey(DDNA.PF_KEY_LAST_SESSION)
-                ? DateTime.ParseExact(
-                    PlayerPrefs.GetString(DDNA.PF_KEY_LAST_SESSION),
-                    Settings.EVENT_TIMESTAMP_FORMAT,
-                    CultureInfo.InvariantCulture)
-                : (DateTime?) null;
+            DateTime? firstSession = RetrieveSessionDate(DDNA.PF_KEY_FIRST_SESSION);
+            DateTime? lastSession = RetrieveSessionDate(DDNA.PF_KEY_LAST_SESSION);
 
             Engagement engagement = new Engagement("config") { Flavour = "internal" };
             engagement.AddParam("timeSinceFirstSession", firstSession != null

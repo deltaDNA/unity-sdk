@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,6 +7,10 @@ namespace DeltaDNA
 {
     public static class AudiencePinpointer
     {
+#if UNITY_IOS
+        [DllImport("__Internal")]
+        private static extern int ddna_get_tracking_status();
+#endif
         /// <summary>
         /// Record this event when a new gameplay session is started.
         /// </summary>
@@ -29,7 +34,6 @@ namespace DeltaDNA
             if (CheckForRequiredFields())
             {
                 PinpointerEvent signalTrackingEvent =  new PinpointerEvent("unitySignalInstall");
-
                 DDNA.Instance.RecordEvent(signalTrackingEvent);;
             }
 #endif
@@ -60,8 +64,8 @@ namespace DeltaDNA
         {
             if (String.IsNullOrEmpty(DDNA.Instance.AppleDeveloperID) || String.IsNullOrEmpty(DDNA.Instance.AppStoreID))
             {
-                Debug.LogWarning("Pinpointer signal events require an Apple developer ID and App Store ID to be" +
-                                 "registered with the DeltaDNA SDK. Please refer to the user guide for more information." +
+                Debug.LogWarning("Pinpointer signal events require an Apple developer ID and App Store ID to be " +
+                                 "registered with the DeltaDNA SDK. Please refer to the user guide for more information. " +
                                  "The event has not been sent.");
                 return false;
             }
@@ -84,6 +88,8 @@ namespace DeltaDNA
                 AddParam("appStoreID", DDNA.Instance.AppStoreID);
                 AddParam("appBundleID", Application.identifier);
                 AddParam("appDeveloperID", DDNA.Instance.AppleDeveloperID);
+
+                AddParam("attTrackingStatus", ddna_get_tracking_status());
 
                 bool idfaPresent = UnityEngine.iOS.Device.advertisingTrackingEnabled;
 

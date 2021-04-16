@@ -32,7 +32,7 @@ namespace DeltaDNA
         public string engageUrl = "";
         public string hashSecret = "";
         public string clientVersion = "";
-        public bool useApplicationVersion = false;
+        public bool useApplicationVersion = true;
 
         public static Configuration GetAssetInstance()
         {

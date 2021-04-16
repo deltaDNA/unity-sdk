@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
@@ -23,8 +24,9 @@ namespace DeltaDNA.Editor
 {
     public class iOSConfiguration
     {
+        private const string CONFIG_IOS_FOLDER = "Assets/DeltaDNA/Resources/";
         private const string CONFIG_IOS = "Assets/DeltaDNA/Resources/ddna_configuration_ios.xml";
-        private static readonly XmlSerializer _serialiser = new XmlSerializer(typeof(iOSConfiguration), new XmlRootAttribute("configuration"));
+        private static readonly XmlSerializer _serializer = new XmlSerializer(typeof(iOSConfiguration), new XmlRootAttribute("configuration"));
 
         [XmlIgnore]
         public bool Dirty { get; set; }
@@ -48,7 +50,7 @@ namespace DeltaDNA.Editor
                 {
                     using (var xmlReader = XmlReader.Create(stringReader))
                     {
-                        return _serialiser.Deserialize(xmlReader) as iOSConfiguration;
+                        return _serializer.Deserialize(xmlReader) as iOSConfiguration;
                     }
                 }
             }
@@ -60,12 +62,14 @@ namespace DeltaDNA.Editor
 
         internal void Save()
         {
+            Directory.CreateDirectory(CONFIG_IOS_FOLDER);
+            
             using (var stringWriter = new StringWriter())
             {
                 using (XmlWriter xmlWriter = XmlWriter.Create(
                         stringWriter, new XmlWriterSettings() { Indent = true }))
                 {
-                    _serialiser.Serialize(xmlWriter, this);
+                    _serializer.Serialize(xmlWriter, this);
                     File.WriteAllText(CONFIG_IOS, stringWriter.ToString());
                 }
             }

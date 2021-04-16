@@ -42,10 +42,18 @@ namespace DeltaDNA
         {
             UnityWebRequest request = ((UnityWebRequestAsyncOperation)asyncOperation).webRequest;
 
+#if UNITY_2020_2_OR_NEWER
+            if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (request.isHttpError || request.isNetworkError)
+#endif
             {
                 Debug.LogError("Failed to create parameter: " + request.error);
+#if UNITY_2020_2_OR_NEWER
+                if (request.result != UnityWebRequest.Result.ConnectionError)
+#else
                 if (!request.isNetworkError)
+#endif
                 {
                     Debug.LogError(request.downloadHandler.text);
                 }

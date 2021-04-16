@@ -79,7 +79,11 @@ namespace DeltaDNA
 
             UnityWebRequestAsyncOperation webOperation = (UnityWebRequestAsyncOperation)asyncOperation;
 
+#if UNITY_2020_2_OR_NEWER
+            if (webOperation.webRequest.result == UnityWebRequest.Result.ProtocolError || webOperation.webRequest.result == UnityWebRequest.Result.ConnectionError)
+#else
             if (webOperation.webRequest.isHttpError || webOperation.webRequest.isNetworkError)
+#endif
             {
                 Debug.LogError("Unable to authenticate with deltaDNA API: " + webOperation.webRequest.error);
             }
