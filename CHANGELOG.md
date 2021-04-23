@@ -1,4 +1,19 @@
 # Change Log
+
+## [5.0.5-preview] - 2021-04-23
+
+### New
+- Signal purchase method will now send a verifiable transaction 
+
+## [5.0.4-preview] - 2021-04-16
+
+### Fixed
+- Fixed issue where parsing of some cached dates would throw an exception for certain user cultures
+- Fixed PlayServicesResolver being placed within the DeltaDNA folder instead of at the project root
+- Fixed default setting for "use application version" being false instead of true
+- Fixed some legal terms in LICENSE and README files
+- Fixed issue in Audience Pinpointer helpers where the ATT status was not reported correctly
+
 ## [5.0.1](https://github.com/deltaDNA/unity-sdk/releases/tag/5.0.1)
 
 ### Fixed
