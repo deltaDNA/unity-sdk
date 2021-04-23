@@ -42,10 +42,14 @@ namespace DeltaDNA
         /// <summary>
         /// Record this event when an in-app purchase was made with real money.
         /// </summary>
-        /// <param name="realCurrencyAmount"></param>
-        /// <param name="realCurrencyType"></param>
+        /// <param name="realCurrencyAmount">The amount of real currency spent in the purchase, in the smallest denomination of that currency (e.g. cents for USD, pence for GBP etc)</param>
+        /// <param name="realCurrencyType">The currency code of the currency spent in this purchase (e.g. USD for US Dollars)</param>
+        /// <param name="transactionID">The Apple transaction ID for this purchase as received from Apple's StoreKit API</param>
+        /// <param name="transactionReceipt">The receipt data (base64 encoded) as received from Apple's StoreKit API</param>
         public static void RecordPurchaseEvent(int realCurrencyAmount,
-                                               string realCurrencyType)
+                                               string realCurrencyType,
+                                               string transactionID,
+                                               string transactionReceipt)
         {
 #if UNITY_IOS
             if (CheckForRequiredFields())
@@ -54,8 +58,17 @@ namespace DeltaDNA
 
                 signalTrackingEvent.AddParam("realCurrencyAmount", realCurrencyAmount);
                 signalTrackingEvent.AddParam("realCurrencyType", realCurrencyType);
+                signalTrackingEvent.AddParam("transactionID", transactionID);
 
                 DDNA.Instance.RecordEvent(signalTrackingEvent);
+
+                if (DDNA.Instance.Settings.AutomaticallyGenerateTransactionForAudiencePinpointer) {
+                    Transaction transactionEvent = new Transaction("Pinpointer Signal Transaction", "PURCHASE", new Product(), new Product());
+                    transactionEvent.SetReceipt(transactionReceipt);
+                    transactionEvent.SetTransactionId(transactionID);
+
+                    DDNA.Instance.RecordEvent(transactionEvent);
+                }
             }
 #endif
         }

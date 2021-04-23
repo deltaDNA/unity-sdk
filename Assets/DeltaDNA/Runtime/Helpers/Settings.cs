@@ -18,7 +18,7 @@ namespace DeltaDNA
 {
     public class Settings
     {
-        public static readonly string SDK_VERSION = "Unity SDK v5.0.2";
+        public static readonly string SDK_VERSION = "Unity SDK v5.0.5";
 
         internal static readonly string ENGAGE_API_VERSION = "4";
 
@@ -74,6 +74,7 @@ namespace DeltaDNA
             MaxConcurrentImageCacheFetches = 3;
             MultipleActionsForEventTriggerEnabled = false;
             MultipleActionsForImageMessagesEnabled = false;
+            AutomaticallyGenerateTransactionForAudiencePinpointer = true;
         }
 
         /// <summary>
@@ -213,5 +214,7 @@ namespace DeltaDNA
         public int HttpRequestConfigurationTimeoutSeconds { get; set; }
         public int HttpRequestConfigurationMaxRetries { get; set; }
         public int HttpRequestConfigurationRetryBackoffFactorSeconds { get; set; }
+        
+        public bool AutomaticallyGenerateTransactionForAudiencePinpointer { get; set; }
     }
 }
