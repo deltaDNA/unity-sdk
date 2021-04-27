@@ -438,13 +438,12 @@ namespace DeltaDNA
 
         private static string GetCountryCode()
         {
-            var region = new System.Globalization.RegionInfo(DeltaDNA.Locale.CurrentCulture().Name);
-            return region.TwoLetterISORegionName;
+            return DeltaDNA.Locale.CurrentCountryCode();
         }
 
         private static string GetLanguageCode()
         {
-            return DeltaDNA.Locale.CurrentCulture().TwoLetterISOLanguageName;
+            return DeltaDNA.Locale.CurrentLanguageCode();
         }
 
         private static string GetLocale()

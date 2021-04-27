@@ -12,74 +12,76 @@ namespace DeltaDNA
         
 #if UNITY_IOS && !UNITY_EDITOR
         [DllImport("__Internal")]
-        private static extern string DDNA_current_culture();
+        private static extern string DDNA_current_culture_language_code();
         [DllImport("__Internal")]
-        private static extern string DDNA_system_culture();
+        private static extern string DDNA_current_culture_country_code();
 
         /// <summary>
-        /// Returns the current culture info. Invokes native method on Android and iOS.
+        /// Returns the current country code from the culture info. Invokes native method on Android and iOS.
         /// </summary>
-        /// <returns></returns>
-        public static CultureInfo CurrentCulture()
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentCountryCode()
         {
-            return new CultureInfo(DDNA_current_culture());
+            //  we would need sysglobl.dll to create any unknown CultureInfo, and that dll may not be available on our targets
+            // as such, returning the strings directly is simpler for us, and CultureInfo will throw for unknown cultures
+            return DDNA_current_culture_country_code();
         }
 
         /// <summary>
-        /// Returns the current culture info. Invokes native method on iOS.
+        /// Returns the current language code from the culture info. Invokes native method on Android and iOS.
         /// </summary>
-        /// <returns></returns>
-        public static CultureInfo SystemCulture()
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentLanguageCode()
         {
-            return new CultureInfo(DDNA_system_culture()); 
+            return DDNA_current_culture_language_code();
         }
         
 #elif UNITY_ANDROID && !UNITY_EDITOR
-        
         /// <summary>
-        /// Returns the current culture info. Invokes native method on Android and iOS.
+        /// Returns the current country code from the culture info. Invokes native method on Android and iOS.
         /// </summary>
-        /// <returns></returns>
-        public static CultureInfo CurrentCulture()
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentCountryCode()
+        {
+            var localeClass = new AndroidJavaClass("java.util.Locale");
+            var defaultLocale = localeClass.CallStatic<AndroidJavaObject>("getDefault");
+            var country = defaultLocale.Call<string>("getCountry");
+            return country;
+        }
+
+        /// <summary>
+        /// Returns the current language code from the culture info. Invokes native method on Android and iOS.
+        /// </summary>
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentLanguageCode()
         {
             var localeClass = new AndroidJavaClass("java.util.Locale");
             var defaultLocale = localeClass.CallStatic<AndroidJavaObject>("getDefault");
             var language = defaultLocale.Call<string>("getLanguage");
-            var country = defaultLocale.Call<string>("getCountry");
-            
-            var ret = new CultureInfo($"{language}-{country}", false);
-            return ret;
+            return language;
         }
-
-        /// <summary>
-        /// Returns the current culture info. Invokes native method on iOS.
-        /// </summary>
-        /// <returns></returns>
-        public static CultureInfo SystemCulture()
-        {
-            return CultureInfo.InvariantCulture;
-        }
-        
 #else
 
+
         /// <summary>
-        /// Returns the current culture info. Invokes native method on Android and iOS.
+        /// Returns the current country code from the culture info. Invokes native method on Android and iOS.
         /// </summary>
-        /// <returns></returns>
-        public static CultureInfo CurrentCulture()
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentCountryCode()
         {
-            return CultureInfo.CurrentCulture;
+            // Not supported in Unity
+            return null;
         }
 
         /// <summary>
-        /// Returns the current culture info. Invokes native method on iOS.
+        /// Returns the current language code from the culture info. Invokes native method on Android and iOS.
         /// </summary>
-        /// <returns></returns>
-        public static CultureInfo SystemCulture()
+        /// <returns>Country Code as a string</returns>
+        public static string CurrentLanguageCode()
         {
-            return CultureInfo.InvariantCulture;
+            return CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
         }
-        
+
 #endif
         
     }
