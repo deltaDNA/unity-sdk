@@ -9,3 +9,11 @@ int ddna_get_tracking_status() {
         return -1;
     }
 }
+
+bool ddna_is_tracking_authorized() {
+    if (@available(iOS 14, *)) {
+        return [ATTrackingManager trackingAuthorizationStatus] == 3;
+    } else {
+        return [[ASIdentifierManager shared] isAdvertisingTrackingEnabled];
+    }
+}
