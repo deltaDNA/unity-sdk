@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.0.7-preview] - 2021-04-29
+
+### Changed
+- Use Unity's in-built gradle instead of Unity Jar Resolver for resolving android dependencies (due to bintray deprecation, reconfiguring android notifications required)
+
+### Fixed
+- Correctly report IDFA in signal events on iOS 14.5+
+
 ## [5.0.6-preview] - 2021-04-27
 
 ### Fixed

@@ -2,12 +2,11 @@
 
 ## deltaDNA Unity SDK
 
-The latest version of the analytics SDK is supported in Unity 2018.4 and newer.
-
- The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
+The repository contains sources for the deltaDNA Unity SDK.  The SDK is distributed as a unitypackage file which can be downloaded from GitHub [releases](https://github.com/deltaDNA/unity-sdk/releases). Import into Unity with Assets->Import Package->Custom Package. If you are updating the SDK it is recommended to remove the *Assets/DeltaDNA* and *Assets/DeltaDNAAds* folders before importing the new package.
 
 deltaDNA SDK [Download](https://github.com/deltaDNA/unity-sdk/releases)
 
+The analytics SDK is supported in both Unity 4, Unity 5, 201x and 2020.
 
 ## Contents
 
@@ -225,7 +224,7 @@ The DeltaDNA service allows you to send notifications with additional content su
 ![DeltaDNA Unity Editor configuration](images/ios_delta_dna_configuration.png)
 
 3. Build the iOS project. 
-4. If you are using Unity editor 2018.4 - 2019.2, you will also need to change the Xcode build system within Xcode (File -> Project Settings -> Build System) to be the legacy build system. This is done automatically for Unity editor versions 2019.3 or higher.
+4. Change the Xcode build system within Xcode (File -> Project Settings -> Build System) to be the legacy build system.
 
 ![Xcode Build System Change](images/ios_build_system_change.png)
 
@@ -245,9 +244,24 @@ DDNA.Instance.Platform = DeltaDNA.Platform.AMAZON;
 DDNA.Instance.StartSDK();
 ```
 
-### Android Dependencies Google Firebase/Play Services Libraries
+### Android Dependencies 
+
+#### v5.0.7 onwards
+
+The android dependencies for this SDK are fetched using Unity's gradle build. This is achieved through a custom gradle template file - this will be copied into your assets folder when you apply the Android notification settings.
+
+If the SDK detects you already have a gradle template file, it will not copy the file to avoid overwriting your existing code. In order to use notifications with the deltaDNA SDK you will need to add our notifications plugin manually to this template, using the provided templates for reference (these are found in `DeltaDNA/Runtime/Plugins/Android`).
+
+If you are upgrading from a version previous to 5.0.7, you may need to remove the assets copied by previous versions of the SDK, and remove the resolver mentioned below. If you then apply the notification settings,
+the new structure will be copied to your assets folder as above.
+
+As of 5.0.7 we no longer use the Unity Jar Resolver.
+
+#### < v5.0.6
 
 Any library dependencies such as Google's Firebase (Google Play Services) are handled by Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver) plugin. The libraries will be automatically downloaded into the *Assets/Plugins/Android* folder. If you have other Unity plugins in your application which don't use the Resolver for downloading dependencies you may want to consider using the Resolver to manage their dependencies as well, otherwise you may have to manually resolve any conflicts.
+
+> Note that occassionaly there can be conflicts between different versions of the resolver, if other plugins are included that also use it. If such conflicts occur, you can safely remove the bundled version of the resolver from the deltaDNA plugin and use one from another source, and it should still resolve the DeltaDNA plugin dependencies correctly.
 
 ### Push Notifications
 
@@ -257,7 +271,10 @@ If your application is setup using the Google Cloud Console you can find instruc
 
 The style of the push notifications can be changed by overriding the behaviour of the library. Instructions on how to do this can be found [here](https://github.com/deltaDNA/android-sdk/tree/master/library-notifications#unity). Once you have added either the modified library or added the new classes as a separate library you will need to change the *Listener Service* field in the configuration to the fully qualified name of your new class.
 
-If you no longer wish to use push notifications on Android then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folder and *Assets/DeltaDNA/Editor/Android/Dependencies.xml* from the project to decrease the number of methods and the APK size of your game.
+If you no longer wish to use push notifications on Android then you can remove the *Assets/Plugins/Android/deltadna-sdk-unity-notifications* folder (and *Assets/DeltaDNA/Editor/Android/Dependencies.xml* if you are using a version of the SDK <5.0.7) from the project to decrease the number of methods and the APK size of your game.
+
+#### Existing Firebase Cloud Messaging SDK 
+If you already use Firebase's Cloud Messaging SDK, you may experience issues receiving notifications using deltaDNA's SDK, as only one receiver can use each Firebase Cloud Messaging configuration in an application at a time. To fix this, you can either remove your existing Firebase Cloud Messaging SDK, or you will need to create a separate project for deltaDNA with a new sender ID in the Firebase Console. If you choose to create a new project, make sure that the configuration for deltaDNA in the Unity Editor is updated to use the new project, and ensure the server API key under the Identities section of the deltaDNA portal is updated to use details from the same project.
 
 ### MultiDex; Working Around Android's 65k Method Limit
 1. Export your Unity project using the *Gradle* build system. These options can be found in the *Build Settings* dialog.
@@ -305,7 +322,7 @@ If the game supports changing of users then calling `StartSdk(userID)` with a ne
 ## Migrations
 
 ### Version 4.3
-Between version 4.2 and version 4.3 we updated our push notifications to use Firebase (play-services-*-10.2).  This requires changing the way push notification integration works.  To better manage the Android dependencies we now use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver).  This allows other plugins to also specify dependencies on the Firebase/Play-Services libraries and the Unity Jar Resolver will work out which library to use, hopefully reducing duplicate library errors at build time.
+Between version 4.2 and version 4.3 we updated our push notifications to use Firebase (`play-services-*-10.2`). This requires changing the way push notification integration works. To better manage the Android dependencies we now use Google's [Unity Jar Resolver](https://github.com/googlesamples/unity-jar-resolver).  This allows other plugins to also specify dependencies on the Firebase/Play-Services libraries and the Unity Jar Resolver will work out which library to use, hopefully reducing duplicate library errors at build time.
 
 ### Version 4.7
 *IosNetworksLoadHelper.cs* should be deleted from *Assets/DeltaDNA/Ads/Editor/Menus/Networks/* as the file has been replaced by *InitialisationHelper.cs*.
@@ -345,6 +362,8 @@ The settings for this feature are stored in `ddna_api_configuation.xml` - please
 ## License
 
 The sources are available under the Apache 2.0 license.
+
+By integrating, accessing, or using the deltaDNA UA SDK, you acknowledge and agree that (1) your access to and use of the deltaDNA UA SDK is governed by Unity’s Monetization Terms of Service, available [here](https://unity3d.com/legal/monetization-services-terms-of-service), and that such service is an Experimental Service (as defined therein); and (2) you will not access or use the deltaDNA UA SDK in connection with any application that is “directed to children” under the age of 13 or would otherwise be subject to the Children’s Online Privacy Protection Act of 1998, or with any application designated as a “Kids” or “Family” application in the Apple App Store or Google Play Store.
 
 ## Contact Us
 

@@ -10,6 +10,9 @@ namespace DeltaDNA
 #if UNITY_IOS
         [DllImport("__Internal")]
         private static extern int ddna_get_tracking_status();
+
+        [DllImport("__Internal")]
+        private static extern bool ddna_is_tracking_authorized();
 #endif
         /// <summary>
         /// Record this event when a new gameplay session is started.
@@ -104,7 +107,7 @@ namespace DeltaDNA
 
                 AddParam("attTrackingStatus", ddna_get_tracking_status());
 
-                bool idfaPresent = UnityEngine.iOS.Device.advertisingTrackingEnabled;
+                bool idfaPresent = ddna_is_tracking_authorized();
 
                 AddParam("idfv", UnityEngine.iOS.Device.vendorIdentifier);
                 if (idfaPresent)

@@ -318,6 +318,7 @@ namespace DeltaDNA.Editor
             try
             {
                 CopyAndroidNotificationFolder();
+                CopyAndroidNotificationGradleFiles();
                 // Inform the user that the plugin has been correctly configured in their assets folder
                 Debug.Log(
                     "deltaDNA Android notification setup complete. The configured plugin has been updated in your Assets/Plugins/Android folder"
@@ -346,6 +347,30 @@ namespace DeltaDNA.Editor
             }
             DirectoryCopy(pluginFolder, targetFolder);
             AssetDatabase.ImportAsset(assetPath);
+        }
+
+        private void CopyAndroidNotificationGradleFiles()
+        {
+            string[] fileNames = {"baseProjectTemplate.gradle", "gradleTemplate.properties", "mainTemplate.gradle"};
+            foreach (var fileName in fileNames)
+            {
+                string sourceFolder = Path.GetFullPath(WindowHelper.FindDir("Runtime/Plugins/Android"));
+                string sourceFile = $"{sourceFolder}/{fileName}";
+                string targetPath = $"Plugins/Android/{fileName}";
+                string targetFile = $"{Application.dataPath}/{targetPath}";
+                string assetTargetPath = $"Assets/{targetPath}";
+
+                if (File.Exists(targetFile))
+                {
+                    Debug.Log(
+                        "An existing gradle template file was found when copying DeltaDNA notification files. " +
+                        "The template was not copied, but can be accessed and manually added from DeltaDNA/Runtime/Plugins/Android if required");
+                    continue;
+                }
+                AssetDatabase.DeleteAsset(assetTargetPath);
+                File.Copy(sourceFile, targetFile);
+                AssetDatabase.ImportAsset(assetTargetPath);
+            }
         }
 
         // Adapted from https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories

@@ -1,2 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<resources />
+<resources>
+  <string name="ddna_application_id">1:3185998592:android:f8cfe35d6825f6f8af51e5</string>
+  <string name="ddna_sender_id">3185998592</string>
+  <string name="ddna_fcm_project_id">deltadna-dev</string>
+  <string name="ddna_fcm_api_key">AIzaSyCzjaIBsecb09zp_Y7Njac9bnLzirQWMbM</string>
+</resources>
