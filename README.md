@@ -250,10 +250,34 @@ DDNA.Instance.StartSDK();
 
 The android dependencies for this SDK are fetched using Unity's gradle build. This is achieved through a custom gradle template file - this will be copied into your assets folder when you apply the Android notification settings.
 
-If the SDK detects you already have a gradle template file, it will not copy the file to avoid overwriting your existing code. In order to use notifications with the deltaDNA SDK you will need to add our notifications plugin manually to this template, using the provided templates for reference (these are found in `DeltaDNA/Runtime/Plugins/Android`).
+If the SDK detects you already have a gradle template file, it will not copy the file to avoid overwriting your existing code. In order to use notifications with the deltaDNA SDK you will need to add our notifications plugin manually to this template, using the provided templates for reference (these are found in `DeltaDNA/Runtime/Plugins/Android`). The following items will need updating:
 
-If you are upgrading from a version previous to 5.0.7, you may need to remove the assets copied by previous versions of the SDK, and remove the resolver mentioned below. If you then apply the notification settings,
-the new structure will be copied to your assets folder as above.
+In `baseProjectTemplate.gradle`, add in our android package repository. You will need a GitHub access token (with `read:packages` permissions) and username, or can use the ones from the example file.
+
+```
+    repositories {**ARTIFACTORYREPOSITORY**
+        google()
+        jcenter()
+        maven {
+            url 'https://maven.pkg.github.com/deltaDNA/android-sdk'
+            credentials {
+                username = "YOUR_GITHUB_USERNAME"
+                password = "YOUR_GITHUB_ACCESS_TOKEN"
+            }
+        }
+        flatDir {
+            dirs "${project(':unityLibrary').projectDir}/libs"
+        }
+    }
+```
+
+In `mainTemplate.gradle`, add in the following dependency
+
+```
+implementation 'com.deltadna.android:deltadna-sdk-notifications:4.13.4'
+```
+
+If you are upgrading from a version previous to 5.0.7, you may need to remove the assets copied by previous versions of the SDK, and remove the resolver mentioned below. If you then click the "Apply Android notification settings" button in the deltaDNA configuration panel, the new structure will be copied to your assets folder as above.
 
 As of 5.0.7 we no longer use the Unity Jar Resolver.
 
