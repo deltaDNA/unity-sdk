@@ -351,26 +351,35 @@ namespace DeltaDNA.Editor
 
         private void CopyAndroidNotificationGradleFiles()
         {
-            string[] fileNames = {"baseProjectTemplate.gradle", "gradleTemplate.properties", "mainTemplate.gradle"};
-            foreach (var fileName in fileNames)
-            {
-                string sourceFolder = Path.GetFullPath(WindowHelper.FindDir("Runtime/Plugins/Android"));
-                string sourceFile = $"{sourceFolder}/{fileName}";
-                string targetPath = $"Plugins/Android/{fileName}";
-                string targetFile = $"{Application.dataPath}/{targetPath}";
-                string assetTargetPath = $"Assets/{targetPath}";
+            #if UNITY_2020_2_OR_NEWER
+            string gradleFileSuffix = "20202";
+            #else
+            string gradleFileSuffix = "20194";
+            #endif
 
-                if (File.Exists(targetFile))
-                {
-                    Debug.Log(
-                        "An existing gradle template file was found when copying DeltaDNA notification files. " +
-                        "The template was not copied, but can be accessed and manually added from DeltaDNA/Runtime/Plugins/Android if required");
-                    continue;
-                }
-                AssetDatabase.DeleteAsset(assetTargetPath);
-                File.Copy(sourceFile, targetFile);
-                AssetDatabase.ImportAsset(assetTargetPath);
+            CopyGradleFile("baseProjectTemplate.gradle", "baseProjectTemplate.gradle");
+            CopyGradleFile($"gradleTemplate{gradleFileSuffix}.properties", "gradleTemplate.properties");
+            CopyGradleFile($"mainTemplate{gradleFileSuffix}.gradle", "mainTemplate.gradle");
+        }
+
+        private static void CopyGradleFile(string fromFilename, string toFilename)
+        {
+            string sourceFolder = Path.GetFullPath(WindowHelper.FindDir("Runtime/Plugins/Android"));
+            string sourceFile = $"{sourceFolder}/{fromFilename}";
+            string targetPath = $"Plugins/Android/{toFilename}";
+            string targetFile = $"{Application.dataPath}/{targetPath}";
+            string assetTargetPath = $"Assets/{targetPath}";
+
+            if (File.Exists(targetFile))
+            {
+                Debug.Log(
+                    "An existing gradle template file was found when copying DeltaDNA notification files. " +
+                    "The template was not copied, but can be accessed and manually added from DeltaDNA/Runtime/Plugins/Android if required");
+                return;
             }
+            AssetDatabase.DeleteAsset(assetTargetPath);
+            File.Copy(sourceFile, targetFile);
+            AssetDatabase.ImportAsset(assetTargetPath);
         }
 
         // Adapted from https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories

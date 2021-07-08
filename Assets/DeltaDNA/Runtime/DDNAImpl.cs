@@ -133,11 +133,6 @@ namespace DeltaDNA {
                     Settings.BackgroundEventUploadStartDelaySeconds,
                     Settings.BackgroundEventUploadRepeatRateSeconds);
             }
-
-            if (Settings.SendGameRunningEveryMinute)
-            {
-                RecordGameRunningEvent();
-            }
         }
 
         override internal void StopSDK() {
@@ -650,7 +645,14 @@ namespace DeltaDNA {
 
                 RecordEvent(clientDeviceEvent).Run();
             }
-
+            
+            if (Settings.SendGameRunningEveryMinute)
+            {
+                RecordGameRunningEvent();
+                ddna.gameRunningEventCoroutine = ddna.GameHeartbeat(DDNA.gameRunningEventInterval);
+                StartCoroutine(ddna.gameRunningEventCoroutine);
+            }
+            
             hasSentDefaultEvents = true;
         }
 
