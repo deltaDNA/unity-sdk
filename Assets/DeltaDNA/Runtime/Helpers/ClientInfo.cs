@@ -448,7 +448,7 @@ namespace DeltaDNA
 
         private static string GetLocale()
         {
-            if (CountryCode != null)
+            if (CountryCode != null && CountryCode.Length == 2)
             {
                 return String.Format("{0}_{1}", LanguageCode, CountryCode);
             }

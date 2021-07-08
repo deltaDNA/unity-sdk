@@ -7,7 +7,7 @@ namespace DeltaDNA
 {
     public static class AudiencePinpointer
     {
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
         [DllImport("__Internal")]
         private static extern int ddna_get_tracking_status();
 
@@ -19,7 +19,7 @@ namespace DeltaDNA
         /// </summary>
         public static void RecordSessionEvent()
         {
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
             if (CheckForRequiredFields())
             {
                 PinpointerEvent signalTrackingEvent = new PinpointerEvent("unitySignalSession");
@@ -33,7 +33,7 @@ namespace DeltaDNA
         /// </summary>
         public static void RecordInstallEvent()
         {
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
             if (CheckForRequiredFields())
             {
                 PinpointerEvent signalTrackingEvent =  new PinpointerEvent("unitySignalInstall");
@@ -54,7 +54,7 @@ namespace DeltaDNA
                                                string transactionID,
                                                string transactionReceipt)
         {
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
             if (CheckForRequiredFields())
             {
                 PinpointerEvent signalTrackingEvent = new PinpointerEvent("unitySignalPurchase");
@@ -69,6 +69,7 @@ namespace DeltaDNA
                     Transaction transactionEvent = new Transaction("Pinpointer Signal Transaction", "PURCHASE", new Product(), new Product());
                     transactionEvent.SetReceipt(transactionReceipt);
                     transactionEvent.SetTransactionId(transactionID);
+                    transactionEvent.SetServer("APPLE");
 
                     DDNA.Instance.RecordEvent(transactionEvent);
                 }
@@ -88,7 +89,7 @@ namespace DeltaDNA
             return true;
         }
 
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR
         private class PinpointerEvent : GameEvent<PinpointerEvent>
         {
             internal PinpointerEvent(string name) : base(name)

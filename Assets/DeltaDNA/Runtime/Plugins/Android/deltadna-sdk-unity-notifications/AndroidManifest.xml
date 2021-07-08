@@ -1,14 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.deltadna.android.sdk.notifications.unity">
   <application>
-    <service android:name="com.deltadna.android.sdk.notifications.NotificationListenerService" android:enabled="true">
+    <service android:name="com.deltadna.android.sdk.notifications.NotificationListenerService" android:enabled="false">
       <intent-filter>
         <action android:name="com.google.firebase.MESSAGING_EVENT" />
       </intent-filter>
     </service>
-    <meta-data android:name="ddna_sender_id" android:resource="@string/ddna_sender_id" />
-    <meta-data android:name="ddna_fcm_api_key" android:resource="@string/ddna_fcm_api_key" />
-    <meta-data android:name="ddna_application_id" android:resource="@string/ddna_application_id" />
-    <meta-data android:name="ddna_fcm_project_id" android:resource="@string/ddna_fcm_project_id" />
   </application>
 </manifest>

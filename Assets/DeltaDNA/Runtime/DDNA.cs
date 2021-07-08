@@ -40,8 +40,8 @@ namespace DeltaDNA
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
         internal const string PF_KEY_ACTIONS_SALT = "DDSDK_ACTIONS_SALT";
 
-        private const float gameRunningEventInterval = 60f;
-        private IEnumerator gameRunningEventCoroutine;
+        internal const float gameRunningEventInterval = 60f;
+        internal IEnumerator gameRunningEventCoroutine;
         private bool isGameRunningCoroutineRunning = false;
 
         private static object _lock = new object();
@@ -212,16 +212,10 @@ namespace DeltaDNA
                 }
 
                 delegated.StartSDK(newPlayer);
-
-                if (Settings.SendGameRunningEveryMinute)
-                {
-                    gameRunningEventCoroutine = GameHeartbeat(gameRunningEventInterval);
-                    StartCoroutine(gameRunningEventCoroutine);
-                }
             }
         }
 
-        IEnumerator GameHeartbeat(float numSeconds)
+        internal IEnumerator GameHeartbeat(float numSeconds)
         {
             isGameRunningCoroutineRunning = true;
             yield return new WaitForSecondsRealtime(numSeconds);

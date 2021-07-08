@@ -86,6 +86,17 @@ namespace DeltaDNA
             }
             #endif
         }
+
+#if UNITY_EDITOR
+        internal static void ResetSingletonState()
+        {
+            // When Domain Reload is disabled, this will remain 'true' after OnDestroy is called
+            // on leaving Play Mode; so we have to reset it manually in this case (see PlayModeHelper
+            // in the editor assembly).
+            // If Domain Reload is enabled (the editor default setting) then this is a harmless non-action.
+            applicationIsQuitting = false;
+        }
+#endif
     }
 }
 // namespace DeltaDNA

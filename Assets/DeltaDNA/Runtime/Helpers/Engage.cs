@@ -17,6 +17,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Globalization;
 
 
 namespace DeltaDNA {
@@ -50,7 +51,7 @@ namespace DeltaDNA {
                     { "version", Settings.ENGAGE_API_VERSION },
                     { "sdkVersion", Settings.SDK_VERSION },
                     { "platform", DDNA.Instance.Platform },
-                    { "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset) }
+                    { "timezoneOffset", Convert.ToInt32(ClientInfo.TimezoneOffset, CultureInfo.InvariantCulture) }
                 };
 
                 if (this.Parameters == null)
