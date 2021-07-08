@@ -21,8 +21,8 @@ allprojects {
         maven {
             url 'https://maven.pkg.github.com/deltaDNA/android-sdk'
             credentials {
-                username = "omur-deltadna"
-                password = "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"
+                username = "<GITHUB_PACKAGES_USERNAME_HERE>"
+                password = "<GITHUB_PACKAGES_ACCESS_TOKEN_HERE>"
             }
         }
         flatDir {
