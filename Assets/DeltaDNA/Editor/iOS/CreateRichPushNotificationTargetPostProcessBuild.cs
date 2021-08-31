@@ -157,7 +157,8 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
             File.Delete(destinationFilepath);
         }
         File.Copy(sourceFilepath, destinationFilepath);
-        AddFileToProject(project, destinationFilepath, filename, extensionDisplayName, extensionGuid, buildPhase);
+        string fileGUID = AddFileToProject(project, destinationFilepath, filename, extensionDisplayName, extensionGuid, buildPhase);
+        project.AddFileToBuildSection(extensionGuid, buildPhase, fileGUID);
     }
 
     private static string GetPathToSourceDirectory()
@@ -165,11 +166,10 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         return Path.Combine("Assets", "DeltaDNA", "Editor", "iOS", "NotificationService");
     }
 
-    private static void AddFileToProject(PBXProject project, string filepath, string filename, string extensionDisplayName, string extensionGuid, string buildPhase)
+    private static string AddFileToProject(PBXProject project, string filepath, string filename, string extensionDisplayName, string extensionGuid, string buildPhase)
     {
         string xcodePath = extensionDisplayName + "/" + filename;
-        string fileGuid = project.AddFile(filepath, xcodePath);
-        project.AddFileToBuildSection(extensionGuid, buildPhase, fileGuid);
+        return project.AddFile(filepath, xcodePath);
     }
 }
 #endif

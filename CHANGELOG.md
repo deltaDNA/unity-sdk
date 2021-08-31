@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.0.9-preview] - 2021-08-30
+
+### Fixed 
+- Xcode builds will now default to the non-legacy build system on supported Unity versions
+
+## [5.0.8-preview] - 2021-07-06
+
+### Fixed
+- Fixed issue where entering and leaving Play Mode with Domain Reload disabled would prevent SDK from starting on returning to Play Mode
+- Timezone offset now InvariantCulture. 
+- Locale fix so backend doesn't reject country codes.
+- Expired credentials removed from Android Notifications gradle template
+
+**NOTE:** After updating to this version of the SDK you will need to manually add your GitHub Packages credentials to the generated gradle template when using Android push notifications.
+More details can be found in the README.
+
 ## [5.0.7-preview] - 2021-04-29
 
 ### Changed
