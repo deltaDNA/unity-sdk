@@ -224,7 +224,7 @@ The DeltaDNA service allows you to send notifications with additional content su
 ![DeltaDNA Unity Editor configuration](images/ios_delta_dna_configuration.png)
 
 3. Build the iOS project. 
-4. Change the Xcode build system within Xcode (File -> Project Settings -> Build System) to be the legacy build system.
+4. **(Only for versions of the Unity SDK 5.0.8 and below)** Change the Xcode build system within Xcode (File -> Project Settings -> Build System) to be the legacy build system.
 
 ![Xcode Build System Change](images/ios_build_system_change.png)
 
@@ -249,6 +249,13 @@ DDNA.Instance.StartSDK();
 #### v5.0.7 onwards
 
 The android dependencies for this SDK are fetched using Unity's gradle build. This is achieved through a custom gradle template file - this will be copied into your assets folder when you apply the Android notification settings.
+
+**Users without an existing gradle template**
+
+If you don't already have a gradle template file, the SDK will copy a basic template into the notification plugin folder in your assets folder (`Assets/Plugins/Android/`). You will need to 
+customise this file by adding a GitHub username and packages access token, with `read:packages` permissions, under the maven credentials section as shown below.
+
+**Users with an existing gradle template**
 
 If the SDK detects you already have a gradle template file, it will not copy the file to avoid overwriting your existing code. In order to use notifications with the deltaDNA SDK you will need to add our notifications plugin manually to this template, using the provided templates for reference (these are found in `DeltaDNA/Runtime/Plugins/Android`). The following items will need updating:
 
