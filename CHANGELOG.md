@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.10-preview]
+
+### Fixed
+- notificationOpened events will now be sent correctly when a notification is opened on iOS 10+
+- Bundle identifier for notification services will be properly respected in Xcode
+
+### Known Issues
+- When upgrading from a previous version, you may get warnings about changes in GUIDs for folders within the SDK. These should have
+no effect on the behaviour of the SDK, and should be able to be safely dismissed. These should only occur on upgrade to this version,
+and should not occur in subsequent upgrades or usage.
+
 ## [5.0.9-preview] - 2021-08-30
 
 ### Fixed 

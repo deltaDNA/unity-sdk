@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.deltadna.android:deltadna-sdk-notifications:4.13.4'
+    implementation 'com.deltadna.android:deltadna-sdk-notifications:4.13.6'
 **DEPS**}
 
 android {

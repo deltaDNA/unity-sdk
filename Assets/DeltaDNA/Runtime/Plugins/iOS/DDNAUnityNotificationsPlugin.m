@@ -81,6 +81,12 @@ static NSDictionary *_remoteNotification = nil;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unityDidFailToRegisterForRemoteNotifications:)
         name:kUnityDidFailToRegisterForRemoteNotificationsWithError object:nil];
+        
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        UNUserNotificationCenter* center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = [DDNAUnityNotificationsPlugin sharedPlugin];
+    });
 }
 
 + (void)applicationDidFinishLaunchingNotification:(NSNotification *)notification
@@ -88,18 +94,18 @@ static NSDictionary *_remoteNotification = nil;
     _coldLaunch = YES;
 }
 
+- (void) userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
+{
+    NSDictionary *userInfo = notification.request.content.userInfo;
+    NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    [DDNAUnityNotificationsPlugin handleReceivedNotificationData: payload];
+}
+
 + (void)unityDidReceiveRemoteNotification:(NSNotification *)notification
 {
     if (_sdkLoaded) {
-      NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:[notification userInfo]];
-      if (payload != nil) {
-          UIApplication *application = [UIApplication sharedApplication];
-          payload[@"_ddLaunch"] = [NSNumber numberWithBool:application.applicationState != UIApplicationStateActive || _coldLaunch];
-          UnitySendMessage("DeltaDNA.IosNotifications", "DidReceivePushNotification",
-              [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
-
-          _coldLaunch = NO;
-      }
+        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:[notification userInfo]];
+        [DDNAUnityNotificationsPlugin handleReceivedNotificationData: payload];
     } else {
         __typeof(self) __weak weakSelf = self;
         dispatch_async(_taskQueue, ^{
@@ -138,6 +144,18 @@ static NSDictionary *_remoteNotification = nil;
 
     UnitySendMessage("DeltaDNA.IosNotifications", "DidFailToRegisterForPushNotifications",
         [errorMsg UTF8String]);
+}
+
++ (void)handleReceivedNotificationData:(NSMutableDictionary *)payload
+{
+    if (payload != nil) {
+        UIApplication *application = [UIApplication sharedApplication];
+        payload[@"_ddLaunch"] = [NSNumber numberWithBool:application.applicationState != UIApplicationStateActive || _coldLaunch];
+        UnitySendMessage("DeltaDNA.IosNotifications", "DidReceivePushNotification",
+            [[NSString jsonStringWithContentsOfDictionary:payload] UTF8String]);
+
+        _coldLaunch = NO;
+    }
 }
 
 - (void)unityLoaded
