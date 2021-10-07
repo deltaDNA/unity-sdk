@@ -15,8 +15,10 @@
 //
 
 #include <Foundation/Foundation.h>
+#import <UserNotifications/UserNotifications.h>
+#import <UIKit/UIKit.h>
 
-@interface DDNAUnityNotificationsPlugin : NSObject
+@interface DDNAUnityNotificationsPlugin : NSObject <UNUserNotificationCenterDelegate>
 
 + (instancetype)sharedPlugin;
 

@@ -68,7 +68,7 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         notificationServicePlist.root.SetString("CFBundleDisplayName", displayName);
         notificationServicePlist.root.SetString("CFBundleIdentifier", bundleIdentifierForNotificationService);
         notificationServicePlist.root.SetString("CFBundleShortVersionString", PlayerSettings.bundleVersion);
-        notificationServicePlist.root.SetString("CFBundleVersion", PlayerSettings.iOS.buildNumber.ToString());
+        notificationServicePlist.root.SetString("CFBundleVersion", PlayerSettings.iOS.buildNumber);
         
         string pathToNotificationServicePlist = Path.Combine(pathToNotificationServiceImplementation, PATH_TO_INFO_PLIST_INSIDE_TARGET);
         notificationServicePlist.WriteToFile(pathToNotificationServicePlist);
@@ -76,7 +76,7 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         string guidOfExtension = PBXProjectExtensions.AddAppExtension(
             project, guidOfInitialTarget,
             displayName,
-            PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.iOS) + ".notificationservice",
+            bundleIdentifierForNotificationService,
             pathToNotificationServicePlist
         );
         string buildPhaseId = project.AddSourcesBuildPhase(guidOfExtension);
