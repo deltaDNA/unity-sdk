@@ -108,6 +108,8 @@ namespace DeltaDNA {
                 completionHandler((int)www.responseCode, www.downloadHandler.text, www.error);
             }
 
+            www.Dispose();
+
             #else
 
             WWW www;
