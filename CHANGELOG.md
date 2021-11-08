@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0]
+
+### New
+
+**Breaking Change**: New APIs provided for checking if PIPL consent is required, and recording users' consent. Note that
+it is now required to check if PIPL consent is required, and provide that consent if necessary, before collect and engage
+requests will be sent from the SDK.
+
+### Fixed
+- iOS notifications will show in the foreground as previously on devices running iOS 10+
+
 ## [5.0.10-preview]
 
 ### Fixed

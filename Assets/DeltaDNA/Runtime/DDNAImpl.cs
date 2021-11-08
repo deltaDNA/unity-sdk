@@ -36,6 +36,7 @@ namespace DeltaDNA {
         private bool started = false;
         private bool uploading = false;
         private DateTime lastActive = DateTime.MinValue;
+        private bool isFetchingConfig = false;
 
         private GameEvent launchNotificationEvent = null;
 
@@ -109,6 +110,11 @@ namespace DeltaDNA {
                 eventStore.FlushBuffers();
                 eventStore.Dispose();
             }
+        }
+
+        internal override void ClearAllEvents()
+        {
+            this.eventStore.ClearAll();
         }
 
         #endregion
@@ -202,6 +208,15 @@ namespace DeltaDNA {
         }
 
         override internal void RequestEngagement(Engagement engagement, Action<Dictionary<string, object>> callback) {
+            if (!DDNA.Instance.consentTracker.HasCheckedForConsent())
+            {
+                Logger.LogWarning("Since v6.0.0, engagements are not available until user consent has been gathered. Please use the check for consent methods first.");
+                engagement.StatusCode = 200;
+                engagement.Raw = "{}";
+                callback(engagement.JSON);
+                return;
+            }
+            
             if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method.");
             } else if (whitelistDps.Count != 0
@@ -246,6 +261,15 @@ namespace DeltaDNA {
         }
 
         override internal void RequestEngagement(Engagement engagement, Action<Engagement> onCompleted, Action<Exception> onError) {
+            if (!DDNA.Instance.consentTracker.HasCheckedForConsent())
+            {
+                Logger.LogWarning("Since v6.0.0, engagements are not available until user consent has been gathered. Please use the check for consent methods first.");
+                engagement.StatusCode = 200;
+                engagement.Raw = "{}";
+                onCompleted(engagement);
+                return;
+            }
+            
             if (!this.started) {
                 throw new Exception("You must first start the SDK via the StartSDK method.");
             } else if (whitelistDps.Count != 0
@@ -364,6 +388,20 @@ namespace DeltaDNA {
 
         override internal void RequestSessionConfiguration() {
             Logger.LogDebug("Requesting session configuration");
+
+            if (!DDNA.Instance.consentTracker.HasCheckedForConsent())
+            {
+                // Can't request SDK setup until consent has been requested. This will be automatically retried when they provide positive consent.
+                Logger.LogDebug("Consent not yet provided, so session configuration on hold until positive consent is given.");
+                return;
+            }
+
+            if (isFetchingConfig) {
+                Logger.LogDebug("A config fetch is already in progress, ignoring new fetch request");
+                return;
+            }
+
+            isFetchingConfig = true;
 
             DateTime? firstSession = RetrieveSessionDate(DDNA.PF_KEY_FIRST_SESSION);
             DateTime? lastSession = RetrieveSessionDate(DDNA.PF_KEY_LAST_SESSION);
@@ -545,6 +583,12 @@ namespace DeltaDNA {
 
         private IEnumerator PostEvents(string[] events, Action<bool, int> resultCallback)
         {
+            if (!DDNA.Instance.consentTracker.HasCheckedForConsent())
+            {
+                Debug.Log("Not yet checked for consent so no events are being sent!");
+                resultCallback(false, -1);
+                yield return null;
+            }
             string bulkEvent = "{\"eventList\":[" + String.Join(",", events) + "]}";
             string url;
             if (HashSecret != null) {
@@ -726,6 +770,7 @@ namespace DeltaDNA {
                 ddna.NotifyOnSessionConfigurationFailed();
                 HandleSessionConfigurationRetry();
             }
+            isFetchingConfig = false;
             TriggerDefaultEvents(newPlayer);
         }
 

@@ -44,10 +44,23 @@ Our analytics SDK is written entirely in Unity with no native code requirements.
 
 For all the information on how to use the analytics SDK, refer to our documentation [portal](http://docs.deltadna.com/advanced-integration/unity-sdk/).
 
-Checkout `BasicExample` class in `Assets\DeltaDNA\Example` to see how to use the SDK. At a minimum you will want to set the environment, Collect, and Engage URLs in the configuration UI accessible from the Editor under *DeltaDNA -> Configuration*. Finally you will need to start the SDK from a custom `MonoBehaviour`.
+Checkout `BasicExample` class in `Assets\DeltaDNA\Example` to see how to use the SDK. 
+
+At a minimum you will want to set the environment, Collect, and Engage URLs in the configuration UI accessible from the Editor under *DeltaDNA -> Configuration*. 
+
+It is a requirement in versions 6.0.0 and above to check if a user is in a location where PIPL consent is required, and to provide that consent if so. This must
+be done before the SDK will send any events or make any engage requests.
+
+Finally you will need to start the SDK from a custom `MonoBehaviour`.
+
 
 ```csharp
-DDNA.Instance.StartSDK();
+DDNA.Instance.IsPiplConsentRequired(delegate (bool isRequired) => {
+    if (isRequired) {
+        // Show a consent flow to get consent, and register it with the SDK using DDNA.Instance.SetPiplConsent(dataUse, dataExport)
+    }
+    DDNA.Instance.StartSDK();
+});
 ```
 
 On the first run this will create new user id and send a `newPlayer` event. On every call it will send a `gameStarted` and `clientDevice` event.

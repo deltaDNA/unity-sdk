@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
+using DeltaDNA.Consent;
 using UnityEngine;
 
 namespace DeltaDNA
@@ -45,6 +47,22 @@ namespace DeltaDNA
         private bool isGameRunningCoroutineRunning = false;
 
         private static object _lock = new object();
+
+        // Need to lazily initialise consent tracker as it reads its previous state from PlayerPrefs
+        // and we can't do that in a Monobehaviour property initializer
+        private ConsentTracker m_consentTracker;
+        internal ConsentTracker consentTracker
+        {
+            get
+            {
+                if (m_consentTracker == null)
+                {
+                    m_consentTracker = new ConsentTracker();
+                }
+
+                return m_consentTracker;
+            }
+        }
 
         public event Action OnNewSession;
         /// <summary>
@@ -100,6 +118,7 @@ namespace DeltaDNA
                 if (PlayerPrefs.HasKey(PF_KEY_FORGET_ME)
                     || PlayerPrefs.HasKey(PF_KEY_FORGOTTEN)
                     || PlayerPrefs.HasKey(PF_KEY_STOP_TRACKING_ME)
+                    || consentTracker.IsConsentDenied()
                     ) {
                     delegated = new DDNANonTracking(this);
                 } else {
@@ -121,6 +140,52 @@ namespace DeltaDNA
 
         #region Client Interface
 
+        /// <summary>
+        /// Checks if any PIPL user consents are required before sending data from the device.
+        /// This method must be called before starting the SDK.
+        ///
+        /// The callback parameter will be true if consent needs to be checked, and false if either
+        /// consent has previously been gathered, or if consent is not required in the user's current
+        /// location.
+        /// </summary>
+        public void IsPiplConsentRequired(Action<bool> callback)
+        {
+            StartCoroutine(consentTracker.IsPiplConsentFlowRequired(delegate(bool isRequired)
+            {
+                if (delegated.HasStarted && !isRequired)
+                {
+                    RequestSessionConfiguration();
+                }
+
+                callback(isRequired);
+            }));
+        }
+        
+        /// <summary>
+        /// Registers a user's consent (or lack of consent) to have their data used and / or exported
+        /// under PIPL legislation. Call isPiplConsentRequired first to check if this method is needed
+        /// or not.
+        /// </summary>
+        public void SetPiplConsent(bool dataUse, bool dataExport)
+        {
+            if (!dataUse || !dataExport)
+            {
+                delegated.ClearAllEvents();
+                ForgetMe();
+            }
+            else
+            {
+                if (delegated.HasStarted)
+                {
+                    // Have to re-request session configuration here as it will have failed previously.
+                    RequestSessionConfiguration();
+                }
+            }
+
+            consentTracker.SetUserPiplExportConsent(dataExport);
+            consentTracker.SetUserPiplUseConsent(dataUse);
+        }
+        
         /// <summary>
         /// Starts the SDK.  Call before sending events or making engagements.  The SDK will
         /// generate a new user id if this is the first run.
@@ -159,6 +224,11 @@ namespace DeltaDNA
         /// <param name="userID">The user id for the player, if set to null we create one for you.</param>
         public void StartSDK(Configuration config, string userID) {
             lock (_lock) {
+                if (!consentTracker.HasCheckedForConsent())
+                {
+                    Debug.LogWarning("Since v6.0.0, the deltaDNA SDK requires you check if user consent is required in their current jurisdiction before events will be sent. Please check for user consent using IsPiplConsentRequired in order to resume event sending.");
+                }
+                
                 bool newPlayer = false;
                 if (String.IsNullOrEmpty(UserID)) {         // first time!
                     newPlayer = true;

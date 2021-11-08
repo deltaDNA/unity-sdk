@@ -99,6 +99,7 @@ static NSDictionary *_remoteNotification = nil;
     NSDictionary *userInfo = notification.request.content.userInfo;
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     [DDNAUnityNotificationsPlugin handleReceivedNotificationData: payload];
+    completionHandler((UNAuthorizationOptionSound + UNAuthorizationOptionAlert + UNAuthorizationOptionBadge));
 }
 
 + (void)unityDidReceiveRemoteNotification:(NSNotification *)notification

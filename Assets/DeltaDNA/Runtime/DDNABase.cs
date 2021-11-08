@@ -50,6 +50,8 @@ namespace DeltaDNA {
         #endregion
         #region Client Interface
 
+        internal abstract void ClearAllEvents();
+
         internal abstract void StartSDK(bool newPlayer);
         internal abstract void StopSDK();
 

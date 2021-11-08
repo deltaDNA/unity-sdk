@@ -72,7 +72,6 @@ namespace DeltaDNA {
 
         internal static IEnumerator SendRequest(HttpRequest request, Action<int /*statusCode*/, string /*data*/, string /*error*/> completionHandler)
         {
-
             // timeout feature added in 5.6.2f1
             #if UNITY_5_6_OR_NEWER && !UNITY_5_6_0 && !UNITY_5_6_1
 
@@ -86,6 +85,14 @@ namespace DeltaDNA {
                 foreach (var entry in request.getHeaders())
                 {
                     www.SetRequestHeader(entry.Key, entry.Value);
+                }
+                if (DDNA.Instance.consentTracker.PiplExportConsentGiven)
+                {
+                    www.SetRequestHeader("PIPL_EXPORT", "");
+                }
+                if (DDNA.Instance.consentTracker.PiplUseConsentGiven)
+                {
+                    www.SetRequestHeader("PIPL_CONSENT", "");
                 }
                 byte[] bytes = Encoding.UTF8.GetBytes(request.HTTPBody);
                 www.uploadHandler = new UploadHandlerRaw(bytes);
@@ -107,6 +114,8 @@ namespace DeltaDNA {
             if (completionHandler != null) {
                 completionHandler((int)www.responseCode, www.downloadHandler.text, www.error);
             }
+            
+            www.Dispose();
 
             #else
 

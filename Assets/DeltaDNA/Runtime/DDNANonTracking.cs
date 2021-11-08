@@ -39,6 +39,11 @@ namespace DeltaDNA {
         #endregion
         #region Client Interface
 
+        internal override void ClearAllEvents()
+        {
+            // Not needed here
+        }
+
         override internal void StartSDK(bool newPlayer) {
             started = true;
             NewSession();

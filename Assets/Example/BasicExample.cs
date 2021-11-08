@@ -77,16 +77,24 @@ public class BasicExample : MonoBehaviour {
             // do something with the game parameters
             Debug.Log("Received game parameters from event trigger: " + gameParameters);
         });
-
-        // To use your own configuration, fill in the DDNA config UI in the Unity editor 
-        // and use DDNA.Instance.StartSDK() below.
-        DDNA.Instance.StartSDK(new Configuration()
+        
+        DDNA.Instance.IsPiplConsentRequired(delegate(bool isRequired)
         {
-            environmentKeyDev = "48380028118965502444250662515743",
-            environmentKey = 0,
-            collectUrl = "https://collect16056nwdmf.deltadna.net/collect/api",
-            engageUrl = "https://engage16056nwdmf.deltadna.net",
-            useApplicationVersion = true
+            if (isRequired)
+            {
+                // Get user consent and update the booleans below to match
+                DDNA.Instance.SetPiplConsent(true, true);
+            }
+            // To use your own configuration, fill in the DDNA config UI in the Unity editor 
+            // and use DDNA.Instance.StartSDK() below.
+            DDNA.Instance.StartSDK(new Configuration()
+            {
+                environmentKeyDev = "48380028118965502444250662515743",
+                environmentKey = 0,
+                collectUrl = "https://collect16056nwdmf.deltadna.net/collect/api",
+                engageUrl = "https://engage16056nwdmf.deltadna.net",
+                useApplicationVersion = true
+            });
         });
         
         Debug.LogWarning("DeltaDNA has started with a default configuration. To use your own config, edit the BasicExample script.");
