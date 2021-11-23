@@ -88,11 +88,11 @@ namespace DeltaDNA {
                 }
                 if (DDNA.Instance.consentTracker.PiplExportConsentGiven)
                 {
-                    www.SetRequestHeader("PIPL_EXPORT", "");
+                    www.SetRequestHeader("PIPL_EXPORT", "true");
                 }
                 if (DDNA.Instance.consentTracker.PiplUseConsentGiven)
                 {
-                    www.SetRequestHeader("PIPL_CONSENT", "");
+                    www.SetRequestHeader("PIPL_CONSENT", "true");
                 }
                 byte[] bytes = Encoding.UTF8.GetBytes(request.HTTPBody);
                 www.uploadHandler = new UploadHandlerRaw(bytes);

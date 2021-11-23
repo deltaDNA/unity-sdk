@@ -1,5 +1,10 @@
 # Changelog
 
+## [6.0.1]
+
+### Fixed
+- Fixed a bug where in certain cases devices wouldn't send events from locations requiring PIPL consent, even if consent was provided.
+
 ## [6.0.0]
 
 ### New
