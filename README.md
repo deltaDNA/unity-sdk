@@ -55,7 +55,8 @@ Finally you will need to start the SDK from a custom `MonoBehaviour`.
 
 
 ```csharp
-DDNA.Instance.IsPiplConsentRequired(delegate (bool isRequired) => {
+DDNA.Instance.IsPiplConsentRequired(delegate (bool isRequired)
+{
     if (isRequired) {
         // Show a consent flow to get consent, and register it with the SDK using DDNA.Instance.SetPiplConsent(dataUse, dataExport)
     }
