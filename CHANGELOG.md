@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.0.2]
+
+### Fixed
+- When switching environments between Dev and Live, data will be cleaned so that events are not sent to the wrong environment during testing
+- Fixed a potential bug in Android push notifications where opening a notification on the latest version of Android could cause an exception
+
 ## [6.0.1]
 
 ### Fixed

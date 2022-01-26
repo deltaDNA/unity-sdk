@@ -11,9 +11,9 @@ elif [ -z "$2" ]; then
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "s/$1/$2/g" Assets/DeltaDNA/Helpers/Settings.cs
+  sed -i '' "s/$1/$2/g" Assets/DeltaDNA/Runtime/Helpers/Settings.cs
 else
-  sed -i "s/$1/$2/g" Assets/DeltaDNA/Helpers/Settings.cs
+  sed -i "s/$1/$2/g" Assets/DeltaDNA/Runtime/Helpers/Settings.cs
 fi
 
 echo "Have you updated the CHANGELOG.md?"

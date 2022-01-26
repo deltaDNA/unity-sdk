@@ -41,6 +41,7 @@ namespace DeltaDNA
         internal const string PF_KEY_STOP_TRACKING_ME = "DDSKD_STOP_TRACKING_ME";
         internal const string PF_KEY_FORGOTTEN = "DDSK_FORGOTTEN";
         internal const string PF_KEY_ACTIONS_SALT = "DDSDK_ACTIONS_SALT";
+        internal const string PF_KEY_PREVIOUS_ENV = "DDSDK_PREVIOUS_ENV";
 
         internal const float gameRunningEventInterval = 60f;
         internal IEnumerator gameRunningEventCoroutine;
@@ -254,6 +255,9 @@ namespace DeltaDNA
                     : config.environmentKeyLive;
                 CollectURL = config.collectUrl;
                 EngageURL = config.engageUrl;
+
+                HandleEnvironmentChanges();
+
                 if (Platform == null) {
                     Platform = ClientInfo.Platform;
                 }
@@ -765,6 +769,22 @@ namespace DeltaDNA
 
         private string GenerateUserID() {
             return Guid.NewGuid().ToString();
+        }
+
+        /// Checks to see if the environment key has changed since the last startup, and resets the event queue
+        /// if so, to ensure events are not sent to the incorrect environment. In almost all cases, this will only happen
+        /// during testing.
+        private void HandleEnvironmentChanges() {
+            if (PlayerPrefs.HasKey(PF_KEY_PREVIOUS_ENV))
+            {
+                string previousEnv = PlayerPrefs.GetString(PF_KEY_PREVIOUS_ENV);
+                if (!string.IsNullOrEmpty(previousEnv) && (previousEnv != EnvironmentKey)) 
+                {
+                    Debug.Log($"Detected an environment configuration change from {previousEnv} to {EnvironmentKey}, clearing out old events from previous environment.");
+                    delegated.ClearAllEvents();
+                }
+            }
+            PlayerPrefs.SetString(PF_KEY_PREVIOUS_ENV, EnvironmentKey);
         }
 
         internal static string GenerateHash(string data, string secret) {
