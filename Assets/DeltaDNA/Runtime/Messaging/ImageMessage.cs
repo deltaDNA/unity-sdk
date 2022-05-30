@@ -223,8 +223,10 @@ namespace DeltaDNA{
 
         public void Show(){
             if (IsReady()){
-                try{
-                    if (spriteMap.Texture == null){
+                try
+                {
+                    if (spriteMap.Texture == null)
+                    {
                         /*
                          * This is a workaround for when we're showing for an
                          * event trigger, as the instance didn't go through the
@@ -239,7 +241,8 @@ namespace DeltaDNA{
                     messageCanvas.sortingOrder = 32767;
                     gameObject.AddComponent<GraphicRaycaster>();
 
-                    if (this.configuration.ContainsKey("shim")){
+                    if (this.configuration.ContainsKey("shim"))
+                    {
                         ShimLayer shimLayer = gameObject.AddComponent<ShimLayer>();
                         shimLayer.Build(ddna, gameObject, this, this.configuration["shim"] as JSONObject, this.depth);
                     }
@@ -247,7 +250,8 @@ namespace DeltaDNA{
                     JSONObject layout = configuration["layout"] as JSONObject;
                     object orientation;
                     if (!layout.TryGetValue("landscape", out orientation) &&
-                        !layout.TryGetValue("portrait", out orientation)){
+                        !layout.TryGetValue("portrait", out orientation))
+                    {
                         throw new KeyNotFoundException("Layout missing orientation key.");
                     }
 
@@ -261,11 +265,15 @@ namespace DeltaDNA{
 
                     showing = true;
                 }
-                catch (KeyNotFoundException exception){
+                catch (KeyNotFoundException exception)
+                {
                     Logger.LogWarning("Failed to show image message, invalid format: " + exception.Message);
+                    HideImageMessageObject();
                 }
-                catch (Exception exception){
+                catch (Exception exception)
+                {
                     Logger.LogWarning("Failed to show image message: " + exception.Message);
+                    HideImageMessageObject();
                 }
             }
         }
@@ -276,9 +284,18 @@ namespace DeltaDNA{
 
         public void Close(){
             if (showing){
-                UnityEngine.Object.Destroy(gameObject);
-                showing = false;
+                HideImageMessageObject();
             }
+        }
+
+        private void HideImageMessageObject()
+        {
+            if (gameObject != null)
+            {
+                Object.Destroy(gameObject);
+            }
+            
+            showing = false;
         }
 
         public JSONObject Parameters{ get; private set; }

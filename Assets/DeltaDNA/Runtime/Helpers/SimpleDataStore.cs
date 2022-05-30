@@ -10,7 +10,7 @@ namespace DeltaDNA{
         
         private static object LOCK = new object();
 
-        private readonly string location = Application.temporaryCachePath + "/deltadna/";
+        private readonly string location;
         private readonly string storename;
 
         private Dictionary<K, V> data;
@@ -20,12 +20,15 @@ namespace DeltaDNA{
 
             directory = !directory.EndsWith("/") ? directory + "/" : directory;
             
-            this.location = Application.temporaryCachePath + "/deltadna/" + directory;
+            this.location = Application.persistentDataPath + "/deltadna/" + directory;
+            
             this.paramSeparator = paramSeparator;
             this.storename = storename;
             
             lock (LOCK) {
                 CreateDirectory();
+                
+                MigrateFromOldCacheFile(directory);
                 
                 if (File.Exists(location + storename)) {
                     data = File
@@ -92,6 +95,16 @@ namespace DeltaDNA{
             return this.paramSeparator;
         }
 
+        private void MigrateFromOldCacheFile(string directory)
+        {
+            string oldPath = Application.temporaryCachePath + "/deltadna/" + directory + storename;
+            string newPath = location + storename;
+
+            if (File.Exists(oldPath) && !File.Exists(newPath))
+            {
+                File.Move(oldPath, newPath);
+            }
+        }
     }
     
 }

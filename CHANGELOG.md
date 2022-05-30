@@ -1,5 +1,11 @@
 # Changelog
 
+## [6.0.3]
+
+### Fixed
+- Event trigger counts will now be correctly persisted across sessions
+- iOS Rich Push Notifications will build correctly when project is moved between different systems between Unity and Xcode builds
+
 ## [6.0.2]
 
 ### Fixed

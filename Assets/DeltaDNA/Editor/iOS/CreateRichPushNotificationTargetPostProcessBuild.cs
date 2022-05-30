@@ -44,7 +44,7 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
 
         string guidOfInitialTarget = GetTargetGuid(project);
 
-        string pathToInfoPlist = Path.Combine(buildOutputPath, PATH_TO_INFO_PLIST_INSIDE_TARGET);
+        string pathToInfoPlist = buildOutputPath + "/" + PATH_TO_INFO_PLIST_INSIDE_TARGET;
         PlistDocument mainProjectInfoPlist = new PlistDocument();
         mainProjectInfoPlist.ReadFromFile(pathToInfoPlist);
         PlistElementArray array = mainProjectInfoPlist.root.CreateArray("UIBackgroundModes");
@@ -55,7 +55,7 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         int indexOfLastIdentifierSection = bundleIdentifierForNotificationService.LastIndexOf('.') + 1;
         string displayName = bundleIdentifierForNotificationService.Substring(indexOfLastIdentifierSection);
         
-        string pathToNotificationServiceImplementation = Path.Combine(buildOutputPath, displayName);
+        string pathToNotificationServiceImplementation = buildOutputPath + "/" + displayName;
         
         if (!Directory.Exists(pathToNotificationServiceImplementation))
         {
@@ -63,21 +63,22 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         }
 
         PlistDocument notificationServicePlist = new PlistDocument();
-        string plistTemplatePath = Path.Combine(GetPathToSourceDirectory(), "Info.plist");
+        string plistTemplatePath = GetPathToSourceDirectory() + "/" + "Info.plist";
         notificationServicePlist.ReadFromFile(plistTemplatePath);
         notificationServicePlist.root.SetString("CFBundleDisplayName", displayName);
         notificationServicePlist.root.SetString("CFBundleIdentifier", bundleIdentifierForNotificationService);
         notificationServicePlist.root.SetString("CFBundleShortVersionString", PlayerSettings.bundleVersion);
         notificationServicePlist.root.SetString("CFBundleVersion", PlayerSettings.iOS.buildNumber);
         
-        string pathToNotificationServicePlist = Path.Combine(pathToNotificationServiceImplementation, PATH_TO_INFO_PLIST_INSIDE_TARGET);
+        string pathToNotificationServicePlist = pathToNotificationServiceImplementation + "/" + PATH_TO_INFO_PLIST_INSIDE_TARGET;
         notificationServicePlist.WriteToFile(pathToNotificationServicePlist);
         
         string guidOfExtension = PBXProjectExtensions.AddAppExtension(
-            project, guidOfInitialTarget,
+            project, 
+            guidOfInitialTarget,
             displayName,
             bundleIdentifierForNotificationService,
-            pathToNotificationServicePlist
+            displayName + "/" + PATH_TO_INFO_PLIST_INSIDE_TARGET
         );
         string buildPhaseId = project.AddSourcesBuildPhase(guidOfExtension);
 
@@ -99,7 +100,6 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         );
         AddFileToProject(
             project,
-            pathToNotificationServicePlist,
             "Info.plist",
             displayName,
             guidOfExtension,
@@ -150,26 +150,26 @@ public sealed class CreateRichPushNotificationTargetPostProcessBuild
         string pathToImplementation
         )
     {
-        string sourceFilepath = Path.Combine(GetPathToSourceDirectory(), filename);
-        string destinationFilepath = Path.Combine(pathToImplementation, filename);
+        string sourceFilepath = GetPathToSourceDirectory() + "/" + filename;
+        string destinationFilepath = pathToImplementation + "/" + filename;
         if (File.Exists(destinationFilepath))
         {
             File.Delete(destinationFilepath);
         }
         File.Copy(sourceFilepath, destinationFilepath);
-        string fileGUID = AddFileToProject(project, destinationFilepath, filename, extensionDisplayName, extensionGuid, buildPhase);
+        string fileGUID = AddFileToProject(project, filename, extensionDisplayName, extensionGuid, buildPhase);
         project.AddFileToBuildSection(extensionGuid, buildPhase, fileGUID);
     }
 
     private static string GetPathToSourceDirectory()
     {
-        return Path.Combine("Assets", "DeltaDNA", "Editor", "iOS", "NotificationService");
+        return string.Join("/", "Assets", "DeltaDNA", "Editor", "iOS", "NotificationService");
     }
 
-    private static string AddFileToProject(PBXProject project, string filepath, string filename, string extensionDisplayName, string extensionGuid, string buildPhase)
+    private static string AddFileToProject(PBXProject project, string filename, string extensionDisplayName, string extensionGuid, string buildPhase)
     {
         string xcodePath = extensionDisplayName + "/" + filename;
-        return project.AddFile(filepath, xcodePath);
+        return project.AddFile(xcodePath, xcodePath);
     }
 }
 #endif
