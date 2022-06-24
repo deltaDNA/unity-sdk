@@ -117,6 +117,8 @@ namespace DeltaDNA {
             
             www.Dispose();
 
+            www.Dispose();
+
             #else
 
             WWW www;
